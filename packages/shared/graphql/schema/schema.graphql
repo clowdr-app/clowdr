@@ -13398,6 +13398,10 @@ enum content_ElementType_enum {
     """
     EXPLORE_SCHEDULE_BUTTON
     """
+    Data for a Zoom meeting.
+    """
+    EXTERNAL_EVENT_LINK
+    """
     File for an image (stored by Clowdr).
     """
     IMAGE_FILE
@@ -13485,10 +13489,6 @@ enum content_ElementType_enum {
     Schedule view for the whole conference.
     """
     WHOLE_SCHEDULE
-    """
-    Data for a Zoom meeting.
-    """
-    ZOOM
 }
 
 """
@@ -16205,6 +16205,23 @@ enum content_Item_update_column {
 input content_searchItems_args {
     conferenceId: uuid
     search: String
+}
+
+scalar float8
+
+"""
+Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'.
+"""
+input float8_comparison_exp {
+    _eq: float8
+    _gt: float8
+    _gte: float8
+    _in: [float8!]
+    _is_null: Boolean
+    _lt: float8
+    _lte: float8
+    _neq: float8
+    _nin: [float8!]
 }
 
 """
@@ -21529,19 +21546,6 @@ type mutation_root {
     """
     delete_room_ManagementMode_by_pk(name: String!): room_ManagementMode
     """
-    delete data from the table: "room.Mode"
-    """
-    delete_room_Mode(
-        """
-        filter the rows which have to be deleted
-        """
-        where: room_Mode_bool_exp!
-    ): room_Mode_mutation_response
-    """
-    delete single row from the table: "room.Mode"
-    """
-    delete_room_Mode_by_pk(name: String!): room_Mode
-    """
     delete data from the table: "room.PersonRole"
     """
     delete_room_PersonRole(
@@ -21706,6 +21710,19 @@ type mutation_root {
     delete single row from the table: "schedule.Event"
     """
     delete_schedule_Event_by_pk(id: uuid!): schedule_Event
+    """
+    delete data from the table: "schedule.Mode"
+    """
+    delete_schedule_Mode(
+        """
+        filter the rows which have to be deleted
+        """
+        where: schedule_Mode_bool_exp!
+    ): schedule_Mode_mutation_response
+    """
+    delete single row from the table: "schedule.Mode"
+    """
+    delete_schedule_Mode_by_pk(name: String!): schedule_Mode
     """
     delete data from the table: "schedule.StarredEvent"
     """
@@ -23672,32 +23689,6 @@ type mutation_root {
         on_conflict: room_ManagementMode_on_conflict
     ): room_ManagementMode
     """
-    insert data into the table: "room.Mode"
-    """
-    insert_room_Mode(
-        """
-        the rows to be inserted
-        """
-        objects: [room_Mode_insert_input!]!
-        """
-        on conflict condition
-        """
-        on_conflict: room_Mode_on_conflict
-    ): room_Mode_mutation_response
-    """
-    insert a single row into the table: "room.Mode"
-    """
-    insert_room_Mode_one(
-        """
-        the row to be inserted
-        """
-        object: room_Mode_insert_input!
-        """
-        on conflict condition
-        """
-        on_conflict: room_Mode_on_conflict
-    ): room_Mode
-    """
     insert data into the table: "room.PersonRole"
     """
     insert_room_PersonRole(
@@ -24027,6 +24018,32 @@ type mutation_root {
         """
         on_conflict: schedule_Event_on_conflict
     ): schedule_Event
+    """
+    insert data into the table: "schedule.Mode"
+    """
+    insert_schedule_Mode(
+        """
+        the rows to be inserted
+        """
+        objects: [schedule_Mode_insert_input!]!
+        """
+        on conflict condition
+        """
+        on_conflict: schedule_Mode_on_conflict
+    ): schedule_Mode_mutation_response
+    """
+    insert a single row into the table: "schedule.Mode"
+    """
+    insert_schedule_Mode_one(
+        """
+        the row to be inserted
+        """
+        object: schedule_Mode_insert_input!
+        """
+        on conflict condition
+        """
+        on_conflict: schedule_Mode_on_conflict
+    ): schedule_Mode
     """
     insert data into the table: "schedule.StarredEvent"
     """
@@ -26880,29 +26897,6 @@ type mutation_root {
         pk_columns: room_ManagementMode_pk_columns_input!
     ): room_ManagementMode
     """
-    update data of the table: "room.Mode"
-    """
-    update_room_Mode(
-        """
-        sets the columns of the filtered rows to the given values
-        """
-        _set: room_Mode_set_input
-        """
-        filter the rows which have to be updated
-        """
-        where: room_Mode_bool_exp!
-    ): room_Mode_mutation_response
-    """
-    update single row of the table: "room.Mode"
-    """
-    update_room_Mode_by_pk(
-        """
-        sets the columns of the filtered rows to the given values
-        """
-        _set: room_Mode_set_input
-        pk_columns: room_Mode_pk_columns_input!
-    ): room_Mode
-    """
     update data of the table: "room.PersonRole"
     """
     update_room_PersonRole(
@@ -27194,10 +27188,6 @@ type mutation_root {
     """
     update_schedule_CurrentEvents(
         """
-        increments the numeric columns with given value of the filtered values
-        """
-        _inc: schedule_CurrentEvents_inc_input
-        """
         sets the columns of the filtered rows to the given values
         """
         _set: schedule_CurrentEvents_set_input
@@ -27210,10 +27200,6 @@ type mutation_root {
     update data of the table: "schedule.Event"
     """
     update_schedule_Event(
-        """
-        increments the numeric columns with given value of the filtered values
-        """
-        _inc: schedule_Event_inc_input
         """
         sets the columns of the filtered rows to the given values
         """
@@ -27274,15 +27260,34 @@ type mutation_root {
     """
     update_schedule_Event_by_pk(
         """
-        increments the numeric columns with given value of the filtered values
-        """
-        _inc: schedule_Event_inc_input
-        """
         sets the columns of the filtered rows to the given values
         """
         _set: schedule_Event_set_input
         pk_columns: schedule_Event_pk_columns_input!
     ): schedule_Event
+    """
+    update data of the table: "schedule.Mode"
+    """
+    update_schedule_Mode(
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: schedule_Mode_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: schedule_Mode_bool_exp!
+    ): schedule_Mode_mutation_response
+    """
+    update single row of the table: "schedule.Mode"
+    """
+    update_schedule_Mode_by_pk(
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: schedule_Mode_set_input
+        pk_columns: schedule_Mode_pk_columns_input!
+    ): schedule_Mode
     """
     update data of the table: "schedule.StarredEvent"
     """
@@ -31998,60 +32003,6 @@ type query_root {
     """
     room_ManagementMode_by_pk(name: String!): room_ManagementMode
     """
-    fetch data from the table: "room.Mode"
-    """
-    room_Mode(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Mode_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Mode_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Mode_bool_exp
-    ): [room_Mode!]!
-    """
-    fetch aggregated fields from the table: "room.Mode"
-    """
-    room_Mode_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Mode_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Mode_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Mode_bool_exp
-    ): room_Mode_aggregate!
-    """
-    fetch data from the table: "room.Mode" using primary key columns
-    """
-    room_Mode_by_pk(name: String!): room_Mode
-    """
     fetch data from the table: "room.PersonRole"
     """
     room_PersonRole(
@@ -32749,6 +32700,60 @@ type query_root {
     fetch data from the table: "schedule.Event" using primary key columns
     """
     schedule_Event_by_pk(id: uuid!): schedule_Event
+    """
+    fetch data from the table: "schedule.Mode"
+    """
+    schedule_Mode(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Mode_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Mode_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Mode_bool_exp
+    ): [schedule_Mode!]!
+    """
+    fetch aggregated fields from the table: "schedule.Mode"
+    """
+    schedule_Mode_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Mode_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Mode_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Mode_bool_exp
+    ): schedule_Mode_aggregate!
+    """
+    fetch data from the table: "schedule.Mode" using primary key columns
+    """
+    schedule_Mode_by_pk(name: String!): schedule_Mode
     """
     fetch data from the table: "schedule.OverlappingEvents"
     """
@@ -37770,7 +37775,7 @@ type room_LivestreamDurations {
     room: room_Room
     roomId: uuid
     subconferenceId: uuid
-    sum: bigint
+    sum: float8
 }
 
 """
@@ -37817,7 +37822,7 @@ input room_LivestreamDurations_bool_exp {
     room: room_Room_bool_exp
     roomId: uuid_comparison_exp
     subconferenceId: uuid_comparison_exp
-    sum: bigint_comparison_exp
+    sum: float8_comparison_exp
 }
 
 """
@@ -37829,7 +37834,7 @@ input room_LivestreamDurations_insert_input {
     room: room_Room_obj_rel_insert_input
     roomId: uuid
     subconferenceId: uuid
-    sum: bigint
+    sum: float8
 }
 
 """
@@ -37839,7 +37844,7 @@ type room_LivestreamDurations_max_fields {
     conferenceId: uuid
     roomId: uuid
     subconferenceId: uuid
-    sum: bigint
+    sum: float8
 }
 
 """
@@ -37849,7 +37854,7 @@ type room_LivestreamDurations_min_fields {
     conferenceId: uuid
     roomId: uuid
     subconferenceId: uuid
-    sum: bigint
+    sum: float8
 }
 
 """
@@ -37918,7 +37923,7 @@ type room_LivestreamDurations_stddev_samp_fields {
 aggregate sum on columns
 """
 type room_LivestreamDurations_sum_fields {
-    sum: bigint
+    sum: float8
 }
 
 """
@@ -38117,264 +38122,6 @@ input room_ManagementMode_set_input {
 update columns of table "room.ManagementMode"
 """
 enum room_ManagementMode_update_column {
-    """
-    column name
-    """
-    description
-    """
-    column name
-    """
-    name
-}
-
-"""
-columns and relationships of "room.Mode"
-"""
-type room_Mode {
-    description: String!
-    """
-    An array relationship
-    """
-    events(
-        """
-        distinct select on columns
-        """
-        distinct_on: [schedule_Event_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [schedule_Event_order_by!]
-        """
-        filter the rows returned
-        """
-        where: schedule_Event_bool_exp
-    ): [schedule_Event!]!
-    """
-    An aggregate relationship
-    """
-    events_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [schedule_Event_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [schedule_Event_order_by!]
-        """
-        filter the rows returned
-        """
-        where: schedule_Event_bool_exp
-    ): schedule_Event_aggregate!
-    name: String!
-}
-
-"""
-aggregated selection of "room.Mode"
-"""
-type room_Mode_aggregate {
-    aggregate: room_Mode_aggregate_fields
-    nodes: [room_Mode!]!
-}
-
-"""
-aggregate fields of "room.Mode"
-"""
-type room_Mode_aggregate_fields {
-    count(columns: [room_Mode_select_column!], distinct: Boolean): Int!
-    max: room_Mode_max_fields
-    min: room_Mode_min_fields
-}
-
-"""
-Boolean expression to filter rows from the table "room.Mode". All fields are combined with a logical 'AND'.
-"""
-input room_Mode_bool_exp {
-    _and: [room_Mode_bool_exp!]
-    _not: room_Mode_bool_exp
-    _or: [room_Mode_bool_exp!]
-    description: String_comparison_exp
-    events: schedule_Event_bool_exp
-    name: String_comparison_exp
-}
-
-"""
-unique or primary key constraints on table "room.Mode"
-"""
-enum room_Mode_constraint {
-    """
-    unique or primary key constraint
-    """
-    Mode_pkey
-}
-
-enum room_Mode_enum {
-    """
-    An exhibition hall.
-    """
-    EXHIBITION
-    """
-    An empty room.
-    """
-    NONE
-    """
-    Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users.
-    """
-    PRERECORDED
-    """
-    A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users.
-    """
-    PRESENTATION
-    """
-    A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users.
-    """
-    Q_AND_A
-    """
-    A shuffle queue.
-    """
-    SHUFFLE
-    """
-    Users may participate in the general video chat.
-    """
-    VIDEO_CHAT
-    """
-    An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr.
-    """
-    VIDEO_PLAYER
-    """
-    Event is taking place in a Zoom room.
-    """
-    ZOOM
-}
-
-"""
-Boolean expression to compare columns of type "room_Mode_enum". All fields are combined with logical 'AND'.
-"""
-input room_Mode_enum_comparison_exp {
-    _eq: room_Mode_enum
-    _in: [room_Mode_enum!]
-    _is_null: Boolean
-    _neq: room_Mode_enum
-    _nin: [room_Mode_enum!]
-}
-
-"""
-input type for inserting data into table "room.Mode"
-"""
-input room_Mode_insert_input {
-    description: String
-    events: schedule_Event_arr_rel_insert_input
-    name: String
-}
-
-"""
-aggregate max on columns
-"""
-type room_Mode_max_fields {
-    description: String
-    name: String
-}
-
-"""
-aggregate min on columns
-"""
-type room_Mode_min_fields {
-    description: String
-    name: String
-}
-
-"""
-response of any mutation on the table "room.Mode"
-"""
-type room_Mode_mutation_response {
-    """
-    number of rows affected by the mutation
-    """
-    affected_rows: Int!
-    """
-    data from the rows affected by the mutation
-    """
-    returning: [room_Mode!]!
-}
-
-"""
-input type for inserting object relation for remote table "room.Mode"
-"""
-input room_Mode_obj_rel_insert_input {
-    data: room_Mode_insert_input!
-    """
-    on conflict condition
-    """
-    on_conflict: room_Mode_on_conflict
-}
-
-"""
-on conflict condition type for table "room.Mode"
-"""
-input room_Mode_on_conflict {
-    constraint: room_Mode_constraint!
-    update_columns: [room_Mode_update_column!]! = []
-    where: room_Mode_bool_exp
-}
-
-"""
-Ordering options when selecting data from "room.Mode".
-"""
-input room_Mode_order_by {
-    description: order_by
-    events_aggregate: schedule_Event_aggregate_order_by
-    name: order_by
-}
-
-"""
-primary key columns input for table: room_Mode
-"""
-input room_Mode_pk_columns_input {
-    name: String!
-}
-
-"""
-select columns of table "room.Mode"
-"""
-enum room_Mode_select_column {
-    """
-    column name
-    """
-    description
-    """
-    column name
-    """
-    name
-}
-
-"""
-input type for updating data in table "room.Mode"
-"""
-input room_Mode_set_input {
-    description: String
-    name: String
-}
-
-"""
-update columns of table "room.Mode"
-"""
-enum room_Mode_update_column {
     """
     column name
     """
@@ -42563,11 +42310,11 @@ input schedule_Continuation_variance_order_by {
 columns and relationships of "schedule.CurrentEvents"
 """
 type schedule_CurrentEvents {
+    autoPlayElementId: uuid
+    automaticParticipationSurvey: Boolean
     conferenceId: uuid
     created_at: timestamptz
-    durationSeconds: Int
     enableRecording: Boolean
-    endTime: timestamptz
     """
     An array relationship
     """
@@ -42620,16 +42367,17 @@ type schedule_CurrentEvents {
     ): schedule_EventProgramPerson_aggregate!
     exhibitionId: uuid
     id: uuid
-    intendedRoomModeName: String
     itemId: uuid
+    modeName: String
     name: String
     """
     An object relationship
     """
     room: room_Room
     roomId: uuid
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
     subconferenceId: uuid
     timings_updated_at: timestamptz
@@ -42649,34 +42397,18 @@ type schedule_CurrentEvents_aggregate {
 aggregate fields of "schedule.CurrentEvents"
 """
 type schedule_CurrentEvents_aggregate_fields {
-    avg: schedule_CurrentEvents_avg_fields
     count(columns: [schedule_CurrentEvents_select_column!], distinct: Boolean): Int!
     max: schedule_CurrentEvents_max_fields
     min: schedule_CurrentEvents_min_fields
-    stddev: schedule_CurrentEvents_stddev_fields
-    stddev_pop: schedule_CurrentEvents_stddev_pop_fields
-    stddev_samp: schedule_CurrentEvents_stddev_samp_fields
-    sum: schedule_CurrentEvents_sum_fields
-    var_pop: schedule_CurrentEvents_var_pop_fields
-    var_samp: schedule_CurrentEvents_var_samp_fields
-    variance: schedule_CurrentEvents_variance_fields
 }
 
 """
 order by aggregate values of table "schedule.CurrentEvents"
 """
 input schedule_CurrentEvents_aggregate_order_by {
-    avg: schedule_CurrentEvents_avg_order_by
     count: order_by
     max: schedule_CurrentEvents_max_order_by
     min: schedule_CurrentEvents_min_order_by
-    stddev: schedule_CurrentEvents_stddev_order_by
-    stddev_pop: schedule_CurrentEvents_stddev_pop_order_by
-    stddev_samp: schedule_CurrentEvents_stddev_samp_order_by
-    sum: schedule_CurrentEvents_sum_order_by
-    var_pop: schedule_CurrentEvents_var_pop_order_by
-    var_samp: schedule_CurrentEvents_var_samp_order_by
-    variance: schedule_CurrentEvents_variance_order_by
 }
 
 """
@@ -42687,41 +42419,28 @@ input schedule_CurrentEvents_arr_rel_insert_input {
 }
 
 """
-aggregate avg on columns
-"""
-type schedule_CurrentEvents_avg_fields {
-    durationSeconds: Float
-}
-
-"""
-order by avg() on columns of table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_avg_order_by {
-    durationSeconds: order_by
-}
-
-"""
 Boolean expression to filter rows from the table "schedule.CurrentEvents". All fields are combined with a logical 'AND'.
 """
 input schedule_CurrentEvents_bool_exp {
     _and: [schedule_CurrentEvents_bool_exp!]
     _not: schedule_CurrentEvents_bool_exp
     _or: [schedule_CurrentEvents_bool_exp!]
+    autoPlayElementId: uuid_comparison_exp
+    automaticParticipationSurvey: Boolean_comparison_exp
     conferenceId: uuid_comparison_exp
     created_at: timestamptz_comparison_exp
-    durationSeconds: Int_comparison_exp
     enableRecording: Boolean_comparison_exp
-    endTime: timestamptz_comparison_exp
     eventPeople: schedule_EventProgramPerson_bool_exp
     exhibitionId: uuid_comparison_exp
     id: uuid_comparison_exp
-    intendedRoomModeName: String_comparison_exp
     itemId: uuid_comparison_exp
+    modeName: String_comparison_exp
     name: String_comparison_exp
     room: room_Room_bool_exp
     roomId: uuid_comparison_exp
+    scheduledEndTime: timestamptz_comparison_exp
+    scheduledStartTime: timestamptz_comparison_exp
     shufflePeriodId: uuid_comparison_exp
-    startTime: timestamptz_comparison_exp
     streamTextEventId: String_comparison_exp
     subconferenceId: uuid_comparison_exp
     timings_updated_at: timestamptz_comparison_exp
@@ -42730,31 +42449,25 @@ input schedule_CurrentEvents_bool_exp {
 }
 
 """
-input type for incrementing numeric columns in table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_inc_input {
-    durationSeconds: Int
-}
-
-"""
 input type for inserting data into table "schedule.CurrentEvents"
 """
 input schedule_CurrentEvents_insert_input {
+    autoPlayElementId: uuid
+    automaticParticipationSurvey: Boolean
     conferenceId: uuid
     created_at: timestamptz
-    durationSeconds: Int
     enableRecording: Boolean
-    endTime: timestamptz
     eventPeople: schedule_EventProgramPerson_arr_rel_insert_input
     exhibitionId: uuid
     id: uuid
-    intendedRoomModeName: String
     itemId: uuid
+    modeName: String
     name: String
     room: room_Room_obj_rel_insert_input
     roomId: uuid
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
     subconferenceId: uuid
     timings_updated_at: timestamptz
@@ -42766,18 +42479,18 @@ input schedule_CurrentEvents_insert_input {
 aggregate max on columns
 """
 type schedule_CurrentEvents_max_fields {
+    autoPlayElementId: uuid
     conferenceId: uuid
     created_at: timestamptz
-    durationSeconds: Int
-    endTime: timestamptz
     exhibitionId: uuid
     id: uuid
-    intendedRoomModeName: String
     itemId: uuid
+    modeName: String
     name: String
     roomId: uuid
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
     subconferenceId: uuid
     timings_updated_at: timestamptz
@@ -42789,18 +42502,18 @@ type schedule_CurrentEvents_max_fields {
 order by max() on columns of table "schedule.CurrentEvents"
 """
 input schedule_CurrentEvents_max_order_by {
+    autoPlayElementId: order_by
     conferenceId: order_by
     created_at: order_by
-    durationSeconds: order_by
-    endTime: order_by
     exhibitionId: order_by
     id: order_by
-    intendedRoomModeName: order_by
     itemId: order_by
+    modeName: order_by
     name: order_by
     roomId: order_by
+    scheduledEndTime: order_by
+    scheduledStartTime: order_by
     shufflePeriodId: order_by
-    startTime: order_by
     streamTextEventId: order_by
     subconferenceId: order_by
     timings_updated_at: order_by
@@ -42812,18 +42525,18 @@ input schedule_CurrentEvents_max_order_by {
 aggregate min on columns
 """
 type schedule_CurrentEvents_min_fields {
+    autoPlayElementId: uuid
     conferenceId: uuid
     created_at: timestamptz
-    durationSeconds: Int
-    endTime: timestamptz
     exhibitionId: uuid
     id: uuid
-    intendedRoomModeName: String
     itemId: uuid
+    modeName: String
     name: String
     roomId: uuid
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
     subconferenceId: uuid
     timings_updated_at: timestamptz
@@ -42835,18 +42548,18 @@ type schedule_CurrentEvents_min_fields {
 order by min() on columns of table "schedule.CurrentEvents"
 """
 input schedule_CurrentEvents_min_order_by {
+    autoPlayElementId: order_by
     conferenceId: order_by
     created_at: order_by
-    durationSeconds: order_by
-    endTime: order_by
     exhibitionId: order_by
     id: order_by
-    intendedRoomModeName: order_by
     itemId: order_by
+    modeName: order_by
     name: order_by
     roomId: order_by
+    scheduledEndTime: order_by
+    scheduledStartTime: order_by
     shufflePeriodId: order_by
-    startTime: order_by
     streamTextEventId: order_by
     subconferenceId: order_by
     timings_updated_at: order_by
@@ -42872,21 +42585,22 @@ type schedule_CurrentEvents_mutation_response {
 Ordering options when selecting data from "schedule.CurrentEvents".
 """
 input schedule_CurrentEvents_order_by {
+    autoPlayElementId: order_by
+    automaticParticipationSurvey: order_by
     conferenceId: order_by
     created_at: order_by
-    durationSeconds: order_by
     enableRecording: order_by
-    endTime: order_by
     eventPeople_aggregate: schedule_EventProgramPerson_aggregate_order_by
     exhibitionId: order_by
     id: order_by
-    intendedRoomModeName: order_by
     itemId: order_by
+    modeName: order_by
     name: order_by
     room: room_Room_order_by
     roomId: order_by
+    scheduledEndTime: order_by
+    scheduledStartTime: order_by
     shufflePeriodId: order_by
-    startTime: order_by
     streamTextEventId: order_by
     subconferenceId: order_by
     timings_updated_at: order_by
@@ -42901,6 +42615,14 @@ enum schedule_CurrentEvents_select_column {
     """
     column name
     """
+    autoPlayElementId
+    """
+    column name
+    """
+    automaticParticipationSurvey
+    """
+    column name
+    """
     conferenceId
     """
     column name
@@ -42909,15 +42631,7 @@ enum schedule_CurrentEvents_select_column {
     """
     column name
     """
-    durationSeconds
-    """
-    column name
-    """
     enableRecording
-    """
-    column name
-    """
-    endTime
     """
     column name
     """
@@ -42929,11 +42643,11 @@ enum schedule_CurrentEvents_select_column {
     """
     column name
     """
-    intendedRoomModeName
+    itemId
     """
     column name
     """
-    itemId
+    modeName
     """
     column name
     """
@@ -42945,11 +42659,15 @@ enum schedule_CurrentEvents_select_column {
     """
     column name
     """
-    shufflePeriodId
+    scheduledEndTime
     """
     column name
     """
-    startTime
+    scheduledStartTime
+    """
+    column name
+    """
+    shufflePeriodId
     """
     column name
     """
@@ -42976,19 +42694,20 @@ enum schedule_CurrentEvents_select_column {
 input type for updating data in table "schedule.CurrentEvents"
 """
 input schedule_CurrentEvents_set_input {
+    autoPlayElementId: uuid
+    automaticParticipationSurvey: Boolean
     conferenceId: uuid
     created_at: timestamptz
-    durationSeconds: Int
     enableRecording: Boolean
-    endTime: timestamptz
     exhibitionId: uuid
     id: uuid
-    intendedRoomModeName: String
     itemId: uuid
+    modeName: String
     name: String
     roomId: uuid
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
     subconferenceId: uuid
     timings_updated_at: timestamptz
@@ -42997,107 +42716,14 @@ input schedule_CurrentEvents_set_input {
 }
 
 """
-aggregate stddev on columns
-"""
-type schedule_CurrentEvents_stddev_fields {
-    durationSeconds: Float
-}
-
-"""
-order by stddev() on columns of table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_stddev_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate stddev_pop on columns
-"""
-type schedule_CurrentEvents_stddev_pop_fields {
-    durationSeconds: Float
-}
-
-"""
-order by stddev_pop() on columns of table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_stddev_pop_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate stddev_samp on columns
-"""
-type schedule_CurrentEvents_stddev_samp_fields {
-    durationSeconds: Float
-}
-
-"""
-order by stddev_samp() on columns of table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_stddev_samp_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate sum on columns
-"""
-type schedule_CurrentEvents_sum_fields {
-    durationSeconds: Int
-}
-
-"""
-order by sum() on columns of table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_sum_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate var_pop on columns
-"""
-type schedule_CurrentEvents_var_pop_fields {
-    durationSeconds: Float
-}
-
-"""
-order by var_pop() on columns of table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_var_pop_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate var_samp on columns
-"""
-type schedule_CurrentEvents_var_samp_fields {
-    durationSeconds: Float
-}
-
-"""
-order by var_samp() on columns of table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_var_samp_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate variance on columns
-"""
-type schedule_CurrentEvents_variance_fields {
-    durationSeconds: Float
-}
-
-"""
-order by variance() on columns of table "schedule.CurrentEvents"
-"""
-input schedule_CurrentEvents_variance_order_by {
-    durationSeconds: order_by
-}
-
-"""
 columns and relationships of "schedule.Event"
 """
 type schedule_Event {
+    """
+    An object relationship
+    """
+    autoPlayElement: content_Element
+    autoPlayElementId: uuid
     automaticParticipationSurvey: Boolean!
     """
     An object relationship
@@ -43155,9 +42781,7 @@ type schedule_Event {
         where: schedule_Continuation_bool_exp
     ): schedule_Continuation_aggregate!
     createdAt: timestamptz!
-    durationSeconds: Int!
     enableRecording: Boolean!
-    endTime: timestamptz
     """
     An array relationship
     """
@@ -43218,12 +42842,16 @@ type schedule_Event {
     exhibition: collection_Exhibition
     exhibitionId: uuid
     id: uuid!
-    intendedRoomModeName: room_Mode_enum!
     """
     An object relationship
     """
     item: content_Item
     itemId: uuid
+    """
+    An object relationship
+    """
+    mode: schedule_Mode!
+    modeName: schedule_Mode_enum!
     name: String!
     """
     An object relationship
@@ -43231,20 +42859,22 @@ type schedule_Event {
     room: room_Room!
     roomId: uuid!
     """
-    An object relationship
-    """
-    roomMode: room_Mode!
-    """
     A computed field, executes function "schedule.eventRoomName"
     """
     roomName: String
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
+    sessionEventId: uuid
     """
     An object relationship
     """
     shufflePeriod: room_ShufflePeriod
     shufflePeriodId: uuid
-    startTime: timestamptz!
     streamTextEventId: String
+    """
+    An object relationship
+    """
+    subconference: conference_Subconference
     subconferenceId: uuid
     timingsUpdatedAt: timestamptz!
     updatedAt: timestamptz!
@@ -43766,34 +43396,18 @@ type schedule_Event_aggregate {
 aggregate fields of "schedule.Event"
 """
 type schedule_Event_aggregate_fields {
-    avg: schedule_Event_avg_fields
     count(columns: [schedule_Event_select_column!], distinct: Boolean): Int!
     max: schedule_Event_max_fields
     min: schedule_Event_min_fields
-    stddev: schedule_Event_stddev_fields
-    stddev_pop: schedule_Event_stddev_pop_fields
-    stddev_samp: schedule_Event_stddev_samp_fields
-    sum: schedule_Event_sum_fields
-    var_pop: schedule_Event_var_pop_fields
-    var_samp: schedule_Event_var_samp_fields
-    variance: schedule_Event_variance_fields
 }
 
 """
 order by aggregate values of table "schedule.Event"
 """
 input schedule_Event_aggregate_order_by {
-    avg: schedule_Event_avg_order_by
     count: order_by
     max: schedule_Event_max_order_by
     min: schedule_Event_min_order_by
-    stddev: schedule_Event_stddev_order_by
-    stddev_pop: schedule_Event_stddev_pop_order_by
-    stddev_samp: schedule_Event_stddev_samp_order_by
-    sum: schedule_Event_sum_order_by
-    var_pop: schedule_Event_var_pop_order_by
-    var_samp: schedule_Event_var_samp_order_by
-    variance: schedule_Event_variance_order_by
 }
 
 """
@@ -43808,51 +43422,40 @@ input schedule_Event_arr_rel_insert_input {
 }
 
 """
-aggregate avg on columns
-"""
-type schedule_Event_avg_fields {
-    durationSeconds: Float
-}
-
-"""
-order by avg() on columns of table "schedule.Event"
-"""
-input schedule_Event_avg_order_by {
-    durationSeconds: order_by
-}
-
-"""
 Boolean expression to filter rows from the table "schedule.Event". All fields are combined with a logical 'AND'.
 """
 input schedule_Event_bool_exp {
     _and: [schedule_Event_bool_exp!]
     _not: schedule_Event_bool_exp
     _or: [schedule_Event_bool_exp!]
+    autoPlayElement: content_Element_bool_exp
+    autoPlayElementId: uuid_comparison_exp
     automaticParticipationSurvey: Boolean_comparison_exp
     conference: conference_Conference_bool_exp
     conferenceId: uuid_comparison_exp
     continuations: schedule_Continuation_bool_exp
     createdAt: timestamptz_comparison_exp
-    durationSeconds: Int_comparison_exp
     enableRecording: Boolean_comparison_exp
-    endTime: timestamptz_comparison_exp
     eventPeople: schedule_EventProgramPerson_bool_exp
     eventVonageSession: video_EventVonageSession_bool_exp
     exhibition: collection_Exhibition_bool_exp
     exhibitionId: uuid_comparison_exp
     id: uuid_comparison_exp
-    intendedRoomModeName: room_Mode_enum_comparison_exp
     item: content_Item_bool_exp
     itemId: uuid_comparison_exp
+    mode: schedule_Mode_bool_exp
+    modeName: schedule_Mode_enum_comparison_exp
     name: String_comparison_exp
     room: room_Room_bool_exp
     roomId: uuid_comparison_exp
-    roomMode: room_Mode_bool_exp
     roomName: String_comparison_exp
+    scheduledEndTime: timestamptz_comparison_exp
+    scheduledStartTime: timestamptz_comparison_exp
+    sessionEventId: uuid_comparison_exp
     shufflePeriod: room_ShufflePeriod_bool_exp
     shufflePeriodId: uuid_comparison_exp
-    startTime: timestamptz_comparison_exp
     streamTextEventId: String_comparison_exp
+    subconference: conference_Subconference_bool_exp
     subconferenceId: uuid_comparison_exp
     timingsUpdatedAt: timestamptz_comparison_exp
     updatedAt: timestamptz_comparison_exp
@@ -43870,40 +43473,36 @@ enum schedule_Event_constraint {
 }
 
 """
-input type for incrementing numeric columns in table "schedule.Event"
-"""
-input schedule_Event_inc_input {
-    durationSeconds: Int
-}
-
-"""
 input type for inserting data into table "schedule.Event"
 """
 input schedule_Event_insert_input {
+    autoPlayElement: content_Element_obj_rel_insert_input
+    autoPlayElementId: uuid
     automaticParticipationSurvey: Boolean
     conference: conference_Conference_obj_rel_insert_input
     conferenceId: uuid
     continuations: schedule_Continuation_arr_rel_insert_input
     createdAt: timestamptz
-    durationSeconds: Int
     enableRecording: Boolean
-    endTime: timestamptz
     eventPeople: schedule_EventProgramPerson_arr_rel_insert_input
     eventVonageSession: video_EventVonageSession_obj_rel_insert_input
     exhibition: collection_Exhibition_obj_rel_insert_input
     exhibitionId: uuid
     id: uuid
-    intendedRoomModeName: room_Mode_enum
     item: content_Item_obj_rel_insert_input
     itemId: uuid
+    mode: schedule_Mode_obj_rel_insert_input
+    modeName: schedule_Mode_enum
     name: String
     room: room_Room_obj_rel_insert_input
     roomId: uuid
-    roomMode: room_Mode_obj_rel_insert_input
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
+    sessionEventId: uuid
     shufflePeriod: room_ShufflePeriod_obj_rel_insert_input
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
+    subconference: conference_Subconference_obj_rel_insert_input
     subconferenceId: uuid
     timingsUpdatedAt: timestamptz
     updatedAt: timestamptz
@@ -43914,17 +43513,18 @@ input schedule_Event_insert_input {
 aggregate max on columns
 """
 type schedule_Event_max_fields {
+    autoPlayElementId: uuid
     conferenceId: uuid
     createdAt: timestamptz
-    durationSeconds: Int
-    endTime: timestamptz
     exhibitionId: uuid
     id: uuid
     itemId: uuid
     name: String
     roomId: uuid
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
+    sessionEventId: uuid
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
     subconferenceId: uuid
     timingsUpdatedAt: timestamptz
@@ -43935,17 +43535,18 @@ type schedule_Event_max_fields {
 order by max() on columns of table "schedule.Event"
 """
 input schedule_Event_max_order_by {
+    autoPlayElementId: order_by
     conferenceId: order_by
     createdAt: order_by
-    durationSeconds: order_by
-    endTime: order_by
     exhibitionId: order_by
     id: order_by
     itemId: order_by
     name: order_by
     roomId: order_by
+    scheduledEndTime: order_by
+    scheduledStartTime: order_by
+    sessionEventId: order_by
     shufflePeriodId: order_by
-    startTime: order_by
     streamTextEventId: order_by
     subconferenceId: order_by
     timingsUpdatedAt: order_by
@@ -43956,17 +43557,18 @@ input schedule_Event_max_order_by {
 aggregate min on columns
 """
 type schedule_Event_min_fields {
+    autoPlayElementId: uuid
     conferenceId: uuid
     createdAt: timestamptz
-    durationSeconds: Int
-    endTime: timestamptz
     exhibitionId: uuid
     id: uuid
     itemId: uuid
     name: String
     roomId: uuid
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
+    sessionEventId: uuid
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
     subconferenceId: uuid
     timingsUpdatedAt: timestamptz
@@ -43977,17 +43579,18 @@ type schedule_Event_min_fields {
 order by min() on columns of table "schedule.Event"
 """
 input schedule_Event_min_order_by {
+    autoPlayElementId: order_by
     conferenceId: order_by
     createdAt: order_by
-    durationSeconds: order_by
-    endTime: order_by
     exhibitionId: order_by
     id: order_by
     itemId: order_by
     name: order_by
     roomId: order_by
+    scheduledEndTime: order_by
+    scheduledStartTime: order_by
+    sessionEventId: order_by
     shufflePeriodId: order_by
-    startTime: order_by
     streamTextEventId: order_by
     subconferenceId: order_by
     timingsUpdatedAt: order_by
@@ -44032,31 +43635,34 @@ input schedule_Event_on_conflict {
 Ordering options when selecting data from "schedule.Event".
 """
 input schedule_Event_order_by {
+    autoPlayElement: content_Element_order_by
+    autoPlayElementId: order_by
     automaticParticipationSurvey: order_by
     conference: conference_Conference_order_by
     conferenceId: order_by
     continuations_aggregate: schedule_Continuation_aggregate_order_by
     createdAt: order_by
-    durationSeconds: order_by
     enableRecording: order_by
-    endTime: order_by
     eventPeople_aggregate: schedule_EventProgramPerson_aggregate_order_by
     eventVonageSession: video_EventVonageSession_order_by
     exhibition: collection_Exhibition_order_by
     exhibitionId: order_by
     id: order_by
-    intendedRoomModeName: order_by
     item: content_Item_order_by
     itemId: order_by
+    mode: schedule_Mode_order_by
+    modeName: order_by
     name: order_by
     room: room_Room_order_by
     roomId: order_by
-    roomMode: room_Mode_order_by
     roomName: order_by
+    scheduledEndTime: order_by
+    scheduledStartTime: order_by
+    sessionEventId: order_by
     shufflePeriod: room_ShufflePeriod_order_by
     shufflePeriodId: order_by
-    startTime: order_by
     streamTextEventId: order_by
+    subconference: conference_Subconference_order_by
     subconferenceId: order_by
     timingsUpdatedAt: order_by
     updatedAt: order_by
@@ -44077,6 +43683,10 @@ enum schedule_Event_select_column {
     """
     column name
     """
+    autoPlayElementId
+    """
+    column name
+    """
     automaticParticipationSurvey
     """
     column name
@@ -44089,15 +43699,7 @@ enum schedule_Event_select_column {
     """
     column name
     """
-    durationSeconds
-    """
-    column name
-    """
     enableRecording
-    """
-    column name
-    """
-    endTime
     """
     column name
     """
@@ -44109,11 +43711,11 @@ enum schedule_Event_select_column {
     """
     column name
     """
-    intendedRoomModeName
+    itemId
     """
     column name
     """
-    itemId
+    modeName
     """
     column name
     """
@@ -44125,11 +43727,19 @@ enum schedule_Event_select_column {
     """
     column name
     """
-    shufflePeriodId
+    scheduledEndTime
     """
     column name
     """
-    startTime
+    scheduledStartTime
+    """
+    column name
+    """
+    sessionEventId
+    """
+    column name
+    """
+    shufflePeriodId
     """
     column name
     """
@@ -44156,20 +43766,21 @@ enum schedule_Event_select_column {
 input type for updating data in table "schedule.Event"
 """
 input schedule_Event_set_input {
+    autoPlayElementId: uuid
     automaticParticipationSurvey: Boolean
     conferenceId: uuid
     createdAt: timestamptz
-    durationSeconds: Int
     enableRecording: Boolean
-    endTime: timestamptz
     exhibitionId: uuid
     id: uuid
-    intendedRoomModeName: room_Mode_enum
     itemId: uuid
+    modeName: schedule_Mode_enum
     name: String
     roomId: uuid
+    scheduledEndTime: timestamptz
+    scheduledStartTime: timestamptz
+    sessionEventId: uuid
     shufflePeriodId: uuid
-    startTime: timestamptz
     streamTextEventId: String
     subconferenceId: uuid
     timingsUpdatedAt: timestamptz
@@ -44178,65 +43789,13 @@ input schedule_Event_set_input {
 }
 
 """
-aggregate stddev on columns
-"""
-type schedule_Event_stddev_fields {
-    durationSeconds: Float
-}
-
-"""
-order by stddev() on columns of table "schedule.Event"
-"""
-input schedule_Event_stddev_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate stddev_pop on columns
-"""
-type schedule_Event_stddev_pop_fields {
-    durationSeconds: Float
-}
-
-"""
-order by stddev_pop() on columns of table "schedule.Event"
-"""
-input schedule_Event_stddev_pop_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate stddev_samp on columns
-"""
-type schedule_Event_stddev_samp_fields {
-    durationSeconds: Float
-}
-
-"""
-order by stddev_samp() on columns of table "schedule.Event"
-"""
-input schedule_Event_stddev_samp_order_by {
-    durationSeconds: order_by
-}
-
-"""
-aggregate sum on columns
-"""
-type schedule_Event_sum_fields {
-    durationSeconds: Int
-}
-
-"""
-order by sum() on columns of table "schedule.Event"
-"""
-input schedule_Event_sum_order_by {
-    durationSeconds: order_by
-}
-
-"""
 update columns of table "schedule.Event"
 """
 enum schedule_Event_update_column {
+    """
+    column name
+    """
+    autoPlayElementId
     """
     column name
     """
@@ -44252,15 +43811,7 @@ enum schedule_Event_update_column {
     """
     column name
     """
-    durationSeconds
-    """
-    column name
-    """
     enableRecording
-    """
-    column name
-    """
-    endTime
     """
     column name
     """
@@ -44272,11 +43823,11 @@ enum schedule_Event_update_column {
     """
     column name
     """
-    intendedRoomModeName
+    itemId
     """
     column name
     """
-    itemId
+    modeName
     """
     column name
     """
@@ -44288,11 +43839,19 @@ enum schedule_Event_update_column {
     """
     column name
     """
-    shufflePeriodId
+    scheduledEndTime
     """
     column name
     """
-    startTime
+    scheduledStartTime
+    """
+    column name
+    """
+    sessionEventId
+    """
+    column name
+    """
+    shufflePeriodId
     """
     column name
     """
@@ -44316,45 +43875,253 @@ enum schedule_Event_update_column {
 }
 
 """
-aggregate var_pop on columns
+columns and relationships of "schedule.Mode"
 """
-type schedule_Event_var_pop_fields {
-    durationSeconds: Float
+type schedule_Mode {
+    description: String!
+    """
+    An array relationship
+    """
+    events(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Event_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Event_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Event_bool_exp
+    ): [schedule_Event!]!
+    """
+    An aggregate relationship
+    """
+    events_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Event_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Event_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Event_bool_exp
+    ): schedule_Event_aggregate!
+    name: String!
 }
 
 """
-order by var_pop() on columns of table "schedule.Event"
+aggregated selection of "schedule.Mode"
 """
-input schedule_Event_var_pop_order_by {
-    durationSeconds: order_by
+type schedule_Mode_aggregate {
+    aggregate: schedule_Mode_aggregate_fields
+    nodes: [schedule_Mode!]!
 }
 
 """
-aggregate var_samp on columns
+aggregate fields of "schedule.Mode"
 """
-type schedule_Event_var_samp_fields {
-    durationSeconds: Float
+type schedule_Mode_aggregate_fields {
+    count(columns: [schedule_Mode_select_column!], distinct: Boolean): Int!
+    max: schedule_Mode_max_fields
+    min: schedule_Mode_min_fields
 }
 
 """
-order by var_samp() on columns of table "schedule.Event"
+Boolean expression to filter rows from the table "schedule.Mode". All fields are combined with a logical 'AND'.
 """
-input schedule_Event_var_samp_order_by {
-    durationSeconds: order_by
+input schedule_Mode_bool_exp {
+    _and: [schedule_Mode_bool_exp!]
+    _not: schedule_Mode_bool_exp
+    _or: [schedule_Mode_bool_exp!]
+    description: String_comparison_exp
+    events: schedule_Event_bool_exp
+    name: String_comparison_exp
 }
 
 """
-aggregate variance on columns
+unique or primary key constraints on table "schedule.Mode"
 """
-type schedule_Event_variance_fields {
-    durationSeconds: Float
+enum schedule_Mode_constraint {
+    """
+    unique or primary key constraint
+    """
+    Mode_pkey
+}
+
+enum schedule_Mode_enum {
+    """
+    An exhibition hall.
+    """
+    EXHIBITION
+    """
+    Event is taking place in a Zoom room.
+    """
+    EXTERNAL
+    """
+    Users watch a live-stream.
+    """
+    LIVESTREAM
+    """
+    An empty room.
+    """
+    NONE
+    """
+    A shuffle queue.
+    """
+    SHUFFLE
+    """
+    Users may participate in the general video chat.
+    """
+    VIDEO_CHAT
+    """
+    An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr.
+    """
+    VIDEO_PLAYER
 }
 
 """
-order by variance() on columns of table "schedule.Event"
+Boolean expression to compare columns of type "schedule_Mode_enum". All fields are combined with logical 'AND'.
 """
-input schedule_Event_variance_order_by {
-    durationSeconds: order_by
+input schedule_Mode_enum_comparison_exp {
+    _eq: schedule_Mode_enum
+    _in: [schedule_Mode_enum!]
+    _is_null: Boolean
+    _neq: schedule_Mode_enum
+    _nin: [schedule_Mode_enum!]
+}
+
+"""
+input type for inserting data into table "schedule.Mode"
+"""
+input schedule_Mode_insert_input {
+    description: String
+    events: schedule_Event_arr_rel_insert_input
+    name: String
+}
+
+"""
+aggregate max on columns
+"""
+type schedule_Mode_max_fields {
+    description: String
+    name: String
+}
+
+"""
+aggregate min on columns
+"""
+type schedule_Mode_min_fields {
+    description: String
+    name: String
+}
+
+"""
+response of any mutation on the table "schedule.Mode"
+"""
+type schedule_Mode_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [schedule_Mode!]!
+}
+
+"""
+input type for inserting object relation for remote table "schedule.Mode"
+"""
+input schedule_Mode_obj_rel_insert_input {
+    data: schedule_Mode_insert_input!
+    """
+    on conflict condition
+    """
+    on_conflict: schedule_Mode_on_conflict
+}
+
+"""
+on conflict condition type for table "schedule.Mode"
+"""
+input schedule_Mode_on_conflict {
+    constraint: schedule_Mode_constraint!
+    update_columns: [schedule_Mode_update_column!]! = []
+    where: schedule_Mode_bool_exp
+}
+
+"""
+Ordering options when selecting data from "schedule.Mode".
+"""
+input schedule_Mode_order_by {
+    description: order_by
+    events_aggregate: schedule_Event_aggregate_order_by
+    name: order_by
+}
+
+"""
+primary key columns input for table: schedule_Mode
+"""
+input schedule_Mode_pk_columns_input {
+    name: String!
+}
+
+"""
+select columns of table "schedule.Mode"
+"""
+enum schedule_Mode_select_column {
+    """
+    column name
+    """
+    description
+    """
+    column name
+    """
+    name
+}
+
+"""
+input type for updating data in table "schedule.Mode"
+"""
+input schedule_Mode_set_input {
+    description: String
+    name: String
+}
+
+"""
+update columns of table "schedule.Mode"
+"""
+enum schedule_Mode_update_column {
+    """
+    column name
+    """
+    description
+    """
+    column name
+    """
+    name
 }
 
 """
@@ -49528,60 +49295,6 @@ type subscription_root {
     """
     room_ManagementMode_by_pk(name: String!): room_ManagementMode
     """
-    fetch data from the table: "room.Mode"
-    """
-    room_Mode(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Mode_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Mode_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Mode_bool_exp
-    ): [room_Mode!]!
-    """
-    fetch aggregated fields from the table: "room.Mode"
-    """
-    room_Mode_aggregate(
-        """
-        distinct select on columns
-        """
-        distinct_on: [room_Mode_select_column!]
-        """
-        limit the number of rows returned
-        """
-        limit: Int
-        """
-        skip the first n rows. Use only with order_by
-        """
-        offset: Int
-        """
-        sort the rows by one or more columns
-        """
-        order_by: [room_Mode_order_by!]
-        """
-        filter the rows returned
-        """
-        where: room_Mode_bool_exp
-    ): room_Mode_aggregate!
-    """
-    fetch data from the table: "room.Mode" using primary key columns
-    """
-    room_Mode_by_pk(name: String!): room_Mode
-    """
     fetch data from the table: "room.PersonRole"
     """
     room_PersonRole(
@@ -50279,6 +49992,60 @@ type subscription_root {
     fetch data from the table: "schedule.Event" using primary key columns
     """
     schedule_Event_by_pk(id: uuid!): schedule_Event
+    """
+    fetch data from the table: "schedule.Mode"
+    """
+    schedule_Mode(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Mode_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Mode_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Mode_bool_exp
+    ): [schedule_Mode!]!
+    """
+    fetch aggregated fields from the table: "schedule.Mode"
+    """
+    schedule_Mode_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Mode_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Mode_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Mode_bool_exp
+    ): schedule_Mode_aggregate!
+    """
+    fetch data from the table: "schedule.Mode" using primary key columns
+    """
+    schedule_Mode_by_pk(name: String!): schedule_Mode
     """
     fetch data from the table: "schedule.OverlappingEvents"
     """

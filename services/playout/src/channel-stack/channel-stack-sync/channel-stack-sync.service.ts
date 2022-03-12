@@ -81,10 +81,10 @@ export class ChannelStackSyncService {
                 room_Room(
                     where: {
                         events: {
-                            intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                            modeName: { _eq: LIVESTREAM }
                             _or: [
-                                { startTime: { _gte: $now, _lte: $future } }
-                                { startTime: { _lte: $now }, endTime: { _gte: $now } }
+                                { scheduledStartTime: { _gte: $now, _lte: $future } }
+                                { scheduledStartTime: { _lte: $now }, scheduledEndTime: { _gte: $now } }
                             ]
                         }
                         _not: {
@@ -146,10 +146,7 @@ export class ChannelStackSyncService {
                             {
                                 _not: {
                                     room: {
-                                        events: {
-                                            endTime: { _gte: $past }
-                                            intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
-                                        }
+                                        events: { scheduledEndTime: { _gte: $past }, modeName: { _eq: LIVESTREAM } }
                                     }
                                 }
                             }

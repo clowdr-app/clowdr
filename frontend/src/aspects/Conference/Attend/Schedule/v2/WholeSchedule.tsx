@@ -11,19 +11,19 @@ gql`
         earliestStartingEvent: schedule_Event(
             where: { conferenceId: { _eq: $conferenceId } }
             limit: 1
-            order_by: { startTime: asc }
+            order_by: { scheduledStartTime: asc }
         ) {
             id
-            startTime
+            scheduledStartTime
             conferenceId
         }
         latestEndingEvent: schedule_Event(
             where: { conferenceId: { _eq: $conferenceId } }
             limit: 1
-            order_by: { endTime: desc }
+            order_by: { scheduledEndTime: desc }
         ) {
             id
-            endTime
+            scheduledEndTime
             conferenceId
         }
     }
@@ -39,14 +39,14 @@ export default function WholeSchedule(): JSX.Element {
 
     const earliestStartingTime = useMemo(() => {
         if (eventsResponse.data?.earliestStartingEvent) {
-            return luxon.DateTime.fromISO(eventsResponse.data.earliestStartingEvent[0].startTime);
+            return luxon.DateTime.fromISO(eventsResponse.data.earliestStartingEvent[0].scheduledStartTime);
         }
         return undefined;
     }, [eventsResponse.data?.earliestStartingEvent]);
 
     const latestEndingTime = useMemo(() => {
-        if (eventsResponse.data?.latestEndingEvent[0]?.endTime) {
-            return luxon.DateTime.fromISO(eventsResponse.data.latestEndingEvent[0].endTime);
+        if (eventsResponse.data?.latestEndingEvent[0]?.scheduledEndTime) {
+            return luxon.DateTime.fromISO(eventsResponse.data.latestEndingEvent[0].scheduledEndTime);
         }
         return undefined;
     }, [eventsResponse.data?.latestEndingEvent]);

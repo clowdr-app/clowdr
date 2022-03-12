@@ -137,9 +137,9 @@ gql`
             id
             conferenceId
             name
-            startTime
-            endTime
-            intendedRoomModeName
+            scheduledStartTime
+            scheduledEndTime
+            modeName
             itemId
             item {
                 id
@@ -556,7 +556,7 @@ export default function CreateContinuationModal({
                     return (
                         data.data?.schedule_Event.map((x) => ({
                             key: x.id,
-                            value: `${format(new Date(x.startTime), "d MMMM HH:mm")} - ${x.name}${
+                            value: `${format(new Date(x.scheduledStartTime), "d MMMM HH:mm")} - ${x.name}${
                                 x.item
                                     ? `: ${x.item.title}`
                                     : x.exhibition

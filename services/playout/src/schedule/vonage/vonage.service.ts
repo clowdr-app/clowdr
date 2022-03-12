@@ -24,9 +24,7 @@ export class VonageService {
     public async createMissingEventVonageSessions(): Promise<void> {
         gql`
             query VonageService_FindEventsWithMissingVonageSession {
-                schedule_Event(
-                    where: { _not: { eventVonageSession: {} }, intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] } }
-                ) {
+                schedule_Event(where: { _not: { eventVonageSession: {} }, modeName: { _eq: LIVESTREAM } }) {
                     id
                     conferenceId
                 }

@@ -98,12 +98,12 @@ export function ImmediateSwitch(): JSX.Element {
     const toast = useToast();
     const event = useContextSelector(BackstageContext, (state) => state.event);
 
-    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
-    const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
+    const scheduledStartTime = useMemo(() => Date.parse(event.scheduledStartTime), [event.scheduledStartTime]);
+    const scheduledEndTime = useMemo(() => Date.parse(event.scheduledEndTime), [event.scheduledEndTime]);
     const now = useRealTime(1000);
     const offsetNow = now + 2000; // adjust for expected RTMP delay
-    const live = offsetNow >= startTime && offsetNow <= endTime;
-    const secondsUntilOffAir = (endTime - offsetNow) / 1000;
+    const live = offsetNow >= scheduledStartTime && offsetNow <= scheduledEndTime;
+    const secondsUntilOffAir = (scheduledEndTime - offsetNow) / 1000;
 
     const context = useMemo(
         () =>

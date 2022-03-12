@@ -12,6 +12,7 @@ export type Scalars = {
     Int: number;
     Float: number;
     bigint: any;
+    float8: any;
     jsonb: any;
     name: any;
     numeric: any;
@@ -9896,6 +9897,8 @@ export enum Content_ElementType_Enum {
     ExploreProgramButton = "EXPLORE_PROGRAM_BUTTON",
     /** Button that opens the explore program modal with the Schedule tab open. Intended for use on the landing page. */
     ExploreScheduleButton = "EXPLORE_SCHEDULE_BUTTON",
+    /** Data for a Zoom meeting. */
+    ExternalEventLink = "EXTERNAL_EVENT_LINK",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -9940,8 +9943,6 @@ export enum Content_ElementType_Enum {
     VideoUrl = "VIDEO_URL",
     /** Schedule view for the whole conference. */
     WholeSchedule = "WHOLE_SCHEDULE",
-    /** Data for a Zoom meeting. */
-    Zoom = "ZOOM",
 }
 
 /** Boolean expression to compare columns of type "content_ElementType_enum". All fields are combined with logical 'AND'. */
@@ -11876,6 +11877,19 @@ export enum Content_Item_Update_Column {
 export type Content_SearchItems_Args = {
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+};
+
+/** Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'. */
+export type Float8_Comparison_Exp = {
+    _eq?: InputMaybe<Scalars["float8"]>;
+    _gt?: InputMaybe<Scalars["float8"]>;
+    _gte?: InputMaybe<Scalars["float8"]>;
+    _in?: InputMaybe<Array<Scalars["float8"]>>;
+    _is_null?: InputMaybe<Scalars["Boolean"]>;
+    _lt?: InputMaybe<Scalars["float8"]>;
+    _lte?: InputMaybe<Scalars["float8"]>;
+    _neq?: InputMaybe<Scalars["float8"]>;
+    _nin?: InputMaybe<Array<Scalars["float8"]>>;
 };
 
 /** columns and relationships of "job_queues.ChannelStackCreateJob" */
@@ -15470,10 +15484,6 @@ export type Mutation_Root = {
     delete_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** delete single row from the table: "room.ManagementMode" */
     delete_room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** delete data from the table: "room.Mode" */
-    delete_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** delete single row from the table: "room.Mode" */
-    delete_room_Mode_by_pk?: Maybe<Room_Mode>;
     /** delete data from the table: "room.PersonRole" */
     delete_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** delete single row from the table: "room.PersonRole" */
@@ -15524,6 +15534,10 @@ export type Mutation_Root = {
     delete_schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
     /** delete single row from the table: "schedule.Event" */
     delete_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** delete data from the table: "schedule.Mode" */
+    delete_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** delete single row from the table: "schedule.Mode" */
+    delete_schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** delete data from the table: "schedule.StarredEvent" */
     delete_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** delete single row from the table: "schedule.StarredEvent" */
@@ -15874,10 +15888,6 @@ export type Mutation_Root = {
     insert_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** insert a single row into the table: "room.ManagementMode" */
     insert_room_ManagementMode_one?: Maybe<Room_ManagementMode>;
-    /** insert data into the table: "room.Mode" */
-    insert_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** insert a single row into the table: "room.Mode" */
-    insert_room_Mode_one?: Maybe<Room_Mode>;
     /** insert data into the table: "room.PersonRole" */
     insert_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** insert a single row into the table: "room.PersonRole" */
@@ -15930,6 +15940,10 @@ export type Mutation_Root = {
     insert_schedule_EventProgramPerson_one?: Maybe<Schedule_EventProgramPerson>;
     /** insert a single row into the table: "schedule.Event" */
     insert_schedule_Event_one?: Maybe<Schedule_Event>;
+    /** insert data into the table: "schedule.Mode" */
+    insert_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** insert a single row into the table: "schedule.Mode" */
+    insert_schedule_Mode_one?: Maybe<Schedule_Mode>;
     /** insert data into the table: "schedule.StarredEvent" */
     insert_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** insert a single row into the table: "schedule.StarredEvent" */
@@ -16292,10 +16306,6 @@ export type Mutation_Root = {
     update_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** update single row of the table: "room.ManagementMode" */
     update_room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** update data of the table: "room.Mode" */
-    update_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** update single row of the table: "room.Mode" */
-    update_room_Mode_by_pk?: Maybe<Room_Mode>;
     /** update data of the table: "room.PersonRole" */
     update_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** update single row of the table: "room.PersonRole" */
@@ -16346,6 +16356,10 @@ export type Mutation_Root = {
     update_schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
     /** update single row of the table: "schedule.Event" */
     update_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** update data of the table: "schedule.Mode" */
+    update_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** update single row of the table: "schedule.Mode" */
+    update_schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** update data of the table: "schedule.StarredEvent" */
     update_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** update single row of the table: "schedule.StarredEvent" */
@@ -17106,16 +17120,6 @@ export type Mutation_RootDelete_Room_ManagementMode_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootDelete_Room_ModeArgs = {
-    where: Room_Mode_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Room_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
-/** mutation root */
 export type Mutation_RootDelete_Room_PersonRoleArgs = {
     where: Room_PersonRole_Bool_Exp;
 };
@@ -17238,6 +17242,16 @@ export type Mutation_RootDelete_Schedule_EventProgramPerson_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Schedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_ModeArgs = {
+    where: Schedule_Mode_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 /** mutation root */
@@ -18245,18 +18259,6 @@ export type Mutation_RootInsert_Room_ManagementMode_OneArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootInsert_Room_ModeArgs = {
-    objects: Array<Room_Mode_Insert_Input>;
-    on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Room_Mode_OneArgs = {
-    object: Room_Mode_Insert_Input;
-    on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** mutation root */
 export type Mutation_RootInsert_Room_PersonRoleArgs = {
     objects: Array<Room_PersonRole_Insert_Input>;
     on_conflict?: InputMaybe<Room_PersonRole_On_Conflict>;
@@ -18408,6 +18410,18 @@ export type Mutation_RootInsert_Schedule_EventProgramPerson_OneArgs = {
 export type Mutation_RootInsert_Schedule_Event_OneArgs = {
     object: Schedule_Event_Insert_Input;
     on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_ModeArgs = {
+    objects: Array<Schedule_Mode_Insert_Input>;
+    on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_Mode_OneArgs = {
+    object: Schedule_Mode_Insert_Input;
+    on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
 };
 
 /** mutation root */
@@ -19723,18 +19737,6 @@ export type Mutation_RootUpdate_Room_ManagementMode_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootUpdate_Room_ModeArgs = {
-    _set?: InputMaybe<Room_Mode_Set_Input>;
-    where: Room_Mode_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Room_Mode_By_PkArgs = {
-    _set?: InputMaybe<Room_Mode_Set_Input>;
-    pk_columns: Room_Mode_Pk_Columns_Input;
-};
-
-/** mutation root */
 export type Mutation_RootUpdate_Room_PersonRoleArgs = {
     _set?: InputMaybe<Room_PersonRole_Set_Input>;
     where: Room_PersonRole_Bool_Exp;
@@ -19864,14 +19866,12 @@ export type Mutation_RootUpdate_Schedule_Continuation_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_CurrentEventsArgs = {
-    _inc?: InputMaybe<Schedule_CurrentEvents_Inc_Input>;
     _set?: InputMaybe<Schedule_CurrentEvents_Set_Input>;
     where: Schedule_CurrentEvents_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_EventArgs = {
-    _inc?: InputMaybe<Schedule_Event_Inc_Input>;
     _set?: InputMaybe<Schedule_Event_Set_Input>;
     where: Schedule_Event_Bool_Exp;
 };
@@ -19902,9 +19902,20 @@ export type Mutation_RootUpdate_Schedule_EventProgramPerson_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_Event_By_PkArgs = {
-    _inc?: InputMaybe<Schedule_Event_Inc_Input>;
     _set?: InputMaybe<Schedule_Event_Set_Input>;
     pk_columns: Schedule_Event_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_ModeArgs = {
+    _set?: InputMaybe<Schedule_Mode_Set_Input>;
+    where: Schedule_Mode_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_Mode_By_PkArgs = {
+    _set?: InputMaybe<Schedule_Mode_Set_Input>;
+    pk_columns: Schedule_Mode_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -20704,12 +20715,6 @@ export type Query_Root = {
     room_ManagementMode_aggregate: Room_ManagementMode_Aggregate;
     /** fetch data from the table: "room.ManagementMode" using primary key columns */
     room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** fetch data from the table: "room.Mode" */
-    room_Mode: Array<Room_Mode>;
-    /** fetch aggregated fields from the table: "room.Mode" */
-    room_Mode_aggregate: Room_Mode_Aggregate;
-    /** fetch data from the table: "room.Mode" using primary key columns */
-    room_Mode_by_pk?: Maybe<Room_Mode>;
     /** fetch data from the table: "room.PersonRole" */
     room_PersonRole: Array<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -20786,6 +20791,12 @@ export type Query_Root = {
     schedule_Event_aggregate: Schedule_Event_Aggregate;
     /** fetch data from the table: "schedule.Event" using primary key columns */
     schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** fetch data from the table: "schedule.Mode" */
+    schedule_Mode: Array<Schedule_Mode>;
+    /** fetch aggregated fields from the table: "schedule.Mode" */
+    schedule_Mode_aggregate: Schedule_Mode_Aggregate;
+    /** fetch data from the table: "schedule.Mode" using primary key columns */
+    schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** fetch data from the table: "schedule.OverlappingEvents" */
     schedule_OverlappingEvents: Array<Schedule_OverlappingEvents>;
     /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
@@ -22362,26 +22373,6 @@ export type Query_RootRoom_ManagementMode_By_PkArgs = {
     name: Scalars["String"];
 };
 
-export type Query_RootRoom_ModeArgs = {
-    distinct_on?: InputMaybe<Array<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Query_RootRoom_Mode_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Query_RootRoom_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
 export type Query_RootRoom_PersonRoleArgs = {
     distinct_on?: InputMaybe<Array<Room_PersonRole_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -22636,6 +22627,26 @@ export type Query_RootSchedule_Event_AggregateArgs = {
 
 export type Query_RootSchedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootSchedule_ModeArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Query_RootSchedule_Mode_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Query_RootSchedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 export type Query_RootSchedule_OverlappingEventsArgs = {
@@ -25808,7 +25819,7 @@ export type Room_LivestreamDurations = {
     room?: Maybe<Room_Room>;
     roomId?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
-    sum?: Maybe<Scalars["bigint"]>;
+    sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregated selection of "room.LivestreamDurations" */
@@ -25856,7 +25867,7 @@ export type Room_LivestreamDurations_Bool_Exp = {
     room?: InputMaybe<Room_Room_Bool_Exp>;
     roomId?: InputMaybe<Uuid_Comparison_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    sum?: InputMaybe<Bigint_Comparison_Exp>;
+    sum?: InputMaybe<Float8_Comparison_Exp>;
 };
 
 /** input type for inserting data into table "room.LivestreamDurations" */
@@ -25866,7 +25877,7 @@ export type Room_LivestreamDurations_Insert_Input = {
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: InputMaybe<Scalars["uuid"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    sum?: InputMaybe<Scalars["bigint"]>;
+    sum?: InputMaybe<Scalars["float8"]>;
 };
 
 /** aggregate max on columns */
@@ -25875,7 +25886,7 @@ export type Room_LivestreamDurations_Max_Fields = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
-    sum?: Maybe<Scalars["bigint"]>;
+    sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregate min on columns */
@@ -25884,7 +25895,7 @@ export type Room_LivestreamDurations_Min_Fields = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
-    sum?: Maybe<Scalars["bigint"]>;
+    sum?: Maybe<Scalars["float8"]>;
 };
 
 /** input type for inserting object relation for remote table "room.LivestreamDurations" */
@@ -25935,7 +25946,7 @@ export type Room_LivestreamDurations_Stddev_Samp_Fields = {
 /** aggregate sum on columns */
 export type Room_LivestreamDurations_Sum_Fields = {
     __typename?: "room_LivestreamDurations_sum_fields";
-    sum?: Maybe<Scalars["bigint"]>;
+    sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregate var_pop on columns */
@@ -26089,180 +26100,6 @@ export type Room_ManagementMode_Set_Input = {
 
 /** update columns of table "room.ManagementMode" */
 export enum Room_ManagementMode_Update_Column {
-    /** column name */
-    Description = "description",
-    /** column name */
-    Name = "name",
-}
-
-/** columns and relationships of "room.Mode" */
-export type Room_Mode = {
-    __typename?: "room_Mode";
-    description: Scalars["String"];
-    /** An array relationship */
-    events: Array<Schedule_Event>;
-    /** An aggregate relationship */
-    events_aggregate: Schedule_Event_Aggregate;
-    name: Scalars["String"];
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeEventsArgs = {
-    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeEvents_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** aggregated selection of "room.Mode" */
-export type Room_Mode_Aggregate = {
-    __typename?: "room_Mode_aggregate";
-    aggregate?: Maybe<Room_Mode_Aggregate_Fields>;
-    nodes: Array<Room_Mode>;
-};
-
-/** aggregate fields of "room.Mode" */
-export type Room_Mode_Aggregate_Fields = {
-    __typename?: "room_Mode_aggregate_fields";
-    count: Scalars["Int"];
-    max?: Maybe<Room_Mode_Max_Fields>;
-    min?: Maybe<Room_Mode_Min_Fields>;
-};
-
-/** aggregate fields of "room.Mode" */
-export type Room_Mode_Aggregate_FieldsCountArgs = {
-    columns?: InputMaybe<Array<Room_Mode_Select_Column>>;
-    distinct?: InputMaybe<Scalars["Boolean"]>;
-};
-
-/** Boolean expression to filter rows from the table "room.Mode". All fields are combined with a logical 'AND'. */
-export type Room_Mode_Bool_Exp = {
-    _and?: InputMaybe<Array<Room_Mode_Bool_Exp>>;
-    _not?: InputMaybe<Room_Mode_Bool_Exp>;
-    _or?: InputMaybe<Array<Room_Mode_Bool_Exp>>;
-    description?: InputMaybe<String_Comparison_Exp>;
-    events?: InputMaybe<Schedule_Event_Bool_Exp>;
-    name?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "room.Mode" */
-export enum Room_Mode_Constraint {
-    /** unique or primary key constraint */
-    ModePkey = "Mode_pkey",
-}
-
-export enum Room_Mode_Enum {
-    /** An exhibition hall. */
-    Exhibition = "EXHIBITION",
-    /** An empty room. */
-    None = "NONE",
-    /** Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users. */
-    Prerecorded = "PRERECORDED",
-    /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
-    Presentation = "PRESENTATION",
-    /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
-    QAndA = "Q_AND_A",
-    /** A shuffle queue. */
-    Shuffle = "SHUFFLE",
-    /** Users may participate in the general video chat. */
-    VideoChat = "VIDEO_CHAT",
-    /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
-    VideoPlayer = "VIDEO_PLAYER",
-    /** Event is taking place in a Zoom room. */
-    Zoom = "ZOOM",
-}
-
-/** Boolean expression to compare columns of type "room_Mode_enum". All fields are combined with logical 'AND'. */
-export type Room_Mode_Enum_Comparison_Exp = {
-    _eq?: InputMaybe<Room_Mode_Enum>;
-    _in?: InputMaybe<Array<Room_Mode_Enum>>;
-    _is_null?: InputMaybe<Scalars["Boolean"]>;
-    _neq?: InputMaybe<Room_Mode_Enum>;
-    _nin?: InputMaybe<Array<Room_Mode_Enum>>;
-};
-
-/** input type for inserting data into table "room.Mode" */
-export type Room_Mode_Insert_Input = {
-    description?: InputMaybe<Scalars["String"]>;
-    events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
-    name?: InputMaybe<Scalars["String"]>;
-};
-
-/** aggregate max on columns */
-export type Room_Mode_Max_Fields = {
-    __typename?: "room_Mode_max_fields";
-    description?: Maybe<Scalars["String"]>;
-    name?: Maybe<Scalars["String"]>;
-};
-
-/** aggregate min on columns */
-export type Room_Mode_Min_Fields = {
-    __typename?: "room_Mode_min_fields";
-    description?: Maybe<Scalars["String"]>;
-    name?: Maybe<Scalars["String"]>;
-};
-
-/** response of any mutation on the table "room.Mode" */
-export type Room_Mode_Mutation_Response = {
-    __typename?: "room_Mode_mutation_response";
-    /** number of rows affected by the mutation */
-    affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    returning: Array<Room_Mode>;
-};
-
-/** input type for inserting object relation for remote table "room.Mode" */
-export type Room_Mode_Obj_Rel_Insert_Input = {
-    data: Room_Mode_Insert_Input;
-    /** on conflict condition */
-    on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** on conflict condition type for table "room.Mode" */
-export type Room_Mode_On_Conflict = {
-    constraint: Room_Mode_Constraint;
-    update_columns?: Array<Room_Mode_Update_Column>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "room.Mode". */
-export type Room_Mode_Order_By = {
-    description?: InputMaybe<Order_By>;
-    events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
-    name?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: room_Mode */
-export type Room_Mode_Pk_Columns_Input = {
-    name: Scalars["String"];
-};
-
-/** select columns of table "room.Mode" */
-export enum Room_Mode_Select_Column {
-    /** column name */
-    Description = "description",
-    /** column name */
-    Name = "name",
-}
-
-/** input type for updating data in table "room.Mode" */
-export type Room_Mode_Set_Input = {
-    description?: InputMaybe<Scalars["String"]>;
-    name?: InputMaybe<Scalars["String"]>;
-};
-
-/** update columns of table "room.Mode" */
-export enum Room_Mode_Update_Column {
     /** column name */
     Description = "description",
     /** column name */
@@ -29281,25 +29118,26 @@ export type Schedule_Continuation_Variance_Order_By = {
 /** columns and relationships of "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents = {
     __typename?: "schedule_CurrentEvents";
+    autoPlayElementId?: Maybe<Scalars["uuid"]>;
+    automaticParticipationSurvey?: Maybe<Scalars["Boolean"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
-    durationSeconds?: Maybe<Scalars["Int"]>;
     enableRecording?: Maybe<Scalars["Boolean"]>;
-    endTime?: Maybe<Scalars["timestamptz"]>;
     /** An array relationship */
     eventPeople: Array<Schedule_EventProgramPerson>;
     /** An aggregate relationship */
     eventPeople_aggregate: Schedule_EventProgramPerson_Aggregate;
     exhibitionId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
-    intendedRoomModeName?: Maybe<Scalars["String"]>;
     itemId?: Maybe<Scalars["uuid"]>;
+    modeName?: Maybe<Scalars["String"]>;
     name?: Maybe<Scalars["String"]>;
     /** An object relationship */
     room?: Maybe<Room_Room>;
     roomId?: Maybe<Scalars["uuid"]>;
+    scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    startTime?: Maybe<Scalars["timestamptz"]>;
     streamTextEventId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29335,17 +29173,9 @@ export type Schedule_CurrentEvents_Aggregate = {
 /** aggregate fields of "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Aggregate_Fields = {
     __typename?: "schedule_CurrentEvents_aggregate_fields";
-    avg?: Maybe<Schedule_CurrentEvents_Avg_Fields>;
     count: Scalars["Int"];
     max?: Maybe<Schedule_CurrentEvents_Max_Fields>;
     min?: Maybe<Schedule_CurrentEvents_Min_Fields>;
-    stddev?: Maybe<Schedule_CurrentEvents_Stddev_Fields>;
-    stddev_pop?: Maybe<Schedule_CurrentEvents_Stddev_Pop_Fields>;
-    stddev_samp?: Maybe<Schedule_CurrentEvents_Stddev_Samp_Fields>;
-    sum?: Maybe<Schedule_CurrentEvents_Sum_Fields>;
-    var_pop?: Maybe<Schedule_CurrentEvents_Var_Pop_Fields>;
-    var_samp?: Maybe<Schedule_CurrentEvents_Var_Samp_Fields>;
-    variance?: Maybe<Schedule_CurrentEvents_Variance_Fields>;
 };
 
 /** aggregate fields of "schedule.CurrentEvents" */
@@ -29356,17 +29186,9 @@ export type Schedule_CurrentEvents_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Aggregate_Order_By = {
-    avg?: InputMaybe<Schedule_CurrentEvents_Avg_Order_By>;
     count?: InputMaybe<Order_By>;
     max?: InputMaybe<Schedule_CurrentEvents_Max_Order_By>;
     min?: InputMaybe<Schedule_CurrentEvents_Min_Order_By>;
-    stddev?: InputMaybe<Schedule_CurrentEvents_Stddev_Order_By>;
-    stddev_pop?: InputMaybe<Schedule_CurrentEvents_Stddev_Pop_Order_By>;
-    stddev_samp?: InputMaybe<Schedule_CurrentEvents_Stddev_Samp_Order_By>;
-    sum?: InputMaybe<Schedule_CurrentEvents_Sum_Order_By>;
-    var_pop?: InputMaybe<Schedule_CurrentEvents_Var_Pop_Order_By>;
-    var_samp?: InputMaybe<Schedule_CurrentEvents_Var_Samp_Order_By>;
-    variance?: InputMaybe<Schedule_CurrentEvents_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "schedule.CurrentEvents" */
@@ -29374,37 +29196,27 @@ export type Schedule_CurrentEvents_Arr_Rel_Insert_Input = {
     data: Array<Schedule_CurrentEvents_Insert_Input>;
 };
 
-/** aggregate avg on columns */
-export type Schedule_CurrentEvents_Avg_Fields = {
-    __typename?: "schedule_CurrentEvents_avg_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by avg() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Avg_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "schedule.CurrentEvents". All fields are combined with a logical 'AND'. */
 export type Schedule_CurrentEvents_Bool_Exp = {
     _and?: InputMaybe<Array<Schedule_CurrentEvents_Bool_Exp>>;
     _not?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
     _or?: InputMaybe<Array<Schedule_CurrentEvents_Bool_Exp>>;
+    autoPlayElementId?: InputMaybe<Uuid_Comparison_Exp>;
+    automaticParticipationSurvey?: InputMaybe<Boolean_Comparison_Exp>;
     conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-    durationSeconds?: InputMaybe<Int_Comparison_Exp>;
     enableRecording?: InputMaybe<Boolean_Comparison_Exp>;
-    endTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     eventPeople?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
     exhibitionId?: InputMaybe<Uuid_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
-    intendedRoomModeName?: InputMaybe<String_Comparison_Exp>;
     itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    modeName?: InputMaybe<String_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     roomId?: InputMaybe<Uuid_Comparison_Exp>;
+    scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
-    startTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     streamTextEventId?: InputMaybe<String_Comparison_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     timings_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -29412,28 +29224,24 @@ export type Schedule_CurrentEvents_Bool_Exp = {
     visibilityLevel?: InputMaybe<String_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Inc_Input = {
-    durationSeconds?: InputMaybe<Scalars["Int"]>;
-};
-
 /** input type for inserting data into table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Insert_Input = {
+    autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
+    automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     created_at?: InputMaybe<Scalars["timestamptz"]>;
-    durationSeconds?: InputMaybe<Scalars["Int"]>;
     enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    endTime?: InputMaybe<Scalars["timestamptz"]>;
     eventPeople?: InputMaybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
     exhibitionId?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
-    intendedRoomModeName?: InputMaybe<Scalars["String"]>;
     itemId?: InputMaybe<Scalars["uuid"]>;
+    modeName?: InputMaybe<Scalars["String"]>;
     name?: InputMaybe<Scalars["String"]>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: InputMaybe<Scalars["uuid"]>;
+    scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    startTime?: InputMaybe<Scalars["timestamptz"]>;
     streamTextEventId?: InputMaybe<Scalars["String"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     timings_updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -29444,18 +29252,18 @@ export type Schedule_CurrentEvents_Insert_Input = {
 /** aggregate max on columns */
 export type Schedule_CurrentEvents_Max_Fields = {
     __typename?: "schedule_CurrentEvents_max_fields";
+    autoPlayElementId?: Maybe<Scalars["uuid"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
-    durationSeconds?: Maybe<Scalars["Int"]>;
-    endTime?: Maybe<Scalars["timestamptz"]>;
     exhibitionId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
-    intendedRoomModeName?: Maybe<Scalars["String"]>;
     itemId?: Maybe<Scalars["uuid"]>;
+    modeName?: Maybe<Scalars["String"]>;
     name?: Maybe<Scalars["String"]>;
     roomId?: Maybe<Scalars["uuid"]>;
+    scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    startTime?: Maybe<Scalars["timestamptz"]>;
     streamTextEventId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29465,18 +29273,18 @@ export type Schedule_CurrentEvents_Max_Fields = {
 
 /** order by max() on columns of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Max_Order_By = {
+    autoPlayElementId?: InputMaybe<Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     created_at?: InputMaybe<Order_By>;
-    durationSeconds?: InputMaybe<Order_By>;
-    endTime?: InputMaybe<Order_By>;
     exhibitionId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
-    intendedRoomModeName?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
+    modeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     roomId?: InputMaybe<Order_By>;
+    scheduledEndTime?: InputMaybe<Order_By>;
+    scheduledStartTime?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
-    startTime?: InputMaybe<Order_By>;
     streamTextEventId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     timings_updated_at?: InputMaybe<Order_By>;
@@ -29487,18 +29295,18 @@ export type Schedule_CurrentEvents_Max_Order_By = {
 /** aggregate min on columns */
 export type Schedule_CurrentEvents_Min_Fields = {
     __typename?: "schedule_CurrentEvents_min_fields";
+    autoPlayElementId?: Maybe<Scalars["uuid"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
-    durationSeconds?: Maybe<Scalars["Int"]>;
-    endTime?: Maybe<Scalars["timestamptz"]>;
     exhibitionId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
-    intendedRoomModeName?: Maybe<Scalars["String"]>;
     itemId?: Maybe<Scalars["uuid"]>;
+    modeName?: Maybe<Scalars["String"]>;
     name?: Maybe<Scalars["String"]>;
     roomId?: Maybe<Scalars["uuid"]>;
+    scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    startTime?: Maybe<Scalars["timestamptz"]>;
     streamTextEventId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29508,18 +29316,18 @@ export type Schedule_CurrentEvents_Min_Fields = {
 
 /** order by min() on columns of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Min_Order_By = {
+    autoPlayElementId?: InputMaybe<Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     created_at?: InputMaybe<Order_By>;
-    durationSeconds?: InputMaybe<Order_By>;
-    endTime?: InputMaybe<Order_By>;
     exhibitionId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
-    intendedRoomModeName?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
+    modeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     roomId?: InputMaybe<Order_By>;
+    scheduledEndTime?: InputMaybe<Order_By>;
+    scheduledStartTime?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
-    startTime?: InputMaybe<Order_By>;
     streamTextEventId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     timings_updated_at?: InputMaybe<Order_By>;
@@ -29538,21 +29346,22 @@ export type Schedule_CurrentEvents_Mutation_Response = {
 
 /** Ordering options when selecting data from "schedule.CurrentEvents". */
 export type Schedule_CurrentEvents_Order_By = {
+    autoPlayElementId?: InputMaybe<Order_By>;
+    automaticParticipationSurvey?: InputMaybe<Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     created_at?: InputMaybe<Order_By>;
-    durationSeconds?: InputMaybe<Order_By>;
     enableRecording?: InputMaybe<Order_By>;
-    endTime?: InputMaybe<Order_By>;
     eventPeople_aggregate?: InputMaybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
     exhibitionId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
-    intendedRoomModeName?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
+    modeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     roomId?: InputMaybe<Order_By>;
+    scheduledEndTime?: InputMaybe<Order_By>;
+    scheduledStartTime?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
-    startTime?: InputMaybe<Order_By>;
     streamTextEventId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     timings_updated_at?: InputMaybe<Order_By>;
@@ -29563,31 +29372,33 @@ export type Schedule_CurrentEvents_Order_By = {
 /** select columns of table "schedule.CurrentEvents" */
 export enum Schedule_CurrentEvents_Select_Column {
     /** column name */
+    AutoPlayElementId = "autoPlayElementId",
+    /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
+    /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -29602,19 +29413,20 @@ export enum Schedule_CurrentEvents_Select_Column {
 
 /** input type for updating data in table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Set_Input = {
+    autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
+    automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     created_at?: InputMaybe<Scalars["timestamptz"]>;
-    durationSeconds?: InputMaybe<Scalars["Int"]>;
     enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    endTime?: InputMaybe<Scalars["timestamptz"]>;
     exhibitionId?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
-    intendedRoomModeName?: InputMaybe<Scalars["String"]>;
     itemId?: InputMaybe<Scalars["uuid"]>;
+    modeName?: InputMaybe<Scalars["String"]>;
     name?: InputMaybe<Scalars["String"]>;
     roomId?: InputMaybe<Scalars["uuid"]>;
+    scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    startTime?: InputMaybe<Scalars["timestamptz"]>;
     streamTextEventId?: InputMaybe<Scalars["String"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     timings_updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -29622,86 +29434,12 @@ export type Schedule_CurrentEvents_Set_Input = {
     visibilityLevel?: InputMaybe<Scalars["String"]>;
 };
 
-/** aggregate stddev on columns */
-export type Schedule_CurrentEvents_Stddev_Fields = {
-    __typename?: "schedule_CurrentEvents_stddev_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Schedule_CurrentEvents_Stddev_Pop_Fields = {
-    __typename?: "schedule_CurrentEvents_stddev_pop_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_pop() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Pop_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Schedule_CurrentEvents_Stddev_Samp_Fields = {
-    __typename?: "schedule_CurrentEvents_stddev_samp_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_samp() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Samp_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Schedule_CurrentEvents_Sum_Fields = {
-    __typename?: "schedule_CurrentEvents_sum_fields";
-    durationSeconds?: Maybe<Scalars["Int"]>;
-};
-
-/** order by sum() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Sum_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Schedule_CurrentEvents_Var_Pop_Fields = {
-    __typename?: "schedule_CurrentEvents_var_pop_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_pop() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Var_Pop_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Schedule_CurrentEvents_Var_Samp_Fields = {
-    __typename?: "schedule_CurrentEvents_var_samp_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_samp() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Var_Samp_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Schedule_CurrentEvents_Variance_Fields = {
-    __typename?: "schedule_CurrentEvents_variance_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by variance() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Variance_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
     __typename?: "schedule_Event";
+    /** An object relationship */
+    autoPlayElement?: Maybe<Content_Element>;
+    autoPlayElementId?: Maybe<Scalars["uuid"]>;
     automaticParticipationSurvey: Scalars["Boolean"];
     /** An object relationship */
     conference: Conference_Conference;
@@ -29711,9 +29449,7 @@ export type Schedule_Event = {
     /** An aggregate relationship */
     continuations_aggregate: Schedule_Continuation_Aggregate;
     createdAt: Scalars["timestamptz"];
-    durationSeconds: Scalars["Int"];
     enableRecording: Scalars["Boolean"];
-    endTime?: Maybe<Scalars["timestamptz"]>;
     /** An array relationship */
     eventPeople: Array<Schedule_EventProgramPerson>;
     /** An aggregate relationship */
@@ -29724,23 +29460,27 @@ export type Schedule_Event = {
     exhibition?: Maybe<Collection_Exhibition>;
     exhibitionId?: Maybe<Scalars["uuid"]>;
     id: Scalars["uuid"];
-    intendedRoomModeName: Room_Mode_Enum;
     /** An object relationship */
     item?: Maybe<Content_Item>;
     itemId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    mode: Schedule_Mode;
+    modeName: Schedule_Mode_Enum;
     name: Scalars["String"];
     /** An object relationship */
     room: Room_Room;
     roomId: Scalars["uuid"];
-    /** An object relationship */
-    roomMode: Room_Mode;
     /** A computed field, executes function "schedule.eventRoomName" */
     roomName?: Maybe<Scalars["String"]>;
+    scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    sessionEventId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     shufflePeriod?: Maybe<Room_ShufflePeriod>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    startTime: Scalars["timestamptz"];
     streamTextEventId?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    subconference?: Maybe<Conference_Subconference>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     timingsUpdatedAt: Scalars["timestamptz"];
     updatedAt: Scalars["timestamptz"];
@@ -30158,17 +29898,9 @@ export type Schedule_Event_Aggregate = {
 /** aggregate fields of "schedule.Event" */
 export type Schedule_Event_Aggregate_Fields = {
     __typename?: "schedule_Event_aggregate_fields";
-    avg?: Maybe<Schedule_Event_Avg_Fields>;
     count: Scalars["Int"];
     max?: Maybe<Schedule_Event_Max_Fields>;
     min?: Maybe<Schedule_Event_Min_Fields>;
-    stddev?: Maybe<Schedule_Event_Stddev_Fields>;
-    stddev_pop?: Maybe<Schedule_Event_Stddev_Pop_Fields>;
-    stddev_samp?: Maybe<Schedule_Event_Stddev_Samp_Fields>;
-    sum?: Maybe<Schedule_Event_Sum_Fields>;
-    var_pop?: Maybe<Schedule_Event_Var_Pop_Fields>;
-    var_samp?: Maybe<Schedule_Event_Var_Samp_Fields>;
-    variance?: Maybe<Schedule_Event_Variance_Fields>;
 };
 
 /** aggregate fields of "schedule.Event" */
@@ -30179,17 +29911,9 @@ export type Schedule_Event_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "schedule.Event" */
 export type Schedule_Event_Aggregate_Order_By = {
-    avg?: InputMaybe<Schedule_Event_Avg_Order_By>;
     count?: InputMaybe<Order_By>;
     max?: InputMaybe<Schedule_Event_Max_Order_By>;
     min?: InputMaybe<Schedule_Event_Min_Order_By>;
-    stddev?: InputMaybe<Schedule_Event_Stddev_Order_By>;
-    stddev_pop?: InputMaybe<Schedule_Event_Stddev_Pop_Order_By>;
-    stddev_samp?: InputMaybe<Schedule_Event_Stddev_Samp_Order_By>;
-    sum?: InputMaybe<Schedule_Event_Sum_Order_By>;
-    var_pop?: InputMaybe<Schedule_Event_Var_Pop_Order_By>;
-    var_samp?: InputMaybe<Schedule_Event_Var_Samp_Order_By>;
-    variance?: InputMaybe<Schedule_Event_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "schedule.Event" */
@@ -30199,47 +29923,39 @@ export type Schedule_Event_Arr_Rel_Insert_Input = {
     on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
 };
 
-/** aggregate avg on columns */
-export type Schedule_Event_Avg_Fields = {
-    __typename?: "schedule_Event_avg_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by avg() on columns of table "schedule.Event" */
-export type Schedule_Event_Avg_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "schedule.Event". All fields are combined with a logical 'AND'. */
 export type Schedule_Event_Bool_Exp = {
     _and?: InputMaybe<Array<Schedule_Event_Bool_Exp>>;
     _not?: InputMaybe<Schedule_Event_Bool_Exp>;
     _or?: InputMaybe<Array<Schedule_Event_Bool_Exp>>;
+    autoPlayElement?: InputMaybe<Content_Element_Bool_Exp>;
+    autoPlayElementId?: InputMaybe<Uuid_Comparison_Exp>;
     automaticParticipationSurvey?: InputMaybe<Boolean_Comparison_Exp>;
     conference?: InputMaybe<Conference_Conference_Bool_Exp>;
     conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     continuations?: InputMaybe<Schedule_Continuation_Bool_Exp>;
     createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    durationSeconds?: InputMaybe<Int_Comparison_Exp>;
     enableRecording?: InputMaybe<Boolean_Comparison_Exp>;
-    endTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     eventPeople?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
     eventVonageSession?: InputMaybe<Video_EventVonageSession_Bool_Exp>;
     exhibition?: InputMaybe<Collection_Exhibition_Bool_Exp>;
     exhibitionId?: InputMaybe<Uuid_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
-    intendedRoomModeName?: InputMaybe<Room_Mode_Enum_Comparison_Exp>;
     item?: InputMaybe<Content_Item_Bool_Exp>;
     itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    mode?: InputMaybe<Schedule_Mode_Bool_Exp>;
+    modeName?: InputMaybe<Schedule_Mode_Enum_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     roomId?: InputMaybe<Uuid_Comparison_Exp>;
-    roomMode?: InputMaybe<Room_Mode_Bool_Exp>;
     roomName?: InputMaybe<String_Comparison_Exp>;
+    scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    sessionEventId?: InputMaybe<Uuid_Comparison_Exp>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
-    startTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     streamTextEventId?: InputMaybe<String_Comparison_Exp>;
+    subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     timingsUpdatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -30252,37 +29968,35 @@ export enum Schedule_Event_Constraint {
     EventPkey = "Event_pkey",
 }
 
-/** input type for incrementing numeric columns in table "schedule.Event" */
-export type Schedule_Event_Inc_Input = {
-    durationSeconds?: InputMaybe<Scalars["Int"]>;
-};
-
 /** input type for inserting data into table "schedule.Event" */
 export type Schedule_Event_Insert_Input = {
+    autoPlayElement?: InputMaybe<Content_Element_Obj_Rel_Insert_Input>;
+    autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
     automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     continuations?: InputMaybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    durationSeconds?: InputMaybe<Scalars["Int"]>;
     enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    endTime?: InputMaybe<Scalars["timestamptz"]>;
     eventPeople?: InputMaybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
     eventVonageSession?: InputMaybe<Video_EventVonageSession_Obj_Rel_Insert_Input>;
     exhibition?: InputMaybe<Collection_Exhibition_Obj_Rel_Insert_Input>;
     exhibitionId?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
-    intendedRoomModeName?: InputMaybe<Room_Mode_Enum>;
     item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
     itemId?: InputMaybe<Scalars["uuid"]>;
+    mode?: InputMaybe<Schedule_Mode_Obj_Rel_Insert_Input>;
+    modeName?: InputMaybe<Schedule_Mode_Enum>;
     name?: InputMaybe<Scalars["String"]>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: InputMaybe<Scalars["uuid"]>;
-    roomMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
+    scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    sessionEventId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    startTime?: InputMaybe<Scalars["timestamptz"]>;
     streamTextEventId?: InputMaybe<Scalars["String"]>;
+    subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     timingsUpdatedAt?: InputMaybe<Scalars["timestamptz"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -30292,17 +30006,18 @@ export type Schedule_Event_Insert_Input = {
 /** aggregate max on columns */
 export type Schedule_Event_Max_Fields = {
     __typename?: "schedule_Event_max_fields";
+    autoPlayElementId?: Maybe<Scalars["uuid"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    durationSeconds?: Maybe<Scalars["Int"]>;
-    endTime?: Maybe<Scalars["timestamptz"]>;
     exhibitionId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     roomId?: Maybe<Scalars["uuid"]>;
+    scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    sessionEventId?: Maybe<Scalars["uuid"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    startTime?: Maybe<Scalars["timestamptz"]>;
     streamTextEventId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     timingsUpdatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -30311,17 +30026,18 @@ export type Schedule_Event_Max_Fields = {
 
 /** order by max() on columns of table "schedule.Event" */
 export type Schedule_Event_Max_Order_By = {
+    autoPlayElementId?: InputMaybe<Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     createdAt?: InputMaybe<Order_By>;
-    durationSeconds?: InputMaybe<Order_By>;
-    endTime?: InputMaybe<Order_By>;
     exhibitionId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     roomId?: InputMaybe<Order_By>;
+    scheduledEndTime?: InputMaybe<Order_By>;
+    scheduledStartTime?: InputMaybe<Order_By>;
+    sessionEventId?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
-    startTime?: InputMaybe<Order_By>;
     streamTextEventId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     timingsUpdatedAt?: InputMaybe<Order_By>;
@@ -30331,17 +30047,18 @@ export type Schedule_Event_Max_Order_By = {
 /** aggregate min on columns */
 export type Schedule_Event_Min_Fields = {
     __typename?: "schedule_Event_min_fields";
+    autoPlayElementId?: Maybe<Scalars["uuid"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    durationSeconds?: Maybe<Scalars["Int"]>;
-    endTime?: Maybe<Scalars["timestamptz"]>;
     exhibitionId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     itemId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     roomId?: Maybe<Scalars["uuid"]>;
+    scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    sessionEventId?: Maybe<Scalars["uuid"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    startTime?: Maybe<Scalars["timestamptz"]>;
     streamTextEventId?: Maybe<Scalars["String"]>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     timingsUpdatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -30350,17 +30067,18 @@ export type Schedule_Event_Min_Fields = {
 
 /** order by min() on columns of table "schedule.Event" */
 export type Schedule_Event_Min_Order_By = {
+    autoPlayElementId?: InputMaybe<Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     createdAt?: InputMaybe<Order_By>;
-    durationSeconds?: InputMaybe<Order_By>;
-    endTime?: InputMaybe<Order_By>;
     exhibitionId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     itemId?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     roomId?: InputMaybe<Order_By>;
+    scheduledEndTime?: InputMaybe<Order_By>;
+    scheduledStartTime?: InputMaybe<Order_By>;
+    sessionEventId?: InputMaybe<Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
-    startTime?: InputMaybe<Order_By>;
     streamTextEventId?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     timingsUpdatedAt?: InputMaybe<Order_By>;
@@ -30392,31 +30110,34 @@ export type Schedule_Event_On_Conflict = {
 
 /** Ordering options when selecting data from "schedule.Event". */
 export type Schedule_Event_Order_By = {
+    autoPlayElement?: InputMaybe<Content_Element_Order_By>;
+    autoPlayElementId?: InputMaybe<Order_By>;
     automaticParticipationSurvey?: InputMaybe<Order_By>;
     conference?: InputMaybe<Conference_Conference_Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     continuations_aggregate?: InputMaybe<Schedule_Continuation_Aggregate_Order_By>;
     createdAt?: InputMaybe<Order_By>;
-    durationSeconds?: InputMaybe<Order_By>;
     enableRecording?: InputMaybe<Order_By>;
-    endTime?: InputMaybe<Order_By>;
     eventPeople_aggregate?: InputMaybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
     eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
     exhibition?: InputMaybe<Collection_Exhibition_Order_By>;
     exhibitionId?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
-    intendedRoomModeName?: InputMaybe<Order_By>;
     item?: InputMaybe<Content_Item_Order_By>;
     itemId?: InputMaybe<Order_By>;
+    mode?: InputMaybe<Schedule_Mode_Order_By>;
+    modeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     roomId?: InputMaybe<Order_By>;
-    roomMode?: InputMaybe<Room_Mode_Order_By>;
     roomName?: InputMaybe<Order_By>;
+    scheduledEndTime?: InputMaybe<Order_By>;
+    scheduledStartTime?: InputMaybe<Order_By>;
+    sessionEventId?: InputMaybe<Order_By>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
-    startTime?: InputMaybe<Order_By>;
     streamTextEventId?: InputMaybe<Order_By>;
+    subconference?: InputMaybe<Conference_Subconference_Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     timingsUpdatedAt?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
@@ -30431,33 +30152,35 @@ export type Schedule_Event_Pk_Columns_Input = {
 /** select columns of table "schedule.Event" */
 export enum Schedule_Event_Select_Column {
     /** column name */
+    AutoPlayElementId = "autoPlayElementId",
+    /** column name */
     AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    SessionEventId = "sessionEventId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -30472,20 +30195,21 @@ export enum Schedule_Event_Select_Column {
 
 /** input type for updating data in table "schedule.Event" */
 export type Schedule_Event_Set_Input = {
+    autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
     automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    durationSeconds?: InputMaybe<Scalars["Int"]>;
     enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    endTime?: InputMaybe<Scalars["timestamptz"]>;
     exhibitionId?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
-    intendedRoomModeName?: InputMaybe<Room_Mode_Enum>;
     itemId?: InputMaybe<Scalars["uuid"]>;
+    modeName?: InputMaybe<Schedule_Mode_Enum>;
     name?: InputMaybe<Scalars["String"]>;
     roomId?: InputMaybe<Scalars["uuid"]>;
+    scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    sessionEventId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    startTime?: InputMaybe<Scalars["timestamptz"]>;
     streamTextEventId?: InputMaybe<Scalars["String"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     timingsUpdatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -30493,52 +30217,10 @@ export type Schedule_Event_Set_Input = {
     visibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum>;
 };
 
-/** aggregate stddev on columns */
-export type Schedule_Event_Stddev_Fields = {
-    __typename?: "schedule_Event_stddev_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Schedule_Event_Stddev_Pop_Fields = {
-    __typename?: "schedule_Event_stddev_pop_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_pop() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Pop_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Schedule_Event_Stddev_Samp_Fields = {
-    __typename?: "schedule_Event_stddev_samp_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_samp() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Samp_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Schedule_Event_Sum_Fields = {
-    __typename?: "schedule_Event_sum_fields";
-    durationSeconds?: Maybe<Scalars["Int"]>;
-};
-
-/** order by sum() on columns of table "schedule.Event" */
-export type Schedule_Event_Sum_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** update columns of table "schedule.Event" */
 export enum Schedule_Event_Update_Column {
+    /** column name */
+    AutoPlayElementId = "autoPlayElementId",
     /** column name */
     AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
@@ -30546,27 +30228,27 @@ export enum Schedule_Event_Update_Column {
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    SessionEventId = "sessionEventId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -30579,38 +30261,175 @@ export enum Schedule_Event_Update_Column {
     VisibilityLevel = "visibilityLevel",
 }
 
-/** aggregate var_pop on columns */
-export type Schedule_Event_Var_Pop_Fields = {
-    __typename?: "schedule_Event_var_pop_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_Mode = {
+    __typename?: "schedule_Mode";
+    description: Scalars["String"];
+    /** An array relationship */
+    events: Array<Schedule_Event>;
+    /** An aggregate relationship */
+    events_aggregate: Schedule_Event_Aggregate;
+    name: Scalars["String"];
 };
 
-/** order by var_pop() on columns of table "schedule.Event" */
-export type Schedule_Event_Var_Pop_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_ModeEventsArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
-/** aggregate var_samp on columns */
-export type Schedule_Event_Var_Samp_Fields = {
-    __typename?: "schedule_Event_var_samp_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_ModeEvents_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
-/** order by var_samp() on columns of table "schedule.Event" */
-export type Schedule_Event_Var_Samp_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
+/** aggregated selection of "schedule.Mode" */
+export type Schedule_Mode_Aggregate = {
+    __typename?: "schedule_Mode_aggregate";
+    aggregate?: Maybe<Schedule_Mode_Aggregate_Fields>;
+    nodes: Array<Schedule_Mode>;
 };
 
-/** aggregate variance on columns */
-export type Schedule_Event_Variance_Fields = {
-    __typename?: "schedule_Event_variance_fields";
-    durationSeconds?: Maybe<Scalars["Float"]>;
+/** aggregate fields of "schedule.Mode" */
+export type Schedule_Mode_Aggregate_Fields = {
+    __typename?: "schedule_Mode_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Schedule_Mode_Max_Fields>;
+    min?: Maybe<Schedule_Mode_Min_Fields>;
 };
 
-/** order by variance() on columns of table "schedule.Event" */
-export type Schedule_Event_Variance_Order_By = {
-    durationSeconds?: InputMaybe<Order_By>;
+/** aggregate fields of "schedule.Mode" */
+export type Schedule_Mode_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<Schedule_Mode_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
 };
+
+/** Boolean expression to filter rows from the table "schedule.Mode". All fields are combined with a logical 'AND'. */
+export type Schedule_Mode_Bool_Exp = {
+    _and?: InputMaybe<Array<Schedule_Mode_Bool_Exp>>;
+    _not?: InputMaybe<Schedule_Mode_Bool_Exp>;
+    _or?: InputMaybe<Array<Schedule_Mode_Bool_Exp>>;
+    description?: InputMaybe<String_Comparison_Exp>;
+    events?: InputMaybe<Schedule_Event_Bool_Exp>;
+    name?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "schedule.Mode" */
+export enum Schedule_Mode_Constraint {
+    /** unique or primary key constraint */
+    ModePkey = "Mode_pkey",
+}
+
+export enum Schedule_Mode_Enum {
+    /** An exhibition hall. */
+    Exhibition = "EXHIBITION",
+    /** Event is taking place in a Zoom room. */
+    External = "EXTERNAL",
+    /** Users watch a live-stream. */
+    Livestream = "LIVESTREAM",
+    /** An empty room. */
+    None = "NONE",
+    /** A shuffle queue. */
+    Shuffle = "SHUFFLE",
+    /** Users may participate in the general video chat. */
+    VideoChat = "VIDEO_CHAT",
+    /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
+    VideoPlayer = "VIDEO_PLAYER",
+}
+
+/** Boolean expression to compare columns of type "schedule_Mode_enum". All fields are combined with logical 'AND'. */
+export type Schedule_Mode_Enum_Comparison_Exp = {
+    _eq?: InputMaybe<Schedule_Mode_Enum>;
+    _in?: InputMaybe<Array<Schedule_Mode_Enum>>;
+    _is_null?: InputMaybe<Scalars["Boolean"]>;
+    _neq?: InputMaybe<Schedule_Mode_Enum>;
+    _nin?: InputMaybe<Array<Schedule_Mode_Enum>>;
+};
+
+/** input type for inserting data into table "schedule.Mode" */
+export type Schedule_Mode_Insert_Input = {
+    description?: InputMaybe<Scalars["String"]>;
+    events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
+    name?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Schedule_Mode_Max_Fields = {
+    __typename?: "schedule_Mode_max_fields";
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Schedule_Mode_Min_Fields = {
+    __typename?: "schedule_Mode_min_fields";
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** response of any mutation on the table "schedule.Mode" */
+export type Schedule_Mode_Mutation_Response = {
+    __typename?: "schedule_Mode_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Schedule_Mode>;
+};
+
+/** input type for inserting object relation for remote table "schedule.Mode" */
+export type Schedule_Mode_Obj_Rel_Insert_Input = {
+    data: Schedule_Mode_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
+};
+
+/** on conflict condition type for table "schedule.Mode" */
+export type Schedule_Mode_On_Conflict = {
+    constraint: Schedule_Mode_Constraint;
+    update_columns?: Array<Schedule_Mode_Update_Column>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "schedule.Mode". */
+export type Schedule_Mode_Order_By = {
+    description?: InputMaybe<Order_By>;
+    events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
+    name?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: schedule_Mode */
+export type Schedule_Mode_Pk_Columns_Input = {
+    name: Scalars["String"];
+};
+
+/** select columns of table "schedule.Mode" */
+export enum Schedule_Mode_Select_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
+
+/** input type for updating data in table "schedule.Mode" */
+export type Schedule_Mode_Set_Input = {
+    description?: InputMaybe<Scalars["String"]>;
+    name?: InputMaybe<Scalars["String"]>;
+};
+
+/** update columns of table "schedule.Mode" */
+export enum Schedule_Mode_Update_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
 
 /** columns and relationships of "schedule.OverlappingEvents" */
 export type Schedule_OverlappingEvents = {
@@ -32015,12 +31834,6 @@ export type Subscription_Root = {
     room_ManagementMode_aggregate: Room_ManagementMode_Aggregate;
     /** fetch data from the table: "room.ManagementMode" using primary key columns */
     room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** fetch data from the table: "room.Mode" */
-    room_Mode: Array<Room_Mode>;
-    /** fetch aggregated fields from the table: "room.Mode" */
-    room_Mode_aggregate: Room_Mode_Aggregate;
-    /** fetch data from the table: "room.Mode" using primary key columns */
-    room_Mode_by_pk?: Maybe<Room_Mode>;
     /** fetch data from the table: "room.PersonRole" */
     room_PersonRole: Array<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -32097,6 +31910,12 @@ export type Subscription_Root = {
     schedule_Event_aggregate: Schedule_Event_Aggregate;
     /** fetch data from the table: "schedule.Event" using primary key columns */
     schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** fetch data from the table: "schedule.Mode" */
+    schedule_Mode: Array<Schedule_Mode>;
+    /** fetch aggregated fields from the table: "schedule.Mode" */
+    schedule_Mode_aggregate: Schedule_Mode_Aggregate;
+    /** fetch data from the table: "schedule.Mode" using primary key columns */
+    schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** fetch data from the table: "schedule.OverlappingEvents" */
     schedule_OverlappingEvents: Array<Schedule_OverlappingEvents>;
     /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
@@ -33667,26 +33486,6 @@ export type Subscription_RootRoom_ManagementMode_By_PkArgs = {
     name: Scalars["String"];
 };
 
-export type Subscription_RootRoom_ModeArgs = {
-    distinct_on?: InputMaybe<Array<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Mode_AggregateArgs = {
-    distinct_on?: InputMaybe<Array<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<Array<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
 export type Subscription_RootRoom_PersonRoleArgs = {
     distinct_on?: InputMaybe<Array<Room_PersonRole_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -33941,6 +33740,26 @@ export type Subscription_RootSchedule_Event_AggregateArgs = {
 
 export type Subscription_RootSchedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootSchedule_ModeArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_Mode_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 export type Subscription_RootSchedule_OverlappingEventsArgs = {
@@ -39645,8 +39464,8 @@ export type GetEventChatInfoQuery = {
     schedule_Event_by_pk?: {
         __typename?: "schedule_Event";
         id: any;
-        startTime: any;
-        durationSeconds: number;
+        scheduledStartTime?: any | null;
+        scheduledEndTime?: any | null;
         room: { __typename?: "room_Room"; id: any; name: string; chatId?: any | null };
         item?: { __typename?: "content_Item"; id: any; title: string; chatId?: any | null } | null;
     } | null;
@@ -39703,10 +39522,10 @@ export type GetEventTimingsQuery = {
         id: any;
         name: string;
         timingsUpdatedAt: any;
-        startTime: any;
-        endTime?: any | null;
+        scheduledStartTime?: any | null;
+        scheduledEndTime?: any | null;
         conferenceId: any;
-        intendedRoomModeName: Room_Mode_Enum;
+        modeName: Schedule_Mode_Enum;
         roomId: any;
         enableRecording: boolean;
         eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
@@ -40123,8 +39942,8 @@ export type Recording_GetEventQuery = {
     schedule_Event_by_pk?: {
         __typename?: "schedule_Event";
         id: any;
-        startTime: any;
-        endTime?: any | null;
+        scheduledStartTime?: any | null;
+        scheduledEndTime?: any | null;
         room: {
             __typename?: "room_Room";
             id: any;
@@ -40170,8 +39989,8 @@ export type Recording_GetMediaPackageHarvestJobQuery = {
             __typename?: "schedule_Event";
             id: any;
             name: string;
-            startTime: any;
-            durationSeconds: number;
+            scheduledStartTime?: any | null;
+            scheduledEndTime?: any | null;
             item?: { __typename?: "content_Item"; id: any; title: string; subconferenceId?: any | null } | null;
         };
     }>;
@@ -40368,7 +40187,7 @@ export type ActiveShufflePeriodFragment = {
             people: Array<{ __typename?: "room_RoomMembership"; id: any; registrantId: any }>;
         };
     }>;
-    events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
+    events: Array<{ __typename?: "schedule_Event"; id: any; scheduledEndTime?: any | null }>;
 };
 
 export type SelectShufflePeriodQueryVariables = Exact<{
@@ -40410,7 +40229,7 @@ export type SelectShufflePeriodQuery = {
                 people: Array<{ __typename?: "room_RoomMembership"; id: any; registrantId: any }>;
             };
         }>;
-        events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
+        events: Array<{ __typename?: "schedule_Event"; id: any; scheduledEndTime?: any | null }>;
     } | null;
 };
 
@@ -40454,7 +40273,7 @@ export type SelectActiveShufflePeriodsQuery = {
                 people: Array<{ __typename?: "room_RoomMembership"; id: any; registrantId: any }>;
             };
         }>;
-        events: Array<{ __typename?: "schedule_Event"; id: any; endTime?: any | null }>;
+        events: Array<{ __typename?: "schedule_Event"; id: any; scheduledEndTime?: any | null }>;
     }>;
 };
 
@@ -40809,8 +40628,8 @@ export type GetEventForArchiveQuery = {
         __typename?: "schedule_Event";
         id: any;
         name: string;
-        startTime: any;
-        durationSeconds: number;
+        scheduledStartTime?: any | null;
+        scheduledEndTime?: any | null;
         conferenceId: any;
         subconferenceId?: any | null;
         item?: {
@@ -40876,10 +40695,10 @@ export type Vonage_GetEventDetailsQuery = {
         __typename?: "schedule_Event";
         conferenceId: any;
         id: any;
-        intendedRoomModeName: Room_Mode_Enum;
+        modeName: Schedule_Mode_Enum;
         enableRecording: boolean;
-        startTime: any;
-        durationSeconds: number;
+        scheduledStartTime?: any | null;
+        scheduledEndTime?: any | null;
         eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
         room: { __typename?: "room_Room"; id: any; capacity?: number | null; publicVonageSessionId?: string | null };
         eventPeople: Array<{
@@ -42236,7 +42055,7 @@ export const ActiveShufflePeriodFragmentDoc = {
                                     fields: [
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "startTime" },
+                                            name: { kind: "Name", value: "scheduledStartTime" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -42253,7 +42072,7 @@ export const ActiveShufflePeriodFragmentDoc = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "endTime" },
+                                            name: { kind: "Name", value: "scheduledEndTime" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -42276,7 +42095,7 @@ export const ActiveShufflePeriodFragmentDoc = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "endTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                             ],
                         },
                     },
@@ -44683,8 +44502,8 @@ export const GetEventChatInfoDocument = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "startTime" } },
-                                { kind: "Field", name: { kind: "Name", value: "durationSeconds" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "room" },
@@ -45034,10 +44853,10 @@ export const GetEventTimingsDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "name" } },
                                 { kind: "Field", name: { kind: "Name", value: "timingsUpdatedAt" } },
-                                { kind: "Field", name: { kind: "Name", value: "startTime" } },
-                                { kind: "Field", name: { kind: "Name", value: "endTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                                { kind: "Field", name: { kind: "Name", value: "intendedRoomModeName" } },
+                                { kind: "Field", name: { kind: "Name", value: "modeName" } },
                                 { kind: "Field", name: { kind: "Name", value: "roomId" } },
                                 { kind: "Field", name: { kind: "Name", value: "enableRecording" } },
                                 {
@@ -47427,8 +47246,8 @@ export const Recording_GetEventDocument = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "startTime" } },
-                                { kind: "Field", name: { kind: "Name", value: "endTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "room" },
@@ -47667,8 +47486,8 @@ export const Recording_GetMediaPackageHarvestJobDocument = {
                                             },
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
                                             { kind: "Field", name: { kind: "Name", value: "name" } },
-                                            { kind: "Field", name: { kind: "Name", value: "startTime" } },
-                                            { kind: "Field", name: { kind: "Name", value: "durationSeconds" } },
+                                            { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
+                                            { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                                         ],
                                     },
                                 },
@@ -51098,7 +50917,7 @@ export const GetRoomForUsageCalculationDocument = {
                                                 fields: [
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "startTime" },
+                                                        name: { kind: "Name", value: "scheduledStartTime" },
                                                         value: {
                                                             kind: "ObjectValue",
                                                             fields: [
@@ -51115,7 +50934,7 @@ export const GetRoomForUsageCalculationDocument = {
                                                     },
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "endTime" },
+                                                        name: { kind: "Name", value: "scheduledEndTime" },
                                                         value: {
                                                             kind: "ObjectValue",
                                                             fields: [
@@ -51532,27 +51351,21 @@ export const OngoingBroadcastableVideoRoomEventsDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "intendedRoomModeName" },
+                                            name: { kind: "Name", value: "modeName" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_in" },
-                                                        value: {
-                                                            kind: "ListValue",
-                                                            values: [
-                                                                { kind: "EnumValue", value: "Q_AND_A" },
-                                                                { kind: "EnumValue", value: "PRESENTATION" },
-                                                            ],
-                                                        },
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: { kind: "EnumValue", value: "LIVESTREAM" },
                                                     },
                                                 ],
                                             },
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "endTime" },
+                                            name: { kind: "Name", value: "scheduledEndTime" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -51569,7 +51382,7 @@ export const OngoingBroadcastableVideoRoomEventsDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "startTime" },
+                                            name: { kind: "Name", value: "scheduledStartTime" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -51664,7 +51477,7 @@ export const OngoingArchivableVideoRoomEventsDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "intendedRoomModeName" },
+                                            name: { kind: "Name", value: "modeName" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -51678,7 +51491,7 @@ export const OngoingArchivableVideoRoomEventsDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "endTime" },
+                                            name: { kind: "Name", value: "scheduledEndTime" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -51695,7 +51508,7 @@ export const OngoingArchivableVideoRoomEventsDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "startTime" },
+                                            name: { kind: "Name", value: "scheduledStartTime" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -51760,8 +51573,8 @@ export const GetEventForArchiveDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "name" } },
-                                { kind: "Field", name: { kind: "Name", value: "startTime" } },
-                                { kind: "Field", name: { kind: "Name", value: "durationSeconds" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
                                 { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                 {
@@ -52202,10 +52015,10 @@ export const Vonage_GetEventDetailsDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "intendedRoomModeName" } },
+                                { kind: "Field", name: { kind: "Name", value: "modeName" } },
                                 { kind: "Field", name: { kind: "Name", value: "enableRecording" } },
-                                { kind: "Field", name: { kind: "Name", value: "startTime" } },
-                                { kind: "Field", name: { kind: "Name", value: "durationSeconds" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
+                                { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "eventVonageSession" },
@@ -52582,7 +52395,7 @@ export const FindRoomByVonageSessionIdDocument = {
                                                 fields: [
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "startTime" },
+                                                        name: { kind: "Name", value: "scheduledStartTime" },
                                                         value: {
                                                             kind: "ObjectValue",
                                                             fields: [
@@ -52599,7 +52412,7 @@ export const FindRoomByVonageSessionIdDocument = {
                                                     },
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "endTime" },
+                                                        name: { kind: "Name", value: "scheduledEndTime" },
                                                         value: {
                                                             kind: "ObjectValue",
                                                             fields: [
@@ -55349,7 +55162,7 @@ export const OngoingArchivableVideoRoomEventsWithRoomInfoDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "intendedRoomModeName" },
+                                            name: { kind: "Name", value: "modeName" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -55363,7 +55176,7 @@ export const OngoingArchivableVideoRoomEventsWithRoomInfoDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "endTime" },
+                                            name: { kind: "Name", value: "scheduledEndTime" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
@@ -55380,7 +55193,7 @@ export const OngoingArchivableVideoRoomEventsWithRoomInfoDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "startTime" },
+                                            name: { kind: "Name", value: "scheduledStartTime" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [

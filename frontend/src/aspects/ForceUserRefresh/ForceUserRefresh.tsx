@@ -119,17 +119,23 @@ export default function ForceUserRefresh(): JSX.Element {
                     </Text>
                 </ModalBody>
                 <ModalFooter>
-                    <ProgressTimeout startTime={lastCheckMs} endTime={lastCheckMs + 3 * 60 * 1000} />
+                    <ProgressTimeout scheduledStartTime={lastCheckMs} scheduledEndTime={lastCheckMs + 3 * 60 * 1000} />
                 </ModalFooter>
             </ModalContent>
         </Modal>
     );
 }
 
-function ProgressTimeout({ startTime, endTime }: { startTime: number; endTime: number }) {
+function ProgressTimeout({
+    scheduledStartTime,
+    scheduledEndTime,
+}: {
+    scheduledStartTime: number;
+    scheduledEndTime: number;
+}) {
     const now = useRealTime(1000);
-    const value = (100 * (endTime - now)) / (endTime - startTime);
-    const timeRemaining = (endTime - now) / 1000;
+    const value = (100 * (scheduledEndTime - now)) / (scheduledEndTime - scheduledStartTime);
+    const timeRemaining = (scheduledEndTime - now) / 1000;
 
     const history = useHistory();
     useEffect(() => {

@@ -14,7 +14,7 @@ import {
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
-import { Content_ItemType_Enum, Room_Mode_Enum } from "../../../../generated/graphql";
+import { Content_ItemType_Enum, Schedule_Mode_Enum } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { ShufflePeriodBox } from "../../../ShuffleRooms/WaitingPage";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
@@ -84,8 +84,8 @@ export function RoomContent({
 
     const now5s = useRealTime(5000);
     const currentEventEndTime = useMemo(
-        () => currentRoomEvent?.endTime && Date.parse(currentRoomEvent.endTime),
-        [currentRoomEvent?.endTime]
+        () => currentRoomEvent?.scheduledEndTime && Date.parse(currentRoomEvent.scheduledEndTime),
+        [currentRoomEvent?.scheduledEndTime]
     );
 
     return (
@@ -93,9 +93,9 @@ export function RoomContent({
             {currentRoomEvent ? (
                 <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={2}>
                     <HStack justifyContent="space-between">
-                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now5s)}</Text>
-                        {currentRoomEvent.endTime ? (
-                            <Text>Ends {formatRelative(Date.parse(currentRoomEvent.endTime), now5s)}</Text>
+                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.scheduledStartTime), now5s)}</Text>
+                        {currentRoomEvent.scheduledEndTime ? (
+                            <Text>Ends {formatRelative(Date.parse(currentRoomEvent.scheduledEndTime), now5s)}</Text>
                         ) : undefined}
                         {currentEventRole ? (
                             <Tag colorScheme="Room-CurrentEventRoleLabel" my={2}>
@@ -115,10 +115,8 @@ export function RoomContent({
                     ) : (
                         <></>
                     )}
-                    {currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoPlayer
-                        ? currentEventVideosEl
-                        : undefined}
-                    {currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
+                    {currentRoomEvent.modeName === Schedule_Mode_Enum.VideoPlayer ? currentEventVideosEl : undefined}
+                    {currentRoomEvent.modeName !== Schedule_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
                         <ItemElementsWrapper itemId={currentRoomEvent.itemId} linkToItem={true} />
                     ) : undefined}
                     {currentRoomEvent.exhibitionId ? (
@@ -139,7 +137,7 @@ export function RoomContent({
                         {nextRoomEvent.name}
                     </Heading>
                     <HStack justifyContent="space-between" mb={2}>
-                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}</Text>
+                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.scheduledStartTime), now5s)}</Text>
                         {nextEventRole ? (
                             <Tag colorScheme="Room-NextEventRoleLabel" my={2} textTransform="none">
                                 You are {nextEventRole}

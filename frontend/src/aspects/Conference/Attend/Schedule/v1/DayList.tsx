@@ -12,7 +12,7 @@ import useTimelineParameters from "./useTimelineParameters";
 
 type FirstEventInfo = {
     event: Schedule_EventSummaryFragment;
-    startTime: number;
+    scheduledStartTime: number;
 };
 
 export interface TimelineEvent extends Schedule_EventSummaryFragment {
@@ -44,25 +44,25 @@ export default function DayList({
         for (const room of rooms) {
             for (const event of events.filter((x) => x.roomId === room.id)) {
                 // TODO: How to handle multi-year calendars?
-                const startDate = DateTime.fromISO(event.startTime).setZone(timelineParams.timezone);
+                const startDate = DateTime.fromISO(event.scheduledStartTime).setZone(timelineParams.timezone);
                 const day = startDate.startOf("day");
 
                 const existingStartEv = result.get(day.toMillis());
                 if (existingStartEv) {
                     if (
-                        startDate.toMillis() < existingStartEv.event.startTime ||
-                        (startDate.toMillis() === existingStartEv.event.startTime &&
+                        startDate.toMillis() < existingStartEv.event.scheduledStartTime ||
+                        (startDate.toMillis() === existingStartEv.event.scheduledStartTime &&
                             room.priority < existingStartEv.roomPriority)
                     ) {
                         result.set(day.toMillis(), {
                             roomPriority: room.priority,
-                            event: { event, startTime: startDate.toMillis() },
+                            event: { event, scheduledStartTime: startDate.toMillis() },
                         });
                     }
                 } else {
                     result.set(day.toMillis(), {
                         roomPriority: room.priority,
-                        event: { event, startTime: startDate.toMillis() },
+                        event: { event, scheduledStartTime: startDate.toMillis() },
                     });
                 }
             }

@@ -16,8 +16,8 @@ gql`
     query GetEvent($id: uuid!) {
         schedule_Event_by_pk(id: $id) {
             id
-            startTime
-            durationSeconds
+            scheduledStartTime
+            scheduledEndTime
             roomId
             name
             item {
@@ -50,7 +50,12 @@ export async function eventStarted(req: Request, res: Response, _next?: NextFunc
             const event = eventResponse?.data.schedule_Event_by_pk;
             if (event.room.chatId) {
                 const systemId =
-                    "EVENT_START:" + event.id + ":" + event.roomId + "@" + new Date(event.startTime).toISOString();
+                    "EVENT_START:" +
+                    event.id +
+                    ":" +
+                    event.roomId +
+                    "@" +
+                    new Date(event.scheduledStartTime).toISOString();
                 const redisClient = await redisClientPool.acquire("/http-handlers/chat/eventStarted");
                 try {
                     const systemIdsKey = `realtime:chat.${event.room.chatId}.recentSystemIdsSeen`;
@@ -77,7 +82,7 @@ export async function eventStarted(req: Request, res: Response, _next?: NextFunc
                                     data: {
                                         event: {
                                             id: event.id,
-                                            startTime: event.startTime,
+                                            scheduledStartTime: event.scheduledStartTime,
                                             durationSeconds: event.durationSeconds,
                                             name: event.name,
                                         },
@@ -146,7 +151,7 @@ export async function eventEnded(req: Request, res: Response, _next?: NextFuncti
                     ":" +
                     event.roomId +
                     "@" +
-                    new Date(Date.parse(event.startTime) + event.durationSeconds * 1000).toISOString();
+                    new Date(Date.parse(event.scheduledStartTime) + event.durationSeconds * 1000).toISOString();
                 const redisClient = await redisClientPool.acquire("/http-handlers/chat/eventEnded");
                 try {
                     const systemIdsKey = `realtime:chat.${event.room.chatId}.recentSystemIdsSeen`;
@@ -172,7 +177,7 @@ export async function eventEnded(req: Request, res: Response, _next?: NextFuncti
                                     data: {
                                         event: {
                                             id: event.id,
-                                            startTime: event.startTime,
+                                            scheduledStartTime: event.scheduledStartTime,
                                             durationSeconds: event.durationSeconds,
                                             name: event.name,
                                         },

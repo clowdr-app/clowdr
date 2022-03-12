@@ -14,6 +14,7 @@ import type {
     UpdateEventMutationVariables,
 } from "../generated/graphql";
 import { DeleteEventDocument, GetEventDocument, InsertEventDocument, UpdateEventDocument } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment Event on schedule_Event {
@@ -22,12 +23,11 @@ gql`
         updatedAt
         conferenceId
         roomId
-        intendedRoomModeName
+        modeName
         itemId
         name
-        startTime
-        durationSeconds
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         exhibitionId
         shufflePeriodId
         timingsUpdatedAt
@@ -73,7 +73,7 @@ export async function getEvent(eventId: string): Promise<EventFragment> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.schedule_Event_by_pk) {
         throw new Error("No data");
@@ -91,7 +91,7 @@ export async function insertEvent(object: Schedule_Event_Insert_Input): Promise<
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.insert_schedule_Event_one) {
         throw new Error("No insert response");
@@ -110,7 +110,7 @@ export async function updateEvent(eventId: string, set: Schedule_Event_Set_Input
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.update_schedule_Event_by_pk) {
         throw new Error("No update response");
@@ -128,7 +128,7 @@ export async function deleteEvent(eventId: string): Promise<string> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.delete_schedule_Event_by_pk) {
         throw new Error("No delete response");

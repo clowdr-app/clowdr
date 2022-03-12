@@ -19,6 +19,8 @@ export enum Content_ElementType_Enum {
     ExploreProgramButton = "EXPLORE_PROGRAM_BUTTON",
     /** Button that opens the explore program modal with the Schedule tab open. Intended for use on the landing page. */
     ExploreScheduleButton = "EXPLORE_SCHEDULE_BUTTON",
+    /** Data for a Zoom meeting. */
+    ExternalEventLink = "EXTERNAL_EVENT_LINK",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -63,8 +65,6 @@ export enum Content_ElementType_Enum {
     VideoUrl = "VIDEO_URL",
     /** Schedule view for the whole conference. */
     WholeSchedule = "WHOLE_SCHEDULE",
-    /** Data for a Zoom meeting. */
-    Zoom = "ZOOM",
 }
 
 export type ElementDataBlob = ElementVersionData[];
@@ -108,7 +108,7 @@ export type ElementBlob =
     | VideoTitlesBlob
     | VideoUrlBlob
     | WholeScheduleBlob
-    | ZoomBlob
+    | ExternalEventLinkBlob
     | ActiveSocialRoomsBlob
     | LiveProgramRoomsBlob
     | DividerBlob
@@ -215,8 +215,8 @@ export interface ExploreScheduleButtonBlob extends ComponentBlob {
     type: Content_ElementType_Enum.ExploreScheduleButton;
 }
 
-export interface ZoomBlob extends UrlElementBlob {
-    type: Content_ElementType_Enum.Zoom;
+export interface ExternalEventLinkBlob extends UrlElementBlob {
+    type: Content_ElementType_Enum.ExternalEventLink;
 }
 
 export interface ActiveSocialRoomsBlob extends ComponentBlob {
@@ -281,7 +281,7 @@ export const ElementBaseTypes: { [K in Content_ElementType_Enum]: ElementBaseTyp
     [Content_ElementType_Enum.VideoSponsorsFiller]: ElementBaseType.Video,
     [Content_ElementType_Enum.VideoTitles]: ElementBaseType.Video,
     [Content_ElementType_Enum.VideoUrl]: ElementBaseType.URL,
-    [Content_ElementType_Enum.Zoom]: ElementBaseType.URL,
+    [Content_ElementType_Enum.ExternalEventLink]: ElementBaseType.URL,
     [Content_ElementType_Enum.WholeSchedule]: ElementBaseType.Component,
     [Content_ElementType_Enum.ActiveSocialRooms]: ElementBaseType.Component,
     [Content_ElementType_Enum.LiveProgramRooms]: ElementBaseType.Component,

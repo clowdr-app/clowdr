@@ -107,12 +107,12 @@ export class EventCache {
             }
 
             if ("startLte" in filters) {
-                gqlFilters.startTime = {
+                gqlFilters.scheduledStartTime = {
                     _lte: filters.startLte,
                 };
             }
             if ("endGte" in filters) {
-                gqlFilters.endTime = {
+                gqlFilters.scheduledEndTime = {
                     _lte: filters.endGte,
                 };
             }

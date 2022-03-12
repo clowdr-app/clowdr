@@ -6,7 +6,7 @@ import { add } from "date-fns";
 import * as R from "ramda";
 import { v4 as uuidv4 } from "uuid";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
-import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
+import { Schedule_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
 import type { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import { ContentElementDataService } from "../../hasura-data/content/content-element.service";
@@ -408,14 +408,17 @@ export class ScheduleSyncService {
         syncCutoffTime: number,
         makeImmediateIfBeforeCutoff: false | { now: number }
     ): { actions: ScheduleAction[]; immediateDelayMillis?: number } {
-        if (localAction.startTime <= syncCutoffTime) {
+        if (localAction.scheduledStartTime <= syncCutoffTime) {
             return makeImmediateIfBeforeCutoff
                 ? {
                       actions: this.convertLocalEventToScheduleActions(localAction, channelStackDetails, {
                           mode: "immediate",
                           now: makeImmediateIfBeforeCutoff.now,
                       }),
-                      immediateDelayMillis: Math.max(localAction.startTime - makeImmediateIfBeforeCutoff.now, 0),
+                      immediateDelayMillis: Math.max(
+                          localAction.scheduledStartTime - makeImmediateIfBeforeCutoff.now,
+                          0
+                      ),
                   }
                 : { actions: [] };
         }
@@ -430,7 +433,7 @@ export class ScheduleSyncService {
         startMode: { mode: "fixed" } | { mode: "immediate"; now: number }
     ): ScheduleAction[] {
         const immediate = startMode.mode === "immediate";
-        const offsetMillis = startMode.mode === "immediate" ? startMode.now - localAction.startTime : 0;
+        const offsetMillis = startMode.mode === "immediate" ? startMode.now - localAction.scheduledStartTime : 0;
         const sequenceNumber = Math.round(localAction.sequenceNumber ?? 0);
         if (this.localScheduleService.isLive(localAction.roomModeName)) {
             return [
@@ -442,7 +445,7 @@ export class ScheduleSyncService {
                           }
                         : {
                               FixedModeScheduleActionStartSettings: {
-                                  Time: new Date(localAction.startTime).toISOString(),
+                                  Time: new Date(localAction.scheduledStartTime).toISOString(),
                               },
                           },
                     ScheduleActionSettings: {
@@ -461,7 +464,7 @@ export class ScheduleSyncService {
             ];
         }
 
-        if (localAction.roomModeName === Room_Mode_Enum.Prerecorded) {
+        if (localAction.roomModeName === Schedule_Mode_Enum.Livestream && localAction.autoPlayElementId) {
             const videoKey = localAction.videoData
                 ? this.contentElementDataService.getVideoKey(localAction.videoData)
                 : null;
@@ -481,7 +484,7 @@ export class ScheduleSyncService {
                               }
                             : {
                                   FixedModeScheduleActionStartSettings: {
-                                      Time: new Date(localAction.startTime).toISOString(),
+                                      Time: new Date(localAction.scheduledStartTime).toISOString(),
                                   },
                               },
                         ScheduleActionSettings: {
@@ -546,7 +549,7 @@ export class ScheduleSyncService {
         const videosMatch =
             !!localAction.videoData &&
             this.contentElementDataService.getVideoKey(localAction.videoData) === remoteAction.s3Key;
-        const timesMatch = remoteAction.startTime === localAction.startTime;
+        const timesMatch = remoteAction.scheduledStartTime === localAction.scheduledStartTime;
 
         return (
             remoteAction.eventId === localAction.eventId && modesMatch && rtmpInputsMatch && videosMatch && timesMatch
@@ -582,14 +585,14 @@ export class ScheduleSyncService {
 
     canRemoveInvalidAction(action: InvalidAction, removalCutoffTime: number): boolean {
         const notInputSwitch = !action.isInputSwitch;
-        const inFuture = !!action.startTime && action.startTime > removalCutoffTime;
+        const inFuture = !!action.scheduledStartTime && action.scheduledStartTime > removalCutoffTime;
         // If chainBeforeStartTime is null, implies a follow chain from an immediate action - not safe to attempt removal
         const inUnstartedChain = !!action.chainBeforeStartTime && action.chainBeforeStartTime > removalCutoffTime;
         return notInputSwitch || inFuture || inUnstartedChain;
     }
 
     canRemoveEventAction(action: EventAction, syncCutoffTime: number): boolean {
-        const inFuture = action.startTime > syncCutoffTime;
+        const inFuture = action.scheduledStartTime > syncCutoffTime;
         return inFuture;
     }
 

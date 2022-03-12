@@ -52,22 +52,22 @@ gql`
             id
             title
         }
-        endTime
-        intendedRoomModeName
+        scheduledEndTime
+        modeName
         name
         roomId
         room {
             id
             name
         }
-        startTime
+        scheduledStartTime
     }
 
     query RegistrantEventsWithBackstages($registrantId: uuid!) {
         schedule_Event(
             where: {
                 eventPeople: { person: { registrantId: { _eq: $registrantId } } }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
                 room: {}
             }
         ) {
@@ -94,10 +94,10 @@ function MyBackstages(): JSX.Element {
         () =>
             myBackstagesResponse.data?.schedule_Event &&
             R.groupBy<MyBackstages_EventFragment>(
-                (x) => new Date(x.startTime).toLocaleDateString(),
+                (x) => new Date(x.scheduledStartTime).toLocaleDateString(),
                 R.sortBy(
-                    (x) => Date.parse(x.startTime),
-                    myBackstagesResponse.data.schedule_Event.filter((x) => Date.parse(x.endTime) >= now)
+                    (x) => Date.parse(x.scheduledStartTime),
+                    myBackstagesResponse.data.schedule_Event.filter((x) => Date.parse(x.scheduledEndTime) >= now)
                 )
             ),
         [myBackstagesResponse.data?.schedule_Event, now]
@@ -106,7 +106,7 @@ function MyBackstages(): JSX.Element {
         () =>
             eventsGroupedByDay &&
             Object.values(eventsGroupedByDay).filter((group) => {
-                const startAtDay = new Date(group[0].startTime);
+                const startAtDay = new Date(group[0].scheduledStartTime);
                 startAtDay.setHours(23);
                 startAtDay.setMinutes(59);
                 startAtDay.setSeconds(59);
@@ -163,10 +163,10 @@ function MyBackstages(): JSX.Element {
                             <Text>All times/dates are shown in your local timezone.</Text>
                             <Accordion allowToggle w="100%" reduceMotion defaultIndex={0}>
                                 {eventsTodayAndFuture.reduce((elements, group) => {
-                                    const startAtDay = new Date(group[0].startTime);
+                                    const startAtDay = new Date(group[0].scheduledStartTime);
                                     return [
                                         ...elements,
-                                        <AccordionItem key={group[0].startTime}>
+                                        <AccordionItem key={group[0].scheduledStartTime}>
                                             <AccordionButton>
                                                 <HStack>
                                                     <AccordionIcon ml={0} pl={0} />
@@ -193,15 +193,17 @@ function MyBackstages(): JSX.Element {
                                                     </Thead>
                                                     <Tbody>
                                                         {group.map((x) => {
-                                                            const startAt = new Date(x.startTime);
-                                                            const endTime = Date.parse(x.endTime);
+                                                            const startAt = new Date(x.scheduledStartTime);
+                                                            const scheduledEndTime = Date.parse(x.scheduledEndTime);
                                                             const backstageStartTime =
                                                                 startAt.getTime() - 20 * 1000 * 60;
-                                                            const isNow = backstageStartTime <= now && now <= endTime;
+                                                            const isNow =
+                                                                backstageStartTime <= now && now <= scheduledEndTime;
                                                             const isSoon =
                                                                 backstageStartTime - 40 * 1000 * 60 <= now &&
-                                                                now <= endTime;
-                                                            const isLive = startAt.getTime() <= now && now <= endTime;
+                                                                now <= scheduledEndTime;
+                                                            const isLive =
+                                                                startAt.getTime() <= now && now <= scheduledEndTime;
                                                             return (
                                                                 <Tr
                                                                     key={x.id}

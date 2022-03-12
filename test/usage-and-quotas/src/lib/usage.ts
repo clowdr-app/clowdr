@@ -11,6 +11,7 @@ import type {
     UsageFragment,
 } from "../generated/graphql";
 import { CallUpdateUsageDocument, GetUsageDocument, UpdateUsageDocument } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment Usage on conference_Usage {
@@ -60,7 +61,7 @@ export async function getUsage(conferenceId: string): Promise<UsageFragment> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data) {
         throw new Error("No data");
@@ -79,7 +80,7 @@ export async function updateUsage(conferenceId: string, set: Conference_Usage_Se
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.update_conference_Usage) {
         throw new Error("No update response");
@@ -98,7 +99,7 @@ export async function callUpdateUsage(): Promise<readonly UsageFragment[]> {
         .mutation<CallUpdateUsageMutation, CallUpdateUsageMutationVariables>(CallUpdateUsageDocument)
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.conference_updateEventUsage) {
         throw new Error("No update response");

@@ -140,17 +140,15 @@ gql`
         existing: schedule_Event(where: $where) {
             id
             name
-            startTime
-            durationSeconds
+            scheduledStartTime
+            scheduledEndTime
 
             enableRecording
             exhibitionId
-            intendedRoomModeName
+            modeName
             itemId
             roomId
             shufflePeriodId
-
-            endTime
         }
     }
 
@@ -626,8 +624,10 @@ export async function entityExists(
         case "Event":
             {
                 const endTimeStr =
-                    data.value.endTime ??
-                    new Date(Date.parse(data.value.startTime) + data.value.durationSeconds! * 1000).toISOString();
+                    data.value.scheduledEndTime ??
+                    new Date(
+                        Date.parse(data.value.scheduledStartTime) + data.value.durationSeconds! * 1000
+                    ).toISOString();
                 const response = await gqlClient
                     ?.query<ExistingSchedule_EventQuery, ExistingSchedule_EventQueryVariables>(
                         ExistingSchedule_EventDocument,
@@ -647,10 +647,10 @@ export async function entityExists(
                                                 name: { _eq: data.value.name },
                                             },
                                             {
-                                                startTime: { _eq: data.value.startTime },
+                                                scheduledStartTime: { _eq: data.value.scheduledStartTime },
                                             },
                                             {
-                                                endTime: {
+                                                scheduledEndTime: {
                                                     _eq: endTimeStr,
                                                 },
                                             },
@@ -663,10 +663,10 @@ export async function entityExists(
                                                 roomId: { _eq: data.value.roomId },
                                             },
                                             {
-                                                startTime: { _eq: data.value.startTime },
+                                                scheduledStartTime: { _eq: data.value.scheduledStartTime },
                                             },
                                             {
-                                                endTime: {
+                                                scheduledEndTime: {
                                                     _eq: endTimeStr,
                                                 },
                                             },
@@ -679,13 +679,13 @@ export async function entityExists(
                                                 roomId: { _eq: data.value.roomId },
                                             },
                                             {
-                                                startTime: {
+                                                scheduledStartTime: {
                                                     _lt: endTimeStr,
                                                 },
                                             },
                                             {
-                                                endTime: {
-                                                    _gt: data.value.startTime,
+                                                scheduledEndTime: {
+                                                    _gt: data.value.scheduledStartTime,
                                                 },
                                             },
                                         ],
@@ -700,28 +700,28 @@ export async function entityExists(
                 }
                 const allExisting = response?.data?.existing;
                 if (allExisting?.length) {
-                    const startTimeMs = new Date(data.value.startTime).getTime();
+                    const scheduledStartTimeMs = new Date(data.value.scheduledStartTime).getTime();
                     const endTimeMs = new Date(endTimeStr).getTime();
 
                     const matching = allExisting.find(
                         (existing) =>
                             (existing.name === data.value.name || existing.name === data.value.roomId) &&
-                            new Date(existing.startTime).getTime() === startTimeMs &&
-                            new Date(existing.endTime!).getTime() === endTimeMs
+                            new Date(existing.scheduledStartTime).getTime() === scheduledStartTimeMs &&
+                            new Date(existing.scheduledEndTime!).getTime() === endTimeMs
                     );
                     if (matching) {
-                        delete matching.endTime;
+                        delete matching.scheduledEndTime;
 
                         if (
                             matching.enableRecording === data.value.enableRecording &&
                             matching.exhibitionId === data.value.exhibitionId &&
-                            matching.intendedRoomModeName === data.value.intendedRoomModeName &&
+                            matching.modeName === data.value.modeName &&
                             matching.itemId === data.value.itemId &&
                             matching.name === data.value.name &&
                             matching.roomId === data.value.roomId &&
                             matching.shufflePeriodId === data.value.shufflePeriodId &&
-                            Date.parse(matching.startTime) === Date.parse(data.value.startTime) &&
-                            Date.parse(matching.endTime) === Date.parse(data.value.endTime)
+                            Date.parse(matching.scheduledStartTime) === Date.parse(data.value.scheduledStartTime) &&
+                            Date.parse(matching.scheduledEndTime) === Date.parse(data.value.scheduledEndTime)
                         ) {
                             return {
                                 state: "exists_update_not_required",

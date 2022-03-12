@@ -14,6 +14,7 @@ import type {
     UpdateItemMutationVariables,
 } from "../generated/graphql";
 import { DeleteItemDocument, GetItemDocument, InsertItemDocument, UpdateItemDocument } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment Item on content_Item {
@@ -64,7 +65,7 @@ export async function getItem(itemId: string): Promise<ItemFragment> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.content_Item_by_pk) {
         throw new Error("No data");
@@ -82,7 +83,7 @@ export async function insertItem(object: Content_Item_Insert_Input): Promise<Ite
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.insert_content_Item_one) {
         throw new Error("No insert response");
@@ -101,7 +102,7 @@ export async function updateItem(itemId: string, set: Content_Item_Set_Input): P
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.update_content_Item_by_pk) {
         throw new Error("No update response");
@@ -119,7 +120,7 @@ export async function deleteItem(itemId: string): Promise<string> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.delete_content_Item_by_pk) {
         throw new Error("No delete response");

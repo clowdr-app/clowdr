@@ -35,7 +35,7 @@ import { gql } from "@urql/core";
 import * as R from "ramda";
 import type { PropsWithChildren } from "react";
 import React, { Fragment, useMemo } from "react";
-import { Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
+import { Schedule_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -80,9 +80,7 @@ gql`
         requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                eventPeople: {
-                    event: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }, endTime: { _gte: $now } }
-                }
+                eventPeople: { event: { modeName: { _eq: LIVESTREAM }, scheduledEndTime: { _gte: $now } } }
                 registrantId: { _is_null: true }
             }
         ) {
@@ -95,9 +93,7 @@ gql`
         requiredProgramPeopleNotRegistered: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                eventPeople: {
-                    event: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }, endTime: { _gte: $now } }
-                }
+                eventPeople: { event: { modeName: { _eq: LIVESTREAM }, scheduledEndTime: { _gte: $now } } }
                 registrant: { userId: { _is_null: true } }
             }
         ) {
@@ -119,16 +115,16 @@ gql`
 
         livestreamEventsWithoutRegisteredPresenter: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
                 _not: { eventPeople: { roleName: { _eq: PRESENTER }, person: { registrantId: { _is_null: false } } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -141,16 +137,16 @@ gql`
 
         livestreamEventsWithoutRegisteredChair: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
                 _not: { eventPeople: { roleName: { _eq: CHAIR }, person: { registrantId: { _is_null: false } } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -163,16 +159,17 @@ gql`
 
         prerecordedEventsWithoutVideo: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _eq: PRERECORDED }
+                modeName: { _eq: LIVESTREAM }
+                autoPlayElementId: { _is_null: false }
                 _not: { item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -185,16 +182,17 @@ gql`
 
         prerecordedEventsWithVideo: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _eq: PRERECORDED }
+                modeName: { _eq: LIVESTREAM }
+                autoPlayElementId: { _is_null: false }
                 item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -210,17 +208,17 @@ gql`
             }
         }
 
-        zoomEvents: schedule_Event(
+        externalEvents: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _eq: ZOOM }
+                modeName: { _eq: EXTERNAL }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -228,7 +226,7 @@ gql`
             item {
                 id
                 title
-                elements(where: { typeName: { _eq: ZOOM } }) {
+                elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }) {
                     id
                     name
                     data
@@ -238,14 +236,14 @@ gql`
 
         allLiveEventsWithPeople: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
             }
         ) {
             id
             name
-            intendedRoomModeName
+            modeName
             room {
                 id
                 name
@@ -264,8 +262,9 @@ gql`
                 id
                 name
             }
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
+            autoPlayElementId
             eventPeople {
                 id
                 personId
@@ -284,16 +283,16 @@ gql`
 
         exhibitionEventsWithoutExhibition: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [EXHIBITION] }
+                modeName: { _in: [EXHIBITION] }
                 exhibitionId: { _is_null: true }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -302,16 +301,16 @@ gql`
 
         exhibitionEventsWithoutDiscussionRooms: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [EXHIBITION, NONE] }
+                modeName: { _in: [EXHIBITION, NONE] }
                 exhibition: { items: { item: { _not: { room: {} } } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -331,17 +330,17 @@ gql`
 
         liveEventsWithoutContent: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
                 itemId: { _is_null: true }
                 enableRecording: { _eq: true }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             item {
                 id
                 title
@@ -356,8 +355,8 @@ gql`
             eventX {
                 id
                 name
-                startTime
-                endTime
+                scheduledStartTime
+                scheduledEndTime
                 room {
                     id
                     name
@@ -366,25 +365,8 @@ gql`
             eventY {
                 id
                 name
-                startTime
-                endTime
-            }
-        }
-
-        shortEvents: schedule_Event(
-            where: { endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId }, durationSeconds: { _lte: 60 } }
-        ) {
-            id
-            name
-            startTime
-            endTime
-            room {
-                id
-                name
-            }
-            item {
-                id
-                title
+                scheduledStartTime
+                scheduledEndTime
             }
         }
 
@@ -393,23 +375,6 @@ gql`
             name
             livestreamDuration {
                 sum
-            }
-        }
-
-        eventsWithNegativeDuration: schedule_Event(
-            where: { endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId }, durationSeconds: { _lt: 0 } }
-        ) {
-            id
-            name
-            startTime
-            durationSeconds
-            room {
-                id
-                name
-            }
-            item {
-                id
-                title
             }
         }
     }
@@ -601,10 +566,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={filteredEvents?.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
                         </>
@@ -632,11 +597,11 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
                     items={checklistResponse.data?.livestreamEventsWithoutRegisteredPresenter}
-                    sortBy={(x) => Date.parse(x.startTime)}
+                    sortBy={(x) => Date.parse(x.scheduledStartTime)}
                 >
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
                         </>
@@ -661,11 +626,11 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
                     items={checklistResponse.data?.livestreamEventsWithoutRegisteredChair}
-                    sortBy={(x) => Date.parse(x.startTime)}
+                    sortBy={(x) => Date.parse(x.scheduledStartTime)}
                 >
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -698,10 +663,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!nonsyncedEvents && nonsyncedEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={nonsyncedEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={nonsyncedEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -733,10 +698,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!nonsyncedEvents && nonsyncedEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={nonsyncedEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={nonsyncedEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -805,7 +770,7 @@ export default function ChecklistPage(): JSX.Element {
 
     const prerecordedEventsHaveItem = useMemo(() => {
         const filteredEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
-            (event) => event.intendedRoomModeName === Room_Mode_Enum.Prerecorded && !event.item
+            (event) => event.modeName === Schedule_Mode_Enum.Livestream && event.autoPlayElementId && !event.item
         );
         return (
             <ChecklistItem
@@ -819,10 +784,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -847,11 +812,11 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
                     items={checklistResponse.data?.prerecordedEventsWithoutVideo}
-                    sortBy={(x) => Date.parse(x.startTime)}
+                    sortBy={(x) => Date.parse(x.scheduledStartTime)}
                 >
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -892,10 +857,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -926,7 +891,7 @@ export default function ChecklistPage(): JSX.Element {
                         ) {
                             return (
                                 version.data.broadcastTranscode.durationSeconds >
-                                (Date.parse(event.endTime) - Date.parse(event.startTime)) / 1000
+                                (Date.parse(event.scheduledEndTime) - Date.parse(event.scheduledStartTime)) / 1000
                             );
                         }
                     }
@@ -945,10 +910,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -977,7 +942,8 @@ export default function ChecklistPage(): JSX.Element {
                             version.data.broadcastTranscode &&
                             version.data.broadcastTranscode.durationSeconds !== undefined
                         ) {
-                            const d = (Date.parse(event.endTime) - Date.parse(event.startTime)) / 1000;
+                            const d =
+                                (Date.parse(event.scheduledEndTime) - Date.parse(event.scheduledStartTime)) / 1000;
                             const diff = version.data.broadcastTranscode.durationSeconds - d;
                             if (Math.abs(diff) > 1) {
                                 console.log("Event duration difference: ", {
@@ -1003,10 +969,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -1018,7 +984,7 @@ export default function ChecklistPage(): JSX.Element {
 
     const videoPlayerEventsHaveItem = useMemo(() => {
         const filteredEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
-            (event) => event.intendedRoomModeName === Room_Mode_Enum.VideoPlayer && !event.item
+            (event) => event.modeName === Schedule_Mode_Enum.VideoPlayer && !event.item
         );
         return (
             <ChecklistItem
@@ -1032,10 +998,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -1045,15 +1011,17 @@ export default function ChecklistPage(): JSX.Element {
         );
     }, [checklistResponse.data?.allLiveEventsWithPeople]);
 
-    const zoomEventsHaveZoom = useMemo(() => {
-        const filteredEvents = checklistResponse.data?.zoomEvents.filter(
+    const externalEventsHaveZoom = useMemo(() => {
+        const filteredEvents = checklistResponse.data?.externalEvents.filter(
             (event) =>
                 !event.item ||
                 !event.item.elements.some((ev) => {
                     if (ev.data && isElementDataBlob(ev.data)) {
                         const lastData = R.last(ev.data as ElementDataBlob)?.data;
                         if (lastData) {
-                            return lastData.type === Content_ElementType_Enum.Zoom && !!lastData.url?.length;
+                            return (
+                                lastData.type === Content_ElementType_Enum.ExternalEventLink && !!lastData.url?.length
+                            );
                         }
                     }
                     return false;
@@ -1071,10 +1039,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.scheduledStartTime)}>
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -1082,7 +1050,7 @@ export default function ChecklistPage(): JSX.Element {
                 </ExpandableList>
             </ChecklistItem>
         );
-    }, [checklistResponse.data?.zoomEvents]);
+    }, [checklistResponse.data?.externalEvents]);
 
     const exhibitionEventsWithoutExhibition = useMemo(() => {
         return (
@@ -1099,11 +1067,11 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
                     items={checklistResponse.data?.exhibitionEventsWithoutExhibition}
-                    sortBy={(x) => Date.parse(x.startTime)}
+                    sortBy={(x) => Date.parse(x.scheduledStartTime)}
                 >
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}: {x.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}: {x.name}
                         </>
                     )}
                 </ExpandableList>
@@ -1126,11 +1094,11 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
                     items={checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms}
-                    sortBy={(x) => Date.parse(x.startTime)}
+                    sortBy={(x) => Date.parse(x.scheduledStartTime)}
                 >
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}: {x.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}: {x.name}
                         </>
                     )}
                 </ExpandableList>
@@ -1155,11 +1123,11 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
                     items={checklistResponse.data?.liveEventsWithoutContent}
-                    sortBy={(x) => Date.parse(x.startTime)}
+                    sortBy={(x) => Date.parse(x.scheduledStartTime)}
                 >
                     {(x) => (
                         <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            {new Date(x.scheduledStartTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}
                         </>
@@ -1184,16 +1152,17 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
                     items={checklistResponse.data?.overlappingEvents}
-                    sortBy={(x) => (x.eventX ? Date.parse(x.eventX.startTime) : 0)}
+                    sortBy={(x) => (x.eventX ? Date.parse(x.eventX.scheduledStartTime) : 0)}
                 >
                     {(x) =>
                         x.eventX && x.eventY ? (
                             <>
-                                {new Date(x.eventX.startTime).toLocaleString()} - {x.eventX.room?.name}: {x.eventX.name}
+                                {new Date(x.eventX.scheduledStartTime).toLocaleString()} - {x.eventX.room?.name}:{" "}
+                                {x.eventX.name}
                                 <br />
                                 overlaps with
                                 <br />
-                                {new Date(x.eventY.startTime).toLocaleString()}: {x.eventY.name}
+                                {new Date(x.eventY.scheduledStartTime).toLocaleString()}: {x.eventY.name}
                             </>
                         ) : (
                             <>Unknown events</>
@@ -1203,61 +1172,6 @@ export default function ChecklistPage(): JSX.Element {
             </ChecklistItem>
         );
     }, [checklistResponse.data?.overlappingEvents]);
-
-    const shortEvents = useMemo(() => {
-        return (
-            <ChecklistItem
-                title="All events are longer than 60 seconds"
-                status="warning"
-                description="We do not recommend having events that are shorter than 60 seconds. Please consider modifying your schedule to lengthen these events."
-                action={{
-                    title: "Manage Schedule",
-                    url: "schedule",
-                }}
-                ok={checklistResponse.data?.shortEvents.length === 0}
-            >
-                <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.shortEvents} sortBy={(x) => Date.parse(x.startTime)}>
-                    {(x) => (
-                        <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
-                            <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
-                        </>
-                    )}
-                </ExpandableList>
-            </ChecklistItem>
-        );
-    }, [checklistResponse.data?.shortEvents]);
-
-    const eventsWithNegativeDuration = useMemo(() => {
-        return (
-            <ChecklistItem
-                title="All events have positive duration"
-                status="error"
-                description="Oops, how did this happen! One or more events has a negative duration. Please edit your schedule to ensure events end after they start. If this issue persists, please contact Midspace tech support."
-                action={{
-                    title: "Manage Schedule",
-                    url: "schedule",
-                }}
-                ok={checklistResponse.data?.eventsWithNegativeDuration.length === 0}
-            >
-                <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList
-                    items={checklistResponse.data?.eventsWithNegativeDuration}
-                    sortBy={(x) => Date.parse(x.startTime)}
-                >
-                    {(x) => (
-                        <>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
-                            <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
-                        </>
-                    )}
-                </ExpandableList>
-            </ChecklistItem>
-        );
-    }, [checklistResponse.data?.eventsWithNegativeDuration]);
 
     const roomsWithStreams = useMemo(() => {
         return (
@@ -1356,10 +1270,6 @@ export default function ChecklistPage(): JSX.Element {
                             </Heading>
                         </GridItem>
                         <GridItem colSpan={defaultColSpan}>{overlappingEvents}</GridItem>
-                        <GridItem colSpan={defaultColSpan}></GridItem>
-                        <GridItem colSpan={defaultColSpan}>{shortEvents}</GridItem>
-                        <GridItem colSpan={defaultColSpan}></GridItem>
-                        <GridItem colSpan={defaultColSpan}>{eventsWithNegativeDuration}</GridItem>
                         <GridItem colSpan={2} rowSpan={2}></GridItem>
 
                         <GridItem colSpan={defaultColSpan}>
@@ -1417,7 +1327,7 @@ export default function ChecklistPage(): JSX.Element {
                                 Zoom events
                             </Heading>
                         </GridItem>
-                        <GridItem colSpan={defaultColSpan}>{zoomEventsHaveZoom}</GridItem>
+                        <GridItem colSpan={defaultColSpan}>{externalEventsHaveZoom}</GridItem>
                         <GridItem colSpan={2} rowSpan={2}></GridItem>
 
                         <GridItem colSpan={defaultColSpan}>

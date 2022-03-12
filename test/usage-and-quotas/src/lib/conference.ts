@@ -62,10 +62,11 @@ gql`
 const slug = "test-e2e-usage-and-quotas";
 
 export async function createTestConference() {
+    const rand = Math.round(Math.random() * 100000000);
     return gqlClient
         ?.mutation<CreateConferenceMutation, CreateConferenceMutationVariables>(CreateConferenceDocument, {
             object: {
-                slug: slug + "-" + Math.round(Math.random() * 100000000),
+                slug: slug + "-" + rand,
                 createdBy: process.env.TEST_USER_ID,
                 demoCode: {
                     data: {
@@ -73,8 +74,8 @@ export async function createTestConference() {
                         usedById: process.env.TEST_USER_ID,
                     },
                 },
-                name: "Test-E2E-Usage-And-Quotas",
-                shortName: "Test-E2E-Usage-And-Quotas",
+                name: "Test-E2E-Usage-And-Quotas" + "-" + rand,
+                shortName: "Test-E2E-Usage-And-Quotas" + "-" + rand,
             },
         })
         .toPromise();

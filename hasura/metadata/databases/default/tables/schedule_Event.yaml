@@ -8,6 +8,9 @@ configuration:
     updated_at: updatedAt
   custom_root_fields: {}
 object_relationships:
+- name: autoPlayElement
+  using:
+    foreign_key_constraint_on: autoPlayElementId
 - name: conference
   using:
     foreign_key_constraint_on: conferenceId
@@ -26,15 +29,18 @@ object_relationships:
 - name: item
   using:
     foreign_key_constraint_on: itemId
+- name: mode
+  using:
+    foreign_key_constraint_on: modeName
 - name: room
   using:
     foreign_key_constraint_on: roomId
-- name: roomMode
-  using:
-    foreign_key_constraint_on: intendedRoomModeName
 - name: shufflePeriod
   using:
     foreign_key_constraint_on: shufflePeriodId
+- name: subconference
+  using:
+    foreign_key_constraint_on: subconferenceId
 array_relationships:
 - name: continuations
   using:
@@ -69,17 +75,16 @@ insert_permissions:
     columns:
     - automaticParticipationSurvey
     - conferenceId
-    - durationSeconds
     - enableRecording
-    - endTime
+    - scheduledEndTime
     - exhibitionId
     - id
-    - intendedRoomModeName
     - itemId
+    - modeName
     - name
     - roomId
+    - scheduledStartTime
     - shufflePeriodId
-    - startTime
     - streamTextEventId
     - subconferenceId
     - visibilityLevel
@@ -98,17 +103,16 @@ insert_permissions:
     columns:
     - automaticParticipationSurvey
     - conferenceId
-    - durationSeconds
     - enableRecording
-    - endTime
+    - scheduledEndTime
     - exhibitionId
     - id
-    - intendedRoomModeName
+    - modeName
     - itemId
     - name
     - roomId
     - shufflePeriodId
-    - startTime
+    - scheduledStartTime
     - streamTextEventId
     - subconferenceId
     - visibilityLevel
@@ -118,17 +122,16 @@ select_permissions:
     columns:
     - conferenceId
     - created_at
-    - durationSeconds
     - enableRecording
-    - endTime
+    - scheduledEndTime
     - exhibitionId
     - id
-    - intendedRoomModeName
+    - modeName
     - itemId
     - name
     - roomId
     - shufflePeriodId
-    - startTime
+    - scheduledStartTime
     - streamTextEventId
     - subconferenceId
     - updated_at
@@ -158,17 +161,16 @@ select_permissions:
     - automaticParticipationSurvey
     - conferenceId
     - created_at
-    - durationSeconds
     - enableRecording
-    - endTime
+    - scheduledEndTime
     - exhibitionId
     - id
-    - intendedRoomModeName
+    - modeName
     - itemId
     - name
     - roomId
     - shufflePeriodId
-    - startTime
+    - scheduledStartTime
     - streamTextEventId
     - subconferenceId
     - updated_at
@@ -188,17 +190,16 @@ select_permissions:
     - automaticParticipationSurvey
     - conferenceId
     - created_at
-    - durationSeconds
     - enableRecording
-    - endTime
+    - scheduledEndTime
     - exhibitionId
     - id
-    - intendedRoomModeName
+    - modeName
     - itemId
     - name
     - roomId
     - shufflePeriodId
-    - startTime
+    - scheduledStartTime
     - streamTextEventId
     - subconferenceId
     - updated_at
@@ -219,16 +220,15 @@ select_permissions:
     columns:
     - conferenceId
     - created_at
-    - durationSeconds
-    - endTime
+    - scheduledEndTime
     - exhibitionId
     - id
-    - intendedRoomModeName
+    - modeName
     - itemId
     - name
     - roomId
     - shufflePeriodId
-    - startTime
+    - scheduledStartTime
     - subconferenceId
     - updated_at
     - visibilityLevel
@@ -257,16 +257,15 @@ update_permissions:
     check: null
     columns:
     - automaticParticipationSurvey
-    - durationSeconds
     - enableRecording
-    - endTime
+    - scheduledEndTime
     - exhibitionId
-    - intendedRoomModeName
+    - modeName
     - itemId
     - name
     - roomId
     - shufflePeriodId
-    - startTime
+    - scheduledStartTime
     - streamTextEventId
     - visibilityLevel
     filter:
@@ -281,16 +280,15 @@ update_permissions:
     check: null
     columns:
     - automaticParticipationSurvey
-    - durationSeconds
     - enableRecording
-    - endTime
+    - scheduledEndTime
     - exhibitionId
-    - intendedRoomModeName
+    - modeName
     - itemId
     - name
     - roomId
     - shufflePeriodId
-    - startTime
+    - scheduledStartTime
     - streamTextEventId
     - visibilityLevel
     filter:
@@ -365,13 +363,12 @@ event_triggers:
     enable_manual: true
     update:
       columns:
-      - durationSeconds
-      - intendedRoomModeName
-      - endTime
-      - startTime
+      - scheduledEndTime
+      - modeName
+      - scheduledStartTime
       - conferenceId
-      - itemId
       - id
+      - itemId
       - roomId
   headers:
   - name: x-hasura-event-secret

@@ -1,0 +1,1 @@
+alter table "schedule"."Event" add constraint "start_and_end_times_exist_together" check (("scheduledStartTime" IS NOT NULL AND "scheduledEndTime" IS NOT NULL) OR ("scheduledStartTime" IS NULL AND "scheduledEndTime" IS NULL));

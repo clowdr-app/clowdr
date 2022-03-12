@@ -39,8 +39,8 @@ import type {
 } from "../../../../generated/graphql";
 import {
     AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
-    Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
+    Schedule_Mode_Enum,
     useAddEventPeople_InsertEventPeopleMutation,
     useAddEventPeople_InsertProgramPeopleMutation,
     useAddEventPeople_SelectRegistrantsQuery,
@@ -75,16 +75,15 @@ gql`
     fragment EventInfo on schedule_Event {
         conferenceId
         id
-        durationSeconds
         eventPeople {
             ...EventProgramPersonInfo
         }
         id
-        intendedRoomModeName
+        modeName
         name
         roomId
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         itemId
         exhibitionId
         shufflePeriodId
@@ -124,11 +123,7 @@ gql`
 `;
 
 export function requiresEventPeople(event: EventInfoFragment): boolean {
-    return (
-        (!event.eventPeople || event.eventPeople.length === 0) &&
-        (event.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-            event.intendedRoomModeName === Room_Mode_Enum.QAndA)
-    );
+    return (!event.eventPeople || event.eventPeople.length === 0) && event.modeName === Schedule_Mode_Enum.Livestream;
 }
 
 export function AddEventProgramPerson_RegistrantModal({
@@ -454,7 +449,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                 set: (record, value) => {
                     record.roleName = value;
                 },
-                sort: (x: Room_Mode_Enum, y: Room_Mode_Enum) => x.localeCompare(y),
+                sort: (x: Schedule_Mode_Enum, y: Schedule_Mode_Enum) => x.localeCompare(y),
                 cell: function EventNameCell({
                     value,
                     onChange,
@@ -464,7 +459,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                     return (
                         <Select
                             value={value ?? ""}
-                            onChange={(ev) => onChange?.(ev.target.value as Room_Mode_Enum)}
+                            onChange={(ev) => onChange?.(ev.target.value as Schedule_Mode_Enum)}
                             onBlur={onBlur}
                             ref={ref as LegacyRef<HTMLSelectElement>}
                         >

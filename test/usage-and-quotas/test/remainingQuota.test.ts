@@ -6,7 +6,7 @@ import type {
     TestConferenceFragment,
     UsageFragment,
 } from "../src/generated/graphql";
-import { Content_ItemType_Enum, Room_ManagementMode_Enum, Room_Mode_Enum } from "../src/generated/graphql";
+import { Content_ItemType_Enum, Room_ManagementMode_Enum, Schedule_Mode_Enum } from "../src/generated/graphql";
 import { cleanupTestConference, createTestConference } from "../src/lib/conference";
 import { deleteEvent, insertEvent } from "../src/lib/event";
 import { deleteItem, insertItem } from "../src/lib/item";
@@ -220,9 +220,9 @@ describe("RemainingQuota", () => {
             const duration = 100;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: streamingRoom1.id,
             });
@@ -238,9 +238,9 @@ describe("RemainingQuota", () => {
             const pastDuration = 10;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - pastDuration * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() - pastDuration * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() - pastDuration * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: streamingRoom1.id,
             });
@@ -256,9 +256,9 @@ describe("RemainingQuota", () => {
             const pastDuration = 10;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - pastDuration * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() - pastDuration * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() - pastDuration * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: streamingRoom1.id,
             });
@@ -292,9 +292,9 @@ describe("RemainingQuota", () => {
             const duration = 100;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() - 24 * 60 * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: videoChatRoom1.id,
             });
@@ -309,9 +309,9 @@ describe("RemainingQuota", () => {
             const duration = 100;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                scheduledStartTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() - 24 * 60 * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Exhibition,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: videoChatRoom1.id,
             });
@@ -327,9 +327,9 @@ describe("RemainingQuota", () => {
             const pastDuration = 110;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - pastDuration * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() - pastDuration * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() - pastDuration * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: streamingRoom1.id,
             });
@@ -400,9 +400,9 @@ describe("RemainingQuota", () => {
             const duration = 100;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: videoChatRoom1.id,
             });
@@ -418,9 +418,9 @@ describe("RemainingQuota", () => {
             const pastDuration = 10;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - pastDuration * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() - pastDuration * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() - pastDuration * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: videoChatRoom1.id,
             });
@@ -436,9 +436,9 @@ describe("RemainingQuota", () => {
             const pastDuration = 10;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - pastDuration * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() - pastDuration * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() - pastDuration * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: videoChatRoom1.id,
             });
@@ -472,9 +472,9 @@ describe("RemainingQuota", () => {
             const duration = 100;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: streamingRoom1.id,
             });
@@ -489,9 +489,9 @@ describe("RemainingQuota", () => {
             const duration = 100;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + duration * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Exhibition,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: videoChatRoom1.id,
             });
@@ -507,9 +507,9 @@ describe("RemainingQuota", () => {
             const pastDuration = 110;
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - pastDuration * 60 * 1000),
-                durationSeconds: duration * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() - pastDuration * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + (duration - pastDuration) * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: videoChatRoom1.id,
             });
@@ -931,9 +931,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -988,9 +988,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1013,9 +1013,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             const event = await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1043,9 +1043,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1068,9 +1068,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             const event = await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1130,9 +1130,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1187,9 +1187,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1212,9 +1212,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             const event = await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1242,9 +1242,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1267,9 +1267,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             const event = await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1312,9 +1312,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1344,9 +1344,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1552,9 +1552,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -1580,9 +1580,9 @@ describe("RemainingQuota - Room quotas", () => {
 
             const event = await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });

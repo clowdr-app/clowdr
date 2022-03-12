@@ -19,11 +19,11 @@ interface Props {
 }
 
 function useValue({ hlsUri, event }: Props) {
-    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
-    const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
+    const scheduledStartTime = useMemo(() => Date.parse(event.scheduledStartTime), [event.scheduledStartTime]);
+    const scheduledEndTime = useMemo(() => Date.parse(event.scheduledEndTime), [event.scheduledEndTime]);
     const realNow = useRealTime(1000);
     const now = realNow + 2000; // adjust for expected RTMP delay
-    const live = now >= startTime && now <= endTime;
+    const live = now >= scheduledStartTime && now <= scheduledEndTime;
 
     const vonageGlobalState = useVonageGlobalState();
     const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -142,8 +142,8 @@ function useValue({ hlsUri, event }: Props) {
     return {
         hlsUri,
         event,
-        startTime,
-        endTime,
+        scheduledStartTime,
+        scheduledEndTime,
         now,
         live,
         liveOnAir,

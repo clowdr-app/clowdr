@@ -1,5 +1,5 @@
 import { expect } from "vitest";
-import extractActualError from "./triggers/extractError";
+import extractActualError from "../src/lib/extractError";
 
 export default async function expectError(message: string, p: Promise<unknown>, doExtract = true): Promise<void> {
     if (!doExtract) {

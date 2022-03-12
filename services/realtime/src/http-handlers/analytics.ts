@@ -8,7 +8,7 @@ import { ModelName, publishBatchUpdate } from "../rabbitmq/analytics/batchUpdate
 
 gql`
     query Analytics_ListConferences($cutoff: timestamptz!) {
-        conference_Conference(where: { events: { endTime: { _gte: $cutoff } } }) {
+        conference_Conference(where: { events: { scheduledEndTime: { _gte: $cutoff } } }) {
             id
         }
     }

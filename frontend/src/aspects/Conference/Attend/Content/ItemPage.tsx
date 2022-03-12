@@ -43,7 +43,7 @@ gql`
     }
 
     fragment ItemEvent on schedule_Event {
-        startTime
+        scheduledStartTime
         roomId
         room {
             name
@@ -51,10 +51,9 @@ gql`
         }
         exhibitionId
         id
-        durationSeconds
-        endTime
+        scheduledEndTime
         name
-        intendedRoomModeName
+        modeName
         itemId
     }
 `;

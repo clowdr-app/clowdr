@@ -1044,19 +1044,19 @@ export default function BatchAddEventPeople({
                 startsAfterTime || endsBeforeTime
                     ? filteredByRoom.filter(
                           (event) =>
-                              (!startsAfterTime || Date.parse(event.startTime) >= startsAfterTime) &&
+                              (!startsAfterTime || Date.parse(event.scheduledStartTime) >= startsAfterTime) &&
                               (!endsBeforeTime ||
-                                  Date.parse(event.startTime) + event.durationSeconds * 1000 <= endsBeforeTime)
+                                  Date.parse(event.scheduledStartTime) + event.durationSeconds * 1000 <= endsBeforeTime)
                       )
                     : filteredByRoom;
             setFilteredEvents(
                 R.sortWith(
                     [
-                        (a, b) => Date.parse(a.startTime) - Date.parse(b.startTime),
+                        (a, b) => Date.parse(a.scheduledStartTime) - Date.parse(b.scheduledStartTime),
                         (a, b) =>
-                            Date.parse(a.startTime) +
+                            Date.parse(a.scheduledStartTime) +
                             a.durationSeconds * 1000 -
-                            (Date.parse(b.startTime) + b.durationSeconds * 1000),
+                            (Date.parse(b.scheduledStartTime) + b.durationSeconds * 1000),
                     ],
                     filteredByTime
                 )
@@ -1132,12 +1132,14 @@ export default function BatchAddEventPeople({
                             <List>
                                 {firstEvent ? (
                                     <ListItem>
-                                        First: {new Date(firstEvent.startTime).toLocaleString()} - {firstEvent.name}
+                                        First: {new Date(firstEvent.scheduledStartTime).toLocaleString()} -{" "}
+                                        {firstEvent.name}
                                     </ListItem>
                                 ) : undefined}
                                 {lastEvent ? (
                                     <ListItem>
-                                        Last: {new Date(lastEvent.startTime).toLocaleString()} - {lastEvent.name}
+                                        Last: {new Date(lastEvent.scheduledStartTime).toLocaleString()} -{" "}
+                                        {lastEvent.name}
                                     </ListItem>
                                 ) : undefined}
                             </List>

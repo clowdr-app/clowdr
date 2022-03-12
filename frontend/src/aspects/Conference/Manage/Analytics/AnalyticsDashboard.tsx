@@ -82,7 +82,7 @@ gql`
                     hlsViewCount
                     roomId
                 }
-                events(order_by: [{ startTime: asc }, { endTime: asc }]) {
+                events(order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }]) {
                     id
                     name
                     roomId
@@ -97,10 +97,10 @@ gql`
                         name
                     }
 
-                    startTime
-                    endTime
+                    scheduledStartTime
+                    scheduledEndTime
 
-                    intendedRoomModeName
+                    modeName
                 }
             }
         }
@@ -405,12 +405,12 @@ export default function AnalyticsDashboard(): JSX.Element {
                         let streamViews = 0;
                         while (pointers.event < room.events.length) {
                             const event = room.events[pointers.event];
-                            const eventStartMs = Date.parse(event.startTime);
+                            const eventStartMs = Date.parse(event.scheduledStartTime);
                             if (eventStartMs >= currentEndMs) {
                                 // Start in the future
                                 break;
                             }
-                            const eventEndMs = Date.parse(event.endTime);
+                            const eventEndMs = Date.parse(event.scheduledEndTime);
                             if (eventEndMs < currentStartMs) {
                                 // Ended in the past
                                 pointers.event++;

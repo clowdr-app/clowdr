@@ -31,8 +31,8 @@ import {
     Content_ElementType_Enum,
     Content_ItemType_Enum,
     Room_ManagementMode_Enum,
-    Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
+    Schedule_Mode_Enum,
 } from "../../generated/graphql";
 import { publishTask } from "../../rabbitmq/tasks";
 import type { Context } from "../../types/context";
@@ -718,12 +718,12 @@ export function generateContentEntities(
     return result;
 }
 
-const modeMap: Record<NonNullable<Event<string>["interactionMode"]>, Room_Mode_Enum> = {
-    "video-chat": Room_Mode_Enum.VideoChat,
-    "breakout video-chat": Room_Mode_Enum.Exhibition,
-    "external event": Room_Mode_Enum.Zoom,
-    networking: Room_Mode_Enum.Shuffle,
-    "live-stream": Room_Mode_Enum.Presentation,
+const modeMap: Record<NonNullable<Event<string>["interactionMode"]>, Schedule_Mode_Enum> = {
+    "video-chat": Schedule_Mode_Enum.VideoChat,
+    "breakout video-chat": Schedule_Mode_Enum.Exhibition,
+    "external event": Schedule_Mode_Enum.External,
+    networking: Schedule_Mode_Enum.Shuffle,
+    "live-stream": Schedule_Mode_Enum.Livestream,
 };
 
 function generateEventEntities(
@@ -743,7 +743,7 @@ function generateEventEntities(
         eventMode === "networking" && context.createdBy
             ? composeOutputNames(composeOutputNames(rootOutputName, "shuffle"), "id")
             : undefined;
-    const startTime = typeof event.start === "string" ? new Date(event.start) : event.start;
+    const scheduledStartTime = typeof event.start === "string" ? new Date(event.start) : event.start;
     return [
         {
             __outputs: [
@@ -761,12 +761,12 @@ function generateEventEntities(
             durationSeconds: event.duration * 60,
             enableRecording: true,
             exhibitionId: exhibitionOutputName ? composeOutputNames(exhibitionOutputName, "id") : undefined,
-            intendedRoomModeName: modeMap[eventMode],
+            modeName: modeMap[eventMode],
             itemId: contentOutputName && composeOutputNames(contentOutputName, "id"),
             name: event.name,
             roomId: composeOutputNames(roomOutputName, "id"),
             shufflePeriodId: shufflePeriodIdOutputName,
-            startTime: startTime.toISOString(),
+            scheduledStartTime: scheduledStartTime.toISOString(),
         },
         ...[...(sessionChairs ? sessionChairs : []), ...event.chairs].map<Entity>((chair, idx) => ({
             __outputs: [
@@ -835,8 +835,8 @@ function generateEventEntities(
                       conferenceId: context.conferenceId,
                       subconferenceId: context.subconferenceId,
 
-                      startAt: startTime.toISOString(),
-                      endAt: new Date(startTime.getTime() + event.duration * 60 * 1000).toISOString(),
+                      startAt: scheduledStartTime.toISOString(),
+                      endAt: new Date(scheduledStartTime.getTime() + event.duration * 60 * 1000).toISOString(),
                       maxRegistrantsPerRoom: 5,
                       name: event.name,
                       organiserId: context.createdBy,

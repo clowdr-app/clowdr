@@ -14,6 +14,7 @@ import type {
     UpdateRoomMutationVariables,
 } from "../generated/graphql";
 import { DeleteRoomDocument, GetRoomDocument, InsertRoomDocument, UpdateRoomDocument } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment Room on room_Room {
@@ -68,7 +69,7 @@ export async function getRoom(roomId: string): Promise<RoomFragment> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.room_Room_by_pk) {
         throw new Error("No data");
@@ -86,7 +87,7 @@ export async function insertRoom(object: Room_Room_Insert_Input): Promise<RoomFr
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.insert_room_Room_one) {
         throw new Error("No insert response");
@@ -105,7 +106,7 @@ export async function updateRoom(roomId: string, set: Room_Room_Set_Input): Prom
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.update_room_Room_by_pk) {
         throw new Error("No update response");
@@ -123,7 +124,7 @@ export async function deleteRoom(roomId: string): Promise<string> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.delete_room_Room_by_pk) {
         throw new Error("No delete response");

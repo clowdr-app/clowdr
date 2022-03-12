@@ -515,9 +515,9 @@ export class ChannelStackDataService {
                         id
                         immediateEvent: events(
                             where: {
-                                startTime: { _lte: $now }
-                                endTime: { _gte: $syncCutoff }
-                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                scheduledStartTime: { _lte: $now }
+                                scheduledEndTime: { _gte: $syncCutoff }
+                                modeName: { _eq: LIVESTREAM }
                             }
                             limit: 1
                         ) {
@@ -525,20 +525,17 @@ export class ChannelStackDataService {
                         }
                         delayedImmediateEvent: events(
                             where: {
-                                startTime: { _gt: $now, _lt: $syncCutoff }
-                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                scheduledStartTime: { _gt: $now, _lt: $syncCutoff }
+                                modeName: { _eq: LIVESTREAM }
                             }
-                            order_by: { startTime: desc_nulls_last }
+                            order_by: { scheduledStartTime: desc_nulls_last }
                             limit: 1
                         ) {
                             id
                         }
                         fixedEvent: events(
-                            where: {
-                                startTime: { _gte: $syncCutoff }
-                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
-                            }
-                            order_by: { startTime: asc_nulls_last }
+                            where: { scheduledStartTime: { _gte: $syncCutoff }, modeName: { _eq: LIVESTREAM } }
+                            order_by: { scheduledStartTime: asc_nulls_last }
                             limit: 1
                         ) {
                             id

@@ -166,7 +166,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.PosterUrl:
             case Content_ElementType_Enum.VideoUrl:
             case Content_ElementType_Enum.AudioUrl:
-            case Content_ElementType_Enum.Zoom:
+            case Content_ElementType_Enum.ExternalEventLink:
                 return (
                     <UploadUrlForm
                         elementId={elementId}

@@ -43,9 +43,10 @@ export function EventsTable({
                 </Thead>
                 <Tbody>
                     {events.length > 0 ? (
-                        R.sort((a, b) => Date.parse(a.startTime) - Date.parse(b.startTime), events).map((event) => (
-                            <Event key={event.id} itemEvent={event} includeRoom={includeRoom} />
-                        ))
+                        R.sort(
+                            (a, b) => Date.parse(a.scheduledStartTime) - Date.parse(b.scheduledStartTime),
+                            events
+                        ).map((event) => <Event key={event.id} itemEvent={event} includeRoom={includeRoom} />)
                     ) : (
                         <>No events.</>
                     )}
@@ -67,8 +68,8 @@ function Event({
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const now = useRealTime(60000);
 
-    const startMillis = useMemo(() => Date.parse(itemEvent.startTime), [itemEvent.startTime]);
-    const endMillis = useMemo(() => Date.parse(itemEvent.endTime), [itemEvent.endTime]);
+    const startMillis = useMemo(() => Date.parse(itemEvent.scheduledStartTime), [itemEvent.scheduledStartTime]);
+    const endMillis = useMemo(() => Date.parse(itemEvent.scheduledEndTime), [itemEvent.scheduledEndTime]);
 
     const startDate = useMemo(() => {
         return new Date(startMillis).toLocaleString(undefined, {
@@ -77,7 +78,7 @@ function Event({
         });
     }, [startMillis]);
 
-    const startTime = useMemo(() => {
+    const scheduledStartTime = useMemo(() => {
         return new Date(startMillis).toLocaleString(undefined, {
             hour: "2-digit",
             minute: "2-digit",
@@ -110,7 +111,7 @@ function Event({
                 <Text>{startDate}</Text>
             </Td>
             <Td px={1}>
-                <Text>{startTime}</Text>
+                <Text>{scheduledStartTime}</Text>
             </Td>
             <Td>
                 <Text>{duration}</Text>

@@ -268,12 +268,12 @@ export class RaiseHandState {
         this.IsBackstage.publish(value);
     }
 
-    private startTimeOfNextBackstage: number | null = null;
+    private scheduledStartTimeOfNextBackstage: number | null = null;
     public StartTimeOfNextBackstage: Observable<number | null> = new Observable((observer) => {
-        observer(this.startTimeOfNextBackstage);
+        observer(this.scheduledStartTimeOfNextBackstage);
     });
     public setStartTimeOfNextBackstage(value: number | null): void {
-        this.startTimeOfNextBackstage = value;
+        this.scheduledStartTimeOfNextBackstage = value;
         this.StartTimeOfNextBackstage.publish(value);
     }
 }

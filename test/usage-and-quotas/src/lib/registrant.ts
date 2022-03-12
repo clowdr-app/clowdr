@@ -19,6 +19,7 @@ import {
     InsertRegistrantDocument,
     UpdateRegistrantDocument,
 } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment Registrant on registrant_Registrant {
@@ -66,7 +67,7 @@ export async function getRegistrant(registrantId: string): Promise<RegistrantFra
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.registrant_Registrant_by_pk) {
         throw new Error("No data");
@@ -84,7 +85,7 @@ export async function insertRegistrant(object: Registrant_Registrant_Insert_Inpu
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.insert_registrant_Registrant_one) {
         throw new Error("No insert response");
@@ -106,7 +107,7 @@ export async function updateRegistrant(
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.update_registrant_Registrant_by_pk) {
         throw new Error("No update response");
@@ -124,7 +125,7 @@ export async function deleteRegistrant(registrantId: string): Promise<string> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.delete_registrant_Registrant_by_pk) {
         throw new Error("No delete response");

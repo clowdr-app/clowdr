@@ -33,10 +33,10 @@ export default function EventBox({
     const conference = useConference();
     const event = sortedEvents[0];
     const eventIds = useMemo(() => sortedEvents.map((x) => x.id), [sortedEvents]);
-    const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
+    const eventStartMs = useMemo(() => Date.parse(event.scheduledStartTime), [event.scheduledStartTime]);
     const durationSeconds = useMemo(() => {
         const lastEvent = sortedEvents[sortedEvents.length - 1];
-        return (Date.parse(lastEvent.startTime) + lastEvent.durationSeconds * 1000 - eventStartMs) / 1000;
+        return (Date.parse(lastEvent.scheduledStartTime) + lastEvent.durationSeconds * 1000 - eventStartMs) / 1000;
     }, [eventStartMs, sortedEvents]);
 
     const timelineParams = useTimelineParameters();
@@ -71,7 +71,7 @@ export default function EventBox({
                                 sortedEvents.map((ev, idx) => (
                                     <EventModeIcon
                                         key={idx}
-                                        mode={ev.intendedRoomModeName}
+                                        mode={ev.modeName}
                                         durationSeconds={ev.durationSeconds}
                                         fontSize="inherit"
                                     />
@@ -119,7 +119,9 @@ export default function EventBox({
                     <Divider
                         pos="absolute"
                         key={ev.id}
-                        top={(100 * (Date.parse(ev.startTime) - eventStartMs)) / (1000 * durationSeconds) + "%"}
+                        top={
+                            (100 * (Date.parse(ev.scheduledStartTime) - eventStartMs)) / (1000 * durationSeconds) + "%"
+                        }
                         left={0}
                         w="100%"
                         borderTopStyle="dashed"

@@ -50,22 +50,23 @@ gql`
         liveEvents: schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                startTime: { _lte: $later }
-                endTime: { _gte: $now }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                scheduledStartTime: { _lte: $later }
+                scheduledEndTime: { _gte: $now }
+                modeName: { _eq: LIVESTREAM }
             }
-            order_by: [{ startTime: asc }, { endTime: asc }, { room: { name: asc } }]
+            order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }, { room: { name: asc } }]
         ) {
             ...MonitorLivestreams_Event
         }
         prerecordedEvents: schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                startTime: { _lte: $later }
-                endTime: { _gte: $now }
-                intendedRoomModeName: { _in: [PRERECORDED] }
+                scheduledStartTime: { _lte: $later }
+                scheduledEndTime: { _gte: $now }
+                modeName: { _eq: LIVESTREAM }
+                autoPlayElementId: { _is_null: false }
             }
-            order_by: [{ startTime: asc }, { endTime: asc }, { room: { name: asc } }]
+            order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }, { room: { name: asc } }]
         ) {
             ...MonitorLivestreams_PrerecEvent
         }
@@ -74,9 +75,9 @@ gql`
     fragment MonitorLivestreams_PrerecEvent on schedule_Event {
         id
         conferenceId
-        startTime
-        endTime
-        intendedRoomModeName
+        scheduledStartTime
+        scheduledEndTime
+        modeName
         roomId
         room {
             id
@@ -105,10 +106,10 @@ gql`
     fragment MonitorLivestreams_Event on schedule_Event {
         id
         conferenceId
-        intendedRoomModeName
+        modeName
         name
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         roomId
         room {
             id
@@ -148,7 +149,7 @@ interface PersonStatus {
 
 interface EventStatus {
     event: MonitorLivestreams_EventFragment;
-    startTimeMs: number;
+    scheduledStartTimeMs: number;
     endTimeMs: number;
 
     isLive: boolean;
@@ -194,7 +195,7 @@ export default function LivestreamMonitoring(): JSX.Element {
             setLiveEvents((oldLiveEvents) =>
                 R.sortWith(
                     [
-                        (x, y) => x.startTimeMs - y.startTimeMs,
+                        (x, y) => x.scheduledStartTimeMs - y.scheduledStartTimeMs,
                         (x, y) => x.event.room.priority - y.event.room.priority,
                         (x, y) => x.event.room.name.localeCompare(y.event.room.name),
                     ],
@@ -221,13 +222,13 @@ export default function LivestreamMonitoring(): JSX.Element {
                             };
                         });
 
-                        const startTimeMs = Date.parse(event.startTime);
-                        const endTimeMs = Date.parse(event.endTime);
+                        const scheduledStartTimeMs = Date.parse(event.scheduledStartTime);
+                        const endTimeMs = Date.parse(event.scheduledEndTime);
 
                         const peopleForSeverity = people.filter((x) => !!x.userId);
                         const oldEvent = oldLiveEvents.find((x) => x.event.id === event.id);
                         const previouslyIsLive = !!oldEvent?.isLive;
-                        const isLive = startTimeMs <= nowRoundedUp && nowRoundedUp <= endTimeMs;
+                        const isLive = scheduledStartTimeMs <= nowRoundedUp && nowRoundedUp <= endTimeMs;
                         const previousSeverityLevel = oldEvent?.severityLevel;
                         let currentSeverityLevel: number;
 
@@ -296,7 +297,7 @@ export default function LivestreamMonitoring(): JSX.Element {
 
                         return {
                             event,
-                            startTimeMs,
+                            scheduledStartTimeMs,
                             endTimeMs,
                             isLive,
                             severityLevel,
@@ -331,9 +332,9 @@ export default function LivestreamMonitoring(): JSX.Element {
                     {sortedRooms.map((room) => {
                         const events = eventsByRoom[room.id];
                         if (events) {
-                            const sortedEvents = R.sortBy((x) => x.startTimeMs, events);
+                            const sortedEvents = R.sortBy((x) => x.scheduledStartTimeMs, events);
                             const shouldHighlight = events.some(
-                                (x) => x.startTimeMs < nowRoundedDown + 10 * 60 * 1000 && x.severityLevel >= 2
+                                (x) => x.scheduledStartTimeMs < nowRoundedDown + 10 * 60 * 1000 && x.severityLevel >= 2
                             );
                             return (
                                 <GridItem
@@ -386,14 +387,14 @@ export default function LivestreamMonitoring(): JSX.Element {
                                                                 <Text mb={1}>
                                                                     <chakra.span fontWeight="bold" mr={3}>
                                                                         {new Date(
-                                                                            event.event.startTime
+                                                                            event.event.scheduledStartTime
                                                                         ).toLocaleTimeString(undefined, {
                                                                             hour: "2-digit",
                                                                             minute: "2-digit",
                                                                         })}
                                                                         {" to "}
                                                                         {new Date(
-                                                                            event.event.endTime
+                                                                            event.event.scheduledEndTime
                                                                         ).toLocaleTimeString(undefined, {
                                                                             hour: "2-digit",
                                                                             minute: "2-digit",
@@ -493,10 +494,10 @@ export default function LivestreamMonitoring(): JSX.Element {
                 [(x, y) => x.priority - y.priority, (x, y) => x.name.localeCompare(y.name)],
                 R.uniq([
                     ...response.data?.liveEvents
-                        .filter((x) => Date.parse(x.startTime) <= nowRoundedUp + 10 * 60 * 1000)
+                        .filter((x) => Date.parse(x.scheduledStartTime) <= nowRoundedUp + 10 * 60 * 1000)
                         .map((x) => x.room),
                     ...response.data?.prerecordedEvents
-                        .filter((x) => Date.parse(x.startTime) <= nowRoundedUp + 10 * 60 * 1000)
+                        .filter((x) => Date.parse(x.scheduledStartTime) <= nowRoundedUp + 10 * 60 * 1000)
                         .map((x) => x.room),
                 ])
             );
@@ -613,8 +614,8 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
     const { hasCopied, onCopy } = useClipboard(event.id);
     const now = useRealTime(60 * 1000);
 
-    const startDate = useMemo(() => new Date(event.startTime), [event.startTime]);
-    const endDate = useMemo(() => new Date(event.endTime), [event.endTime]);
+    const startDate = useMemo(() => new Date(event.scheduledStartTime), [event.scheduledStartTime]);
+    const endDate = useMemo(() => new Date(event.scheduledEndTime), [event.scheduledEndTime]);
     const isFuture = startDate.getTime() > now;
     const isLive = startDate.getTime() <= now && now < endDate.getTime() - 5000;
 

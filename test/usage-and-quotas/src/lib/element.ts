@@ -19,6 +19,7 @@ import {
     InsertElementDocument,
     UpdateElementDocument,
 } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment Element on content_Element {
@@ -73,7 +74,7 @@ export async function getElement(elementId: string): Promise<ElementFragment> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.content_Element_by_pk) {
         throw new Error("No data");
@@ -91,7 +92,7 @@ export async function insertElement(object: Content_Element_Insert_Input): Promi
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.insert_content_Element_one) {
         throw new Error("No insert response");
@@ -110,7 +111,7 @@ export async function updateElement(elementId: string, set: Content_Element_Set_
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.update_content_Element_by_pk) {
         throw new Error("No update response");
@@ -128,7 +129,7 @@ export async function deleteElement(elementId: string): Promise<string> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.delete_content_Element_by_pk) {
         throw new Error("No delete response");

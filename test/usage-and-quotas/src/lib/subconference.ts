@@ -19,6 +19,7 @@ import {
     InsertSubconferenceDocument,
     UpdateSubconferenceDocument,
 } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment Subconference on conference_Subconference {
@@ -68,7 +69,7 @@ export async function getSubconference(subconferenceId: string): Promise<Subconf
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.conference_Subconference_by_pk) {
         throw new Error("No data");
@@ -88,7 +89,7 @@ export async function insertSubconference(
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.insert_conference_Subconference_one) {
         throw new Error("No insert response");
@@ -110,7 +111,7 @@ export async function updateSubconference(
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.update_conference_Subconference_by_pk) {
         throw new Error("No update response");
@@ -128,7 +129,7 @@ export async function deleteSubconference(subconferenceId: string): Promise<stri
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.delete_conference_Subconference_by_pk) {
         throw new Error("No delete response");

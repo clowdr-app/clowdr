@@ -10,7 +10,11 @@ import { roundDownToNearest, roundUpToNearest } from "../Utils/MathUtils";
 gql`
     query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
         schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                scheduledEndTime: { _gte: $now }
+                scheduledStartTime: { _lte: $cutoff }
+            }
         ) {
             ...MinimalEventInfo
         }
@@ -19,8 +23,8 @@ gql`
     fragment MinimalEventInfo on schedule_Event {
         id
         conferenceId
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         roomId
         room {
             id
@@ -80,13 +84,13 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
     useEffect(() => {
         const newActiveEvents = response.data?.schedule_Event
             ? R.sortBy<MinimalEventInfoFragment>(
-                  (x) => Date.parse(x.startTime),
+                  (x) => Date.parse(x.scheduledStartTime),
                   R.sortBy<MinimalEventInfoFragment>(
                       (x) => x.id,
                       R.filter(
                           (x) =>
-                              Date.parse(x.startTime) <= nowQuick + 10 * 60 * 1000 &&
-                              Date.parse(x.endTime) >= nowQuick - 2 * 60 * 1000,
+                              Date.parse(x.scheduledStartTime) <= nowQuick + 10 * 60 * 1000 &&
+                              Date.parse(x.scheduledEndTime) >= nowQuick - 2 * 60 * 1000,
                           response.data.schedule_Event
                       )
                   )

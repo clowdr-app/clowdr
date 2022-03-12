@@ -44,7 +44,7 @@ export class RemoteScheduleService {
                     type: "manual",
                     actionName: actionName.actionName,
                     id: actionName.id,
-                    startTime: this.getStartTime(action),
+                    scheduledStartTime: this.getStartTime(action),
                     isInputSwitch: this.isInputSwitch(action),
                     chainAfter: this.getChainAfter(action, scheduleActions),
                     chainBefore,
@@ -57,7 +57,7 @@ export class RemoteScheduleService {
                     type: "immediate",
                     actionName: actionName.actionName,
                     id: actionName.id,
-                    startTime: this.getStartTime(action),
+                    scheduledStartTime: this.getStartTime(action),
                     isInputSwitch: this.isInputSwitch(action),
                     chainAfter: this.getChainAfter(action, scheduleActions),
                     chainBefore: [],
@@ -80,7 +80,7 @@ export class RemoteScheduleService {
         return {
             type: "invalid",
             actionName: action?.ActionName ?? null,
-            startTime: this.getStartTime(action),
+            scheduledStartTime: this.getStartTime(action),
             isInputSwitch: this.isInputSwitch(action),
             chainBefore,
             chainAfter: this.getChainAfter(action, otherActions),
@@ -169,7 +169,7 @@ export class RemoteScheduleService {
         }
 
         const actionName = action.ActionName;
-        const startTime = action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings?.Time
+        const scheduledStartTime = action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings?.Time
             ? Date.parse(action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings.Time)
             : 0;
         const s3Key =
@@ -177,7 +177,7 @@ export class RemoteScheduleService {
                 ? action.ScheduleActionSettings.InputSwitchSettings.UrlPath[0]
                 : null;
 
-        if (!actionName || !startTime || !s3Key) {
+        if (!actionName || !scheduledStartTime || !s3Key) {
             return null;
         }
 
@@ -186,7 +186,7 @@ export class RemoteScheduleService {
             actionName,
             eventId: event.eventId,
             mode: "prerecorded",
-            startTime,
+            scheduledStartTime,
             rtmpInputName: null,
             s3Key,
             chainAfter: this.getChainAfter(action, otherActions),
@@ -214,7 +214,7 @@ export class RemoteScheduleService {
         }
 
         const actionName = action.ActionName;
-        const startTime = this.getStartTime(action);
+        const scheduledStartTime = this.getStartTime(action);
         const rtmpInputName =
             action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference?.endsWith("-rtmpA")
                 ? Video_RtmpInput_Enum.RtmpA
@@ -226,7 +226,7 @@ export class RemoteScheduleService {
                 ? Video_RtmpInput_Enum.RtmpRoom
                 : null;
 
-        if (!actionName || !startTime || !rtmpInputName) {
+        if (!actionName || !scheduledStartTime || !rtmpInputName) {
             return null;
         }
 
@@ -235,7 +235,7 @@ export class RemoteScheduleService {
             actionName,
             eventId: event.eventId,
             mode: "live",
-            startTime,
+            scheduledStartTime,
             rtmpInputName,
             s3Key: null,
             chainAfter: this.getChainAfter(action, otherActions),
@@ -362,7 +362,7 @@ export type EventAction = {
     mode: "prerecorded" | "live";
     rtmpInputName: Video_RtmpInput_Enum | null;
     s3Key: string | null;
-    startTime: number;
+    scheduledStartTime: number;
     sequenceNumber: number;
 } & ActionChain;
 
@@ -370,7 +370,7 @@ export type ManualAction = {
     type: "manual";
     actionName: string;
     id: string;
-    startTime: number | null;
+    scheduledStartTime: number | null;
     isInputSwitch: boolean;
 } & ActionChain;
 
@@ -378,14 +378,14 @@ export type ImmediateAction = {
     type: "immediate";
     actionName: string;
     id: string;
-    startTime: number | null;
+    scheduledStartTime: number | null;
     isInputSwitch: boolean;
 } & ActionChain;
 
 export type InvalidAction = {
     type: "invalid";
     actionName: string | null;
-    startTime: number | null;
+    scheduledStartTime: number | null;
     isInputSwitch: boolean;
 } & ActionChain;
 

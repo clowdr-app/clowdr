@@ -15,7 +15,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob, ZoomBlob } from "@midspace/shared-types/content";
+import type { ElementDataBlob, ExternalEventLinkBlob } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
@@ -23,9 +23,9 @@ import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "..
 import {
     Content_ItemType_Enum,
     Registrant_RegistrantRole_Enum,
-    Room_Mode_Enum,
     Room_PersonRole_Enum,
     Schedule_EventProgramPersonRole_Enum,
+    Schedule_Mode_Enum,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
@@ -60,7 +60,9 @@ const HlsPlayer = React.lazy(() => import("./Video/HlsPlayer"));
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) @cached {
-        schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }) {
+        schedule_Event(
+            where: { roomId: { _eq: $roomId }, scheduledEndTime: { _gte: $now }, scheduledStartTime: { _lte: $cutoff } }
+        ) {
             ...Room_EventSummary
         }
     }
@@ -69,10 +71,10 @@ gql`
         id
         roomId
         conferenceId
-        startTime
+        scheduledStartTime
         name
-        endTime
-        intendedRoomModeName
+        scheduledEndTime
+        modeName
         itemId
         exhibitionId
         streamTextEventId
@@ -92,7 +94,7 @@ gql`
                 typeName
                 itemId
             }
-            zoomItems: elements(where: { typeName: { _eq: ZOOM } }, limit: 1) {
+            zoomItems: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }, limit: 1) {
                 id
                 data
                 name
@@ -243,8 +245,7 @@ function RoomInner({
     const presentingCurrentOrUpcomingSoonEvent = useMemo(() => {
         const isPresenterOfCurrentEvent =
             currentRoomEvent !== null &&
-            (currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+            currentRoomEvent.modeName === Schedule_Mode_Enum.Livestream &&
             currentRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id);
 
         const isPresenterOfUpcomingSoonEvent = !!nonCurrentLiveEventsInNext20Mins?.some((event) =>
@@ -257,9 +258,7 @@ function RoomInner({
     const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
     const alreadyBackstage = useRef<boolean>(false);
 
-    const hasBackstage = !!roomEvents.some((event) =>
-        [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(event.intendedRoomModeName)
-    );
+    const hasBackstage = !!roomEvents.some((event) => Schedule_Mode_Enum.Livestream === event.modeName);
 
     const notExplicitlyWatchingCurrentOrNextEvent =
         !watchStreamForEventId ||
@@ -278,16 +277,16 @@ function RoomInner({
         }
     }, [nextRoomEvent]);
 
-    const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.None;
+    const currentEventModeIsNone = currentRoomEvent?.modeName === Schedule_Mode_Enum.None;
     const showDefaultVideoChatRoom = useMemo(
         () =>
             !roomDetails.isProgramRoom ||
             (!roomDetails.isStreamingProgramRoom &&
                 ((!currentRoomEvent &&
                     (!nextRoomEvent ||
-                        nextRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Zoom ||
+                        nextRoomEvent.modeName !== Schedule_Mode_Enum.External ||
                         zoomEventStartsAt - now30s > 10 * 60 * 1000)) ||
-                    currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat ||
+                    currentRoomEvent?.modeName === Schedule_Mode_Enum.VideoChat ||
                     (!currentRoomEvent && roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor))),
         [
             currentRoomEvent,
@@ -306,16 +305,16 @@ function RoomInner({
                 const currentZoomItems = currentRoomEvent.item?.zoomItems;
                 if (currentZoomItems?.length) {
                     const versions = currentZoomItems[0].data as ElementDataBlob;
-                    const latest = R.last(versions)?.data as ZoomBlob;
+                    const latest = R.last(versions)?.data as ExternalEventLinkBlob;
                     return { url: latest.url, name: currentZoomItems[0].name };
                 }
             }
 
             if (nextRoomEvent) {
                 const nextZoomItems = nextRoomEvent.item?.zoomItems;
-                if (nextZoomItems?.length && now30s > Date.parse(nextRoomEvent.startTime) - 20 * 60 * 1000) {
+                if (nextZoomItems?.length && now30s > Date.parse(nextRoomEvent.scheduledStartTime) - 20 * 60 * 1000) {
                     const versions = nextZoomItems[0].data as ElementDataBlob;
-                    const latest = R.last(versions)?.data as ZoomBlob;
+                    const latest = R.last(versions)?.data as ExternalEventLinkBlob;
                     return { url: latest.url, name: nextZoomItems[0].name };
                 }
             }
@@ -333,7 +332,7 @@ function RoomInner({
         if (
             selectedVideoElementId &&
             currentRoomEvent &&
-            currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.VideoPlayer
+            currentRoomEvent.modeName !== Schedule_Mode_Enum.VideoPlayer
         ) {
             setSelectedVideoElementId(null);
         }
@@ -344,8 +343,7 @@ function RoomInner({
     useEffect(() => {
         if (
             currentRoomEvent &&
-            (currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+            currentRoomEvent.modeName === Schedule_Mode_Enum.Livestream &&
             currentRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id) &&
             watchStreamForEventId === currentRoomEvent.id &&
             !showBackstage
@@ -364,10 +362,9 @@ function RoomInner({
             });
         } else if (
             nextRoomEvent &&
-            (nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+            nextRoomEvent.modeName === Schedule_Mode_Enum.Livestream &&
             nextRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id) &&
-            Date.parse(nextRoomEvent.startTime) - Date.now() < 20 * 60 * 1000 &&
+            Date.parse(nextRoomEvent.scheduledStartTime) - Date.now() < 20 * 60 * 1000 &&
             !showBackstage
         ) {
             toast({
@@ -432,8 +429,7 @@ function RoomInner({
             if (showBackstage) {
                 const isPresenterOrChairOfCurrentEvent =
                     currentRoomEvent !== null &&
-                    (currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                        currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+                    currentRoomEvent.modeName === Schedule_Mode_Enum.Livestream &&
                     currentRoomEvent.eventPeople.some(
                         (person) =>
                             person.person.registrantId === currentRegistrant.id &&
@@ -447,11 +443,7 @@ function RoomInner({
                         ? Schedule_EventProgramPersonRole_Enum.Chair
                         : Schedule_EventProgramPersonRole_Enum.Participant
                 );
-            } else if (
-                currentRoomEvent?.id &&
-                (currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                    currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.QAndA)
-            ) {
+            } else if (currentRoomEvent?.id && currentRoomEvent?.modeName === Schedule_Mode_Enum.Livestream) {
                 raiseHand.setCurrentEventId(
                     currentRoomEvent.id,
                     currentRegistrant.userId,
@@ -515,8 +507,7 @@ function RoomInner({
     const onLeaveBackstage = useCallback(() => {
         const isParticipantOfCurrentEvent =
             currentRoomEvent !== null &&
-            (currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+            currentRoomEvent.modeName === Schedule_Mode_Enum.Livestream &&
             currentRoomEvent.eventPeople.some(
                 (person) =>
                     person.person.registrantId === currentRegistrant.id &&
@@ -601,17 +592,17 @@ function RoomInner({
     //       breakout event.
     const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt - 10 * 60 * 1000);
     // const currentRoomEventEndTime = useMemo(
-    //     () => (currentRoomEvent ? Date.parse(currentRoomEvent.endTime) : undefined),
+    //     () => (currentRoomEvent ? Date.parse(currentRoomEvent.scheduledEndTime) : undefined),
     //     [currentRoomEvent]
     // );
     // const breakoutEventEndsAt = useMemo(
     //     () =>
     //         currentRoomEventEndTime &&
-    //         currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat &&
-    //         nextRoomEvent?.intendedRoomModeName !== Room_Mode_Enum.VideoChat
+    //         currentRoomEvent?.modeName === Schedule_Mode_Enum.VideoChat &&
+    //         nextRoomEvent?.modeName !== Schedule_Mode_Enum.VideoChat
     //             ? currentRoomEventEndTime
     //             : Number.POSITIVE_INFINITY,
-    //     [currentRoomEvent?.intendedRoomModeName, currentRoomEventEndTime, nextRoomEvent?.intendedRoomModeName]
+    //     [currentRoomEvent?.modeName, currentRoomEventEndTime, nextRoomEvent?.modeName]
     // );
     const breakoutRoomClosesAt = nonVideoChatEventStartsAt; // Math.min(breakoutEventEndsAt, nonVideoChatEventStartsAt);
 
@@ -637,7 +628,7 @@ function RoomInner({
     );
 
     const playerEl = useMemo(() => {
-        const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoPlayer;
+        const currentEventIsVideoPlayer = currentRoomEvent?.modeName === Schedule_Mode_Enum.VideoPlayer;
         const shouldShowLivePlayer =
             !currentEventModeIsNone &&
             (!showDefaultVideoChatRoom || withinStreamLatencySinceBroadcastEvent) &&
@@ -770,12 +761,12 @@ function RoomInner({
                             {isPresenterOfUpcomingEvent ? (
                                 <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
                             ) : undefined}
-                            {maybeZoomUrl && currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom ? (
+                            {maybeZoomUrl && currentRoomEvent?.modeName === Schedule_Mode_Enum.External ? (
                                 <JoinZoomButton zoomUrl={maybeZoomUrl} />
                             ) : maybeZoomUrl &&
-                              nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom &&
+                              nextRoomEvent?.modeName === Schedule_Mode_Enum.External &&
                               zoomEventStartsAt - now5s < 10 * 60 * 1000 ? (
-                                <JoinZoomButton zoomUrl={maybeZoomUrl} startTime={zoomEventStartsAt} />
+                                <JoinZoomButton zoomUrl={maybeZoomUrl} scheduledStartTime={zoomEventStartsAt} />
                             ) : undefined}
 
                             <Box
@@ -791,8 +782,7 @@ function RoomInner({
                                     enable={showDefaultVideoChatRoom}
                                     eventId={
                                         currentRoomEvent?.id ??
-                                        (nextRoomEvent &&
-                                        nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat
+                                        (nextRoomEvent && nextRoomEvent.modeName === Schedule_Mode_Enum.VideoChat
                                             ? nextRoomEvent.id
                                             : undefined)
                                     }

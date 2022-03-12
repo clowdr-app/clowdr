@@ -36,7 +36,7 @@ export type LayoutDataBlob =
     | VideoTitlesLayoutDataBlob
     | VideoUrlLayoutDataBlob
     | WholeScheduleLayoutDataBlob
-    | ZoomLayoutDataBlob
+    | ExternalEventLinkLayoutDataBlob
     | LiveProgramRoomsLayoutDataBlob
     | ActiveSocialRoomsLayoutDataBlob
     | SponsorBoothsLayoutDataBlob
@@ -154,8 +154,8 @@ export interface ExploreScheduleButtonLayoutDataBlob extends BaseLayoutDataBlob 
     contentType: Content_ElementType_Enum.ExploreScheduleButton;
 }
 
-export interface ZoomLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: Content_ElementType_Enum.Zoom;
+export interface ExternalEventLinkLayoutDataBlob extends BaseLayoutDataBlob {
+    contentType: Content_ElementType_Enum.ExternalEventLink;
 }
 
 export interface LiveProgramRoomsLayoutDataBlob extends BaseLayoutDataBlob {

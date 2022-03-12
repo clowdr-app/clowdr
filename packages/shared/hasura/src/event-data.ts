@@ -7,8 +7,8 @@ import type {
     Chat_FlagType_Enum,
     Job_Queues_JobStatus_Enum,
     Room_ManagementMode_Enum,
-    Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
+    Schedule_Mode_Enum,
 } from "./generated/graphql";
 import type { VideoRenderJobDataBlob } from "./json-blobs/video-render-job";
 import type { VonageVideoPlaybackCommandBlob } from "./json-blobs/vonage-video-playback-command";
@@ -83,11 +83,10 @@ export interface CombineVideosJobData extends BaseData {
 }
 
 export interface EventData extends BaseData {
-    durationSeconds: number;
-    intendedRoomModeName: Room_Mode_Enum;
+    modeName: Schedule_Mode_Enum;
     name: string;
-    endTime: string | null;
-    startTime: string;
+    scheduledEndTime: string | null;
+    scheduledStartTime: string | null;
     conferenceId: string;
     itemId: string | null;
     roomId: string;

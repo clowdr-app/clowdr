@@ -1,6 +1,12 @@
 import { FormControl, FormLabel, Input, Text, useToast } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
-import type { ImageUrlBlob, PaperUrlBlob, PosterUrlBlob, VideoUrlBlob, ZoomBlob } from "@midspace/shared-types/content";
+import type {
+    ExternalEventLinkBlob,
+    ImageUrlBlob,
+    PaperUrlBlob,
+    PosterUrlBlob,
+    VideoUrlBlob,
+} from "@midspace/shared-types/content";
 import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -10,7 +16,7 @@ import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 interface UrlElementVersionData {
     createdAt: number;
     createdBy: string;
-    data: ImageUrlBlob | PaperUrlBlob | VideoUrlBlob | PosterUrlBlob | ZoomBlob;
+    data: ImageUrlBlob | PaperUrlBlob | VideoUrlBlob | PosterUrlBlob | ExternalEventLinkBlob;
 }
 
 export const URLElementTemplate: ElementBaseTemplate = {
@@ -20,7 +26,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.PaperUrl,
         Content_ElementType_Enum.VideoUrl,
         Content_ElementType_Enum.PosterUrl,
-        Content_ElementType_Enum.Zoom,
+        Content_ElementType_Enum.ExternalEventLink,
     ],
     createDefault: (type, conferenceId, itemId) => {
         assert.truthy(
@@ -28,7 +34,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
                 type === Content_ElementType_Enum.PaperUrl ||
                 type === Content_ElementType_Enum.VideoUrl ||
                 type === Content_ElementType_Enum.PosterUrl ||
-                type === Content_ElementType_Enum.Zoom,
+                type === Content_ElementType_Enum.ExternalEventLink,
             `URL Element Template mistakenly used for type ${type}.`
         );
 
@@ -39,8 +45,8 @@ export const URLElementTemplate: ElementBaseTemplate = {
                 ? "Paper"
                 : type === Content_ElementType_Enum.VideoUrl
                 ? "Video"
-                : type === Content_ElementType_Enum.Zoom
-                ? "Zoom"
+                : type === Content_ElementType_Enum.ExternalEventLink
+                ? "External Event"
                 : "Poster";
 
         return {
@@ -51,7 +57,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
             id: uuidv4(),
             name,
             typeName: type,
-            isHidden: type === Content_ElementType_Enum.Zoom,
+            isHidden: type === Content_ElementType_Enum.ExternalEventLink,
             data: [],
             layoutData: null,
             uploadsRemaining: 3,
@@ -63,15 +69,16 @@ export const URLElementTemplate: ElementBaseTemplate = {
         const [title, setTitle] = useState<string | null>(null);
 
         const notice =
-            data.typeName === Content_ElementType_Enum.Zoom ? (
+            data.typeName === Content_ElementType_Enum.ExternalEventLink ? (
                 <>
                     <Text pb={4}>
-                        Zoom links should normally be hidden from attendees. They will be automatically revealed during
-                        events.
+                        External meeting links should normally be hidden from attendees. They will be automatically
+                        revealed during events.
                     </Text>
                     <Text pb={4}>
-                        Zoom links should be the ordinary link obtained using &ldquo;Copy link&rdquo; within Zoom. This
-                        will include the password field, enabling attendees to join with a single click.
+                        External meeting links should be the ordinary link obtained using &ldquo;Copy link&rdquo; within
+                        Zoom or other meeting application. This should include the password field, enabling attendees to
+                        join with a single click.
                     </Text>
                 </>
             ) : undefined;
@@ -82,7 +89,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
                 data.typeName === Content_ElementType_Enum.PaperUrl ||
                 data.typeName === Content_ElementType_Enum.VideoUrl ||
                 data.typeName === Content_ElementType_Enum.PosterUrl ||
-                data.typeName === Content_ElementType_Enum.Zoom
+                data.typeName === Content_ElementType_Enum.ExternalEventLink
             )
         ) {
             return <>URL Element Template mistakenly used for type {data.typeName}.</>;
@@ -96,7 +103,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
                 ? "https://ia800600.us.archive.org/7/items/archive_IHGC/Thesis.pdf"
                 : data.typeName === Content_ElementType_Enum.VideoUrl
                 ? "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                : data.typeName === Content_ElementType_Enum.Zoom
+                : data.typeName === Content_ElementType_Enum.ExternalEventLink
                 ? "https://zoom.us/j/12345678901?pwd=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                 : "https://www.example.org/a-poster.pdf";
         const textPlaceholder = "";

@@ -24,9 +24,9 @@ import {
     GetEventForArchiveDocument,
     InsertVonageArchiveElementDocument,
     Registrant_RegistrantRole_Enum,
-    Room_Mode_Enum,
     SaveVonageRoomRecordingDocument,
     Schedule_EventProgramPersonRole_Enum,
+    Schedule_Mode_Enum,
     VonageJoinRoom_GetInfoDocument,
     Vonage_GetEventDetailsDocument,
 } from "../generated/graphql";
@@ -58,9 +58,9 @@ gql`
         schedule_Event(
             where: {
                 eventVonageSession: { sessionId: { _eq: $sessionId } }
-                intendedRoomModeName: { _in: [Q_AND_A, PRESENTATION] }
-                endTime: { _gt: $time }
-                startTime: { _lte: $time }
+                modeName: { _eq: LIVESTREAM }
+                scheduledEndTime: { _gt: $time }
+                scheduledStartTime: { _lte: $time }
             }
         ) {
             id
@@ -71,9 +71,9 @@ gql`
         schedule_Event(
             where: {
                 room: { publicVonageSessionId: { _eq: $sessionId } }
-                intendedRoomModeName: { _eq: VIDEO_CHAT }
-                endTime: { _gt: $time }
-                startTime: { _lte: $time }
+                modeName: { _eq: VIDEO_CHAT }
+                scheduledEndTime: { _gt: $time }
+                scheduledStartTime: { _lte: $time }
             }
         ) {
             id
@@ -134,8 +134,8 @@ gql`
         schedule_Event_by_pk(id: $eventId) {
             id
             name
-            startTime
-            durationSeconds
+            scheduledStartTime
+            scheduledEndTime
             conferenceId
             subconferenceId
             item {
@@ -293,7 +293,7 @@ export async function handleVonageArchiveMonitoringWebhook(
                 const source: SourceBlob = {
                     source: SourceType.EventRecording,
                     eventId: eventId,
-                    startTimeMillis: Date.parse(event.startTime),
+                    scheduledStartTimeMillis: Date.parse(event.scheduledStartTime),
                     durationSeconds: event.durationSeconds,
                 };
 
@@ -315,7 +315,7 @@ export async function handleVonageArchiveMonitoringWebhook(
                     priority: event.item.elements_aggregate.aggregate?.count ?? 0,
                 };
 
-                const startTime = formatRFC7231(Date.parse(event.startTime));
+                const scheduledStartTime = formatRFC7231(Date.parse(event.scheduledStartTime));
                 try {
                     await apolloClient.mutate({
                         mutation: InsertVonageArchiveElementDocument,
@@ -328,7 +328,7 @@ export async function handleVonageArchiveMonitoringWebhook(
                                 isHidden: false,
                                 itemId: event.item.id,
                                 layoutData,
-                                name: `Recording of ${event.name} from ${startTime}`,
+                                name: `Recording of ${event.name} from ${scheduledStartTime}`,
                                 typeName: Content_ElementType_Enum.VideoFile,
                                 uploadsRemaining: 0,
                             },
@@ -396,10 +396,10 @@ gql`
         schedule_Event_by_pk(id: $eventId) {
             conferenceId
             id
-            intendedRoomModeName
+            modeName
             enableRecording
-            startTime
-            durationSeconds
+            scheduledStartTime
+            scheduledEndTime
             eventVonageSession {
                 id
                 sessionId
@@ -448,13 +448,7 @@ export async function handleJoinEvent(
         throw new NotFoundError("Event not found", { privateErrorData: { eventId: payload.eventId } });
     }
 
-    if (
-        !(
-            result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-            result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.QAndA ||
-            result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Prerecorded
-        )
-    ) {
+    if (result.data.schedule_Event_by_pk.modeName !== Schedule_Mode_Enum.Livestream) {
         const existingParticipantsCount = await getRoomParticipantsCount(result.data.schedule_Event_by_pk.room.id);
         if (
             result.data.schedule_Event_by_pk.room.capacity &&
@@ -465,9 +459,7 @@ export async function handleJoinEvent(
     }
 
     const vonageSessionId =
-        result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-        result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.QAndA ||
-        result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Prerecorded
+        result.data.schedule_Event_by_pk.modeName === Schedule_Mode_Enum.Livestream
             ? result.data.schedule_Event_by_pk.eventVonageSession?.sessionId
             : result.data.schedule_Event_by_pk.room.publicVonageSessionId;
     if (!vonageSessionId) {
@@ -499,7 +491,7 @@ export async function handleJoinEvent(
         );
     }
 
-    if (Date.parse(result.data.schedule_Event_by_pk.startTime) - 10 * 60 * 1000 > Date.now()) {
+    if (Date.parse(result.data.schedule_Event_by_pk.scheduledStartTime) - 10 * 60 * 1000 > Date.now()) {
         const remainingQuota = await getVideoChatNonEventRemainingQuota(registrant.conferenceId);
         if (remainingQuota <= 0) {
             throw new Error("Quota limit reached (video-chat social minutes)");
@@ -728,7 +720,7 @@ gql`
     query FindRoomByVonageSessionId($vonageSessionId: String!, $now: timestamptz!, $userId: String!) {
         room_Room(where: { publicVonageSessionId: { _eq: $vonageSessionId } }) {
             id
-            events(where: { startTime: { _lte: $now }, endTime: { _gte: $now } }) {
+            events(where: { scheduledStartTime: { _lte: $now }, scheduledEndTime: { _gte: $now } }) {
                 id
                 eventPeople(
                     where: {

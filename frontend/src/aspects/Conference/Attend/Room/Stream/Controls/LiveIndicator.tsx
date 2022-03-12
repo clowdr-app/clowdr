@@ -48,10 +48,10 @@ gql`
 
 export function LiveIndicator(): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { startTime, endTime, currentInput, now, live, connected } = useContext(BackstageContext);
+    const { scheduledStartTime, scheduledEndTime, currentInput, now, live, connected } = useContext(BackstageContext);
 
-    const secondsUntilLive = (startTime - now) / 1000;
-    const secondsUntilOffAir = (endTime - now) / 1000;
+    const secondsUntilLive = (scheduledStartTime - now) / 1000;
+    const secondsUntilOffAir = (scheduledEndTime - now) / 1000;
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
 
     const whatIsLiveText = useMemo(() => {

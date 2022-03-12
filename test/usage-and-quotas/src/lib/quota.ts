@@ -9,6 +9,7 @@ import type {
     UpdateQuotaMutationVariables,
 } from "../generated/graphql";
 import { GetQuotaDocument, UpdateQuotaDocument } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment Quota on conference_Quota {
@@ -62,7 +63,7 @@ export async function getQuota(conferenceId: string): Promise<QuotaFragment> {
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data) {
         throw new Error("No data");
@@ -81,7 +82,7 @@ export async function updateQuota(conferenceId: string, set: Conference_Quota_Se
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data?.update_conference_Quota) {
         throw new Error("No update response");

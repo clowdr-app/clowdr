@@ -12,8 +12,8 @@ gql`
         schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                startTime: { _lte: $startBefore }
-                endTime: { _gte: $endAfter }
+                scheduledStartTime: { _lte: $startBefore }
+                scheduledEndTime: { _gte: $endAfter }
             }
         ) {
             ...Schedule_EventSummary

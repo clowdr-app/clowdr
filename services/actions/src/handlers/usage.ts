@@ -145,7 +145,7 @@ gql`
         room_Room_by_pk(id: $id) {
             id
             conferenceId
-            events(where: { startTime: { _lte: $now }, endTime: { _gt: $now } }) {
+            events(where: { scheduledStartTime: { _lte: $now }, scheduledEndTime: { _gt: $now } }) {
                 id
             }
         }

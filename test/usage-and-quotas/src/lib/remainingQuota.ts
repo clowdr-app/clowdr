@@ -6,6 +6,7 @@ import type {
     RemainingQuotaFragment,
 } from "../generated/graphql";
 import { GetRemainingQuotaDocument } from "../generated/graphql";
+import extractActualError from "./extractError";
 
 gql`
     fragment RemainingQuota on conference_RemainingQuota {
@@ -39,7 +40,7 @@ export async function getRemainingQuota(conferenceId: string): Promise<Remaining
         })
         .toPromise();
     if (response.error) {
-        throw response.error;
+        throw extractActualError(response.error);
     }
     if (!response.data) {
         throw new Error("No data");

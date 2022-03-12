@@ -14,6 +14,7 @@ export type Scalars = {
     Int: number;
     Float: number;
     bigint: any;
+    float8: any;
     jsonb: any;
     name: any;
     numeric: any;
@@ -9898,6 +9899,8 @@ export enum Content_ElementType_Enum {
     ExploreProgramButton = "EXPLORE_PROGRAM_BUTTON",
     /** Button that opens the explore program modal with the Schedule tab open. Intended for use on the landing page. */
     ExploreScheduleButton = "EXPLORE_SCHEDULE_BUTTON",
+    /** Data for a Zoom meeting. */
+    ExternalEventLink = "EXTERNAL_EVENT_LINK",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -9942,8 +9945,6 @@ export enum Content_ElementType_Enum {
     VideoUrl = "VIDEO_URL",
     /** Schedule view for the whole conference. */
     WholeSchedule = "WHOLE_SCHEDULE",
-    /** Data for a Zoom meeting. */
-    Zoom = "ZOOM",
 }
 
 /** Boolean expression to compare columns of type "content_ElementType_enum". All fields are combined with logical 'AND'. */
@@ -11878,6 +11879,19 @@ export enum Content_Item_Update_Column {
 export type Content_SearchItems_Args = {
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly search?: InputMaybe<Scalars["String"]>;
+};
+
+/** Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'. */
+export type Float8_Comparison_Exp = {
+    readonly _eq?: InputMaybe<Scalars["float8"]>;
+    readonly _gt?: InputMaybe<Scalars["float8"]>;
+    readonly _gte?: InputMaybe<Scalars["float8"]>;
+    readonly _in?: InputMaybe<ReadonlyArray<Scalars["float8"]>>;
+    readonly _is_null?: InputMaybe<Scalars["Boolean"]>;
+    readonly _lt?: InputMaybe<Scalars["float8"]>;
+    readonly _lte?: InputMaybe<Scalars["float8"]>;
+    readonly _neq?: InputMaybe<Scalars["float8"]>;
+    readonly _nin?: InputMaybe<ReadonlyArray<Scalars["float8"]>>;
 };
 
 /** columns and relationships of "job_queues.ChannelStackCreateJob" */
@@ -15472,10 +15486,6 @@ export type Mutation_Root = {
     readonly delete_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** delete single row from the table: "room.ManagementMode" */
     readonly delete_room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** delete data from the table: "room.Mode" */
-    readonly delete_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** delete single row from the table: "room.Mode" */
-    readonly delete_room_Mode_by_pk?: Maybe<Room_Mode>;
     /** delete data from the table: "room.PersonRole" */
     readonly delete_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** delete single row from the table: "room.PersonRole" */
@@ -15526,6 +15536,10 @@ export type Mutation_Root = {
     readonly delete_schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
     /** delete single row from the table: "schedule.Event" */
     readonly delete_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** delete data from the table: "schedule.Mode" */
+    readonly delete_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** delete single row from the table: "schedule.Mode" */
+    readonly delete_schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** delete data from the table: "schedule.StarredEvent" */
     readonly delete_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** delete single row from the table: "schedule.StarredEvent" */
@@ -15876,10 +15890,6 @@ export type Mutation_Root = {
     readonly insert_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** insert a single row into the table: "room.ManagementMode" */
     readonly insert_room_ManagementMode_one?: Maybe<Room_ManagementMode>;
-    /** insert data into the table: "room.Mode" */
-    readonly insert_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** insert a single row into the table: "room.Mode" */
-    readonly insert_room_Mode_one?: Maybe<Room_Mode>;
     /** insert data into the table: "room.PersonRole" */
     readonly insert_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** insert a single row into the table: "room.PersonRole" */
@@ -15932,6 +15942,10 @@ export type Mutation_Root = {
     readonly insert_schedule_EventProgramPerson_one?: Maybe<Schedule_EventProgramPerson>;
     /** insert a single row into the table: "schedule.Event" */
     readonly insert_schedule_Event_one?: Maybe<Schedule_Event>;
+    /** insert data into the table: "schedule.Mode" */
+    readonly insert_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** insert a single row into the table: "schedule.Mode" */
+    readonly insert_schedule_Mode_one?: Maybe<Schedule_Mode>;
     /** insert data into the table: "schedule.StarredEvent" */
     readonly insert_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** insert a single row into the table: "schedule.StarredEvent" */
@@ -16294,10 +16308,6 @@ export type Mutation_Root = {
     readonly update_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** update single row of the table: "room.ManagementMode" */
     readonly update_room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** update data of the table: "room.Mode" */
-    readonly update_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** update single row of the table: "room.Mode" */
-    readonly update_room_Mode_by_pk?: Maybe<Room_Mode>;
     /** update data of the table: "room.PersonRole" */
     readonly update_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** update single row of the table: "room.PersonRole" */
@@ -16348,6 +16358,10 @@ export type Mutation_Root = {
     readonly update_schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
     /** update single row of the table: "schedule.Event" */
     readonly update_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** update data of the table: "schedule.Mode" */
+    readonly update_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** update single row of the table: "schedule.Mode" */
+    readonly update_schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** update data of the table: "schedule.StarredEvent" */
     readonly update_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** update single row of the table: "schedule.StarredEvent" */
@@ -17108,16 +17122,6 @@ export type Mutation_RootDelete_Room_ManagementMode_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootDelete_Room_ModeArgs = {
-    where: Room_Mode_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Room_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
-/** mutation root */
 export type Mutation_RootDelete_Room_PersonRoleArgs = {
     where: Room_PersonRole_Bool_Exp;
 };
@@ -17240,6 +17244,16 @@ export type Mutation_RootDelete_Schedule_EventProgramPerson_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Schedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_ModeArgs = {
+    where: Schedule_Mode_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 /** mutation root */
@@ -18247,18 +18261,6 @@ export type Mutation_RootInsert_Room_ManagementMode_OneArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootInsert_Room_ModeArgs = {
-    objects: ReadonlyArray<Room_Mode_Insert_Input>;
-    on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Room_Mode_OneArgs = {
-    object: Room_Mode_Insert_Input;
-    on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** mutation root */
 export type Mutation_RootInsert_Room_PersonRoleArgs = {
     objects: ReadonlyArray<Room_PersonRole_Insert_Input>;
     on_conflict?: InputMaybe<Room_PersonRole_On_Conflict>;
@@ -18410,6 +18412,18 @@ export type Mutation_RootInsert_Schedule_EventProgramPerson_OneArgs = {
 export type Mutation_RootInsert_Schedule_Event_OneArgs = {
     object: Schedule_Event_Insert_Input;
     on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_ModeArgs = {
+    objects: ReadonlyArray<Schedule_Mode_Insert_Input>;
+    on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_Mode_OneArgs = {
+    object: Schedule_Mode_Insert_Input;
+    on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
 };
 
 /** mutation root */
@@ -19725,18 +19739,6 @@ export type Mutation_RootUpdate_Room_ManagementMode_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootUpdate_Room_ModeArgs = {
-    _set?: InputMaybe<Room_Mode_Set_Input>;
-    where: Room_Mode_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Room_Mode_By_PkArgs = {
-    _set?: InputMaybe<Room_Mode_Set_Input>;
-    pk_columns: Room_Mode_Pk_Columns_Input;
-};
-
-/** mutation root */
 export type Mutation_RootUpdate_Room_PersonRoleArgs = {
     _set?: InputMaybe<Room_PersonRole_Set_Input>;
     where: Room_PersonRole_Bool_Exp;
@@ -19866,14 +19868,12 @@ export type Mutation_RootUpdate_Schedule_Continuation_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_CurrentEventsArgs = {
-    _inc?: InputMaybe<Schedule_CurrentEvents_Inc_Input>;
     _set?: InputMaybe<Schedule_CurrentEvents_Set_Input>;
     where: Schedule_CurrentEvents_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_EventArgs = {
-    _inc?: InputMaybe<Schedule_Event_Inc_Input>;
     _set?: InputMaybe<Schedule_Event_Set_Input>;
     where: Schedule_Event_Bool_Exp;
 };
@@ -19904,9 +19904,20 @@ export type Mutation_RootUpdate_Schedule_EventProgramPerson_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_Event_By_PkArgs = {
-    _inc?: InputMaybe<Schedule_Event_Inc_Input>;
     _set?: InputMaybe<Schedule_Event_Set_Input>;
     pk_columns: Schedule_Event_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_ModeArgs = {
+    _set?: InputMaybe<Schedule_Mode_Set_Input>;
+    where: Schedule_Mode_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_Mode_By_PkArgs = {
+    _set?: InputMaybe<Schedule_Mode_Set_Input>;
+    pk_columns: Schedule_Mode_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -20706,12 +20717,6 @@ export type Query_Root = {
     readonly room_ManagementMode_aggregate: Room_ManagementMode_Aggregate;
     /** fetch data from the table: "room.ManagementMode" using primary key columns */
     readonly room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** fetch data from the table: "room.Mode" */
-    readonly room_Mode: ReadonlyArray<Room_Mode>;
-    /** fetch aggregated fields from the table: "room.Mode" */
-    readonly room_Mode_aggregate: Room_Mode_Aggregate;
-    /** fetch data from the table: "room.Mode" using primary key columns */
-    readonly room_Mode_by_pk?: Maybe<Room_Mode>;
     /** fetch data from the table: "room.PersonRole" */
     readonly room_PersonRole: ReadonlyArray<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -20788,6 +20793,12 @@ export type Query_Root = {
     readonly schedule_Event_aggregate: Schedule_Event_Aggregate;
     /** fetch data from the table: "schedule.Event" using primary key columns */
     readonly schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** fetch data from the table: "schedule.Mode" */
+    readonly schedule_Mode: ReadonlyArray<Schedule_Mode>;
+    /** fetch aggregated fields from the table: "schedule.Mode" */
+    readonly schedule_Mode_aggregate: Schedule_Mode_Aggregate;
+    /** fetch data from the table: "schedule.Mode" using primary key columns */
+    readonly schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** fetch data from the table: "schedule.OverlappingEvents" */
     readonly schedule_OverlappingEvents: ReadonlyArray<Schedule_OverlappingEvents>;
     /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
@@ -22364,26 +22375,6 @@ export type Query_RootRoom_ManagementMode_By_PkArgs = {
     name: Scalars["String"];
 };
 
-export type Query_RootRoom_ModeArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Query_RootRoom_Mode_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Query_RootRoom_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
 export type Query_RootRoom_PersonRoleArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Room_PersonRole_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -22638,6 +22629,26 @@ export type Query_RootSchedule_Event_AggregateArgs = {
 
 export type Query_RootSchedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootSchedule_ModeArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Query_RootSchedule_Mode_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Query_RootSchedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 export type Query_RootSchedule_OverlappingEventsArgs = {
@@ -25810,7 +25821,7 @@ export type Room_LivestreamDurations = {
     readonly room?: Maybe<Room_Room>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly sum?: Maybe<Scalars["bigint"]>;
+    readonly sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregated selection of "room.LivestreamDurations" */
@@ -25858,7 +25869,7 @@ export type Room_LivestreamDurations_Bool_Exp = {
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly sum?: InputMaybe<Bigint_Comparison_Exp>;
+    readonly sum?: InputMaybe<Float8_Comparison_Exp>;
 };
 
 /** input type for inserting data into table "room.LivestreamDurations" */
@@ -25868,7 +25879,7 @@ export type Room_LivestreamDurations_Insert_Input = {
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly sum?: InputMaybe<Scalars["bigint"]>;
+    readonly sum?: InputMaybe<Scalars["float8"]>;
 };
 
 /** aggregate max on columns */
@@ -25877,7 +25888,7 @@ export type Room_LivestreamDurations_Max_Fields = {
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly sum?: Maybe<Scalars["bigint"]>;
+    readonly sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregate min on columns */
@@ -25886,7 +25897,7 @@ export type Room_LivestreamDurations_Min_Fields = {
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly sum?: Maybe<Scalars["bigint"]>;
+    readonly sum?: Maybe<Scalars["float8"]>;
 };
 
 /** input type for inserting object relation for remote table "room.LivestreamDurations" */
@@ -25937,7 +25948,7 @@ export type Room_LivestreamDurations_Stddev_Samp_Fields = {
 /** aggregate sum on columns */
 export type Room_LivestreamDurations_Sum_Fields = {
     readonly __typename?: "room_LivestreamDurations_sum_fields";
-    readonly sum?: Maybe<Scalars["bigint"]>;
+    readonly sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregate var_pop on columns */
@@ -26091,180 +26102,6 @@ export type Room_ManagementMode_Set_Input = {
 
 /** update columns of table "room.ManagementMode" */
 export enum Room_ManagementMode_Update_Column {
-    /** column name */
-    Description = "description",
-    /** column name */
-    Name = "name",
-}
-
-/** columns and relationships of "room.Mode" */
-export type Room_Mode = {
-    readonly __typename?: "room_Mode";
-    readonly description: Scalars["String"];
-    /** An array relationship */
-    readonly events: ReadonlyArray<Schedule_Event>;
-    /** An aggregate relationship */
-    readonly events_aggregate: Schedule_Event_Aggregate;
-    readonly name: Scalars["String"];
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeEventsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeEvents_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** aggregated selection of "room.Mode" */
-export type Room_Mode_Aggregate = {
-    readonly __typename?: "room_Mode_aggregate";
-    readonly aggregate?: Maybe<Room_Mode_Aggregate_Fields>;
-    readonly nodes: ReadonlyArray<Room_Mode>;
-};
-
-/** aggregate fields of "room.Mode" */
-export type Room_Mode_Aggregate_Fields = {
-    readonly __typename?: "room_Mode_aggregate_fields";
-    readonly count: Scalars["Int"];
-    readonly max?: Maybe<Room_Mode_Max_Fields>;
-    readonly min?: Maybe<Room_Mode_Min_Fields>;
-};
-
-/** aggregate fields of "room.Mode" */
-export type Room_Mode_Aggregate_FieldsCountArgs = {
-    columns?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    distinct?: InputMaybe<Scalars["Boolean"]>;
-};
-
-/** Boolean expression to filter rows from the table "room.Mode". All fields are combined with a logical 'AND'. */
-export type Room_Mode_Bool_Exp = {
-    readonly _and?: InputMaybe<ReadonlyArray<Room_Mode_Bool_Exp>>;
-    readonly _not?: InputMaybe<Room_Mode_Bool_Exp>;
-    readonly _or?: InputMaybe<ReadonlyArray<Room_Mode_Bool_Exp>>;
-    readonly description?: InputMaybe<String_Comparison_Exp>;
-    readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
-    readonly name?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "room.Mode" */
-export enum Room_Mode_Constraint {
-    /** unique or primary key constraint */
-    ModePkey = "Mode_pkey",
-}
-
-export enum Room_Mode_Enum {
-    /** An exhibition hall. */
-    Exhibition = "EXHIBITION",
-    /** An empty room. */
-    None = "NONE",
-    /** Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users. */
-    Prerecorded = "PRERECORDED",
-    /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
-    Presentation = "PRESENTATION",
-    /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
-    QAndA = "Q_AND_A",
-    /** A shuffle queue. */
-    Shuffle = "SHUFFLE",
-    /** Users may participate in the general video chat. */
-    VideoChat = "VIDEO_CHAT",
-    /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
-    VideoPlayer = "VIDEO_PLAYER",
-    /** Event is taking place in a Zoom room. */
-    Zoom = "ZOOM",
-}
-
-/** Boolean expression to compare columns of type "room_Mode_enum". All fields are combined with logical 'AND'. */
-export type Room_Mode_Enum_Comparison_Exp = {
-    readonly _eq?: InputMaybe<Room_Mode_Enum>;
-    readonly _in?: InputMaybe<ReadonlyArray<Room_Mode_Enum>>;
-    readonly _is_null?: InputMaybe<Scalars["Boolean"]>;
-    readonly _neq?: InputMaybe<Room_Mode_Enum>;
-    readonly _nin?: InputMaybe<ReadonlyArray<Room_Mode_Enum>>;
-};
-
-/** input type for inserting data into table "room.Mode" */
-export type Room_Mode_Insert_Input = {
-    readonly description?: InputMaybe<Scalars["String"]>;
-    readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
-    readonly name?: InputMaybe<Scalars["String"]>;
-};
-
-/** aggregate max on columns */
-export type Room_Mode_Max_Fields = {
-    readonly __typename?: "room_Mode_max_fields";
-    readonly description?: Maybe<Scalars["String"]>;
-    readonly name?: Maybe<Scalars["String"]>;
-};
-
-/** aggregate min on columns */
-export type Room_Mode_Min_Fields = {
-    readonly __typename?: "room_Mode_min_fields";
-    readonly description?: Maybe<Scalars["String"]>;
-    readonly name?: Maybe<Scalars["String"]>;
-};
-
-/** response of any mutation on the table "room.Mode" */
-export type Room_Mode_Mutation_Response = {
-    readonly __typename?: "room_Mode_mutation_response";
-    /** number of rows affected by the mutation */
-    readonly affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    readonly returning: ReadonlyArray<Room_Mode>;
-};
-
-/** input type for inserting object relation for remote table "room.Mode" */
-export type Room_Mode_Obj_Rel_Insert_Input = {
-    readonly data: Room_Mode_Insert_Input;
-    /** on conflict condition */
-    readonly on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** on conflict condition type for table "room.Mode" */
-export type Room_Mode_On_Conflict = {
-    readonly constraint: Room_Mode_Constraint;
-    readonly update_columns?: ReadonlyArray<Room_Mode_Update_Column>;
-    readonly where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "room.Mode". */
-export type Room_Mode_Order_By = {
-    readonly description?: InputMaybe<Order_By>;
-    readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
-    readonly name?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: room_Mode */
-export type Room_Mode_Pk_Columns_Input = {
-    readonly name: Scalars["String"];
-};
-
-/** select columns of table "room.Mode" */
-export enum Room_Mode_Select_Column {
-    /** column name */
-    Description = "description",
-    /** column name */
-    Name = "name",
-}
-
-/** input type for updating data in table "room.Mode" */
-export type Room_Mode_Set_Input = {
-    readonly description?: InputMaybe<Scalars["String"]>;
-    readonly name?: InputMaybe<Scalars["String"]>;
-};
-
-/** update columns of table "room.Mode" */
-export enum Room_Mode_Update_Column {
     /** column name */
     Description = "description",
     /** column name */
@@ -29283,25 +29120,26 @@ export type Schedule_Continuation_Variance_Order_By = {
 /** columns and relationships of "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents = {
     readonly __typename?: "schedule_CurrentEvents";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
+    readonly automaticParticipationSurvey?: Maybe<Scalars["Boolean"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
     readonly enableRecording?: Maybe<Scalars["Boolean"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     /** An array relationship */
     readonly eventPeople: ReadonlyArray<Schedule_EventProgramPerson>;
     /** An aggregate relationship */
     readonly eventPeople_aggregate: Schedule_EventProgramPerson_Aggregate;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly modeName?: Maybe<Scalars["String"]>;
     readonly name?: Maybe<Scalars["String"]>;
     /** An object relationship */
     readonly room?: Maybe<Room_Room>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29337,17 +29175,9 @@ export type Schedule_CurrentEvents_Aggregate = {
 /** aggregate fields of "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Aggregate_Fields = {
     readonly __typename?: "schedule_CurrentEvents_aggregate_fields";
-    readonly avg?: Maybe<Schedule_CurrentEvents_Avg_Fields>;
     readonly count: Scalars["Int"];
     readonly max?: Maybe<Schedule_CurrentEvents_Max_Fields>;
     readonly min?: Maybe<Schedule_CurrentEvents_Min_Fields>;
-    readonly stddev?: Maybe<Schedule_CurrentEvents_Stddev_Fields>;
-    readonly stddev_pop?: Maybe<Schedule_CurrentEvents_Stddev_Pop_Fields>;
-    readonly stddev_samp?: Maybe<Schedule_CurrentEvents_Stddev_Samp_Fields>;
-    readonly sum?: Maybe<Schedule_CurrentEvents_Sum_Fields>;
-    readonly var_pop?: Maybe<Schedule_CurrentEvents_Var_Pop_Fields>;
-    readonly var_samp?: Maybe<Schedule_CurrentEvents_Var_Samp_Fields>;
-    readonly variance?: Maybe<Schedule_CurrentEvents_Variance_Fields>;
 };
 
 /** aggregate fields of "schedule.CurrentEvents" */
@@ -29358,17 +29188,9 @@ export type Schedule_CurrentEvents_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Aggregate_Order_By = {
-    readonly avg?: InputMaybe<Schedule_CurrentEvents_Avg_Order_By>;
     readonly count?: InputMaybe<Order_By>;
     readonly max?: InputMaybe<Schedule_CurrentEvents_Max_Order_By>;
     readonly min?: InputMaybe<Schedule_CurrentEvents_Min_Order_By>;
-    readonly stddev?: InputMaybe<Schedule_CurrentEvents_Stddev_Order_By>;
-    readonly stddev_pop?: InputMaybe<Schedule_CurrentEvents_Stddev_Pop_Order_By>;
-    readonly stddev_samp?: InputMaybe<Schedule_CurrentEvents_Stddev_Samp_Order_By>;
-    readonly sum?: InputMaybe<Schedule_CurrentEvents_Sum_Order_By>;
-    readonly var_pop?: InputMaybe<Schedule_CurrentEvents_Var_Pop_Order_By>;
-    readonly var_samp?: InputMaybe<Schedule_CurrentEvents_Var_Samp_Order_By>;
-    readonly variance?: InputMaybe<Schedule_CurrentEvents_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "schedule.CurrentEvents" */
@@ -29376,37 +29198,27 @@ export type Schedule_CurrentEvents_Arr_Rel_Insert_Input = {
     readonly data: ReadonlyArray<Schedule_CurrentEvents_Insert_Input>;
 };
 
-/** aggregate avg on columns */
-export type Schedule_CurrentEvents_Avg_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_avg_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by avg() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Avg_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "schedule.CurrentEvents". All fields are combined with a logical 'AND'. */
 export type Schedule_CurrentEvents_Bool_Exp = {
     readonly _and?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Bool_Exp>>;
     readonly _not?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
     readonly _or?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Bool_Exp>>;
+    readonly autoPlayElementId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly automaticParticipationSurvey?: InputMaybe<Boolean_Comparison_Exp>;
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-    readonly durationSeconds?: InputMaybe<Int_Comparison_Exp>;
     readonly enableRecording?: InputMaybe<Boolean_Comparison_Exp>;
-    readonly endTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
     readonly exhibitionId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly intendedRoomModeName?: InputMaybe<String_Comparison_Exp>;
     readonly itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly modeName?: InputMaybe<String_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly startTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly streamTextEventId?: InputMaybe<String_Comparison_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly timings_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -29414,28 +29226,24 @@ export type Schedule_CurrentEvents_Bool_Exp = {
     readonly visibilityLevel?: InputMaybe<String_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Inc_Input = {
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
-};
-
 /** input type for inserting data into table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Insert_Input = {
+    readonly autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
+    readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
     readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
     readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: InputMaybe<Scalars["String"]>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly modeName?: InputMaybe<Scalars["String"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly timings_updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -29446,18 +29254,18 @@ export type Schedule_CurrentEvents_Insert_Input = {
 /** aggregate max on columns */
 export type Schedule_CurrentEvents_Max_Fields = {
     readonly __typename?: "schedule_CurrentEvents_max_fields";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly modeName?: Maybe<Scalars["String"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29467,18 +29275,18 @@ export type Schedule_CurrentEvents_Max_Fields = {
 
 /** order by max() on columns of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Max_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly intendedRoomModeName?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timings_updated_at?: InputMaybe<Order_By>;
@@ -29489,18 +29297,18 @@ export type Schedule_CurrentEvents_Max_Order_By = {
 /** aggregate min on columns */
 export type Schedule_CurrentEvents_Min_Fields = {
     readonly __typename?: "schedule_CurrentEvents_min_fields";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly modeName?: Maybe<Scalars["String"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29510,18 +29318,18 @@ export type Schedule_CurrentEvents_Min_Fields = {
 
 /** order by min() on columns of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Min_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly intendedRoomModeName?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timings_updated_at?: InputMaybe<Order_By>;
@@ -29540,21 +29348,22 @@ export type Schedule_CurrentEvents_Mutation_Response = {
 
 /** Ordering options when selecting data from "schedule.CurrentEvents". */
 export type Schedule_CurrentEvents_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
+    readonly automaticParticipationSurvey?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
     readonly enableRecording?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly eventPeople_aggregate?: InputMaybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly intendedRoomModeName?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timings_updated_at?: InputMaybe<Order_By>;
@@ -29565,31 +29374,33 @@ export type Schedule_CurrentEvents_Order_By = {
 /** select columns of table "schedule.CurrentEvents" */
 export enum Schedule_CurrentEvents_Select_Column {
     /** column name */
+    AutoPlayElementId = "autoPlayElementId",
+    /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
+    /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -29604,19 +29415,20 @@ export enum Schedule_CurrentEvents_Select_Column {
 
 /** input type for updating data in table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Set_Input = {
+    readonly autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
+    readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
     readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: InputMaybe<Scalars["String"]>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly modeName?: InputMaybe<Scalars["String"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly timings_updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -29624,86 +29436,12 @@ export type Schedule_CurrentEvents_Set_Input = {
     readonly visibilityLevel?: InputMaybe<Scalars["String"]>;
 };
 
-/** aggregate stddev on columns */
-export type Schedule_CurrentEvents_Stddev_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_stddev_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Schedule_CurrentEvents_Stddev_Pop_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_stddev_pop_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_pop() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Pop_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Schedule_CurrentEvents_Stddev_Samp_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_stddev_samp_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_samp() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Samp_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Schedule_CurrentEvents_Sum_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_sum_fields";
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-};
-
-/** order by sum() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Sum_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Schedule_CurrentEvents_Var_Pop_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_var_pop_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_pop() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Var_Pop_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Schedule_CurrentEvents_Var_Samp_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_var_samp_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_samp() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Var_Samp_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Schedule_CurrentEvents_Variance_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_variance_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by variance() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Variance_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
     readonly __typename?: "schedule_Event";
+    /** An object relationship */
+    readonly autoPlayElement?: Maybe<Content_Element>;
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly automaticParticipationSurvey: Scalars["Boolean"];
     /** An object relationship */
     readonly conference: Conference_Conference;
@@ -29713,9 +29451,7 @@ export type Schedule_Event = {
     /** An aggregate relationship */
     readonly continuations_aggregate: Schedule_Continuation_Aggregate;
     readonly createdAt: Scalars["timestamptz"];
-    readonly durationSeconds: Scalars["Int"];
     readonly enableRecording: Scalars["Boolean"];
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     /** An array relationship */
     readonly eventPeople: ReadonlyArray<Schedule_EventProgramPerson>;
     /** An aggregate relationship */
@@ -29726,23 +29462,27 @@ export type Schedule_Event = {
     readonly exhibition?: Maybe<Collection_Exhibition>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id: Scalars["uuid"];
-    readonly intendedRoomModeName: Room_Mode_Enum;
     /** An object relationship */
     readonly item?: Maybe<Content_Item>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    readonly mode: Schedule_Mode;
+    readonly modeName: Schedule_Mode_Enum;
     readonly name: Scalars["String"];
     /** An object relationship */
     readonly room: Room_Room;
     readonly roomId: Scalars["uuid"];
-    /** An object relationship */
-    readonly roomMode: Room_Mode;
     /** A computed field, executes function "schedule.eventRoomName" */
     readonly roomName?: Maybe<Scalars["String"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     readonly shufflePeriod?: Maybe<Room_ShufflePeriod>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime: Scalars["timestamptz"];
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    readonly subconference?: Maybe<Conference_Subconference>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt: Scalars["timestamptz"];
     readonly updatedAt: Scalars["timestamptz"];
@@ -30160,17 +29900,9 @@ export type Schedule_Event_Aggregate = {
 /** aggregate fields of "schedule.Event" */
 export type Schedule_Event_Aggregate_Fields = {
     readonly __typename?: "schedule_Event_aggregate_fields";
-    readonly avg?: Maybe<Schedule_Event_Avg_Fields>;
     readonly count: Scalars["Int"];
     readonly max?: Maybe<Schedule_Event_Max_Fields>;
     readonly min?: Maybe<Schedule_Event_Min_Fields>;
-    readonly stddev?: Maybe<Schedule_Event_Stddev_Fields>;
-    readonly stddev_pop?: Maybe<Schedule_Event_Stddev_Pop_Fields>;
-    readonly stddev_samp?: Maybe<Schedule_Event_Stddev_Samp_Fields>;
-    readonly sum?: Maybe<Schedule_Event_Sum_Fields>;
-    readonly var_pop?: Maybe<Schedule_Event_Var_Pop_Fields>;
-    readonly var_samp?: Maybe<Schedule_Event_Var_Samp_Fields>;
-    readonly variance?: Maybe<Schedule_Event_Variance_Fields>;
 };
 
 /** aggregate fields of "schedule.Event" */
@@ -30181,17 +29913,9 @@ export type Schedule_Event_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "schedule.Event" */
 export type Schedule_Event_Aggregate_Order_By = {
-    readonly avg?: InputMaybe<Schedule_Event_Avg_Order_By>;
     readonly count?: InputMaybe<Order_By>;
     readonly max?: InputMaybe<Schedule_Event_Max_Order_By>;
     readonly min?: InputMaybe<Schedule_Event_Min_Order_By>;
-    readonly stddev?: InputMaybe<Schedule_Event_Stddev_Order_By>;
-    readonly stddev_pop?: InputMaybe<Schedule_Event_Stddev_Pop_Order_By>;
-    readonly stddev_samp?: InputMaybe<Schedule_Event_Stddev_Samp_Order_By>;
-    readonly sum?: InputMaybe<Schedule_Event_Sum_Order_By>;
-    readonly var_pop?: InputMaybe<Schedule_Event_Var_Pop_Order_By>;
-    readonly var_samp?: InputMaybe<Schedule_Event_Var_Samp_Order_By>;
-    readonly variance?: InputMaybe<Schedule_Event_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "schedule.Event" */
@@ -30201,47 +29925,39 @@ export type Schedule_Event_Arr_Rel_Insert_Input = {
     readonly on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
 };
 
-/** aggregate avg on columns */
-export type Schedule_Event_Avg_Fields = {
-    readonly __typename?: "schedule_Event_avg_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by avg() on columns of table "schedule.Event" */
-export type Schedule_Event_Avg_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "schedule.Event". All fields are combined with a logical 'AND'. */
 export type Schedule_Event_Bool_Exp = {
     readonly _and?: InputMaybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
     readonly _not?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly _or?: InputMaybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
+    readonly autoPlayElement?: InputMaybe<Content_Element_Bool_Exp>;
+    readonly autoPlayElementId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly automaticParticipationSurvey?: InputMaybe<Boolean_Comparison_Exp>;
     readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly continuations?: InputMaybe<Schedule_Continuation_Bool_Exp>;
     readonly createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    readonly durationSeconds?: InputMaybe<Int_Comparison_Exp>;
     readonly enableRecording?: InputMaybe<Boolean_Comparison_Exp>;
-    readonly endTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Bool_Exp>;
     readonly exhibition?: InputMaybe<Collection_Exhibition_Bool_Exp>;
     readonly exhibitionId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly intendedRoomModeName?: InputMaybe<Room_Mode_Enum_Comparison_Exp>;
     readonly item?: InputMaybe<Content_Item_Bool_Exp>;
     readonly itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly mode?: InputMaybe<Schedule_Mode_Bool_Exp>;
+    readonly modeName?: InputMaybe<Schedule_Mode_Enum_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly roomMode?: InputMaybe<Room_Mode_Bool_Exp>;
     readonly roomName?: InputMaybe<String_Comparison_Exp>;
+    readonly scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly sessionEventId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     readonly shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly startTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly streamTextEventId?: InputMaybe<String_Comparison_Exp>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly timingsUpdatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -30254,37 +29970,35 @@ export enum Schedule_Event_Constraint {
     EventPkey = "Event_pkey",
 }
 
-/** input type for incrementing numeric columns in table "schedule.Event" */
-export type Schedule_Event_Inc_Input = {
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
-};
-
 /** input type for inserting data into table "schedule.Event" */
 export type Schedule_Event_Insert_Input = {
+    readonly autoPlayElement?: InputMaybe<Content_Element_Obj_Rel_Insert_Input>;
+    readonly autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
     readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly continuations?: InputMaybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
     readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
     readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Obj_Rel_Insert_Input>;
     readonly exhibition?: InputMaybe<Collection_Exhibition_Obj_Rel_Insert_Input>;
     readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: InputMaybe<Room_Mode_Enum>;
     readonly item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly mode?: InputMaybe<Schedule_Mode_Obj_Rel_Insert_Input>;
+    readonly modeName?: InputMaybe<Schedule_Mode_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
-    readonly roomMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
+    readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: InputMaybe<Scalars["uuid"]>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -30294,17 +30008,18 @@ export type Schedule_Event_Insert_Input = {
 /** aggregate max on columns */
 export type Schedule_Event_Max_Fields = {
     readonly __typename?: "schedule_Event_max_fields";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: Maybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -30313,17 +30028,18 @@ export type Schedule_Event_Max_Fields = {
 
 /** order by max() on columns of table "schedule.Event" */
 export type Schedule_Event_Max_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
+    readonly sessionEventId?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timingsUpdatedAt?: InputMaybe<Order_By>;
@@ -30333,17 +30049,18 @@ export type Schedule_Event_Max_Order_By = {
 /** aggregate min on columns */
 export type Schedule_Event_Min_Fields = {
     readonly __typename?: "schedule_Event_min_fields";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: Maybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -30352,17 +30069,18 @@ export type Schedule_Event_Min_Fields = {
 
 /** order by min() on columns of table "schedule.Event" */
 export type Schedule_Event_Min_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
+    readonly sessionEventId?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timingsUpdatedAt?: InputMaybe<Order_By>;
@@ -30394,31 +30112,34 @@ export type Schedule_Event_On_Conflict = {
 
 /** Ordering options when selecting data from "schedule.Event". */
 export type Schedule_Event_Order_By = {
+    readonly autoPlayElement?: InputMaybe<Content_Element_Order_By>;
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly automaticParticipationSurvey?: InputMaybe<Order_By>;
     readonly conference?: InputMaybe<Conference_Conference_Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly continuations_aggregate?: InputMaybe<Schedule_Continuation_Aggregate_Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
     readonly enableRecording?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly eventPeople_aggregate?: InputMaybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
     readonly exhibition?: InputMaybe<Collection_Exhibition_Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly intendedRoomModeName?: InputMaybe<Order_By>;
     readonly item?: InputMaybe<Content_Item_Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly mode?: InputMaybe<Schedule_Mode_Order_By>;
+    readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
-    readonly roomMode?: InputMaybe<Room_Mode_Order_By>;
     readonly roomName?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
+    readonly sessionEventId?: InputMaybe<Order_By>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timingsUpdatedAt?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
@@ -30433,33 +30154,35 @@ export type Schedule_Event_Pk_Columns_Input = {
 /** select columns of table "schedule.Event" */
 export enum Schedule_Event_Select_Column {
     /** column name */
+    AutoPlayElementId = "autoPlayElementId",
+    /** column name */
     AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    SessionEventId = "sessionEventId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -30474,20 +30197,21 @@ export enum Schedule_Event_Select_Column {
 
 /** input type for updating data in table "schedule.Event" */
 export type Schedule_Event_Set_Input = {
+    readonly autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
     readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
     readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: InputMaybe<Room_Mode_Enum>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly modeName?: InputMaybe<Schedule_Mode_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: InputMaybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -30495,52 +30219,10 @@ export type Schedule_Event_Set_Input = {
     readonly visibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum>;
 };
 
-/** aggregate stddev on columns */
-export type Schedule_Event_Stddev_Fields = {
-    readonly __typename?: "schedule_Event_stddev_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Schedule_Event_Stddev_Pop_Fields = {
-    readonly __typename?: "schedule_Event_stddev_pop_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_pop() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Pop_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Schedule_Event_Stddev_Samp_Fields = {
-    readonly __typename?: "schedule_Event_stddev_samp_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_samp() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Samp_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Schedule_Event_Sum_Fields = {
-    readonly __typename?: "schedule_Event_sum_fields";
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-};
-
-/** order by sum() on columns of table "schedule.Event" */
-export type Schedule_Event_Sum_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** update columns of table "schedule.Event" */
 export enum Schedule_Event_Update_Column {
+    /** column name */
+    AutoPlayElementId = "autoPlayElementId",
     /** column name */
     AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
@@ -30548,27 +30230,27 @@ export enum Schedule_Event_Update_Column {
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    SessionEventId = "sessionEventId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -30581,38 +30263,175 @@ export enum Schedule_Event_Update_Column {
     VisibilityLevel = "visibilityLevel",
 }
 
-/** aggregate var_pop on columns */
-export type Schedule_Event_Var_Pop_Fields = {
-    readonly __typename?: "schedule_Event_var_pop_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_Mode = {
+    readonly __typename?: "schedule_Mode";
+    readonly description: Scalars["String"];
+    /** An array relationship */
+    readonly events: ReadonlyArray<Schedule_Event>;
+    /** An aggregate relationship */
+    readonly events_aggregate: Schedule_Event_Aggregate;
+    readonly name: Scalars["String"];
 };
 
-/** order by var_pop() on columns of table "schedule.Event" */
-export type Schedule_Event_Var_Pop_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_ModeEventsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
-/** aggregate var_samp on columns */
-export type Schedule_Event_Var_Samp_Fields = {
-    readonly __typename?: "schedule_Event_var_samp_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_ModeEvents_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
-/** order by var_samp() on columns of table "schedule.Event" */
-export type Schedule_Event_Var_Samp_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
+/** aggregated selection of "schedule.Mode" */
+export type Schedule_Mode_Aggregate = {
+    readonly __typename?: "schedule_Mode_aggregate";
+    readonly aggregate?: Maybe<Schedule_Mode_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Schedule_Mode>;
 };
 
-/** aggregate variance on columns */
-export type Schedule_Event_Variance_Fields = {
-    readonly __typename?: "schedule_Event_variance_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+/** aggregate fields of "schedule.Mode" */
+export type Schedule_Mode_Aggregate_Fields = {
+    readonly __typename?: "schedule_Mode_aggregate_fields";
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Schedule_Mode_Max_Fields>;
+    readonly min?: Maybe<Schedule_Mode_Min_Fields>;
 };
 
-/** order by variance() on columns of table "schedule.Event" */
-export type Schedule_Event_Variance_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
+/** aggregate fields of "schedule.Mode" */
+export type Schedule_Mode_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
 };
+
+/** Boolean expression to filter rows from the table "schedule.Mode". All fields are combined with a logical 'AND'. */
+export type Schedule_Mode_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Schedule_Mode_Bool_Exp>>;
+    readonly _not?: InputMaybe<Schedule_Mode_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Schedule_Mode_Bool_Exp>>;
+    readonly description?: InputMaybe<String_Comparison_Exp>;
+    readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
+    readonly name?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "schedule.Mode" */
+export enum Schedule_Mode_Constraint {
+    /** unique or primary key constraint */
+    ModePkey = "Mode_pkey",
+}
+
+export enum Schedule_Mode_Enum {
+    /** An exhibition hall. */
+    Exhibition = "EXHIBITION",
+    /** Event is taking place in a Zoom room. */
+    External = "EXTERNAL",
+    /** Users watch a live-stream. */
+    Livestream = "LIVESTREAM",
+    /** An empty room. */
+    None = "NONE",
+    /** A shuffle queue. */
+    Shuffle = "SHUFFLE",
+    /** Users may participate in the general video chat. */
+    VideoChat = "VIDEO_CHAT",
+    /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
+    VideoPlayer = "VIDEO_PLAYER",
+}
+
+/** Boolean expression to compare columns of type "schedule_Mode_enum". All fields are combined with logical 'AND'. */
+export type Schedule_Mode_Enum_Comparison_Exp = {
+    readonly _eq?: InputMaybe<Schedule_Mode_Enum>;
+    readonly _in?: InputMaybe<ReadonlyArray<Schedule_Mode_Enum>>;
+    readonly _is_null?: InputMaybe<Scalars["Boolean"]>;
+    readonly _neq?: InputMaybe<Schedule_Mode_Enum>;
+    readonly _nin?: InputMaybe<ReadonlyArray<Schedule_Mode_Enum>>;
+};
+
+/** input type for inserting data into table "schedule.Mode" */
+export type Schedule_Mode_Insert_Input = {
+    readonly description?: InputMaybe<Scalars["String"]>;
+    readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Schedule_Mode_Max_Fields = {
+    readonly __typename?: "schedule_Mode_max_fields";
+    readonly description?: Maybe<Scalars["String"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Schedule_Mode_Min_Fields = {
+    readonly __typename?: "schedule_Mode_min_fields";
+    readonly description?: Maybe<Scalars["String"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+};
+
+/** response of any mutation on the table "schedule.Mode" */
+export type Schedule_Mode_Mutation_Response = {
+    readonly __typename?: "schedule_Mode_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Schedule_Mode>;
+};
+
+/** input type for inserting object relation for remote table "schedule.Mode" */
+export type Schedule_Mode_Obj_Rel_Insert_Input = {
+    readonly data: Schedule_Mode_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
+};
+
+/** on conflict condition type for table "schedule.Mode" */
+export type Schedule_Mode_On_Conflict = {
+    readonly constraint: Schedule_Mode_Constraint;
+    readonly update_columns?: ReadonlyArray<Schedule_Mode_Update_Column>;
+    readonly where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "schedule.Mode". */
+export type Schedule_Mode_Order_By = {
+    readonly description?: InputMaybe<Order_By>;
+    readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: schedule_Mode */
+export type Schedule_Mode_Pk_Columns_Input = {
+    readonly name: Scalars["String"];
+};
+
+/** select columns of table "schedule.Mode" */
+export enum Schedule_Mode_Select_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
+
+/** input type for updating data in table "schedule.Mode" */
+export type Schedule_Mode_Set_Input = {
+    readonly description?: InputMaybe<Scalars["String"]>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+};
+
+/** update columns of table "schedule.Mode" */
+export enum Schedule_Mode_Update_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
 
 /** columns and relationships of "schedule.OverlappingEvents" */
 export type Schedule_OverlappingEvents = {
@@ -32017,12 +31836,6 @@ export type Subscription_Root = {
     readonly room_ManagementMode_aggregate: Room_ManagementMode_Aggregate;
     /** fetch data from the table: "room.ManagementMode" using primary key columns */
     readonly room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** fetch data from the table: "room.Mode" */
-    readonly room_Mode: ReadonlyArray<Room_Mode>;
-    /** fetch aggregated fields from the table: "room.Mode" */
-    readonly room_Mode_aggregate: Room_Mode_Aggregate;
-    /** fetch data from the table: "room.Mode" using primary key columns */
-    readonly room_Mode_by_pk?: Maybe<Room_Mode>;
     /** fetch data from the table: "room.PersonRole" */
     readonly room_PersonRole: ReadonlyArray<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -32099,6 +31912,12 @@ export type Subscription_Root = {
     readonly schedule_Event_aggregate: Schedule_Event_Aggregate;
     /** fetch data from the table: "schedule.Event" using primary key columns */
     readonly schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** fetch data from the table: "schedule.Mode" */
+    readonly schedule_Mode: ReadonlyArray<Schedule_Mode>;
+    /** fetch aggregated fields from the table: "schedule.Mode" */
+    readonly schedule_Mode_aggregate: Schedule_Mode_Aggregate;
+    /** fetch data from the table: "schedule.Mode" using primary key columns */
+    readonly schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** fetch data from the table: "schedule.OverlappingEvents" */
     readonly schedule_OverlappingEvents: ReadonlyArray<Schedule_OverlappingEvents>;
     /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
@@ -33669,26 +33488,6 @@ export type Subscription_RootRoom_ManagementMode_By_PkArgs = {
     name: Scalars["String"];
 };
 
-export type Subscription_RootRoom_ModeArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Mode_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
 export type Subscription_RootRoom_PersonRoleArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Room_PersonRole_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -33943,6 +33742,26 @@ export type Subscription_RootSchedule_Event_AggregateArgs = {
 
 export type Subscription_RootSchedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootSchedule_ModeArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_Mode_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 export type Subscription_RootSchedule_OverlappingEventsArgs = {
@@ -39436,12 +39255,11 @@ export type EventFragment = {
     readonly updatedAt: any;
     readonly conferenceId: any;
     readonly roomId: any;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly modeName: Schedule_Mode_Enum;
     readonly itemId?: any | null;
     readonly name: string;
-    readonly startTime: any;
-    readonly durationSeconds: number;
-    readonly endTime?: any | null;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly exhibitionId?: any | null;
     readonly shufflePeriodId?: any | null;
     readonly timingsUpdatedAt: any;
@@ -39465,12 +39283,11 @@ export type GetEventQuery = {
         readonly updatedAt: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
         readonly timingsUpdatedAt: any;
@@ -39495,12 +39312,11 @@ export type InsertEventMutation = {
         readonly updatedAt: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
         readonly timingsUpdatedAt: any;
@@ -39526,12 +39342,11 @@ export type UpdateEventMutation = {
         readonly updatedAt: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
         readonly timingsUpdatedAt: any;
@@ -40171,12 +39986,11 @@ export const EventFragmentDoc = gql`
         updatedAt
         conferenceId
         roomId
-        intendedRoomModeName
+        modeName
         itemId
         name
-        startTime
-        durationSeconds
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         exhibitionId
         shufflePeriodId
         timingsUpdatedAt

@@ -14,7 +14,7 @@ import {
     GetEventTimingsDocument,
     NotifyRealtimeEventEndedDocument,
     NotifyRealtimeEventStartedDocument,
-    Room_Mode_Enum,
+    Schedule_Mode_Enum,
     StartChatDuplicationDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -47,9 +47,19 @@ export async function handleEventUpdated(logger: P.Logger, payload: EventPayload
 
     try {
         if (newRow) {
-            await createEventStartTrigger(logger, newRow.id, newRow.startTime, Date.parse(newRow.timings_updated_at));
-            if (newRow.endTime) {
-                await createEventEndTrigger(logger, newRow.id, newRow.endTime, Date.parse(newRow.timings_updated_at));
+            await createEventStartTrigger(
+                logger,
+                newRow.id,
+                newRow.scheduledStartTime,
+                Date.parse(newRow.timings_updated_at)
+            );
+            if (newRow.scheduledEndTime) {
+                await createEventEndTrigger(
+                    logger,
+                    newRow.id,
+                    newRow.scheduledEndTime,
+                    Date.parse(newRow.timings_updated_at)
+                );
             } else {
                 logger.error(
                     { eventId: newRow.id },
@@ -65,7 +75,7 @@ export async function handleEventUpdated(logger: P.Logger, payload: EventPayload
 
     try {
         const hasVonageSession = await eventHasVonageSession(newRow.id);
-        if (!hasVonageSession && isLive(newRow.intendedRoomModeName)) {
+        if (!hasVonageSession && isLive(newRow.modeName)) {
             await createEventVonageSession(logger, newRow.id, newRow.conferenceId);
         }
     } catch (err) {
@@ -78,8 +88,8 @@ gql`
     query GetEventChatInfo($eventId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             id
-            startTime
-            durationSeconds
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -179,10 +189,10 @@ gql`
             id
             name
             timingsUpdatedAt
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             conferenceId
-            intendedRoomModeName
+            modeName
             roomId
             enableRecording
             eventVonageSession {
@@ -212,10 +222,10 @@ gql`
 export async function handleEventStartNotification(
     logger: P.Logger,
     eventId: string,
-    startTime: string,
+    scheduledStartTime: string,
     updatedAt: number | null
 ): Promise<void> {
-    logger.info({ eventId, startTime }, "Handling event start");
+    logger.info({ eventId, scheduledStartTime }, "Handling event start");
     const result = await callWithRetry(
         async () =>
             await apolloClient.query({
@@ -228,30 +238,30 @@ export async function handleEventStartNotification(
 
     if (
         result.data.schedule_Event_by_pk &&
-        result.data.schedule_Event_by_pk.startTime === startTime &&
+        result.data.schedule_Event_by_pk.scheduledStartTime === scheduledStartTime &&
         (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
         const isHybrid = Boolean(result.data.schedule_Event_by_pk.room?.rtmpInput?.inputId);
         logger.info(
-            { eventId: result.data.schedule_Event_by_pk.id, startTime, isHybrid },
-            "Handling event start: matched expected startTime"
+            { eventId: result.data.schedule_Event_by_pk.id, scheduledStartTime, isHybrid },
+            "Handling event start: matched expected scheduledStartTime"
         );
         const nowMillis = new Date().getTime();
-        const startTimeMillis = Date.parse(startTime);
+        const scheduledStartTimeMillis = Date.parse(scheduledStartTime);
         // If the event is hybrid, delay by 3 seconds to reduce risk of RTMP PUSH Input conflict between events
         const preloadMillis = isHybrid ? -3000 : 10000;
-        const waitForMillis = Math.max(startTimeMillis - nowMillis - preloadMillis, 0);
+        const waitForMillis = Math.max(scheduledStartTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
         const roomId = result.data.schedule_Event_by_pk.roomId;
-        const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
+        const modeName = result.data.schedule_Event_by_pk.modeName;
         const intendedRecordingEnabled = result.data.schedule_Event_by_pk.enableRecording;
 
         setTimeout(() => {
-            if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
+            if (modeName === Schedule_Mode_Enum.Livestream) {
                 startEventBroadcast(logger, eventId).catch((e) => {
                     logger.error({ eventId, err: e }, "Failed to start event broadcast");
                 });
-            } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat && intendedRecordingEnabled) {
+            } else if (modeName === Schedule_Mode_Enum.VideoChat && intendedRecordingEnabled) {
                 startRoomVonageArchiving(logger, roomId, eventId).catch((e) => {
                     logger.error(
                         {
@@ -273,7 +283,7 @@ export async function handleEventStartNotification(
             notifyRealtimeServiceEventStarted(eventId).catch((e) => {
                 logger.error("Failed to notify real-time service event started", { eventId, e });
             });
-        }, Math.max(startTimeMillis - nowMillis + 500, 0));
+        }, Math.max(scheduledStartTimeMillis - nowMillis + 500, 0));
 
         // Used to skip creating duplicate rooms by accident
         const itemsCreatedRoomsFor: string[] = [];
@@ -323,7 +333,7 @@ export async function handleEventStartNotification(
         //       continuations are fully bedded in, the logic can be removed as it is
         //       redundant.
         if (
-            [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName) &&
+            Schedule_Mode_Enum.Livestream === modeName &&
             result.data.schedule_Event_by_pk.item &&
             !itemsCreatedRoomsFor.includes(result.data.schedule_Event_by_pk.item.id)
         ) {
@@ -341,7 +351,7 @@ export async function handleEventStartNotification(
         logger.info(
             {
                 eventId,
-                startTime,
+                scheduledStartTime,
                 updatedAt,
             },
             "Event start notification did not match current event start time, skipping."
@@ -352,10 +362,10 @@ export async function handleEventStartNotification(
 export async function handleEventEndNotification(
     logger: P.Logger,
     eventId: string,
-    endTime: string,
+    scheduledEndTime: string,
     updatedAt: number | null
 ): Promise<void> {
-    logger.info({ eventId, endTime }, "Handling event end");
+    logger.info({ eventId, scheduledEndTime }, "Handling event end");
     const result = await callWithRetry(
         async () =>
             await apolloClient.query({
@@ -368,29 +378,29 @@ export async function handleEventEndNotification(
 
     if (
         result.data.schedule_Event_by_pk &&
-        result.data.schedule_Event_by_pk.endTime === endTime &&
+        result.data.schedule_Event_by_pk.scheduledEndTime === scheduledEndTime &&
         (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
         logger.info(
-            { eventId: result.data.schedule_Event_by_pk.id, endTime },
-            "Handling event end: matched expected endTime"
+            { eventId: result.data.schedule_Event_by_pk.id, scheduledEndTime },
+            "Handling event end: matched expected scheduledEndTime"
         );
         const nowMillis = new Date().getTime();
-        const endTimeMillis = Date.parse(endTime);
+        const endTimeMillis = Date.parse(scheduledEndTime);
         const preloadMillis = 1000;
         const waitForMillis = Math.max(endTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
         const roomId = result.data.schedule_Event_by_pk.roomId;
         const enableRecording = result.data.schedule_Event_by_pk.enableRecording;
         const conferenceId = result.data.schedule_Event_by_pk.conferenceId;
-        const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
+        const modeName = result.data.schedule_Event_by_pk.modeName;
 
         setTimeout(() => {
-            if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
+            if (modeName === Schedule_Mode_Enum.Livestream) {
                 stopEventBroadcasts(logger, eventId).catch((e) => {
                     logger.error({ eventId, e }, "Failed to stop event broadcasts");
                 });
-            } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat && enableRecording) {
+            } else if (modeName === Schedule_Mode_Enum.VideoChat && enableRecording) {
                 stopRoomVonageArchiving(logger, roomId, eventId).catch((e) => {
                     logger.error({ eventId, e }, "Failed to stop event archiving");
                 });
@@ -410,10 +420,7 @@ export async function handleEventEndNotification(
         if (enableRecording) {
             const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
             setTimeout(() => {
-                if (
-                    intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                    intendedRoomModeName === Room_Mode_Enum.QAndA
-                ) {
+                if (modeName === Schedule_Mode_Enum.Livestream) {
                     createMediaPackageHarvestJob(logger, eventId, conferenceId).catch((e) => {
                         logger.error({ eventId, e }, "Failed to create MediaPackage harvest job");
                     });
@@ -421,7 +428,10 @@ export async function handleEventEndNotification(
             }, harvestJobWaitForMillis);
         }
     } else {
-        logger.info({ eventId, endTime, updatedAt }, "Event stop notification did not match current event, skipping.");
+        logger.info(
+            { eventId, scheduledEndTime, updatedAt },
+            "Event stop notification did not match current event, skipping."
+        );
     }
 }
 

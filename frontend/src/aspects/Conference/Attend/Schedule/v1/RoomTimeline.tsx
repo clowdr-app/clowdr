@@ -54,7 +54,9 @@ function RoomTimelineInner({
 }): JSX.Element {
     const groupedEvents = useMemo(() => {
         const result: TimelineEvent[][] = [];
-        const sortedEvents = [...room.events].sort((x, y) => Date.parse(x.startTime) - Date.parse(y.startTime));
+        const sortedEvents = [...room.events].sort(
+            (x, y) => Date.parse(x.scheduledStartTime) - Date.parse(y.scheduledStartTime)
+        );
 
         let currentEventsGroup: TimelineEvent[] = [];
         for (let idx = 0; idx < sortedEvents.length; idx++) {
@@ -66,8 +68,8 @@ function RoomTimelineInner({
                 (compareEvent.item &&
                     compareEvent.item.id === event.item?.id &&
                     Math.abs(
-                        Date.parse(event.startTime) -
-                            (Date.parse(compareEvent.startTime) + compareEvent.durationSeconds * 1000)
+                        Date.parse(event.scheduledStartTime) -
+                            (Date.parse(compareEvent.scheduledStartTime) + compareEvent.durationSeconds * 1000)
                     ) <
                         1000 * 330)
             ) {

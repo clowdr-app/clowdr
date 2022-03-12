@@ -123,7 +123,7 @@ export default function EventBoxModal({
                 <ModalCloseButton />
                 <ModalHeader fontWeight="semibold" pr={1}>
                     <Text
-                        aria-label={`Starts at ${DateTime.fromISO(event0.startTime)
+                        aria-label={`Starts at ${DateTime.fromISO(event0.scheduledStartTime)
                             .setZone(timelineParams.timezone)
                             .toLocaleString({
                                 weekday: "long",
@@ -143,7 +143,7 @@ export default function EventBoxModal({
                         {events.length === 1 ? (
                             <Box mr={2}>
                                 <EventModeIcon
-                                    mode={event0.intendedRoomModeName}
+                                    mode={event0.modeName}
                                     durationSeconds={event0.durationSeconds}
                                     fontSize="inherit"
                                 />
@@ -250,15 +250,17 @@ export default function EventBoxModal({
                                         </GridItem>
                                         <GridItem>
                                             <EventModeIcon
-                                                mode={event.intendedRoomModeName}
+                                                mode={event.modeName}
                                                 durationSeconds={event.durationSeconds}
                                                 fontSize="inherit"
                                             />
                                         </GridItem>
                                         <GridItem>
-                                            {format(new Date(event.startTime), "HH:mm")} -{" "}
+                                            {format(new Date(event.scheduledStartTime), "HH:mm")} -{" "}
                                             {format(
-                                                new Date(Date.parse(event.startTime) + 1000 * event.durationSeconds),
+                                                new Date(
+                                                    Date.parse(event.scheduledStartTime) + 1000 * event.durationSeconds
+                                                ),
                                                 "HH:mm"
                                             )}
                                         </GridItem>

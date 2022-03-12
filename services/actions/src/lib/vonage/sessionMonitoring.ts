@@ -155,9 +155,9 @@ gql`
         schedule_Event(
             where: {
                 room: { publicVonageSessionId: { _eq: $sessionId } }
-                intendedRoomModeName: { _eq: VIDEO_CHAT }
-                endTime: { _gt: $time }
-                startTime: { _lte: $time }
+                modeName: { _eq: VIDEO_CHAT }
+                scheduledEndTime: { _gt: $time }
+                scheduledStartTime: { _lte: $time }
             }
         ) {
             id

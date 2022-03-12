@@ -47,15 +47,19 @@ gql`
             where: {
                 _or: [
                     { id: { _eq: $fromId } }
-                    { startTime: { _lte: $nowStart }, endTime: { _gte: $nowEnd }, shufflePeriodId: { _eq: $fromId } }
+                    {
+                        scheduledStartTime: { _lte: $nowStart }
+                        scheduledEndTime: { _gte: $nowEnd }
+                        shufflePeriodId: { _eq: $fromId }
+                    }
                 ]
             }
         ) {
             id
             roomId
             shufflePeriodId
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
         }
     }
 
@@ -121,9 +125,9 @@ export default function ContinuationChoices({
                     ? {
                           eventId: from.eventId,
                           itemId: from.itemId,
-                          endTime:
+                          scheduledEndTime:
                               response.data.schedule_Event.length > 0
-                                  ? Date.parse(response.data.schedule_Event[0].endTime)
+                                  ? Date.parse(response.data.schedule_Event[0].scheduledEndTime)
                                   : 0,
                       }
                     : {
@@ -171,7 +175,7 @@ function ContinuationChoices_Inner({
     currentRoomId,
 }: {
     from:
-        | { eventId: string; itemId: string | null; endTime: number }
+        | { eventId: string; itemId: string | null; scheduledEndTime: number }
         | {
               shufflePeriodId: string;
               periodEndTime: number;
@@ -209,44 +213,44 @@ function ContinuationChoices_Inner({
 
     const now = useRealTime(1000);
     const initialTimeRemaining = useMemo(() => {
-        let endTime: number;
+        let scheduledEndTime: number;
         if ("eventId" in from) {
-            endTime = from.endTime;
+            scheduledEndTime = from.scheduledEndTime;
         } else {
             if (from.roomEndTime < from.periodEndTime - from.roomDuration) {
                 // Time for another room, never display the choice
-                endTime = from.roomEndTime;
+                scheduledEndTime = from.roomEndTime;
             } else {
                 // No time for another room, display choice when this room ends
-                endTime = from.roomEndTime;
+                scheduledEndTime = from.roomEndTime;
             }
         }
-        return endTime - Date.now();
+        return scheduledEndTime - Date.now();
     }, [from]);
     const { displayChoice, timeRemaining } = useMemo(() => {
-        let endTime: number;
+        let scheduledEndTime: number;
         if ("eventId" in from) {
-            endTime = from.endTime;
+            scheduledEndTime = from.scheduledEndTime;
         } else {
             if (from.roomEndTime < from.periodEndTime - from.roomDuration) {
                 // Time for another room, never display the choice
                 return { displayChoice: false, timeRemaining: from.roomEndTime - now };
             } else {
                 // No time for another room, display choice when this room ends
-                endTime = from.roomEndTime;
+                scheduledEndTime = from.roomEndTime;
             }
         }
         return {
             displayChoice:
                 choices.length > 0 &&
                 ((!isActiveChoice &&
-                    (now < endTime || selectedOptionId === null) &&
-                    now > endTime - passiveChoice_RevealThreshholdMs &&
-                    now < endTime + passiveChoice_HideThreshholdMs) ||
+                    (now < scheduledEndTime || selectedOptionId === null) &&
+                    now > scheduledEndTime - passiveChoice_RevealThreshholdMs &&
+                    now < scheduledEndTime + passiveChoice_HideThreshholdMs) ||
                     (isActiveChoice &&
-                        now > endTime - activeChoice_RevealThreshholdMs &&
-                        now < endTime + activeChoice_HideThreshholdMs)),
-            timeRemaining: endTime - now,
+                        now > scheduledEndTime - activeChoice_RevealThreshholdMs &&
+                        now < scheduledEndTime + activeChoice_HideThreshholdMs)),
+            timeRemaining: scheduledEndTime - now,
         };
     }, [from, isActiveChoice, now, selectedOptionId, choices.length]);
 

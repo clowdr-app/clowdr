@@ -12,9 +12,9 @@ import {
     LocalSchedule_GetRoomsWithEventsStartingDocument,
     LocalSchedule_GetRoomsWithoutEventsDocument,
     LocalSchedule_GetScheduleDocument,
-    Room_Mode_Enum,
     ScheduleService_GetRoomsWithBroadcastEventsDocument,
     ScheduleService_UpdateRtmpInputsDocument,
+    Schedule_Mode_Enum,
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
 import { ContentElementDataService } from "../content/content-element.service";
@@ -28,11 +28,11 @@ export interface LocalSchedule {
 
 export interface LocalScheduleAction {
     eventId: string;
-    roomModeName: Room_Mode_Enum;
+    roomModeName: Schedule_Mode_Enum;
     rtmpInputName: Video_RtmpInput_Enum | null;
     videoData: VideoBroadcastBlob | null;
-    startTime: number;
-    endTime: number;
+    scheduledStartTime: number;
+    scheduledEndTime: number;
     sequenceNumber?: number;
 }
 
@@ -51,14 +51,7 @@ export class LocalScheduleService {
     public async getRoomsWithBroadcastEvents(): Promise<string[]> {
         gql`
             query ScheduleService_GetRoomsWithBroadcastEvents($now: timestamptz!) {
-                room_Room(
-                    where: {
-                        events: {
-                            intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A, PRERECORDED] }
-                            endTime: { _gt: $now }
-                        }
-                    }
-                ) {
+                room_Room(where: { events: { modeName: { _eq: LIVESTREAM }, scheduledEndTime: { _gt: $now } } }) {
                     id
                 }
             }
@@ -80,17 +73,17 @@ export class LocalScheduleService {
 
         const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;
 
-        if (!event.eventVonageSession && this.isLive(event.intendedRoomModeName)) {
+        if (!event.eventVonageSession && this.isLive(event.modeName)) {
             this.logger.warn({ eventId: event.id }, "Live event is missing a Vonage session");
         }
 
         return {
             eventId: event.id,
             rtmpInputName,
-            roomModeName: event.intendedRoomModeName,
+            roomModeName: event.modeName,
             videoData,
-            startTime: Date.parse(event.startTime),
-            endTime: Date.parse(event.endTime ?? event.startTime),
+            scheduledStartTime: Date.parse(event.scheduledStartTime),
+            scheduledEndTime: Date.parse(event.scheduledEndTime ?? event.scheduledStartTime),
         };
     }
 
@@ -117,7 +110,7 @@ export class LocalScheduleService {
     public async getScheduleData(roomId: string): Promise<LocalSchedule> {
         gql`
             query LocalSchedule_GetSchedule($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
-                schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now, _lt: $cutoff } }) {
+                schedule_Event(where: { roomId: { _eq: $roomId }, scheduledEndTime: { _gte: $now, _lt: $cutoff } }) {
                     ...LocalSchedule_EventDetails
                 }
                 room_Room_by_pk(id: $roomId) {
@@ -141,13 +134,13 @@ export class LocalScheduleService {
                         data
                     }
                 }
-                endTime
-                startTime
+                scheduledEndTime
+                scheduledStartTime
                 eventVonageSession {
                     id
                     rtmpInputName
                 }
-                intendedRoomModeName
+                modeName
             }
         `;
 
@@ -172,15 +165,15 @@ export class LocalScheduleService {
         };
     }
 
-    isLive(roomMode: Room_Mode_Enum): boolean {
-        return [Room_Mode_Enum.QAndA, Room_Mode_Enum.Presentation].includes(roomMode);
+    isLive(roomMode: Schedule_Mode_Enum): boolean {
+        return Schedule_Mode_Enum.Livestream === roomMode;
     }
 
     public async ensureRtmpInputsAlternate(scheduleData: LocalSchedule): Promise<LocalSchedule> {
         const liveEvents = scheduleData.items
             .filter((item) => this.isLive(item.roomModeName))
-            .filter((item) => item.startTime > add(Date.now(), { seconds: 30 }).getTime())
-            .sort((a, b) => a.startTime - b.startTime);
+            .filter((item) => item.scheduledStartTime > add(Date.now(), { seconds: 30 }).getTime())
+            .sort((a, b) => a.scheduledStartTime - b.scheduledStartTime);
 
         if (liveEvents.length === 0) {
             return scheduleData;
@@ -272,8 +265,8 @@ export class LocalScheduleService {
                 room_Room(
                     where: {
                         events: {
-                            _and: [{ startTime: { _lte: $to } }, { endTime: { _gte: $from } }]
-                            intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                            _and: [{ scheduledStartTime: { _lte: $to } }, { scheduledEndTime: { _gte: $from } }]
+                            modeName: { _eq: LIVESTREAM }
                         }
                         _not: {
                             channelStack: { channelStackUpdateJobs: { jobStatusName: { _in: [NEW, IN_PROGRESS] } } }
@@ -321,10 +314,13 @@ export class LocalScheduleService {
                                 room: {
                                     _not: {
                                         events: {
-                                            intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                            modeName: { _eq: LIVESTREAM }
                                             _or: [
-                                                { startTime: { _gte: $from, _lte: $to } }
-                                                { startTime: { _lte: $from }, endTime: { _gte: $from } }
+                                                { scheduledStartTime: { _gte: $from, _lte: $to } }
+                                                {
+                                                    scheduledStartTime: { _lte: $from }
+                                                    scheduledEndTime: { _gte: $from }
+                                                }
                                             ]
                                         }
                                     }
@@ -377,8 +373,8 @@ export class LocalScheduleService {
             eventId: event.id,
             conferenceId: event.conferenceId,
             channelStack,
-            startTime: Date.parse(event.startTime),
-            endTime: Date.parse(event.endTime),
+            scheduledStartTime: Date.parse(event.scheduledStartTime),
+            scheduledEndTime: Date.parse(event.scheduledEndTime),
             eventRtmpInputName: event.eventVonageSession?.rtmpInputName ?? null,
         };
     }
@@ -394,8 +390,8 @@ export class LocalScheduleService {
             fragment LocalSchedule_Event on schedule_Event {
                 id
                 conferenceId
-                endTime
-                startTime
+                scheduledEndTime
+                scheduledStartTime
                 eventVonageSession {
                     rtmpInputName
                 }
@@ -439,8 +435,8 @@ export interface Room {
 export interface Event {
     eventId: string;
     conferenceId: string;
-    startTime: number;
-    endTime: number;
+    scheduledStartTime: number;
+    scheduledEndTime: number;
     channelStack: ChannelStack | null;
     eventRtmpInputName: string | null;
 }

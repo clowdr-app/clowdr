@@ -39,7 +39,7 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
 router.post("/notifyStart", json(), async (req: Request, res: Response) => {
     req.log.info("Event started");
     try {
-        assertType<ScheduledEventPayload<{ eventId: string; startTime: string }>>(req.body);
+        assertType<ScheduledEventPayload<{ eventId: string; scheduledStartTime: string }>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
@@ -50,7 +50,7 @@ router.post("/notifyStart", json(), async (req: Request, res: Response) => {
         await handleEventStartNotification(
             req.log,
             req.body.payload.eventId,
-            req.body.payload.startTime,
+            req.body.payload.scheduledStartTime,
             req.body.payload.updatedAt ?? null
         );
     } catch (e: any) {
@@ -64,7 +64,7 @@ router.post("/notifyStart", json(), async (req: Request, res: Response) => {
 router.post("/notifyEnd", json(), async (req: Request, res: Response) => {
     req.log.info("Event ended");
     try {
-        assertType<ScheduledEventPayload<{ eventId: string; endTime: string }>>(req.body);
+        assertType<ScheduledEventPayload<{ eventId: string; scheduledEndTime: string }>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
@@ -75,7 +75,7 @@ router.post("/notifyEnd", json(), async (req: Request, res: Response) => {
         await handleEventEndNotification(
             req.log,
             req.body.payload.eventId,
-            req.body.payload.endTime,
+            req.body.payload.scheduledEndTime,
             req.body.payload.updatedAt ?? null
         );
     } catch (e: any) {

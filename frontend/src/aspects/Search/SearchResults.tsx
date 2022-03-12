@@ -39,8 +39,8 @@ gql`
         conferenceId
         name
         itemId
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         roomId
         roomName
     }
@@ -190,8 +190,8 @@ export default function SearchResults({
         <List spacing={0}>
             {data?.schedule_searchEvents.map((event) => {
                 const now = Date.now();
-                const start = Date.parse(event.startTime);
-                const end = Date.parse(event.endTime);
+                const start = Date.parse(event.scheduledStartTime);
+                const end = Date.parse(event.scheduledEndTime);
                 const inPast = end <= now;
                 const ongoing = start <= now && now < end;
                 return (

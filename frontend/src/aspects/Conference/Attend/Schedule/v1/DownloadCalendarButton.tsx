@@ -29,27 +29,29 @@ const DownloadCalendarButton = React.forwardRef<HTMLButtonElement, Props>(functi
             {...props}
             onClick={() => {
                 const convertedEvents: EventAttributes[] = events().map((event) => {
-                    const startTime = new Date(event.startTime);
-                    const endTime = new Date(Date.parse(event.startTime) + event.durationSeconds * 1000);
+                    const scheduledStartTime = new Date(event.scheduledStartTime);
+                    const scheduledEndTime = new Date(
+                        Date.parse(event.scheduledStartTime) + event.durationSeconds * 1000
+                    );
                     return {
                         uid: event.id + "@" + window.location.hostname,
                         title: event.item ? `${event.item.title} (${event.name})` : event.name,
                         url: `${window.location.origin}${conferencePath}/room/${event.roomId}`,
                         location: `${window.location.origin}${conferencePath}/room/${event.roomId}`,
                         start: [
-                            startTime.getUTCFullYear(),
-                            startTime.getUTCMonth() + 1,
-                            startTime.getUTCDate(),
-                            startTime.getUTCHours(),
-                            startTime.getUTCMinutes(),
+                            scheduledStartTime.getUTCFullYear(),
+                            scheduledStartTime.getUTCMonth() + 1,
+                            scheduledStartTime.getUTCDate(),
+                            scheduledStartTime.getUTCHours(),
+                            scheduledStartTime.getUTCMinutes(),
                         ],
                         startInputType: "utc",
                         end: [
-                            endTime.getUTCFullYear(),
-                            endTime.getUTCMonth() + 1,
-                            endTime.getUTCDate(),
-                            endTime.getUTCHours(),
-                            endTime.getUTCMinutes(),
+                            scheduledEndTime.getUTCFullYear(),
+                            scheduledEndTime.getUTCMonth() + 1,
+                            scheduledEndTime.getUTCDate(),
+                            scheduledEndTime.getUTCHours(),
+                            scheduledEndTime.getUTCMinutes(),
                         ],
                         endInputType: "utc",
                         calName: conference.shortName + ": " + calendarName,

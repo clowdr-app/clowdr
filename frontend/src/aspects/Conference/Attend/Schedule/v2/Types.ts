@@ -2,7 +2,7 @@ import type { ScheduleV2_LightweightEventFragment } from "../../../../../generat
 
 export interface ParsedEvent {
     lwEvent: ScheduleV2_LightweightEventFragment;
-    startTimeMs: number;
+    scheduledStartTimeMs: number;
     endTimeMs: number;
 }
 

@@ -35,9 +35,9 @@ gql`
         id
         roomId
         name
-        intendedRoomModeName
-        startTime
-        endTime
+        modeName
+        scheduledStartTime
+        scheduledEndTime
         exhibitionId
         exhibition {
             id

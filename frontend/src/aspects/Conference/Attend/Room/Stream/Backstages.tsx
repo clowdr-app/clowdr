@@ -19,7 +19,7 @@ import * as R from "ramda";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
-import { Room_Mode_Enum } from "../../../../../generated/graphql";
+import { Schedule_Mode_Enum } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import type { VonageRoom } from "../Vonage/VonageRoom";
@@ -54,10 +54,8 @@ export default function Backstages({
     const sortedEvents = useMemo(
         () =>
             R.sortWith(
-                [R.ascend(R.prop("startTime"))],
-                roomEvents.filter((event) =>
-                    [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(event.intendedRoomModeName)
-                )
+                [R.ascend(R.prop("scheduledStartTime"))],
+                roomEvents.filter((event) => Schedule_Mode_Enum.Livestream === event.modeName)
             ),
         [roomEvents]
     );

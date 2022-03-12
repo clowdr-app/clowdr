@@ -22,7 +22,7 @@ gql`
         typeName
         elements(
             where: {
-                _or: [{ isHidden: { _eq: false } }, { typeName: { _eq: ZOOM } }]
+                _or: [{ isHidden: { _eq: false } }, { typeName: { _eq: EXTERNAL_EVENT_LINK } }]
                 typeName: {
                     _in: [
                         ABSTRACT
@@ -35,7 +35,7 @@ gql`
                         VIDEO_FILE
                         VIDEO_PREPUBLISH
                         VIDEO_URL
-                        ZOOM
+                        EXTERNAL_EVENT_LINK
                     ]
                 }
             }
@@ -44,8 +44,8 @@ gql`
         }
         events {
             id
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             roomId
             itemId
         }

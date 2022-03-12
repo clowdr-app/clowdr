@@ -1,7 +1,7 @@
 import * as R from "ramda";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Room_EventSummaryFragment } from "../../../../generated/graphql";
-import { Room_Mode_Enum } from "../../../../generated/graphql";
+import { Schedule_Mode_Enum } from "../../../../generated/graphql";
 import usePolling from "../../../Hooks/usePolling";
 
 interface Result {
@@ -17,17 +17,12 @@ interface Result {
 
 export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragment[]): Result {
     const broadcastEvents = useMemo(
-        () =>
-            roomEvents.filter((event) =>
-                [Room_Mode_Enum.Prerecorded, Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(
-                    event.intendedRoomModeName
-                )
-            ),
+        () => roomEvents.filter((event) => Schedule_Mode_Enum.Livestream === event.modeName),
         [roomEvents]
     );
 
     const zoomEvents = useMemo(
-        () => roomEvents.filter((event) => event.intendedRoomModeName === Room_Mode_Enum.Zoom),
+        () => roomEvents.filter((event) => event.modeName === Schedule_Mode_Enum.External),
         [roomEvents]
     );
 
@@ -35,9 +30,9 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
     const getCurrentEvent = useCallback(() => {
         const now = Date.now();
         const eventsNow = roomEvents.filter((event) => {
-            const startTime = Date.parse(event.startTime);
-            const endTime = Date.parse(event.endTime);
-            return startTime <= now && now < endTime;
+            const scheduledStartTime = Date.parse(event.scheduledStartTime);
+            const scheduledEndTime = Date.parse(event.scheduledEndTime);
+            return scheduledStartTime <= now && now < scheduledEndTime;
         });
         if (eventsNow.length > 0) {
             setCurrentRoomEvent(eventsNow[0]);
@@ -50,9 +45,9 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
     const getWithinThreeMinutesOfEvent = useCallback(() => {
         const now = Date.now();
         const eventsSoon = broadcastEvents.filter((event) => {
-            const startTime = Date.parse(event.startTime);
-            const endTime = Date.parse(event.endTime);
-            return startTime - 3 * 60 * 1000 < now && now < endTime + 3 * 60 * 1000;
+            const scheduledStartTime = Date.parse(event.scheduledStartTime);
+            const scheduledEndTime = Date.parse(event.scheduledEndTime);
+            return scheduledStartTime - 3 * 60 * 1000 < now && now < scheduledEndTime + 3 * 60 * 1000;
         });
         setWithinThreeMinutesOfBroadcastEvent(eventsSoon.length > 0);
     }, [broadcastEvents]);
@@ -62,9 +57,9 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
     const getWithinStreamLatencySinceBroadcastEvent = useCallback(() => {
         const now = Date.now();
         const maybeOngoingStreams = broadcastEvents.filter((event) => {
-            const startTime = Date.parse(event.startTime);
-            const endTime = Date.parse(event.endTime);
-            return startTime < now && now < endTime + 45 * 1000;
+            const scheduledStartTime = Date.parse(event.scheduledStartTime);
+            const scheduledEndTime = Date.parse(event.scheduledEndTime);
+            return scheduledStartTime < now && now < scheduledEndTime + 45 * 1000;
         });
         setWithinStreamLatencySinceBroadcastEvent(maybeOngoingStreams.length > 0);
     }, [broadcastEvents]);
@@ -72,14 +67,17 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
     const [broadcastEventStartsAt, setBroadcastEventStartsAt] = useState<number>(Number.MAX_SAFE_INTEGER);
     const computeSecondsUntilBroadcastEvent = useCallback(() => {
         setBroadcastEventStartsAt(
-            broadcastEvents.reduce((acc, ev) => Math.min(acc, Date.parse(ev.startTime)), Number.MAX_SAFE_INTEGER)
+            broadcastEvents.reduce(
+                (acc, ev) => Math.min(acc, Date.parse(ev.scheduledStartTime)),
+                Number.MAX_SAFE_INTEGER
+            )
         );
     }, [broadcastEvents]);
 
     const [zoomEventStartsAt, setZoomEventStartsAt] = useState<number>(Number.MAX_SAFE_INTEGER);
     const computeSecondsUntilZoomEvent = useCallback(() => {
         setZoomEventStartsAt(
-            zoomEvents.reduce((acc, ev) => Math.min(acc, Date.parse(ev.startTime)), Number.MAX_SAFE_INTEGER)
+            zoomEvents.reduce((acc, ev) => Math.min(acc, Date.parse(ev.scheduledStartTime)), Number.MAX_SAFE_INTEGER)
         );
     }, [zoomEvents]);
 
@@ -92,8 +90,8 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
     const [nextRoomEvent, setNextRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
     const getNextEvent = useCallback(() => {
         const now = Date.now();
-        const sortedEvents = R.sortBy((event) => Date.parse(event.startTime), roomEvents);
-        const futureEvents = sortedEvents.filter((event) => Date.parse(event.startTime) > now);
+        const sortedEvents = R.sortBy((event) => Date.parse(event.scheduledStartTime), roomEvents);
+        const futureEvents = sortedEvents.filter((event) => Date.parse(event.scheduledStartTime) > now);
         setNextRoomEvent(futureEvents.length > 0 ? futureEvents[0] : null);
     }, [roomEvents]);
 
@@ -101,18 +99,15 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
     const getNonCurrentEvents = useCallback(() => {
         const now = Date.now();
         const filteredEvents = roomEvents.filter((event) => {
-            if (
-                event.intendedRoomModeName !== Room_Mode_Enum.Presentation &&
-                event.intendedRoomModeName !== Room_Mode_Enum.QAndA
-            ) {
+            if (event.modeName !== Schedule_Mode_Enum.Livestream) {
                 return false;
             }
 
-            const start = Date.parse(event.startTime);
-            const end = Date.parse(event.endTime);
+            const start = Date.parse(event.scheduledStartTime);
+            const end = Date.parse(event.scheduledEndTime);
             return start > now && now < end;
         });
-        const sortedEvents = R.sortBy((event) => Date.parse(event.startTime), filteredEvents);
+        const sortedEvents = R.sortBy((event) => Date.parse(event.scheduledStartTime), filteredEvents);
         setNonCurrentEvents(sortedEvents);
     }, [roomEvents]);
 
@@ -123,18 +118,15 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         const now = Date.now();
         const cutoff = now + 20 * 60 * 1000;
         const filteredEvents = roomEvents.filter((event) => {
-            if (
-                event.intendedRoomModeName !== Room_Mode_Enum.Presentation &&
-                event.intendedRoomModeName !== Room_Mode_Enum.QAndA
-            ) {
+            if (event.modeName !== Schedule_Mode_Enum.Livestream) {
                 return false;
             }
 
-            const start = Date.parse(event.startTime);
-            const end = Date.parse(event.endTime);
+            const start = Date.parse(event.scheduledStartTime);
+            const end = Date.parse(event.scheduledEndTime);
             return start > now && now < end && start <= cutoff;
         });
-        const sortedEvents = R.sortBy((event) => Date.parse(event.startTime), filteredEvents);
+        const sortedEvents = R.sortBy((event) => Date.parse(event.scheduledStartTime), filteredEvents);
         setNonCurrentEventsInNext20Mins(sortedEvents);
     }, [roomEvents]);
 

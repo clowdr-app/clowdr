@@ -72,7 +72,7 @@ export default function Backstage({
                     </Heading>
 
                     <Text my={2} fontStyle="italic" whiteSpace="normal">
-                        {formatRelative(Date.parse(event.startTime), Date.now())}
+                        {formatRelative(Date.parse(event.scheduledStartTime), Date.now())}
                     </Text>
                 </VStack>
                 <Button
@@ -93,7 +93,16 @@ export default function Backstage({
                 </Button>
             </HStack>
         ),
-        [borderColour, category, event.id, event.startTime, isSelected, selectedEventId, setSelectedEventId, title]
+        [
+            borderColour,
+            category,
+            event.id,
+            event.scheduledStartTime,
+            isSelected,
+            selectedEventId,
+            setSelectedEventId,
+            title,
+        ]
     );
 
     const vonageBackstage = useMemo(

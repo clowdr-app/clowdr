@@ -4,7 +4,7 @@ import { TrackedHasuraEventHandler, TrackedHasuraScheduledEventHandler } from "@
 import { Injectable } from "@nestjs/common";
 import type * as Bunyan from "bunyan";
 import { ChannelStackSyncService } from "./channel-stack/channel-stack-sync/channel-stack-sync.service";
-import type { Room_Mode_Enum } from "./generated/graphql";
+import type { Schedule_Mode_Enum } from "./generated/graphql";
 import { ImmediateSwitchService } from "./schedule/immediate-switch/immediate-switch.service";
 import { ScheduleSyncService } from "./schedule/schedule-sync/schedule-sync.service";
 
@@ -84,11 +84,10 @@ export interface BaseData {
 }
 
 export interface EventData extends BaseData {
-    durationSeconds: number;
-    intendedRoomModeName: Room_Mode_Enum;
+    modeName: Schedule_Mode_Enum;
     name: string;
-    endTime: string | null;
-    startTime: string;
+    scheduledEndTime: string | null;
+    scheduledStartTime: string | null;
     conferenceId: string;
     itemId: string | null;
     roomId: string;

@@ -2,20 +2,20 @@ import { AspectRatio, Box, Spacer, Text, Tooltip, VStack } from "@chakra-ui/reac
 import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
 import type { RoomTile_EventFragment } from "../../../../generated/graphql";
-import { Room_Mode_Enum } from "../../../../generated/graphql";
+import { Schedule_Mode_Enum } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
 
 export default function EventHighlight({ event }: { event: RoomTile_EventFragment }): JSX.Element {
     return (
         <AspectRatio ratio={16 / 9} w="100%">
             <VStack bgColor="rgba(7,7,10,0.85)" color="gray.50" flexDir="column" pt={6} h="100%" overflow="hidden">
-                <EventModeIcon mode={event.intendedRoomModeName} />
-                <EventModeName mode={event.intendedRoomModeName} />
+                <EventModeIcon mode={event.modeName} />
+                <EventModeName mode={event.modeName} />
                 <Spacer />
                 <Box>
                     <Text>
                         Ends:{" "}
-                        {new Date(event.endTime).toLocaleTimeString(undefined, {
+                        {new Date(event.scheduledEndTime).toLocaleTimeString(undefined, {
                             hour: "2-digit",
                             minute: "2-digit",
                         })}
@@ -48,27 +48,25 @@ export function EventModeIcon({
     fontSize = "3xl",
     durationSeconds,
 }: {
-    mode: Room_Mode_Enum;
+    mode: Schedule_Mode_Enum;
     fontSize?: string;
     durationSeconds?: number;
 }): JSX.Element {
     const iconEl = (() => {
         switch (mode) {
-            case Room_Mode_Enum.VideoChat:
+            case Schedule_Mode_Enum.VideoChat:
                 return <FAIcon iconStyle="s" icon="users" fontSize={fontSize} mb={1} />;
-            case Room_Mode_Enum.Exhibition:
+            case Schedule_Mode_Enum.Exhibition:
                 return <FAIcon iconStyle="s" icon="puzzle-piece" fontSize={fontSize} mb={1} />;
-            case Room_Mode_Enum.None:
+            case Schedule_Mode_Enum.None:
                 return <FAIcon iconStyle="s" icon="calendar" fontSize={fontSize} mb={1} />;
-            case Room_Mode_Enum.Prerecorded:
-            case Room_Mode_Enum.Presentation:
-            case Room_Mode_Enum.QAndA:
+            case Schedule_Mode_Enum.Livestream:
                 return <FAIcon iconStyle="s" icon="broadcast-tower" fontSize={fontSize} color="red.400" mb={1} />;
-            case Room_Mode_Enum.Shuffle:
+            case Schedule_Mode_Enum.Shuffle:
                 return <FAIcon iconStyle="s" icon="random" fontSize={fontSize} mb={1} />;
-            case Room_Mode_Enum.VideoPlayer:
+            case Schedule_Mode_Enum.VideoPlayer:
                 return <FAIcon iconStyle="s" icon="video" fontSize={fontSize} mb={1} />;
-            case Room_Mode_Enum.Zoom:
+            case Schedule_Mode_Enum.External:
                 return <FAIcon iconStyle="s" icon="headset" fontSize={fontSize} mb={1} />;
         }
     })();
@@ -76,7 +74,7 @@ export function EventModeIcon({
     return <Tooltip label={EventModeNameString(mode, durationSeconds)}>{iconEl}</Tooltip>;
 }
 
-function EventModeName({ mode }: { mode: Room_Mode_Enum }): JSX.Element {
+function EventModeName({ mode }: { mode: Schedule_Mode_Enum }): JSX.Element {
     const fontSize = "sm";
     return (
         <Text fontSize={fontSize} fontStyle="italic">
@@ -85,7 +83,7 @@ function EventModeName({ mode }: { mode: Room_Mode_Enum }): JSX.Element {
     );
 }
 
-function EventModeNameString(mode: Room_Mode_Enum, durationSeconds?: number): string {
+function EventModeNameString(mode: Schedule_Mode_Enum, durationSeconds?: number): string {
     const durationStr = durationSeconds
         ? " for " +
           formatDuration(
@@ -98,30 +96,26 @@ function EventModeNameString(mode: Room_Mode_Enum, durationSeconds?: number): st
 
     let result = "";
     switch (mode) {
-        case Room_Mode_Enum.VideoChat:
+        case Schedule_Mode_Enum.VideoChat:
             result = "Video-chat";
             break;
-        case Room_Mode_Enum.Exhibition:
+        case Schedule_Mode_Enum.Exhibition:
             result = "Exhibition";
             break;
-        case Room_Mode_Enum.None:
-            result = "External";
+        case Schedule_Mode_Enum.None:
+            result = "Unstructured";
             break;
-        case Room_Mode_Enum.Prerecorded:
-        case Room_Mode_Enum.Presentation:
-        case Room_Mode_Enum.QAndA:
-            result = `Live-stream (${
-                mode === Room_Mode_Enum.Prerecorded ? "Video" : mode === Room_Mode_Enum.QAndA ? "Q&A" : "Presentation"
-            })`;
+        case Schedule_Mode_Enum.Livestream:
+            result = "Live-stream";
             break;
-        case Room_Mode_Enum.Shuffle:
+        case Schedule_Mode_Enum.Shuffle:
             result = "Social";
             break;
-        case Room_Mode_Enum.VideoPlayer:
+        case Schedule_Mode_Enum.VideoPlayer:
             result = "Video";
             break;
-        case Room_Mode_Enum.Zoom:
-            result = "External video-call";
+        case Schedule_Mode_Enum.External:
+            result = "External event";
             break;
     }
 

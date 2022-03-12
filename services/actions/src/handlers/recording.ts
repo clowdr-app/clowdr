@@ -26,8 +26,8 @@ gql`
     query Recording_GetEvent($eventId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             id
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 channelStack {
@@ -79,8 +79,8 @@ export async function handleMediaPackageHarvestJobUpdated(
 
             const harvestJobId = await createHarvestJob(
                 eventResult.data.schedule_Event_by_pk.room.channelStack.mediaPackageChannelId,
-                eventResult.data.schedule_Event_by_pk.startTime,
-                eventResult.data.schedule_Event_by_pk.endTime
+                eventResult.data.schedule_Event_by_pk.scheduledStartTime,
+                eventResult.data.schedule_Event_by_pk.scheduledEndTime
             );
 
             await apolloClient.mutate({
@@ -138,8 +138,8 @@ gql`
                 }
                 id
                 name
-                startTime
-                durationSeconds
+                scheduledStartTime
+                scheduledEndTime
             }
             id
         }
@@ -232,12 +232,12 @@ export async function completeMediaPackageHarvestJob(
     const source: SourceBlob = {
         source: SourceType.EventRecording,
         eventId: job.event.id,
-        startTimeMillis: Date.parse(job.event.startTime),
+        startTimeMillis: Date.parse(job.event.scheduledStartTime),
         durationSeconds: job.event.durationSeconds,
     };
 
     logger.info({ eventId: job.event.id, jobId: job.id }, "Completing MediaPackage harvest job");
-    const startTime = formatRFC7231(Date.parse(job.event.startTime));
+    const scheduledStartTime = formatRFC7231(Date.parse(job.event.scheduledStartTime));
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -250,7 +250,7 @@ export async function completeMediaPackageHarvestJob(
                     itemId: job.event.item?.id,
                     data,
                     source,
-                    name: `Recording of ${job.event.name} from ${startTime}`,
+                    name: `Recording of ${job.event.name} from ${scheduledStartTime}`,
                 },
             })
     );

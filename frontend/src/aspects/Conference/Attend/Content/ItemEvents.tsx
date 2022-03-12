@@ -10,17 +10,16 @@ import { EventsTable } from "./EventsTable";
 
 gql`
     fragment ItemRoomEvent on schedule_Event {
-        startTime
+        scheduledStartTime
         item {
             id
             title
         }
         exhibitionId
         id
-        durationSeconds
-        endTime
+        scheduledEndTime
         name
-        intendedRoomModeName
+        modeName
     }
 `;
 
@@ -118,17 +117,16 @@ function RoomEventsSummary({
     const queryString = useMemo(
         () => `
 fragment ItemRoomEvent on schedule_Event {
-    startTime
+    scheduledStartTime
     item {
         id
         title
     }
     exhibitionId
     id
-    durationSeconds
-    endTime
+    scheduledEndTime
     name
-    intendedRoomModeName
+    modeName
     roomId
 }
 
@@ -139,9 +137,9 @@ query ItemEvent_RoomNearbyEvents @cached {
         Event_${index}_prior: schedule_Event(
             where: {
                 roomId: { _eq: "${roomId}" }
-                startTime: { _lt: "${event.startTime}" }
+                scheduledStartTime: { _lt: "${event.scheduledStartTime}" }
             }, 
-            order_by: { startTime: desc }, 
+            order_by: { scheduledStartTime: desc }, 
             limit: 3
         ) {
             ...ItemRoomEvent
@@ -149,11 +147,11 @@ query ItemEvent_RoomNearbyEvents @cached {
         Event_${index}_post: schedule_Event(
             where: {
                 roomId: { _eq: "${roomId}" }
-                endTime: { _gt: "${new Date(
-                    Date.parse(event.startTime) + 1000 * event.durationSeconds
+                scheduledEndTime: { _gt: "${new Date(
+                    Date.parse(event.scheduledStartTime) + 1000 * event.durationSeconds
                 ).toISOString()}" }
             }, 
-            order_by: { startTime: asc }, 
+            order_by: { scheduledStartTime: asc }, 
             limit: 3
         ) {
             ...ItemRoomEvent

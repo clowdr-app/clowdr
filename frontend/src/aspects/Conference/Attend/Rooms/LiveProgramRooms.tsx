@@ -26,7 +26,7 @@ export function usePreloadedLiveProgramRooms(): void {
     const preloadEvents = useMemo(
         () =>
             liveEventsInNextHour.filter((event) => {
-                const timeDiff = Date.parse(event.startTime) - now60s;
+                const timeDiff = Date.parse(event.scheduledStartTime) - now60s;
                 return 0 < timeDiff && timeDiff <= 10 * 60 * 1000;
             }),
         [liveEventsInNextHour, now60s]

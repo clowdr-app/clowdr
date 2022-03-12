@@ -12,13 +12,11 @@ import { makeContext } from "../../../GQL/make-context";
 
 gql`
     query EventVonageControls_GetEvents($conferenceId: uuid!) {
-        schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, intendedRoomModeName: { _in: [Q_AND_A, PRESENTATION] } }
-        ) {
+        schedule_Event(where: { conferenceId: { _eq: $conferenceId }, modeName: { _eq: LIVESTREAM } }) {
             id
             name
             conferenceId
-            intendedRoomModeName
+            modeName
             itemId
             item {
                 id

@@ -156,13 +156,13 @@ function UrqlProviderInner({
                     //     resolvers: genericResolvers(
                     //         {
                     //             schedule_Event: {
-                    //                 endTime: (data) =>
-                    //                     data.endTime ??
-                    //                     (data.startTime &&
+                    //                 scheduledEndTime: (data) =>
+                    //                     data.scheduledEndTime ??
+                    //                     (data.scheduledStartTime &&
                     //                     data.durationSeconds !== null &&
                     //                     data.durationSeconds !== undefined
                     //                         ? new Date(
-                    //                               Date.parse(data.startTime as string) +
+                    //                               Date.parse(data.scheduledStartTime as string) +
                     //                                   (data.durationSeconds as number) * 1000
                     //                           ).toISOString()
                     //                         : null),

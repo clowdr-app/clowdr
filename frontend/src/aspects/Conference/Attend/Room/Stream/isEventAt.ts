@@ -1,12 +1,12 @@
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
 
 export function isEventNow(now: number, event: Room_EventSummaryFragment): boolean {
-    const startTime = Date.parse(event.startTime) - 3000;
-    const endTime = Date.parse(event.endTime);
-    return now >= startTime && now <= endTime;
+    const scheduledStartTime = Date.parse(event.scheduledStartTime) - 3000;
+    const scheduledEndTime = Date.parse(event.scheduledEndTime);
+    return now >= scheduledStartTime && now <= scheduledEndTime;
 }
 
 export function isEventSoon(now: number, event: Room_EventSummaryFragment): boolean {
-    const startTime = Date.parse(event.startTime);
-    return now >= startTime - 20 * 60 * 1000 - 5000 && now <= startTime;
+    const scheduledStartTime = Date.parse(event.scheduledStartTime);
+    return now >= scheduledStartTime - 20 * 60 * 1000 - 5000 && now <= scheduledStartTime;
 }

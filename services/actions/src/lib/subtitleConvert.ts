@@ -51,8 +51,8 @@ function toTimeCode(totalSeconds: number): string {
 }
 
 function printPhrase(phrase: Phrase, index: number): string {
-    const startTime = toTimeCode(phrase.startedAt);
-    const endTime = toTimeCode(phrase.endedAt);
+    const scheduledStartTime = toTimeCode(phrase.startedAt);
+    const scheduledEndTime = toTimeCode(phrase.endedAt);
     const text = phrase.items.reduce((accum, value, idx) => {
         if (value.type === "pronunciation") {
             return (
@@ -64,7 +64,7 @@ function printPhrase(phrase: Phrase, index: number): string {
             return accum + (value.alternatives.length > 0 ? value.alternatives[0].content : "<missing>");
         }
     }, "");
-    return `${index}\n${startTime} --> ${endTime}\n${text}\n\n`;
+    return `${index}\n${scheduledStartTime} --> ${scheduledEndTime}\n${text}\n\n`;
 }
 
 interface Phrase {

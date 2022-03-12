@@ -24,13 +24,13 @@ export function ItemLive({
     const computeLiveEvent = useCallback(() => {
         const now = Date.now();
         const currentEvents = itemData.events.filter(
-            (event) => Date.parse(event.startTime) <= now + 60000 && now <= Date.parse(event.endTime)
+            (event) => Date.parse(event.scheduledStartTime) <= now + 60000 && now <= Date.parse(event.scheduledEndTime)
         );
         setLiveEvents(currentEvents);
 
         // const nextEvent = R.sortWith(
-        //     [R.ascend(R.prop("startTime"))],
-        //     itemData.events.filter((event) => Date.parse(event.startTime) > now)
+        //     [R.ascend(R.prop("scheduledStartTime"))],
+        //     itemData.events.filter((event) => Date.parse(event.scheduledStartTime) > now)
         // );
         // setNextEvent(nextEvent.length > 0 ? nextEvent[0] : null);
         // setNow(now);

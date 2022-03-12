@@ -5,9 +5,9 @@ import { useRealTime } from "../../../../Hooks/useRealTime";
 import { formatRemainingTime } from "../formatRemainingTime";
 
 export function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }): JSX.Element {
-    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
+    const scheduledStartTime = useMemo(() => Date.parse(event.scheduledStartTime), [event.scheduledStartTime]);
     const now = useRealTime(1000);
-    const timeRemaining = (startTime + 5000 - now - 20 * 60 * 1000) / 1000;
+    const timeRemaining = (scheduledStartTime + 5000 - now - 20 * 60 * 1000) / 1000;
 
     const title = useMemo(() => {
         if (event.item) {

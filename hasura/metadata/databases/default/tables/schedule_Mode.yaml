@@ -1,12 +1,12 @@
 table:
   name: Mode
-  schema: room
+  schema: schedule
 is_enum: true
 array_relationships:
 - name: events
   using:
     foreign_key_constraint_on:
-      column: intendedRoomModeName
+      column: modeName
       table:
         name: Event
         schema: schedule

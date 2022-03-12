@@ -143,7 +143,7 @@ function ItemTile({
     const now = useRealTime(30000);
     const liveEvent = useMemo(() => {
         const liveEvents = item.events.filter(
-            (x) => Date.parse(x.startTime) <= now + 2 * 60 * 1000 && now <= Date.parse(x.endTime)
+            (x) => Date.parse(x.scheduledStartTime) <= now + 2 * 60 * 1000 && now <= Date.parse(x.scheduledEndTime)
         );
         return liveEvents.length > 0 ? liveEvents[0] : undefined;
     }, [item.events, now]);

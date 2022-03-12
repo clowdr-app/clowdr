@@ -108,7 +108,7 @@ export default function ShuffleQueueTile({
     }, [deletePeriodResponse.error, toast]);
 
     const bgColor = useColorModeValue("gray.200", "gray.700");
-    const startTimeStr = useMemo(() => formatRelative(new Date(queue.startAt), new Date()), [queue.startAt]);
+    const scheduledStartTimeStr = useMemo(() => formatRelative(new Date(queue.startAt), new Date()), [queue.startAt]);
     const endTimeStr = useMemo(() => formatRelative(new Date(queue.endAt), new Date()), [queue.endAt]);
     return (
         <Box m={4} h="auto" fontSize="sm" backgroundColor={bgColor} borderRadius="md">
@@ -158,7 +158,7 @@ export default function ShuffleQueueTile({
                 </Flex>
                 {startLabel ? (
                     <Text textAlign="left" w="100%">
-                        {startLabel} {startTimeStr}
+                        {startLabel} {scheduledStartTimeStr}
                     </Text>
                 ) : undefined}
                 {endLabel ? (

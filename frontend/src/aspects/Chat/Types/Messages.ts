@@ -48,8 +48,8 @@ export interface DuplicationMarkerMessageData extends BaseMessageData {
     type: "start" | "end";
     event: {
         id: string;
-        startTime: number;
-        durationSeconds: number;
+        scheduledStartTime: number;
+        scheduledEndTime: number;
     };
     room: {
         id: string;
@@ -66,9 +66,8 @@ export interface DuplicationMarkerMessageData extends BaseMessageData {
 export interface EventStartData extends BaseMessageData {
     event: {
         id: string;
-        startTime: number;
-        durationSeconds: number;
-        name: string;
+        scheduledStartTime: number;
+        scheduledEndTime: number;
     };
     room: {
         id: string;
@@ -83,8 +82,8 @@ export interface EventStartData extends BaseMessageData {
 export interface ParticipationSurveyData extends BaseMessageData {
     event: {
         id: string;
-        startTime: number;
-        durationSeconds: number;
+        scheduledStartTime: number;
+        scheduledEndTime: number;
         name: string;
     };
     room: {

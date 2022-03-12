@@ -6,7 +6,7 @@ import type {
     TestConferenceFragment,
     UsageFragment,
 } from "../../src/generated/graphql";
-import { Room_ManagementMode_Enum, Room_Mode_Enum } from "../../src/generated/graphql";
+import { Room_ManagementMode_Enum, Schedule_Mode_Enum } from "../../src/generated/graphql";
 import { cleanupTestConference, createTestConference } from "../../src/lib/conference";
 import { insertEvent, updateEvent } from "../../src/lib/event";
 import { getQuota, updateQuota } from "../../src/lib/quota";
@@ -89,17 +89,17 @@ describe("checkInsertEvent", () => {
     it("permits change if room, start time, duration and mode are unchanged", async () => {
         const event = await insertEvent({
             conferenceId: conference.id,
-            startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            durationSeconds: 50 * 60,
-            intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+            scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+            modeName: Schedule_Mode_Enum.Livestream,
             name: "E2E Usage-and-Quotas Test Event 1",
             roomId: streamingRoom1.id,
         });
         await insertEvent({
             conferenceId: conference.id,
-            startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-            durationSeconds: 50 * 60,
-            intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+            scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+            scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+            modeName: Schedule_Mode_Enum.Livestream,
             name: "E2E Usage-and-Quotas Test Event 2",
             roomId: streamingRoom2.id,
         });
@@ -113,9 +113,9 @@ describe("checkInsertEvent", () => {
             it("prevents update if streaming events are not allowed", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: videoChatRoom1.id,
                 });
@@ -125,7 +125,7 @@ describe("checkInsertEvent", () => {
                 await expectError(
                     "Quota limit reached (streaming events not included)",
                     updateEvent(event.id, {
-                        intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                        modeName: Schedule_Mode_Enum.Livestream,
                     })
                 );
             });
@@ -135,17 +135,17 @@ describe("checkInsertEvent", () => {
             it("prevents update if target room is a non-streaming room", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
@@ -153,7 +153,7 @@ describe("checkInsertEvent", () => {
                     "Room is a non-streaming program room.",
                     updateEvent(event.id, {
                         roomId: videoChatRoom2.id,
-                        intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                        modeName: Schedule_Mode_Enum.Livestream,
                     })
                 );
             });
@@ -161,25 +161,25 @@ describe("checkInsertEvent", () => {
             it("prevents update if target room is not a program room and no remaining quota for streaming rooms", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 26 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 26 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 26 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 3",
                     roomId: streamingRoom2.id,
                 });
@@ -187,7 +187,7 @@ describe("checkInsertEvent", () => {
                     "Quota limit reached (streaming program rooms)",
                     updateEvent(event.id, {
                         roomId: videoChatRoom2.id,
-                        intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                        modeName: Schedule_Mode_Enum.Livestream,
                     })
                 );
             });
@@ -195,513 +195,531 @@ describe("checkInsertEvent", () => {
 
         describe("always", () => {
             it("prevents update if event duration exceeds individual event quota", async () => {
+                const scheduledStartTime = new Date(Date.now() + 25 * 60 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: streamingRoom1.id,
                 });
                 await expectError(
                     "Quota limit reached (streaming event duration)",
                     updateEvent(event.id, {
-                        durationSeconds: 110 * 60,
+                        scheduledEndTime: new Date(scheduledStartTime.getTime() + 110 * 60 * 1000),
                     })
                 );
             });
 
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future, duration-change scenario]", async () => {
+                const scheduledStartTime = new Date(Date.now() + 25 * 60 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total streaming event minutes)",
                     updateEvent(event.id, {
-                        durationSeconds: 60 * 60,
+                        scheduledEndTime: new Date(scheduledStartTime.getTime() + 60 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future, start-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 18 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    durationSeconds: 10 * 60,
-                    startTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 18 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total streaming event minutes)",
                     updateEvent(event.id, {
-                        durationSeconds: 100 * 60,
-                        startTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() + 18 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future-to-past scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 18 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 18 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 18 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future-to-ongoing scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
 
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past, duration-change scenario]", async () => {
+                const scheduledStartTime = new Date(Date.now() - 25 * 60 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    durationSeconds: 90 * 60,
+                    scheduledEndTime: new Date(scheduledStartTime.getTime() + 90 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past, start-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 20 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 20 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 20 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 20 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 20 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 20 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past-to-future scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 20 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past-to-future scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total streaming event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() + 20 * 60 * 60 * 1000 + 50 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past-to-ongoing scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past-to-ongoing scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total streaming event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() - 10 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
                     })
                 );
             });
 
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, duration-change scenario]", async () => {
+                const scheduledStartTime = new Date(Date.now() - 10 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    durationSeconds: 60 * 60,
+                    scheduledEndTime: new Date(scheduledStartTime.getTime() + 60 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, duration-change scenario]", async () => {
+                const scheduledStartTime = new Date(Date.now() - 10 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total streaming event minutes)",
                     updateEvent(event.id, {
-                        durationSeconds: 70 * 60,
+                        scheduledEndTime: new Date(scheduledStartTime.getTime() + 70 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, start-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 15 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 15 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 15 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, start-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 59 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 59 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total streaming event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() - 4 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() - 4 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() - 4 * 60 * 1000 + 59 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 60 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 60 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 50 - 5 * 60 * 1000),
-                    durationSeconds: 55 * 60,
+                    scheduledStartTime: new Date(Date.now() - 50 - 5 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 50 - 5 * 60 * 1000 + 55 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 60 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 60 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total streaming event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() - 5 * 60 * 1000),
-                        durationSeconds: 57 * 60,
+                        scheduledStartTime: new Date(Date.now() - 5 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() - 5 * 60 * 1000 + 57 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing-to-future scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() + 60 * 60 * 1000),
-                    durationSeconds: 49.9 * 60,
+                    scheduledStartTime: new Date(Date.now() + 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 60 * 60 * 1000 + 49.9 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing-to-future scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 60 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 60 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total streaming event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() + 60 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() + 60 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing-to-past scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
         });
@@ -712,9 +730,9 @@ describe("checkInsertEvent", () => {
             it("prevents update if video-chat events are not allowed", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Exhibition,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: streamingRoom1.id,
                 });
@@ -724,7 +742,7 @@ describe("checkInsertEvent", () => {
                 await expectError(
                     "Quota limit reached (video-chat events not included)",
                     updateEvent(event.id, {
-                        intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                        modeName: Schedule_Mode_Enum.VideoChat,
                     })
                 );
             });
@@ -734,17 +752,17 @@ describe("checkInsertEvent", () => {
             it("prevents update if target room is a streaming room", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
@@ -752,7 +770,7 @@ describe("checkInsertEvent", () => {
                     "Room is a streaming program room.",
                     updateEvent(event.id, {
                         roomId: streamingRoom2.id,
-                        intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                        modeName: Schedule_Mode_Enum.VideoChat,
                     })
                 );
             });
@@ -760,25 +778,25 @@ describe("checkInsertEvent", () => {
             it("prevents update if target room is not a program room and no remaining quota for video-chat rooms", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 26 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 26 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 26 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 3",
                     roomId: videoChatRoom2.id,
                 });
@@ -786,7 +804,7 @@ describe("checkInsertEvent", () => {
                     "Quota limit reached (non-streaming program rooms)",
                     updateEvent(event.id, {
                         roomId: streamingRoom2.id,
-                        intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                        modeName: Schedule_Mode_Enum.VideoChat,
                     })
                 );
             });
@@ -794,513 +812,531 @@ describe("checkInsertEvent", () => {
 
         describe("always", () => {
             it("prevents update if event duration exceeds individual event quota", async () => {
+                const scheduledStartTime = new Date(Date.now() + 25 * 60 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event",
                     roomId: videoChatRoom1.id,
                 });
                 await expectError(
                     "Quota limit reached (video-chat event duration)",
                     updateEvent(event.id, {
-                        durationSeconds: 110 * 60,
+                        scheduledEndTime: new Date(scheduledStartTime.getTime() + 110 * 60 * 1000),
                     })
                 );
             });
 
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future, duration-change scenario]", async () => {
+                const scheduledStartTime = new Date(Date.now() + 25 * 60 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total video-chat event minutes)",
                     updateEvent(event.id, {
-                        durationSeconds: 60 * 60,
+                        scheduledEndTime: new Date(scheduledStartTime.getTime() + 60 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future, start-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 18 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    durationSeconds: 10 * 60,
-                    startTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 18 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total video-chat event minutes)",
                     updateEvent(event.id, {
-                        durationSeconds: 100 * 60,
-                        startTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() + 18 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() + 18 * 60 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future-to-past scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 18 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 18 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 18 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [future-to-ongoing scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
 
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past, duration-change scenario]", async () => {
+                const scheduledStartTime = new Date(Date.now() - 25 * 60 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    durationSeconds: 90 * 60,
+                    scheduledEndTime: new Date(scheduledStartTime.getTime() + 90 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past, start-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 20 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 20 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 20 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 20 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 20 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 20 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past-to-future scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 20 * 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past-to-future scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total video-chat event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() + 20 * 60 * 60 * 1000 + 50 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past-to-ongoing scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [past-to-ongoing scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 25 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 100 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 100 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total video-chat event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() - 10 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
                     })
                 );
             });
 
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, duration-change scenario]", async () => {
+                const scheduledStartTime = new Date(Date.now() - 10 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    durationSeconds: 60 * 60,
+                    scheduledEndTime: new Date(scheduledStartTime.getTime() + 60 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, duration-change scenario]", async () => {
+                const scheduledStartTime = new Date(Date.now() - 10 * 60 * 1000);
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime,
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total video-chat event minutes)",
                     updateEvent(event.id, {
-                        durationSeconds: 70 * 60,
+                        scheduledEndTime: new Date(scheduledStartTime.getTime() + 70 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, start-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 15 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 15 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 15 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, start-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 59 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 59 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total video-chat event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() - 4 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() - 4 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() - 4 * 60 * 1000 + 59 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 60 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 60 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 50 - 5 * 60 * 1000),
-                    durationSeconds: 55 * 60,
+                    scheduledStartTime: new Date(Date.now() - 50 - 5 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 50 - 5 * 60 * 1000 + 55 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing, both-change scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 60 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 60 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total video-chat event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() - 5 * 60 * 1000),
-                        durationSeconds: 57 * 60,
+                        scheduledStartTime: new Date(Date.now() - 5 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() - 5 * 60 * 1000 + 57 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing-to-future scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() + 60 * 60 * 1000),
-                    durationSeconds: 49.9 * 60,
+                    scheduledStartTime: new Date(Date.now() + 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 60 * 60 * 1000 + 49.9 * 60 * 1000),
                 });
             });
             it("prevents update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing-to-future scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 60 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 60 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await expectError(
                     "Quota limit reached (total video-chat event minutes)",
                     updateEvent(event.id, {
-                        startTime: new Date(Date.now() + 60 * 60 * 1000),
+                        scheduledStartTime: new Date(Date.now() + 60 * 60 * 1000),
+                        scheduledEndTime: new Date(Date.now() + 60 * 60 * 1000 + 60 * 60 * 1000),
                     })
                 );
             });
             it("permits update if ((old event duration or remaining time) + remaining quota) < (new event duration or remaining time) [ongoing-to-past scenario]", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() - 10 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() - 10 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 10 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 50 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 50 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom2.id,
                 });
                 await updateEvent(event.id, {
-                    startTime: new Date(Date.now() - 60 * 60 * 1000),
+                    scheduledStartTime: new Date(Date.now() - 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() - 60 * 60 * 1000 + 50 * 60 * 1000),
                 });
             });
         });
@@ -1311,17 +1347,17 @@ describe("checkInsertEvent", () => {
             it("prevents update if target room is a streaming room", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Exhibition,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: streamingRoom2.id,
                 });
@@ -1329,7 +1365,7 @@ describe("checkInsertEvent", () => {
                     "Room is a streaming program room.",
                     updateEvent(event.id, {
                         roomId: streamingRoom2.id,
-                        intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                        modeName: Schedule_Mode_Enum.Exhibition,
                     })
                 );
             });
@@ -1337,25 +1373,25 @@ describe("checkInsertEvent", () => {
             it("prevents update if target room is not a program room and no remaining quota for video-chat rooms", async () => {
                 const event = await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.Livestream,
                     name: "E2E Usage-and-Quotas Test Event 1",
                     roomId: streamingRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 25 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 25 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 2",
                     roomId: videoChatRoom1.id,
                 });
                 await insertEvent({
                     conferenceId: conference.id,
-                    startTime: new Date(Date.now() + 26 * 60 * 60 * 1000),
-                    durationSeconds: 10 * 60,
-                    intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                    scheduledStartTime: new Date(Date.now() + 26 * 60 * 60 * 1000),
+                    scheduledEndTime: new Date(Date.now() + 26 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                    modeName: Schedule_Mode_Enum.VideoChat,
                     name: "E2E Usage-and-Quotas Test Event 3",
                     roomId: videoChatRoom2.id,
                 });
@@ -1363,7 +1399,7 @@ describe("checkInsertEvent", () => {
                     "Quota limit reached (non-streaming program rooms)",
                     updateEvent(event.id, {
                         roomId: streamingRoom2.id,
-                        intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                        modeName: Schedule_Mode_Enum.Exhibition,
                     })
                 );
             });

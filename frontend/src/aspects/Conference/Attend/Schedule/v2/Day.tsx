@@ -23,8 +23,8 @@ import type { EventCellDescriptor, ParsedEvent } from "./Types";
 gql`
     fragment ScheduleV2_LightweightEvent on schedule_Event {
         id
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         roomId
         conferenceId
     }
@@ -39,8 +39,8 @@ gql`
             where: {
                 _and: [
                     { conferenceId: { _eq: $conferenceId } }
-                    { startTime: { _lt: $endOfDay } }
-                    { endTime: { _gt: $startOfDay } }
+                    { scheduledStartTime: { _lt: $endOfDay } }
+                    { scheduledEndTime: { _gt: $startOfDay } }
                     $filter
                 ]
             }
@@ -112,8 +112,8 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
         () =>
             lwEventsResponse.data?.schedule_Event.map((lwEvent) => ({
                 lwEvent,
-                startTimeMs: Date.parse(lwEvent.startTime),
-                endTimeMs: Date.parse(lwEvent.endTime),
+                scheduledStartTimeMs: Date.parse(lwEvent.scheduledStartTime),
+                endTimeMs: Date.parse(lwEvent.scheduledEndTime),
             })) ?? [],
         [lwEventsResponse.data?.schedule_Event]
     );
@@ -130,7 +130,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
     }>(() => {
         // Ealriest events first. Events of equal start time sorted by shortest duration first (earliest ending first)
         const sortedEvents = R.sortWith(
-            [(x, y) => x.startTimeMs - y.startTimeMs, (x, y) => x.endTimeMs - y.endTimeMs],
+            [(x, y) => x.scheduledStartTimeMs - y.scheduledStartTimeMs, (x, y) => x.endTimeMs - y.endTimeMs],
             parsedEvents
         );
 
@@ -139,8 +139,8 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
             sortedEventsByRoom[room.id] = sortedEvents.filter((x) => x.lwEvent.roomId === room.id);
         }
 
-        const earliestMsResult = sortedEvents[0]?.startTimeMs ?? Date.now();
-        const latestMsResult = R.last(sortedEvents)?.startTimeMs ?? Date.now() + 60000;
+        const earliestMsResult = sortedEvents[0]?.scheduledStartTimeMs ?? Date.now();
+        const latestMsResult = R.last(sortedEvents)?.scheduledStartTimeMs ?? Date.now() + 60000;
         const earliestDT = luxon.DateTime.fromMillis(earliestMsResult).setZone(timezone);
         const latestDT = luxon.DateTime.fromMillis(latestMsResult).setZone(timezone);
         let earliestHourDT = earliestDT.startOf("hour");
@@ -216,8 +216,8 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                 // endEventIndex must be less than sortedEvents length because there's still at least one event in the "starting" list!
                 const startEvent = sortedEvents[startEventIndex];
                 const endEvent = sortedEvents[endEventIndex];
-                if (startEvent.startTimeMs < endEvent.endTimeMs || startEventIndex === endEventIndex) {
-                    currentEventMs = startEvent.startTimeMs;
+                if (startEvent.scheduledStartTimeMs < endEvent.endTimeMs || startEventIndex === endEventIndex) {
+                    currentEventMs = startEvent.scheduledStartTimeMs;
                     currentEventSource = "start";
                 } else {
                     currentEventMs = endEvent.endTimeMs;
@@ -277,7 +277,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                         const currentEvent = roomEvents[currentEventIndex];
                         const previousEvent = currentEventIndex > 0 ? roomEvents[currentEventIndex - 1] : undefined;
                         const currentMarkerMs = currentMarker.toMillis();
-                        if (currentEvent.startTimeMs > currentMarkerMs) {
+                        if (currentEvent.scheduledStartTimeMs > currentMarkerMs) {
                             result.push(null);
                             currentMarkerIndex++;
                         } else if (currentDescriptors.length === 0) {
@@ -288,7 +288,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                                     markerSpan: 1,
                                     preceedingEventId:
                                         previousEvent &&
-                                        currentEvent.startTimeMs - previousEvent.endTimeMs < 2 * 60 * 1000
+                                        currentEvent.scheduledStartTimeMs - previousEvent.endTimeMs < 2 * 60 * 1000
                                             ? previousEvent.lwEvent.id
                                             : undefined,
                                     isSecondaryCell: false,
@@ -300,9 +300,9 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                             currentDescriptors = [];
                             currentEventIndex++;
                         } else if (currentDescriptors.length > 0) {
-                            // const startTimeDT = luxon.DateTime.fromMillis(currentEvent.startTimeMs).setZone(timezone);
+                            // const scheduledStartTimeDT = luxon.DateTime.fromMillis(currentEvent.scheduledStartTimeMs).setZone(timezone);
                             // const endTimeDT = luxon.DateTime.fromMillis(currentEvent.endTimeMs).setZone(timezone);
-                            // if (currentDescriptors.length === 1 && startTimeDT.day !== endTimeDT.day) {
+                            // if (currentDescriptors.length === 1 && scheduledStartTimeDT.day !== endTimeDT.day) {
                             //     currentDescriptors.push({
                             //         ...currentDescriptors[0],
                             //         markerMs: currentMarkerMs,
@@ -425,8 +425,8 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                             {sortedRooms.map((room) => {
                                 const eventCellDescriptor = eventCellDescriptors[room.id]?.[markerIndex];
                                 if (eventCellDescriptor) {
-                                    const startTimeDT = luxon.DateTime.fromMillis(
-                                        eventCellDescriptor.parsedEvent.startTimeMs
+                                    const scheduledStartTimeDT = luxon.DateTime.fromMillis(
+                                        eventCellDescriptor.parsedEvent.scheduledStartTimeMs
                                     ).setZone(timezone);
                                     const endTimeDT = luxon.DateTime.fromMillis(
                                         eventCellDescriptor.parsedEvent.endTimeMs
@@ -441,7 +441,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                                             eventBoxBgColor={eventBoxBgColor}
                                             eventBorderColor={eventBorderColor}
                                             splitOverDayBoundary={
-                                                startTimeDT.day !== endTimeDT.day
+                                                scheduledStartTimeDT.day !== endTimeDT.day
                                                     ? eventCellDescriptor.isSecondaryCell
                                                         ? "second"
                                                         : "first"

@@ -21,6 +21,7 @@ export type Scalars = {
     Int: number;
     Float: number;
     bigint: any;
+    float8: any;
     jsonb: any;
     name: any;
     numeric: any;
@@ -9905,6 +9906,8 @@ export enum Content_ElementType_Enum {
     ExploreProgramButton = "EXPLORE_PROGRAM_BUTTON",
     /** Button that opens the explore program modal with the Schedule tab open. Intended for use on the landing page. */
     ExploreScheduleButton = "EXPLORE_SCHEDULE_BUTTON",
+    /** Data for a Zoom meeting. */
+    ExternalEventLink = "EXTERNAL_EVENT_LINK",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -9949,8 +9952,6 @@ export enum Content_ElementType_Enum {
     VideoUrl = "VIDEO_URL",
     /** Schedule view for the whole conference. */
     WholeSchedule = "WHOLE_SCHEDULE",
-    /** Data for a Zoom meeting. */
-    Zoom = "ZOOM",
 }
 
 /** Boolean expression to compare columns of type "content_ElementType_enum". All fields are combined with logical 'AND'. */
@@ -11885,6 +11886,19 @@ export enum Content_Item_Update_Column {
 export type Content_SearchItems_Args = {
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly search?: InputMaybe<Scalars["String"]>;
+};
+
+/** Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'. */
+export type Float8_Comparison_Exp = {
+    readonly _eq?: InputMaybe<Scalars["float8"]>;
+    readonly _gt?: InputMaybe<Scalars["float8"]>;
+    readonly _gte?: InputMaybe<Scalars["float8"]>;
+    readonly _in?: InputMaybe<ReadonlyArray<Scalars["float8"]>>;
+    readonly _is_null?: InputMaybe<Scalars["Boolean"]>;
+    readonly _lt?: InputMaybe<Scalars["float8"]>;
+    readonly _lte?: InputMaybe<Scalars["float8"]>;
+    readonly _neq?: InputMaybe<Scalars["float8"]>;
+    readonly _nin?: InputMaybe<ReadonlyArray<Scalars["float8"]>>;
 };
 
 /** columns and relationships of "job_queues.ChannelStackCreateJob" */
@@ -15479,10 +15493,6 @@ export type Mutation_Root = {
     readonly delete_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** delete single row from the table: "room.ManagementMode" */
     readonly delete_room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** delete data from the table: "room.Mode" */
-    readonly delete_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** delete single row from the table: "room.Mode" */
-    readonly delete_room_Mode_by_pk?: Maybe<Room_Mode>;
     /** delete data from the table: "room.PersonRole" */
     readonly delete_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** delete single row from the table: "room.PersonRole" */
@@ -15533,6 +15543,10 @@ export type Mutation_Root = {
     readonly delete_schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
     /** delete single row from the table: "schedule.Event" */
     readonly delete_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** delete data from the table: "schedule.Mode" */
+    readonly delete_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** delete single row from the table: "schedule.Mode" */
+    readonly delete_schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** delete data from the table: "schedule.StarredEvent" */
     readonly delete_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** delete single row from the table: "schedule.StarredEvent" */
@@ -15883,10 +15897,6 @@ export type Mutation_Root = {
     readonly insert_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** insert a single row into the table: "room.ManagementMode" */
     readonly insert_room_ManagementMode_one?: Maybe<Room_ManagementMode>;
-    /** insert data into the table: "room.Mode" */
-    readonly insert_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** insert a single row into the table: "room.Mode" */
-    readonly insert_room_Mode_one?: Maybe<Room_Mode>;
     /** insert data into the table: "room.PersonRole" */
     readonly insert_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** insert a single row into the table: "room.PersonRole" */
@@ -15939,6 +15949,10 @@ export type Mutation_Root = {
     readonly insert_schedule_EventProgramPerson_one?: Maybe<Schedule_EventProgramPerson>;
     /** insert a single row into the table: "schedule.Event" */
     readonly insert_schedule_Event_one?: Maybe<Schedule_Event>;
+    /** insert data into the table: "schedule.Mode" */
+    readonly insert_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** insert a single row into the table: "schedule.Mode" */
+    readonly insert_schedule_Mode_one?: Maybe<Schedule_Mode>;
     /** insert data into the table: "schedule.StarredEvent" */
     readonly insert_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** insert a single row into the table: "schedule.StarredEvent" */
@@ -16301,10 +16315,6 @@ export type Mutation_Root = {
     readonly update_room_ManagementMode?: Maybe<Room_ManagementMode_Mutation_Response>;
     /** update single row of the table: "room.ManagementMode" */
     readonly update_room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** update data of the table: "room.Mode" */
-    readonly update_room_Mode?: Maybe<Room_Mode_Mutation_Response>;
-    /** update single row of the table: "room.Mode" */
-    readonly update_room_Mode_by_pk?: Maybe<Room_Mode>;
     /** update data of the table: "room.PersonRole" */
     readonly update_room_PersonRole?: Maybe<Room_PersonRole_Mutation_Response>;
     /** update single row of the table: "room.PersonRole" */
@@ -16355,6 +16365,10 @@ export type Mutation_Root = {
     readonly update_schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
     /** update single row of the table: "schedule.Event" */
     readonly update_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** update data of the table: "schedule.Mode" */
+    readonly update_schedule_Mode?: Maybe<Schedule_Mode_Mutation_Response>;
+    /** update single row of the table: "schedule.Mode" */
+    readonly update_schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** update data of the table: "schedule.StarredEvent" */
     readonly update_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
     /** update single row of the table: "schedule.StarredEvent" */
@@ -17115,16 +17129,6 @@ export type Mutation_RootDelete_Room_ManagementMode_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootDelete_Room_ModeArgs = {
-    where: Room_Mode_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Room_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
-/** mutation root */
 export type Mutation_RootDelete_Room_PersonRoleArgs = {
     where: Room_PersonRole_Bool_Exp;
 };
@@ -17247,6 +17251,16 @@ export type Mutation_RootDelete_Schedule_EventProgramPerson_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Schedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_ModeArgs = {
+    where: Schedule_Mode_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 /** mutation root */
@@ -18254,18 +18268,6 @@ export type Mutation_RootInsert_Room_ManagementMode_OneArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootInsert_Room_ModeArgs = {
-    objects: ReadonlyArray<Room_Mode_Insert_Input>;
-    on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Room_Mode_OneArgs = {
-    object: Room_Mode_Insert_Input;
-    on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** mutation root */
 export type Mutation_RootInsert_Room_PersonRoleArgs = {
     objects: ReadonlyArray<Room_PersonRole_Insert_Input>;
     on_conflict?: InputMaybe<Room_PersonRole_On_Conflict>;
@@ -18417,6 +18419,18 @@ export type Mutation_RootInsert_Schedule_EventProgramPerson_OneArgs = {
 export type Mutation_RootInsert_Schedule_Event_OneArgs = {
     object: Schedule_Event_Insert_Input;
     on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_ModeArgs = {
+    objects: ReadonlyArray<Schedule_Mode_Insert_Input>;
+    on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_Mode_OneArgs = {
+    object: Schedule_Mode_Insert_Input;
+    on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
 };
 
 /** mutation root */
@@ -19732,18 +19746,6 @@ export type Mutation_RootUpdate_Room_ManagementMode_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootUpdate_Room_ModeArgs = {
-    _set?: InputMaybe<Room_Mode_Set_Input>;
-    where: Room_Mode_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Room_Mode_By_PkArgs = {
-    _set?: InputMaybe<Room_Mode_Set_Input>;
-    pk_columns: Room_Mode_Pk_Columns_Input;
-};
-
-/** mutation root */
 export type Mutation_RootUpdate_Room_PersonRoleArgs = {
     _set?: InputMaybe<Room_PersonRole_Set_Input>;
     where: Room_PersonRole_Bool_Exp;
@@ -19873,14 +19875,12 @@ export type Mutation_RootUpdate_Schedule_Continuation_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_CurrentEventsArgs = {
-    _inc?: InputMaybe<Schedule_CurrentEvents_Inc_Input>;
     _set?: InputMaybe<Schedule_CurrentEvents_Set_Input>;
     where: Schedule_CurrentEvents_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_EventArgs = {
-    _inc?: InputMaybe<Schedule_Event_Inc_Input>;
     _set?: InputMaybe<Schedule_Event_Set_Input>;
     where: Schedule_Event_Bool_Exp;
 };
@@ -19911,9 +19911,20 @@ export type Mutation_RootUpdate_Schedule_EventProgramPerson_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Schedule_Event_By_PkArgs = {
-    _inc?: InputMaybe<Schedule_Event_Inc_Input>;
     _set?: InputMaybe<Schedule_Event_Set_Input>;
     pk_columns: Schedule_Event_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_ModeArgs = {
+    _set?: InputMaybe<Schedule_Mode_Set_Input>;
+    where: Schedule_Mode_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_Mode_By_PkArgs = {
+    _set?: InputMaybe<Schedule_Mode_Set_Input>;
+    pk_columns: Schedule_Mode_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -20713,12 +20724,6 @@ export type Query_Root = {
     readonly room_ManagementMode_aggregate: Room_ManagementMode_Aggregate;
     /** fetch data from the table: "room.ManagementMode" using primary key columns */
     readonly room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** fetch data from the table: "room.Mode" */
-    readonly room_Mode: ReadonlyArray<Room_Mode>;
-    /** fetch aggregated fields from the table: "room.Mode" */
-    readonly room_Mode_aggregate: Room_Mode_Aggregate;
-    /** fetch data from the table: "room.Mode" using primary key columns */
-    readonly room_Mode_by_pk?: Maybe<Room_Mode>;
     /** fetch data from the table: "room.PersonRole" */
     readonly room_PersonRole: ReadonlyArray<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -20795,6 +20800,12 @@ export type Query_Root = {
     readonly schedule_Event_aggregate: Schedule_Event_Aggregate;
     /** fetch data from the table: "schedule.Event" using primary key columns */
     readonly schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** fetch data from the table: "schedule.Mode" */
+    readonly schedule_Mode: ReadonlyArray<Schedule_Mode>;
+    /** fetch aggregated fields from the table: "schedule.Mode" */
+    readonly schedule_Mode_aggregate: Schedule_Mode_Aggregate;
+    /** fetch data from the table: "schedule.Mode" using primary key columns */
+    readonly schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** fetch data from the table: "schedule.OverlappingEvents" */
     readonly schedule_OverlappingEvents: ReadonlyArray<Schedule_OverlappingEvents>;
     /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
@@ -22371,26 +22382,6 @@ export type Query_RootRoom_ManagementMode_By_PkArgs = {
     name: Scalars["String"];
 };
 
-export type Query_RootRoom_ModeArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Query_RootRoom_Mode_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Query_RootRoom_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
 export type Query_RootRoom_PersonRoleArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Room_PersonRole_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -22645,6 +22636,26 @@ export type Query_RootSchedule_Event_AggregateArgs = {
 
 export type Query_RootSchedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootSchedule_ModeArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Query_RootSchedule_Mode_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Query_RootSchedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 export type Query_RootSchedule_OverlappingEventsArgs = {
@@ -25817,7 +25828,7 @@ export type Room_LivestreamDurations = {
     readonly room?: Maybe<Room_Room>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly sum?: Maybe<Scalars["bigint"]>;
+    readonly sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregated selection of "room.LivestreamDurations" */
@@ -25865,7 +25876,7 @@ export type Room_LivestreamDurations_Bool_Exp = {
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly sum?: InputMaybe<Bigint_Comparison_Exp>;
+    readonly sum?: InputMaybe<Float8_Comparison_Exp>;
 };
 
 /** input type for inserting data into table "room.LivestreamDurations" */
@@ -25875,7 +25886,7 @@ export type Room_LivestreamDurations_Insert_Input = {
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
-    readonly sum?: InputMaybe<Scalars["bigint"]>;
+    readonly sum?: InputMaybe<Scalars["float8"]>;
 };
 
 /** aggregate max on columns */
@@ -25884,7 +25895,7 @@ export type Room_LivestreamDurations_Max_Fields = {
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly sum?: Maybe<Scalars["bigint"]>;
+    readonly sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregate min on columns */
@@ -25893,7 +25904,7 @@ export type Room_LivestreamDurations_Min_Fields = {
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
-    readonly sum?: Maybe<Scalars["bigint"]>;
+    readonly sum?: Maybe<Scalars["float8"]>;
 };
 
 /** input type for inserting object relation for remote table "room.LivestreamDurations" */
@@ -25944,7 +25955,7 @@ export type Room_LivestreamDurations_Stddev_Samp_Fields = {
 /** aggregate sum on columns */
 export type Room_LivestreamDurations_Sum_Fields = {
     readonly __typename?: "room_LivestreamDurations_sum_fields";
-    readonly sum?: Maybe<Scalars["bigint"]>;
+    readonly sum?: Maybe<Scalars["float8"]>;
 };
 
 /** aggregate var_pop on columns */
@@ -26098,180 +26109,6 @@ export type Room_ManagementMode_Set_Input = {
 
 /** update columns of table "room.ManagementMode" */
 export enum Room_ManagementMode_Update_Column {
-    /** column name */
-    Description = "description",
-    /** column name */
-    Name = "name",
-}
-
-/** columns and relationships of "room.Mode" */
-export type Room_Mode = {
-    readonly __typename?: "room_Mode";
-    readonly description: Scalars["String"];
-    /** An array relationship */
-    readonly events: ReadonlyArray<Schedule_Event>;
-    /** An aggregate relationship */
-    readonly events_aggregate: Schedule_Event_Aggregate;
-    readonly name: Scalars["String"];
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeEventsArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** columns and relationships of "room.Mode" */
-export type Room_ModeEvents_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
-    where?: InputMaybe<Schedule_Event_Bool_Exp>;
-};
-
-/** aggregated selection of "room.Mode" */
-export type Room_Mode_Aggregate = {
-    readonly __typename?: "room_Mode_aggregate";
-    readonly aggregate?: Maybe<Room_Mode_Aggregate_Fields>;
-    readonly nodes: ReadonlyArray<Room_Mode>;
-};
-
-/** aggregate fields of "room.Mode" */
-export type Room_Mode_Aggregate_Fields = {
-    readonly __typename?: "room_Mode_aggregate_fields";
-    readonly count: Scalars["Int"];
-    readonly max?: Maybe<Room_Mode_Max_Fields>;
-    readonly min?: Maybe<Room_Mode_Min_Fields>;
-};
-
-/** aggregate fields of "room.Mode" */
-export type Room_Mode_Aggregate_FieldsCountArgs = {
-    columns?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    distinct?: InputMaybe<Scalars["Boolean"]>;
-};
-
-/** Boolean expression to filter rows from the table "room.Mode". All fields are combined with a logical 'AND'. */
-export type Room_Mode_Bool_Exp = {
-    readonly _and?: InputMaybe<ReadonlyArray<Room_Mode_Bool_Exp>>;
-    readonly _not?: InputMaybe<Room_Mode_Bool_Exp>;
-    readonly _or?: InputMaybe<ReadonlyArray<Room_Mode_Bool_Exp>>;
-    readonly description?: InputMaybe<String_Comparison_Exp>;
-    readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
-    readonly name?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "room.Mode" */
-export enum Room_Mode_Constraint {
-    /** unique or primary key constraint */
-    ModePkey = "Mode_pkey",
-}
-
-export enum Room_Mode_Enum {
-    /** An exhibition hall. */
-    Exhibition = "EXHIBITION",
-    /** An empty room. */
-    None = "NONE",
-    /** Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users. */
-    Prerecorded = "PRERECORDED",
-    /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
-    Presentation = "PRESENTATION",
-    /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
-    QAndA = "Q_AND_A",
-    /** A shuffle queue. */
-    Shuffle = "SHUFFLE",
-    /** Users may participate in the general video chat. */
-    VideoChat = "VIDEO_CHAT",
-    /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
-    VideoPlayer = "VIDEO_PLAYER",
-    /** Event is taking place in a Zoom room. */
-    Zoom = "ZOOM",
-}
-
-/** Boolean expression to compare columns of type "room_Mode_enum". All fields are combined with logical 'AND'. */
-export type Room_Mode_Enum_Comparison_Exp = {
-    readonly _eq?: InputMaybe<Room_Mode_Enum>;
-    readonly _in?: InputMaybe<ReadonlyArray<Room_Mode_Enum>>;
-    readonly _is_null?: InputMaybe<Scalars["Boolean"]>;
-    readonly _neq?: InputMaybe<Room_Mode_Enum>;
-    readonly _nin?: InputMaybe<ReadonlyArray<Room_Mode_Enum>>;
-};
-
-/** input type for inserting data into table "room.Mode" */
-export type Room_Mode_Insert_Input = {
-    readonly description?: InputMaybe<Scalars["String"]>;
-    readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
-    readonly name?: InputMaybe<Scalars["String"]>;
-};
-
-/** aggregate max on columns */
-export type Room_Mode_Max_Fields = {
-    readonly __typename?: "room_Mode_max_fields";
-    readonly description?: Maybe<Scalars["String"]>;
-    readonly name?: Maybe<Scalars["String"]>;
-};
-
-/** aggregate min on columns */
-export type Room_Mode_Min_Fields = {
-    readonly __typename?: "room_Mode_min_fields";
-    readonly description?: Maybe<Scalars["String"]>;
-    readonly name?: Maybe<Scalars["String"]>;
-};
-
-/** response of any mutation on the table "room.Mode" */
-export type Room_Mode_Mutation_Response = {
-    readonly __typename?: "room_Mode_mutation_response";
-    /** number of rows affected by the mutation */
-    readonly affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    readonly returning: ReadonlyArray<Room_Mode>;
-};
-
-/** input type for inserting object relation for remote table "room.Mode" */
-export type Room_Mode_Obj_Rel_Insert_Input = {
-    readonly data: Room_Mode_Insert_Input;
-    /** on conflict condition */
-    readonly on_conflict?: InputMaybe<Room_Mode_On_Conflict>;
-};
-
-/** on conflict condition type for table "room.Mode" */
-export type Room_Mode_On_Conflict = {
-    readonly constraint: Room_Mode_Constraint;
-    readonly update_columns?: ReadonlyArray<Room_Mode_Update_Column>;
-    readonly where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "room.Mode". */
-export type Room_Mode_Order_By = {
-    readonly description?: InputMaybe<Order_By>;
-    readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
-    readonly name?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: room_Mode */
-export type Room_Mode_Pk_Columns_Input = {
-    readonly name: Scalars["String"];
-};
-
-/** select columns of table "room.Mode" */
-export enum Room_Mode_Select_Column {
-    /** column name */
-    Description = "description",
-    /** column name */
-    Name = "name",
-}
-
-/** input type for updating data in table "room.Mode" */
-export type Room_Mode_Set_Input = {
-    readonly description?: InputMaybe<Scalars["String"]>;
-    readonly name?: InputMaybe<Scalars["String"]>;
-};
-
-/** update columns of table "room.Mode" */
-export enum Room_Mode_Update_Column {
     /** column name */
     Description = "description",
     /** column name */
@@ -29290,25 +29127,26 @@ export type Schedule_Continuation_Variance_Order_By = {
 /** columns and relationships of "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents = {
     readonly __typename?: "schedule_CurrentEvents";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
+    readonly automaticParticipationSurvey?: Maybe<Scalars["Boolean"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
     readonly enableRecording?: Maybe<Scalars["Boolean"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     /** An array relationship */
     readonly eventPeople: ReadonlyArray<Schedule_EventProgramPerson>;
     /** An aggregate relationship */
     readonly eventPeople_aggregate: Schedule_EventProgramPerson_Aggregate;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly modeName?: Maybe<Scalars["String"]>;
     readonly name?: Maybe<Scalars["String"]>;
     /** An object relationship */
     readonly room?: Maybe<Room_Room>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29344,17 +29182,9 @@ export type Schedule_CurrentEvents_Aggregate = {
 /** aggregate fields of "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Aggregate_Fields = {
     readonly __typename?: "schedule_CurrentEvents_aggregate_fields";
-    readonly avg?: Maybe<Schedule_CurrentEvents_Avg_Fields>;
     readonly count: Scalars["Int"];
     readonly max?: Maybe<Schedule_CurrentEvents_Max_Fields>;
     readonly min?: Maybe<Schedule_CurrentEvents_Min_Fields>;
-    readonly stddev?: Maybe<Schedule_CurrentEvents_Stddev_Fields>;
-    readonly stddev_pop?: Maybe<Schedule_CurrentEvents_Stddev_Pop_Fields>;
-    readonly stddev_samp?: Maybe<Schedule_CurrentEvents_Stddev_Samp_Fields>;
-    readonly sum?: Maybe<Schedule_CurrentEvents_Sum_Fields>;
-    readonly var_pop?: Maybe<Schedule_CurrentEvents_Var_Pop_Fields>;
-    readonly var_samp?: Maybe<Schedule_CurrentEvents_Var_Samp_Fields>;
-    readonly variance?: Maybe<Schedule_CurrentEvents_Variance_Fields>;
 };
 
 /** aggregate fields of "schedule.CurrentEvents" */
@@ -29365,17 +29195,9 @@ export type Schedule_CurrentEvents_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Aggregate_Order_By = {
-    readonly avg?: InputMaybe<Schedule_CurrentEvents_Avg_Order_By>;
     readonly count?: InputMaybe<Order_By>;
     readonly max?: InputMaybe<Schedule_CurrentEvents_Max_Order_By>;
     readonly min?: InputMaybe<Schedule_CurrentEvents_Min_Order_By>;
-    readonly stddev?: InputMaybe<Schedule_CurrentEvents_Stddev_Order_By>;
-    readonly stddev_pop?: InputMaybe<Schedule_CurrentEvents_Stddev_Pop_Order_By>;
-    readonly stddev_samp?: InputMaybe<Schedule_CurrentEvents_Stddev_Samp_Order_By>;
-    readonly sum?: InputMaybe<Schedule_CurrentEvents_Sum_Order_By>;
-    readonly var_pop?: InputMaybe<Schedule_CurrentEvents_Var_Pop_Order_By>;
-    readonly var_samp?: InputMaybe<Schedule_CurrentEvents_Var_Samp_Order_By>;
-    readonly variance?: InputMaybe<Schedule_CurrentEvents_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "schedule.CurrentEvents" */
@@ -29383,37 +29205,27 @@ export type Schedule_CurrentEvents_Arr_Rel_Insert_Input = {
     readonly data: ReadonlyArray<Schedule_CurrentEvents_Insert_Input>;
 };
 
-/** aggregate avg on columns */
-export type Schedule_CurrentEvents_Avg_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_avg_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by avg() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Avg_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "schedule.CurrentEvents". All fields are combined with a logical 'AND'. */
 export type Schedule_CurrentEvents_Bool_Exp = {
     readonly _and?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Bool_Exp>>;
     readonly _not?: InputMaybe<Schedule_CurrentEvents_Bool_Exp>;
     readonly _or?: InputMaybe<ReadonlyArray<Schedule_CurrentEvents_Bool_Exp>>;
+    readonly autoPlayElementId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly automaticParticipationSurvey?: InputMaybe<Boolean_Comparison_Exp>;
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-    readonly durationSeconds?: InputMaybe<Int_Comparison_Exp>;
     readonly enableRecording?: InputMaybe<Boolean_Comparison_Exp>;
-    readonly endTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
     readonly exhibitionId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly intendedRoomModeName?: InputMaybe<String_Comparison_Exp>;
     readonly itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly modeName?: InputMaybe<String_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly startTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly streamTextEventId?: InputMaybe<String_Comparison_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly timings_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -29421,28 +29233,24 @@ export type Schedule_CurrentEvents_Bool_Exp = {
     readonly visibilityLevel?: InputMaybe<String_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Inc_Input = {
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
-};
-
 /** input type for inserting data into table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Insert_Input = {
+    readonly autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
+    readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
     readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
     readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: InputMaybe<Scalars["String"]>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly modeName?: InputMaybe<Scalars["String"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly timings_updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -29453,18 +29261,18 @@ export type Schedule_CurrentEvents_Insert_Input = {
 /** aggregate max on columns */
 export type Schedule_CurrentEvents_Max_Fields = {
     readonly __typename?: "schedule_CurrentEvents_max_fields";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly modeName?: Maybe<Scalars["String"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29474,18 +29282,18 @@ export type Schedule_CurrentEvents_Max_Fields = {
 
 /** order by max() on columns of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Max_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly intendedRoomModeName?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timings_updated_at?: InputMaybe<Order_By>;
@@ -29496,18 +29304,18 @@ export type Schedule_CurrentEvents_Max_Order_By = {
 /** aggregate min on columns */
 export type Schedule_CurrentEvents_Min_Fields = {
     readonly __typename?: "schedule_CurrentEvents_min_fields";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly created_at?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: Maybe<Scalars["String"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
+    readonly modeName?: Maybe<Scalars["String"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timings_updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -29517,18 +29325,18 @@ export type Schedule_CurrentEvents_Min_Fields = {
 
 /** order by min() on columns of table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Min_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly intendedRoomModeName?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timings_updated_at?: InputMaybe<Order_By>;
@@ -29547,21 +29355,22 @@ export type Schedule_CurrentEvents_Mutation_Response = {
 
 /** Ordering options when selecting data from "schedule.CurrentEvents". */
 export type Schedule_CurrentEvents_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
+    readonly automaticParticipationSurvey?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly created_at?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
     readonly enableRecording?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly eventPeople_aggregate?: InputMaybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly intendedRoomModeName?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timings_updated_at?: InputMaybe<Order_By>;
@@ -29572,31 +29381,33 @@ export type Schedule_CurrentEvents_Order_By = {
 /** select columns of table "schedule.CurrentEvents" */
 export enum Schedule_CurrentEvents_Select_Column {
     /** column name */
+    AutoPlayElementId = "autoPlayElementId",
+    /** column name */
+    AutomaticParticipationSurvey = "automaticParticipationSurvey",
+    /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -29611,19 +29422,20 @@ export enum Schedule_CurrentEvents_Select_Column {
 
 /** input type for updating data in table "schedule.CurrentEvents" */
 export type Schedule_CurrentEvents_Set_Input = {
+    readonly autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
+    readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
     readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: InputMaybe<Scalars["String"]>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly modeName?: InputMaybe<Scalars["String"]>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly timings_updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -29631,86 +29443,12 @@ export type Schedule_CurrentEvents_Set_Input = {
     readonly visibilityLevel?: InputMaybe<Scalars["String"]>;
 };
 
-/** aggregate stddev on columns */
-export type Schedule_CurrentEvents_Stddev_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_stddev_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Schedule_CurrentEvents_Stddev_Pop_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_stddev_pop_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_pop() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Pop_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Schedule_CurrentEvents_Stddev_Samp_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_stddev_samp_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_samp() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Stddev_Samp_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Schedule_CurrentEvents_Sum_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_sum_fields";
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-};
-
-/** order by sum() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Sum_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Schedule_CurrentEvents_Var_Pop_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_var_pop_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_pop() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Var_Pop_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Schedule_CurrentEvents_Var_Samp_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_var_samp_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_samp() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Var_Samp_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Schedule_CurrentEvents_Variance_Fields = {
-    readonly __typename?: "schedule_CurrentEvents_variance_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by variance() on columns of table "schedule.CurrentEvents" */
-export type Schedule_CurrentEvents_Variance_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
     readonly __typename?: "schedule_Event";
+    /** An object relationship */
+    readonly autoPlayElement?: Maybe<Content_Element>;
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly automaticParticipationSurvey: Scalars["Boolean"];
     /** An object relationship */
     readonly conference: Conference_Conference;
@@ -29720,9 +29458,7 @@ export type Schedule_Event = {
     /** An aggregate relationship */
     readonly continuations_aggregate: Schedule_Continuation_Aggregate;
     readonly createdAt: Scalars["timestamptz"];
-    readonly durationSeconds: Scalars["Int"];
     readonly enableRecording: Scalars["Boolean"];
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     /** An array relationship */
     readonly eventPeople: ReadonlyArray<Schedule_EventProgramPerson>;
     /** An aggregate relationship */
@@ -29733,23 +29469,27 @@ export type Schedule_Event = {
     readonly exhibition?: Maybe<Collection_Exhibition>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id: Scalars["uuid"];
-    readonly intendedRoomModeName: Room_Mode_Enum;
     /** An object relationship */
     readonly item?: Maybe<Content_Item>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    readonly mode: Schedule_Mode;
+    readonly modeName: Schedule_Mode_Enum;
     readonly name: Scalars["String"];
     /** An object relationship */
     readonly room: Room_Room;
     readonly roomId: Scalars["uuid"];
-    /** An object relationship */
-    readonly roomMode: Room_Mode;
     /** A computed field, executes function "schedule.eventRoomName" */
     readonly roomName?: Maybe<Scalars["String"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     readonly shufflePeriod?: Maybe<Room_ShufflePeriod>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime: Scalars["timestamptz"];
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    readonly subconference?: Maybe<Conference_Subconference>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt: Scalars["timestamptz"];
     readonly updatedAt: Scalars["timestamptz"];
@@ -30167,17 +29907,9 @@ export type Schedule_Event_Aggregate = {
 /** aggregate fields of "schedule.Event" */
 export type Schedule_Event_Aggregate_Fields = {
     readonly __typename?: "schedule_Event_aggregate_fields";
-    readonly avg?: Maybe<Schedule_Event_Avg_Fields>;
     readonly count: Scalars["Int"];
     readonly max?: Maybe<Schedule_Event_Max_Fields>;
     readonly min?: Maybe<Schedule_Event_Min_Fields>;
-    readonly stddev?: Maybe<Schedule_Event_Stddev_Fields>;
-    readonly stddev_pop?: Maybe<Schedule_Event_Stddev_Pop_Fields>;
-    readonly stddev_samp?: Maybe<Schedule_Event_Stddev_Samp_Fields>;
-    readonly sum?: Maybe<Schedule_Event_Sum_Fields>;
-    readonly var_pop?: Maybe<Schedule_Event_Var_Pop_Fields>;
-    readonly var_samp?: Maybe<Schedule_Event_Var_Samp_Fields>;
-    readonly variance?: Maybe<Schedule_Event_Variance_Fields>;
 };
 
 /** aggregate fields of "schedule.Event" */
@@ -30188,17 +29920,9 @@ export type Schedule_Event_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "schedule.Event" */
 export type Schedule_Event_Aggregate_Order_By = {
-    readonly avg?: InputMaybe<Schedule_Event_Avg_Order_By>;
     readonly count?: InputMaybe<Order_By>;
     readonly max?: InputMaybe<Schedule_Event_Max_Order_By>;
     readonly min?: InputMaybe<Schedule_Event_Min_Order_By>;
-    readonly stddev?: InputMaybe<Schedule_Event_Stddev_Order_By>;
-    readonly stddev_pop?: InputMaybe<Schedule_Event_Stddev_Pop_Order_By>;
-    readonly stddev_samp?: InputMaybe<Schedule_Event_Stddev_Samp_Order_By>;
-    readonly sum?: InputMaybe<Schedule_Event_Sum_Order_By>;
-    readonly var_pop?: InputMaybe<Schedule_Event_Var_Pop_Order_By>;
-    readonly var_samp?: InputMaybe<Schedule_Event_Var_Samp_Order_By>;
-    readonly variance?: InputMaybe<Schedule_Event_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "schedule.Event" */
@@ -30208,47 +29932,39 @@ export type Schedule_Event_Arr_Rel_Insert_Input = {
     readonly on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
 };
 
-/** aggregate avg on columns */
-export type Schedule_Event_Avg_Fields = {
-    readonly __typename?: "schedule_Event_avg_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by avg() on columns of table "schedule.Event" */
-export type Schedule_Event_Avg_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "schedule.Event". All fields are combined with a logical 'AND'. */
 export type Schedule_Event_Bool_Exp = {
     readonly _and?: InputMaybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
     readonly _not?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly _or?: InputMaybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
+    readonly autoPlayElement?: InputMaybe<Content_Element_Bool_Exp>;
+    readonly autoPlayElementId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly automaticParticipationSurvey?: InputMaybe<Boolean_Comparison_Exp>;
     readonly conference?: InputMaybe<Conference_Conference_Bool_Exp>;
     readonly conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly continuations?: InputMaybe<Schedule_Continuation_Bool_Exp>;
     readonly createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
-    readonly durationSeconds?: InputMaybe<Int_Comparison_Exp>;
     readonly enableRecording?: InputMaybe<Boolean_Comparison_Exp>;
-    readonly endTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Bool_Exp>;
     readonly exhibition?: InputMaybe<Collection_Exhibition_Bool_Exp>;
     readonly exhibitionId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly intendedRoomModeName?: InputMaybe<Room_Mode_Enum_Comparison_Exp>;
     readonly item?: InputMaybe<Content_Item_Bool_Exp>;
     readonly itemId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly mode?: InputMaybe<Schedule_Mode_Bool_Exp>;
+    readonly modeName?: InputMaybe<Schedule_Mode_Enum_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly roomMode?: InputMaybe<Room_Mode_Bool_Exp>;
     readonly roomName?: InputMaybe<String_Comparison_Exp>;
+    readonly scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly sessionEventId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     readonly shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
-    readonly startTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly streamTextEventId?: InputMaybe<String_Comparison_Exp>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly timingsUpdatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -30261,37 +29977,35 @@ export enum Schedule_Event_Constraint {
     EventPkey = "Event_pkey",
 }
 
-/** input type for incrementing numeric columns in table "schedule.Event" */
-export type Schedule_Event_Inc_Input = {
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
-};
-
 /** input type for inserting data into table "schedule.Event" */
 export type Schedule_Event_Insert_Input = {
+    readonly autoPlayElement?: InputMaybe<Content_Element_Obj_Rel_Insert_Input>;
+    readonly autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
     readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly continuations?: InputMaybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
     readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
     readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly eventPeople?: InputMaybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Obj_Rel_Insert_Input>;
     readonly exhibition?: InputMaybe<Collection_Exhibition_Obj_Rel_Insert_Input>;
     readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: InputMaybe<Room_Mode_Enum>;
     readonly item?: InputMaybe<Content_Item_Obj_Rel_Insert_Input>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly mode?: InputMaybe<Schedule_Mode_Obj_Rel_Insert_Input>;
+    readonly modeName?: InputMaybe<Schedule_Mode_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
-    readonly roomMode?: InputMaybe<Room_Mode_Obj_Rel_Insert_Input>;
+    readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: InputMaybe<Scalars["uuid"]>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -30301,17 +30015,18 @@ export type Schedule_Event_Insert_Input = {
 /** aggregate max on columns */
 export type Schedule_Event_Max_Fields = {
     readonly __typename?: "schedule_Event_max_fields";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: Maybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -30320,17 +30035,18 @@ export type Schedule_Event_Max_Fields = {
 
 /** order by max() on columns of table "schedule.Event" */
 export type Schedule_Event_Max_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
+    readonly sessionEventId?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timingsUpdatedAt?: InputMaybe<Order_By>;
@@ -30340,17 +30056,18 @@ export type Schedule_Event_Max_Order_By = {
 /** aggregate min on columns */
 export type Schedule_Event_Min_Fields = {
     readonly __typename?: "schedule_Event_min_fields";
+    readonly autoPlayElementId?: Maybe<Scalars["uuid"]>;
     readonly conferenceId?: Maybe<Scalars["uuid"]>;
     readonly createdAt?: Maybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-    readonly endTime?: Maybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     readonly name?: Maybe<Scalars["String"]>;
     readonly roomId?: Maybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: Maybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: Maybe<Scalars["uuid"]>;
-    readonly startTime?: Maybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: Maybe<Scalars["String"]>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -30359,17 +30076,18 @@ export type Schedule_Event_Min_Fields = {
 
 /** order by min() on columns of table "schedule.Event" */
 export type Schedule_Event_Min_Order_By = {
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
+    readonly sessionEventId?: InputMaybe<Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timingsUpdatedAt?: InputMaybe<Order_By>;
@@ -30401,31 +30119,34 @@ export type Schedule_Event_On_Conflict = {
 
 /** Ordering options when selecting data from "schedule.Event". */
 export type Schedule_Event_Order_By = {
+    readonly autoPlayElement?: InputMaybe<Content_Element_Order_By>;
+    readonly autoPlayElementId?: InputMaybe<Order_By>;
     readonly automaticParticipationSurvey?: InputMaybe<Order_By>;
     readonly conference?: InputMaybe<Conference_Conference_Order_By>;
     readonly conferenceId?: InputMaybe<Order_By>;
     readonly continuations_aggregate?: InputMaybe<Schedule_Continuation_Aggregate_Order_By>;
     readonly createdAt?: InputMaybe<Order_By>;
-    readonly durationSeconds?: InputMaybe<Order_By>;
     readonly enableRecording?: InputMaybe<Order_By>;
-    readonly endTime?: InputMaybe<Order_By>;
     readonly eventPeople_aggregate?: InputMaybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
     readonly eventVonageSession?: InputMaybe<Video_EventVonageSession_Order_By>;
     readonly exhibition?: InputMaybe<Collection_Exhibition_Order_By>;
     readonly exhibitionId?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
-    readonly intendedRoomModeName?: InputMaybe<Order_By>;
     readonly item?: InputMaybe<Content_Item_Order_By>;
     readonly itemId?: InputMaybe<Order_By>;
+    readonly mode?: InputMaybe<Schedule_Mode_Order_By>;
+    readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
-    readonly roomMode?: InputMaybe<Room_Mode_Order_By>;
     readonly roomName?: InputMaybe<Order_By>;
+    readonly scheduledEndTime?: InputMaybe<Order_By>;
+    readonly scheduledStartTime?: InputMaybe<Order_By>;
+    readonly sessionEventId?: InputMaybe<Order_By>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
-    readonly startTime?: InputMaybe<Order_By>;
     readonly streamTextEventId?: InputMaybe<Order_By>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly timingsUpdatedAt?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
@@ -30440,33 +30161,35 @@ export type Schedule_Event_Pk_Columns_Input = {
 /** select columns of table "schedule.Event" */
 export enum Schedule_Event_Select_Column {
     /** column name */
+    AutoPlayElementId = "autoPlayElementId",
+    /** column name */
     AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    SessionEventId = "sessionEventId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -30481,20 +30204,21 @@ export enum Schedule_Event_Select_Column {
 
 /** input type for updating data in table "schedule.Event" */
 export type Schedule_Event_Set_Input = {
+    readonly autoPlayElementId?: InputMaybe<Scalars["uuid"]>;
     readonly automaticParticipationSurvey?: InputMaybe<Scalars["Boolean"]>;
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly createdAt?: InputMaybe<Scalars["timestamptz"]>;
-    readonly durationSeconds?: InputMaybe<Scalars["Int"]>;
     readonly enableRecording?: InputMaybe<Scalars["Boolean"]>;
-    readonly endTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly exhibitionId?: InputMaybe<Scalars["uuid"]>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
-    readonly intendedRoomModeName?: InputMaybe<Room_Mode_Enum>;
     readonly itemId?: InputMaybe<Scalars["uuid"]>;
+    readonly modeName?: InputMaybe<Schedule_Mode_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
+    readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly sessionEventId?: InputMaybe<Scalars["uuid"]>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    readonly startTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly streamTextEventId?: InputMaybe<Scalars["String"]>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly timingsUpdatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -30502,52 +30226,10 @@ export type Schedule_Event_Set_Input = {
     readonly visibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum>;
 };
 
-/** aggregate stddev on columns */
-export type Schedule_Event_Stddev_Fields = {
-    readonly __typename?: "schedule_Event_stddev_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Schedule_Event_Stddev_Pop_Fields = {
-    readonly __typename?: "schedule_Event_stddev_pop_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_pop() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Pop_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Schedule_Event_Stddev_Samp_Fields = {
-    readonly __typename?: "schedule_Event_stddev_samp_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_samp() on columns of table "schedule.Event" */
-export type Schedule_Event_Stddev_Samp_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Schedule_Event_Sum_Fields = {
-    readonly __typename?: "schedule_Event_sum_fields";
-    readonly durationSeconds?: Maybe<Scalars["Int"]>;
-};
-
-/** order by sum() on columns of table "schedule.Event" */
-export type Schedule_Event_Sum_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
-};
-
 /** update columns of table "schedule.Event" */
 export enum Schedule_Event_Update_Column {
+    /** column name */
+    AutoPlayElementId = "autoPlayElementId",
     /** column name */
     AutomaticParticipationSurvey = "automaticParticipationSurvey",
     /** column name */
@@ -30555,27 +30237,27 @@ export enum Schedule_Event_Update_Column {
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
-    DurationSeconds = "durationSeconds",
-    /** column name */
     EnableRecording = "enableRecording",
-    /** column name */
-    EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
     /** column name */
     Id = "id",
     /** column name */
-    IntendedRoomModeName = "intendedRoomModeName",
-    /** column name */
     ItemId = "itemId",
+    /** column name */
+    ModeName = "modeName",
     /** column name */
     Name = "name",
     /** column name */
     RoomId = "roomId",
     /** column name */
-    ShufflePeriodId = "shufflePeriodId",
+    ScheduledEndTime = "scheduledEndTime",
     /** column name */
-    StartTime = "startTime",
+    ScheduledStartTime = "scheduledStartTime",
+    /** column name */
+    SessionEventId = "sessionEventId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StreamTextEventId = "streamTextEventId",
     /** column name */
@@ -30588,38 +30270,175 @@ export enum Schedule_Event_Update_Column {
     VisibilityLevel = "visibilityLevel",
 }
 
-/** aggregate var_pop on columns */
-export type Schedule_Event_Var_Pop_Fields = {
-    readonly __typename?: "schedule_Event_var_pop_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_Mode = {
+    readonly __typename?: "schedule_Mode";
+    readonly description: Scalars["String"];
+    /** An array relationship */
+    readonly events: ReadonlyArray<Schedule_Event>;
+    /** An aggregate relationship */
+    readonly events_aggregate: Schedule_Event_Aggregate;
+    readonly name: Scalars["String"];
 };
 
-/** order by var_pop() on columns of table "schedule.Event" */
-export type Schedule_Event_Var_Pop_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_ModeEventsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
-/** aggregate var_samp on columns */
-export type Schedule_Event_Var_Samp_Fields = {
-    readonly __typename?: "schedule_Event_var_samp_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+/** columns and relationships of "schedule.Mode" */
+export type Schedule_ModeEvents_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
-/** order by var_samp() on columns of table "schedule.Event" */
-export type Schedule_Event_Var_Samp_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
+/** aggregated selection of "schedule.Mode" */
+export type Schedule_Mode_Aggregate = {
+    readonly __typename?: "schedule_Mode_aggregate";
+    readonly aggregate?: Maybe<Schedule_Mode_Aggregate_Fields>;
+    readonly nodes: ReadonlyArray<Schedule_Mode>;
 };
 
-/** aggregate variance on columns */
-export type Schedule_Event_Variance_Fields = {
-    readonly __typename?: "schedule_Event_variance_fields";
-    readonly durationSeconds?: Maybe<Scalars["Float"]>;
+/** aggregate fields of "schedule.Mode" */
+export type Schedule_Mode_Aggregate_Fields = {
+    readonly __typename?: "schedule_Mode_aggregate_fields";
+    readonly count: Scalars["Int"];
+    readonly max?: Maybe<Schedule_Mode_Max_Fields>;
+    readonly min?: Maybe<Schedule_Mode_Min_Fields>;
 };
 
-/** order by variance() on columns of table "schedule.Event" */
-export type Schedule_Event_Variance_Order_By = {
-    readonly durationSeconds?: InputMaybe<Order_By>;
+/** aggregate fields of "schedule.Mode" */
+export type Schedule_Mode_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
 };
+
+/** Boolean expression to filter rows from the table "schedule.Mode". All fields are combined with a logical 'AND'. */
+export type Schedule_Mode_Bool_Exp = {
+    readonly _and?: InputMaybe<ReadonlyArray<Schedule_Mode_Bool_Exp>>;
+    readonly _not?: InputMaybe<Schedule_Mode_Bool_Exp>;
+    readonly _or?: InputMaybe<ReadonlyArray<Schedule_Mode_Bool_Exp>>;
+    readonly description?: InputMaybe<String_Comparison_Exp>;
+    readonly events?: InputMaybe<Schedule_Event_Bool_Exp>;
+    readonly name?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "schedule.Mode" */
+export enum Schedule_Mode_Constraint {
+    /** unique or primary key constraint */
+    ModePkey = "Mode_pkey",
+}
+
+export enum Schedule_Mode_Enum {
+    /** An exhibition hall. */
+    Exhibition = "EXHIBITION",
+    /** Event is taking place in a Zoom room. */
+    External = "EXTERNAL",
+    /** Users watch a live-stream. */
+    Livestream = "LIVESTREAM",
+    /** An empty room. */
+    None = "NONE",
+    /** A shuffle queue. */
+    Shuffle = "SHUFFLE",
+    /** Users may participate in the general video chat. */
+    VideoChat = "VIDEO_CHAT",
+    /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
+    VideoPlayer = "VIDEO_PLAYER",
+}
+
+/** Boolean expression to compare columns of type "schedule_Mode_enum". All fields are combined with logical 'AND'. */
+export type Schedule_Mode_Enum_Comparison_Exp = {
+    readonly _eq?: InputMaybe<Schedule_Mode_Enum>;
+    readonly _in?: InputMaybe<ReadonlyArray<Schedule_Mode_Enum>>;
+    readonly _is_null?: InputMaybe<Scalars["Boolean"]>;
+    readonly _neq?: InputMaybe<Schedule_Mode_Enum>;
+    readonly _nin?: InputMaybe<ReadonlyArray<Schedule_Mode_Enum>>;
+};
+
+/** input type for inserting data into table "schedule.Mode" */
+export type Schedule_Mode_Insert_Input = {
+    readonly description?: InputMaybe<Scalars["String"]>;
+    readonly events?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Schedule_Mode_Max_Fields = {
+    readonly __typename?: "schedule_Mode_max_fields";
+    readonly description?: Maybe<Scalars["String"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Schedule_Mode_Min_Fields = {
+    readonly __typename?: "schedule_Mode_min_fields";
+    readonly description?: Maybe<Scalars["String"]>;
+    readonly name?: Maybe<Scalars["String"]>;
+};
+
+/** response of any mutation on the table "schedule.Mode" */
+export type Schedule_Mode_Mutation_Response = {
+    readonly __typename?: "schedule_Mode_mutation_response";
+    /** number of rows affected by the mutation */
+    readonly affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    readonly returning: ReadonlyArray<Schedule_Mode>;
+};
+
+/** input type for inserting object relation for remote table "schedule.Mode" */
+export type Schedule_Mode_Obj_Rel_Insert_Input = {
+    readonly data: Schedule_Mode_Insert_Input;
+    /** on conflict condition */
+    readonly on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
+};
+
+/** on conflict condition type for table "schedule.Mode" */
+export type Schedule_Mode_On_Conflict = {
+    readonly constraint: Schedule_Mode_Constraint;
+    readonly update_columns?: ReadonlyArray<Schedule_Mode_Update_Column>;
+    readonly where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "schedule.Mode". */
+export type Schedule_Mode_Order_By = {
+    readonly description?: InputMaybe<Order_By>;
+    readonly events_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
+    readonly name?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: schedule_Mode */
+export type Schedule_Mode_Pk_Columns_Input = {
+    readonly name: Scalars["String"];
+};
+
+/** select columns of table "schedule.Mode" */
+export enum Schedule_Mode_Select_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
+
+/** input type for updating data in table "schedule.Mode" */
+export type Schedule_Mode_Set_Input = {
+    readonly description?: InputMaybe<Scalars["String"]>;
+    readonly name?: InputMaybe<Scalars["String"]>;
+};
+
+/** update columns of table "schedule.Mode" */
+export enum Schedule_Mode_Update_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
 
 /** columns and relationships of "schedule.OverlappingEvents" */
 export type Schedule_OverlappingEvents = {
@@ -32024,12 +31843,6 @@ export type Subscription_Root = {
     readonly room_ManagementMode_aggregate: Room_ManagementMode_Aggregate;
     /** fetch data from the table: "room.ManagementMode" using primary key columns */
     readonly room_ManagementMode_by_pk?: Maybe<Room_ManagementMode>;
-    /** fetch data from the table: "room.Mode" */
-    readonly room_Mode: ReadonlyArray<Room_Mode>;
-    /** fetch aggregated fields from the table: "room.Mode" */
-    readonly room_Mode_aggregate: Room_Mode_Aggregate;
-    /** fetch data from the table: "room.Mode" using primary key columns */
-    readonly room_Mode_by_pk?: Maybe<Room_Mode>;
     /** fetch data from the table: "room.PersonRole" */
     readonly room_PersonRole: ReadonlyArray<Room_PersonRole>;
     /** fetch aggregated fields from the table: "room.PersonRole" */
@@ -32106,6 +31919,12 @@ export type Subscription_Root = {
     readonly schedule_Event_aggregate: Schedule_Event_Aggregate;
     /** fetch data from the table: "schedule.Event" using primary key columns */
     readonly schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** fetch data from the table: "schedule.Mode" */
+    readonly schedule_Mode: ReadonlyArray<Schedule_Mode>;
+    /** fetch aggregated fields from the table: "schedule.Mode" */
+    readonly schedule_Mode_aggregate: Schedule_Mode_Aggregate;
+    /** fetch data from the table: "schedule.Mode" using primary key columns */
+    readonly schedule_Mode_by_pk?: Maybe<Schedule_Mode>;
     /** fetch data from the table: "schedule.OverlappingEvents" */
     readonly schedule_OverlappingEvents: ReadonlyArray<Schedule_OverlappingEvents>;
     /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
@@ -33676,26 +33495,6 @@ export type Subscription_RootRoom_ManagementMode_By_PkArgs = {
     name: Scalars["String"];
 };
 
-export type Subscription_RootRoom_ModeArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Mode_AggregateArgs = {
-    distinct_on?: InputMaybe<ReadonlyArray<Room_Mode_Select_Column>>;
-    limit?: InputMaybe<Scalars["Int"]>;
-    offset?: InputMaybe<Scalars["Int"]>;
-    order_by?: InputMaybe<ReadonlyArray<Room_Mode_Order_By>>;
-    where?: InputMaybe<Room_Mode_Bool_Exp>;
-};
-
-export type Subscription_RootRoom_Mode_By_PkArgs = {
-    name: Scalars["String"];
-};
-
 export type Subscription_RootRoom_PersonRoleArgs = {
     distinct_on?: InputMaybe<ReadonlyArray<Room_PersonRole_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -33950,6 +33749,26 @@ export type Subscription_RootSchedule_Event_AggregateArgs = {
 
 export type Subscription_RootSchedule_Event_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootSchedule_ModeArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_Mode_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Mode_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Mode_Order_By>>;
+    where?: InputMaybe<Schedule_Mode_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_Mode_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 export type Subscription_RootSchedule_OverlappingEventsArgs = {
@@ -39938,13 +39757,12 @@ export type ItemExhibitionDataFragment = {
 
 export type ItemRoomEventFragment = {
     readonly __typename?: "schedule_Event";
-    readonly startTime: any;
+    readonly scheduledStartTime?: any | null;
     readonly exhibitionId?: any | null;
     readonly id: any;
-    readonly durationSeconds: number;
-    readonly endTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly name: string;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly modeName: Schedule_Mode_Enum;
     readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
 };
 
@@ -40126,14 +39944,13 @@ export type GetItemQuery = {
     } | null;
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
-        readonly startTime: any;
+        readonly scheduledStartTime?: any | null;
         readonly roomId: any;
         readonly exhibitionId?: any | null;
         readonly id: any;
-        readonly durationSeconds: number;
-        readonly endTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly name: string;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
     }>;
@@ -40146,14 +39963,13 @@ export type ItemPage_ItemRoomsFragment = {
 
 export type ItemEventFragment = {
     readonly __typename?: "schedule_Event";
-    readonly startTime: any;
+    readonly scheduledStartTime?: any | null;
     readonly roomId: any;
     readonly exhibitionId?: any | null;
     readonly id: any;
-    readonly durationSeconds: number;
-    readonly endTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly name: string;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly modeName: Schedule_Mode_Enum;
     readonly itemId?: any | null;
     readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
 };
@@ -40202,8 +40018,8 @@ export type ContinuationChoices_ContinuationsQuery = {
         readonly id: any;
         readonly roomId: any;
         readonly shufflePeriodId?: any | null;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
     }>;
 };
 
@@ -40244,8 +40060,8 @@ export type ExhibitionItemFragment = {
     readonly events: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly roomId: any;
         readonly itemId?: any | null;
     }>;
@@ -40373,8 +40189,8 @@ export type ExhibitionWithContentFragment = {
             readonly events: ReadonlyArray<{
                 readonly __typename?: "schedule_Event";
                 readonly id: any;
-                readonly startTime: any;
-                readonly endTime?: any | null;
+                readonly scheduledStartTime?: any | null;
+                readonly scheduledEndTime?: any | null;
                 readonly roomId: any;
                 readonly itemId?: any | null;
             }>;
@@ -40514,8 +40330,8 @@ export type SelectExhibitionQuery = {
                 readonly events: ReadonlyArray<{
                     readonly __typename?: "schedule_Event";
                     readonly id: any;
-                    readonly startTime: any;
-                    readonly endTime?: any | null;
+                    readonly scheduledStartTime?: any | null;
+                    readonly scheduledEndTime?: any | null;
                     readonly roomId: any;
                     readonly itemId?: any | null;
                 }>;
@@ -40557,14 +40373,13 @@ export type SelectExhibitionQuery = {
     } | null;
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
-        readonly startTime: any;
+        readonly scheduledStartTime?: any | null;
         readonly roomId: any;
         readonly exhibitionId?: any | null;
         readonly id: any;
-        readonly durationSeconds: number;
-        readonly endTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly name: string;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
     }>;
@@ -40801,11 +40616,11 @@ export type MyBackstages_EventFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly itemId?: any | null;
-    readonly endTime?: any | null;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly scheduledEndTime?: any | null;
+    readonly modeName: Schedule_Mode_Enum;
     readonly name: string;
     readonly roomId: any;
-    readonly startTime: any;
+    readonly scheduledStartTime?: any | null;
     readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
     readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
 };
@@ -40821,11 +40636,11 @@ export type RegistrantEventsWithBackstagesQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly itemId?: any | null;
-        readonly endTime?: any | null;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly scheduledEndTime?: any | null;
+        readonly modeName: Schedule_Mode_Enum;
         readonly name: string;
         readonly roomId: any;
-        readonly startTime: any;
+        readonly scheduledStartTime?: any | null;
         readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
@@ -41080,10 +40895,10 @@ export type Room_GetEventsQuery = {
         readonly id: any;
         readonly roomId: any;
         readonly conferenceId: any;
-        readonly startTime: any;
+        readonly scheduledStartTime?: any | null;
         readonly name: string;
-        readonly endTime?: any | null;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly scheduledEndTime?: any | null;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly streamTextEventId?: string | null;
@@ -41156,10 +40971,10 @@ export type Room_EventSummaryFragment = {
     readonly id: any;
     readonly roomId: any;
     readonly conferenceId: any;
-    readonly startTime: any;
+    readonly scheduledStartTime?: any | null;
     readonly name: string;
-    readonly endTime?: any | null;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly scheduledEndTime?: any | null;
+    readonly modeName: Schedule_Mode_Enum;
     readonly itemId?: any | null;
     readonly exhibitionId?: any | null;
     readonly streamTextEventId?: string | null;
@@ -41907,9 +41722,9 @@ export type RoomTile_GetRoomQuery = {
             readonly id: any;
             readonly roomId: any;
             readonly name: string;
-            readonly intendedRoomModeName: Room_Mode_Enum;
-            readonly startTime: any;
-            readonly endTime?: any | null;
+            readonly modeName: Schedule_Mode_Enum;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
             readonly exhibitionId?: any | null;
             readonly itemId?: any | null;
             readonly exhibition?: {
@@ -41934,9 +41749,9 @@ export type RoomTile_RoomFragment = {
         readonly id: any;
         readonly roomId: any;
         readonly name: string;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly modeName: Schedule_Mode_Enum;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly exhibitionId?: any | null;
         readonly itemId?: any | null;
         readonly exhibition?: {
@@ -41953,9 +41768,9 @@ export type RoomTile_EventFragment = {
     readonly id: any;
     readonly roomId: any;
     readonly name: string;
-    readonly intendedRoomModeName: Room_Mode_Enum;
-    readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly modeName: Schedule_Mode_Enum;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly exhibitionId?: any | null;
     readonly itemId?: any | null;
     readonly exhibition?: {
@@ -42122,10 +41937,10 @@ export type Schedule_HappeningSoonQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
@@ -42380,10 +42195,10 @@ export type Schedule_EventSummaryFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly roomId: any;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly modeName: Schedule_Mode_Enum;
     readonly name: string;
-    readonly startTime: any;
-    readonly durationSeconds: number;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly itemId?: any | null;
     readonly exhibitionId?: any | null;
     readonly shufflePeriodId?: any | null;
@@ -42426,10 +42241,10 @@ export type Schedule_SelectSummariesQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
@@ -42498,8 +42313,8 @@ export type StarredEvents_SelectEventIdsQuery = {
 export type ScheduleV2_LightweightEventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
-    readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly roomId: any;
     readonly conferenceId: any;
 };
@@ -42516,8 +42331,8 @@ export type ScheduleV2_DayLightweightEventsQuery = {
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly roomId: any;
         readonly conferenceId: any;
     }>;
@@ -42533,10 +42348,10 @@ export type ScheduleV2_DayEventsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly roomId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
@@ -42649,10 +42464,10 @@ export type ScheduleV2_EventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly roomId: any;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly modeName: Schedule_Mode_Enum;
     readonly name: string;
-    readonly startTime: any;
-    readonly durationSeconds: number;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly itemId?: any | null;
     readonly exhibitionId?: any | null;
     readonly shufflePeriodId?: any | null;
@@ -42752,13 +42567,13 @@ export type ScheduleV2_AllEvents_ParamsQuery = {
     readonly earliestStartingEvent: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
-        readonly startTime: any;
+        readonly scheduledStartTime?: any | null;
         readonly conferenceId: any;
     }>;
     readonly latestEndingEvent: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
-        readonly endTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly conferenceId: any;
     }>;
 };
@@ -42885,9 +42700,9 @@ export type ConferenceStatsQuery = {
                 readonly roomId: any;
                 readonly itemId?: any | null;
                 readonly exhibitionId?: any | null;
-                readonly startTime: any;
-                readonly endTime?: any | null;
-                readonly intendedRoomModeName: Room_Mode_Enum;
+                readonly scheduledStartTime?: any | null;
+                readonly scheduledEndTime?: any | null;
+                readonly modeName: Schedule_Mode_Enum;
                 readonly item?: {
                     readonly __typename?: "content_Item";
                     readonly id: any;
@@ -42956,7 +42771,7 @@ export type EventVonageControls_GetEventsQuery = {
         readonly id: any;
         readonly name: string;
         readonly conferenceId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
     }>;
@@ -42986,10 +42801,10 @@ export type MonitorLivestreamsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly conferenceId: any;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly roomId: any;
         readonly itemId?: any | null;
         readonly room: {
@@ -43036,9 +42851,9 @@ export type MonitorLivestreamsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly conferenceId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly modeName: Schedule_Mode_Enum;
         readonly roomId: any;
         readonly room: {
             readonly __typename?: "room_Room";
@@ -43053,9 +42868,9 @@ export type MonitorLivestreams_PrerecEventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly conferenceId: any;
-    readonly startTime: any;
-    readonly endTime?: any | null;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
+    readonly modeName: Schedule_Mode_Enum;
     readonly roomId: any;
     readonly room: {
         readonly __typename?: "room_Room";
@@ -43089,10 +42904,10 @@ export type MonitorLivestreams_EventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly conferenceId: any;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly modeName: Schedule_Mode_Enum;
     readonly name: string;
-    readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly roomId: any;
     readonly itemId?: any | null;
     readonly room: {
@@ -43338,8 +43153,8 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
         readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
     }>;
@@ -43347,8 +43162,8 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
         readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
     }>;
@@ -43356,8 +43171,8 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
         readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
     }>;
@@ -43365,8 +43180,8 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
         readonly item?: {
             readonly __typename?: "content_Item";
@@ -43380,12 +43195,12 @@ export type PreshowChecklistQuery = {
             }>;
         } | null;
     }>;
-    readonly zoomEvents: ReadonlyArray<{
+    readonly externalEvents: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
         readonly item?: {
             readonly __typename?: "content_Item";
@@ -43403,9 +43218,10 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly intendedRoomModeName: Room_Mode_Enum;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly modeName: Schedule_Mode_Enum;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly autoPlayElementId?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
         readonly item?: {
             readonly __typename?: "content_Item";
@@ -43445,16 +43261,16 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
     readonly exhibitionEventsWithoutDiscussionRooms: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
         readonly exhibition?: {
             readonly __typename?: "collection_Exhibition";
@@ -43471,8 +43287,8 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
@@ -43482,26 +43298,17 @@ export type PreshowChecklistQuery = {
             readonly __typename?: "schedule_Event";
             readonly id: any;
             readonly name: string;
-            readonly startTime: any;
-            readonly endTime?: any | null;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
             readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
         } | null;
         readonly eventY?: {
             readonly __typename?: "schedule_Event";
             readonly id: any;
             readonly name: string;
-            readonly startTime: any;
-            readonly endTime?: any | null;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
         } | null;
-    }>;
-    readonly shortEvents: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
     }>;
     readonly roomsWithStreams: ReadonlyArray<{
         readonly __typename?: "room_Room";
@@ -43511,15 +43318,6 @@ export type PreshowChecklistQuery = {
             readonly __typename?: "room_LivestreamDurations";
             readonly sum?: any | null;
         } | null;
-    }>;
-    readonly eventsWithNegativeDuration: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly name: string;
-        readonly startTime: any;
-        readonly durationSeconds: number;
-        readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
     }>;
 };
 
@@ -46368,9 +46166,9 @@ export type CreateContinuationModal_EventsQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly name: string;
-        readonly startTime: any;
-        readonly endTime?: any | null;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
@@ -46489,12 +46287,11 @@ export type EventInfoFragment = {
     readonly __typename?: "schedule_Event";
     readonly conferenceId: any;
     readonly id: any;
-    readonly durationSeconds: number;
-    readonly intendedRoomModeName: Room_Mode_Enum;
+    readonly modeName: Schedule_Mode_Enum;
     readonly name: string;
     readonly roomId: any;
-    readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly itemId?: any | null;
     readonly exhibitionId?: any | null;
     readonly shufflePeriodId?: any | null;
@@ -46704,12 +46501,11 @@ export type SelectWholeScheduleQuery = {
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
         readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly name: string;
         readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
@@ -46822,10 +46618,10 @@ export type InsertEventInfoMutationVariables = Exact<{
     id: Scalars["uuid"];
     roomId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
-    intendedRoomModeName: Room_Mode_Enum;
+    modeName: Schedule_Mode_Enum;
     name: Scalars["String"];
-    startTime: Scalars["timestamptz"];
-    durationSeconds: Scalars["Int"];
+    scheduledStartTime: Scalars["timestamptz"];
+    scheduledEndTime: Scalars["timestamptz"];
     itemId?: InputMaybe<Scalars["uuid"]>;
     exhibitionId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
@@ -46840,12 +46636,11 @@ export type InsertEventInfoMutation = {
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
         readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly name: string;
         readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
@@ -46868,10 +46663,10 @@ export type InsertEventInfoMutation = {
 export type UpdateEventInfoMutationVariables = Exact<{
     eventId: Scalars["uuid"];
     roomId: Scalars["uuid"];
-    intendedRoomModeName: Room_Mode_Enum;
+    modeName: Schedule_Mode_Enum;
     name: Scalars["String"];
-    startTime: Scalars["timestamptz"];
-    durationSeconds: Scalars["Int"];
+    scheduledStartTime: Scalars["timestamptz"];
+    scheduledEndTime: Scalars["timestamptz"];
     itemId?: InputMaybe<Scalars["uuid"]>;
     exhibitionId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
@@ -46885,12 +46680,11 @@ export type UpdateEventInfoMutation = {
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
         readonly id: any;
-        readonly durationSeconds: number;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly modeName: Schedule_Mode_Enum;
         readonly name: string;
         readonly roomId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
@@ -47620,8 +47414,8 @@ export type GetEventsInNextHourQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly conferenceId: any;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly roomId: any;
         readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
     }>;
@@ -47631,8 +47425,8 @@ export type MinimalEventInfoFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly conferenceId: any;
-    readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly roomId: any;
     readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
 };
@@ -47703,10 +47497,10 @@ export type RaiseHandPanel_GetEventDetailsQuery = {
         readonly id: any;
         readonly roomId: any;
         readonly conferenceId: any;
-        readonly startTime: any;
+        readonly scheduledStartTime?: any | null;
         readonly name: string;
-        readonly endTime?: any | null;
-        readonly intendedRoomModeName: Room_Mode_Enum;
+        readonly scheduledEndTime?: any | null;
+        readonly modeName: Schedule_Mode_Enum;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly streamTextEventId?: string | null;
@@ -47861,8 +47655,8 @@ export type SearchedEventFragment = {
     readonly conferenceId: any;
     readonly name: string;
     readonly itemId?: any | null;
-    readonly startTime: any;
-    readonly endTime?: any | null;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
     readonly roomId: any;
     readonly roomName?: string | null;
 };
@@ -47938,8 +47732,8 @@ export type SearchAllQuery = {
         readonly conferenceId: any;
         readonly name: string;
         readonly itemId?: any | null;
-        readonly startTime: any;
-        readonly endTime?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
         readonly roomId: any;
         readonly roomName?: string | null;
     }>;
@@ -48733,17 +48527,16 @@ export const UseMediaElement_MediaElementFragmentDoc = gql`
 `;
 export const ItemRoomEventFragmentDoc = gql`
     fragment ItemRoomEvent on schedule_Event {
-        startTime
+        scheduledStartTime
         item {
             id
             title
         }
         exhibitionId
         id
-        durationSeconds
-        endTime
+        scheduledEndTime
         name
-        intendedRoomModeName
+        modeName
     }
 `;
 export const ProgramPersonDataFragmentDoc = gql`
@@ -48792,7 +48585,7 @@ export const ItemList_TagInfoFragmentDoc = gql`
 `;
 export const ItemEventFragmentDoc = gql`
     fragment ItemEvent on schedule_Event {
-        startTime
+        scheduledStartTime
         roomId
         room {
             name
@@ -48800,10 +48593,9 @@ export const ItemEventFragmentDoc = gql`
         }
         exhibitionId
         id
-        durationSeconds
-        endTime
+        scheduledEndTime
         name
-        intendedRoomModeName
+        modeName
         itemId
     }
 `;
@@ -48924,7 +48716,7 @@ export const ExhibitionItemFragmentDoc = gql`
         typeName
         elements(
             where: {
-                _or: [{ isHidden: { _eq: false } }, { typeName: { _eq: ZOOM } }]
+                _or: [{ isHidden: { _eq: false } }, { typeName: { _eq: EXTERNAL_EVENT_LINK } }]
                 typeName: {
                     _in: [
                         ABSTRACT
@@ -48937,7 +48729,7 @@ export const ExhibitionItemFragmentDoc = gql`
                         VIDEO_FILE
                         VIDEO_PREPUBLISH
                         VIDEO_URL
-                        ZOOM
+                        EXTERNAL_EVENT_LINK
                     ]
                 }
             }
@@ -48946,8 +48738,8 @@ export const ExhibitionItemFragmentDoc = gql`
         }
         events {
             id
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             roomId
             itemId
         }
@@ -49028,15 +48820,15 @@ export const MyBackstages_EventFragmentDoc = gql`
             id
             title
         }
-        endTime
-        intendedRoomModeName
+        scheduledEndTime
+        modeName
         name
         roomId
         room {
             id
             name
         }
-        startTime
+        scheduledStartTime
     }
 `;
 export const ProfilePage_ItemFragmentDoc = gql`
@@ -49104,10 +48896,10 @@ export const Room_EventSummaryFragmentDoc = gql`
         id
         roomId
         conferenceId
-        startTime
+        scheduledStartTime
         name
-        endTime
-        intendedRoomModeName
+        scheduledEndTime
+        modeName
         itemId
         exhibitionId
         streamTextEventId
@@ -49127,7 +48919,7 @@ export const Room_EventSummaryFragmentDoc = gql`
                 typeName
                 itemId
             }
-            zoomItems: elements(where: { typeName: { _eq: ZOOM } }, limit: 1) {
+            zoomItems: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }, limit: 1) {
                 id
                 data
                 name
@@ -49252,9 +49044,9 @@ export const RoomTile_EventFragmentDoc = gql`
         id
         roomId
         name
-        intendedRoomModeName
-        startTime
-        endTime
+        modeName
+        scheduledStartTime
+        scheduledEndTime
         exhibitionId
         exhibition {
             id
@@ -49420,10 +49212,10 @@ export const Schedule_EventSummaryFragmentDoc = gql`
         id
         conferenceId
         roomId
-        intendedRoomModeName
+        modeName
         name
-        startTime
-        durationSeconds
+        scheduledStartTime
+        scheduledEndTime
         itemId
         exhibitionId
         shufflePeriodId
@@ -49450,8 +49242,8 @@ export const Schedule_TagFragmentDoc = gql`
 export const ScheduleV2_LightweightEventFragmentDoc = gql`
     fragment ScheduleV2_LightweightEvent on schedule_Event {
         id
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         roomId
         conferenceId
     }
@@ -49508,10 +49300,10 @@ export const ScheduleV2_EventFragmentDoc = gql`
     fragment ScheduleV2_Event on schedule_Event {
         id
         roomId
-        intendedRoomModeName
+        modeName
         name
-        startTime
-        durationSeconds
+        scheduledStartTime
+        scheduledEndTime
         itemId
         exhibitionId
         shufflePeriodId
@@ -49570,9 +49362,9 @@ export const MonitorLivestreams_PrerecEventFragmentDoc = gql`
     fragment MonitorLivestreams_PrerecEvent on schedule_Event {
         id
         conferenceId
-        startTime
-        endTime
-        intendedRoomModeName
+        scheduledStartTime
+        scheduledEndTime
+        modeName
         roomId
         room {
             id
@@ -49603,10 +49395,10 @@ export const MonitorLivestreams_EventFragmentDoc = gql`
     fragment MonitorLivestreams_Event on schedule_Event {
         id
         conferenceId
-        intendedRoomModeName
+        modeName
         name
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         roomId
         room {
             id
@@ -50152,16 +49944,15 @@ export const EventInfoFragmentDoc = gql`
     fragment EventInfo on schedule_Event {
         conferenceId
         id
-        durationSeconds
         eventPeople {
             ...EventProgramPersonInfo
         }
         id
-        intendedRoomModeName
+        modeName
         name
         roomId
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         itemId
         exhibitionId
         shufflePeriodId
@@ -50435,8 +50226,8 @@ export const MinimalEventInfoFragmentDoc = gql`
     fragment MinimalEventInfo on schedule_Event {
         id
         conferenceId
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         roomId
         room {
             id
@@ -50484,8 +50275,8 @@ export const SearchedEventFragmentDoc = gql`
         conferenceId
         name
         itemId
-        startTime
-        endTime
+        scheduledStartTime
+        scheduledEndTime
         roomId
         roomName
     }
@@ -50838,15 +50629,19 @@ export const ContinuationChoices_ContinuationsDocument = gql`
             where: {
                 _or: [
                     { id: { _eq: $fromId } }
-                    { startTime: { _lte: $nowStart }, endTime: { _gte: $nowEnd }, shufflePeriodId: { _eq: $fromId } }
+                    {
+                        scheduledStartTime: { _lte: $nowStart }
+                        scheduledEndTime: { _gte: $nowEnd }
+                        shufflePeriodId: { _eq: $fromId }
+                    }
                 ]
             }
         ) {
             id
             roomId
             shufflePeriodId
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
         }
     }
     ${ContinuationChoices_ContinuationFragmentDoc}
@@ -50987,7 +50782,7 @@ export const RegistrantEventsWithBackstagesDocument = gql`
         schedule_Event(
             where: {
                 eventPeople: { person: { registrantId: { _eq: $registrantId } } }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
                 room: {}
             }
         ) {
@@ -51132,7 +50927,9 @@ export function useRemoveRegistrantFromRoomMutation() {
 }
 export const Room_GetEventsDocument = gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) @cached {
-        schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }) {
+        schedule_Event(
+            where: { roomId: { _eq: $roomId }, scheduledEndTime: { _gte: $now }, scheduledStartTime: { _lte: $cutoff } }
+        ) {
             ...Room_EventSummary
         }
     }
@@ -51750,8 +51547,8 @@ export const Schedule_HappeningSoonDocument = gql`
         schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                startTime: { _lte: $startBefore }
-                endTime: { _gte: $endAfter }
+                scheduledStartTime: { _lte: $startBefore }
+                scheduledEndTime: { _gte: $endAfter }
             }
         ) {
             ...Schedule_EventSummary
@@ -51903,8 +51700,8 @@ export const ScheduleV2_DayLightweightEventsDocument = gql`
             where: {
                 _and: [
                     { conferenceId: { _eq: $conferenceId } }
-                    { startTime: { _lt: $endOfDay } }
-                    { endTime: { _gt: $startOfDay } }
+                    { scheduledStartTime: { _lt: $endOfDay } }
+                    { scheduledEndTime: { _gt: $startOfDay } }
                     $filter
                 ]
             }
@@ -51966,19 +51763,19 @@ export const ScheduleV2_AllEvents_ParamsDocument = gql`
         earliestStartingEvent: schedule_Event(
             where: { conferenceId: { _eq: $conferenceId } }
             limit: 1
-            order_by: { startTime: asc }
+            order_by: { scheduledStartTime: asc }
         ) {
             id
-            startTime
+            scheduledStartTime
             conferenceId
         }
         latestEndingEvent: schedule_Event(
             where: { conferenceId: { _eq: $conferenceId } }
             limit: 1
-            order_by: { endTime: desc }
+            order_by: { scheduledEndTime: desc }
         ) {
             id
-            endTime
+            scheduledEndTime
             conferenceId
         }
     }
@@ -52057,7 +51854,7 @@ export const ConferenceStatsDocument = gql`
                     hlsViewCount
                     roomId
                 }
-                events(order_by: [{ startTime: asc }, { endTime: asc }]) {
+                events(order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }]) {
                     id
                     name
                     roomId
@@ -52071,9 +51868,9 @@ export const ConferenceStatsDocument = gql`
                         id
                         name
                     }
-                    startTime
-                    endTime
-                    intendedRoomModeName
+                    scheduledStartTime
+                    scheduledEndTime
+                    modeName
                 }
             }
         }
@@ -52121,13 +51918,11 @@ export function useConferenceConfiguration_GetConferenceConfigurationsQuery(
 }
 export const EventVonageControls_GetEventsDocument = gql`
     query EventVonageControls_GetEvents($conferenceId: uuid!) {
-        schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, intendedRoomModeName: { _in: [Q_AND_A, PRESENTATION] } }
-        ) {
+        schedule_Event(where: { conferenceId: { _eq: $conferenceId }, modeName: { _eq: LIVESTREAM } }) {
             id
             name
             conferenceId
-            intendedRoomModeName
+            modeName
             itemId
             item {
                 id
@@ -52164,22 +51959,23 @@ export const MonitorLivestreamsDocument = gql`
         liveEvents: schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                startTime: { _lte: $later }
-                endTime: { _gte: $now }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                scheduledStartTime: { _lte: $later }
+                scheduledEndTime: { _gte: $now }
+                modeName: { _eq: LIVESTREAM }
             }
-            order_by: [{ startTime: asc }, { endTime: asc }, { room: { name: asc } }]
+            order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }, { room: { name: asc } }]
         ) {
             ...MonitorLivestreams_Event
         }
         prerecordedEvents: schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                startTime: { _lte: $later }
-                endTime: { _gte: $now }
-                intendedRoomModeName: { _in: [PRERECORDED] }
+                scheduledStartTime: { _lte: $later }
+                scheduledEndTime: { _gte: $now }
+                modeName: { _eq: LIVESTREAM }
+                autoPlayElementId: { _is_null: false }
             }
-            order_by: [{ startTime: asc }, { endTime: asc }, { room: { name: asc } }]
+            order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }, { room: { name: asc } }]
         ) {
             ...MonitorLivestreams_PrerecEvent
         }
@@ -52297,9 +52093,7 @@ export const PreshowChecklistDocument = gql`
         requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                eventPeople: {
-                    event: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }, endTime: { _gte: $now } }
-                }
+                eventPeople: { event: { modeName: { _eq: LIVESTREAM }, scheduledEndTime: { _gte: $now } } }
                 registrantId: { _is_null: true }
             }
         ) {
@@ -52311,9 +52105,7 @@ export const PreshowChecklistDocument = gql`
         requiredProgramPeopleNotRegistered: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                eventPeople: {
-                    event: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }, endTime: { _gte: $now } }
-                }
+                eventPeople: { event: { modeName: { _eq: LIVESTREAM }, scheduledEndTime: { _gte: $now } } }
                 registrant: { userId: { _is_null: true } }
             }
         ) {
@@ -52333,16 +52125,16 @@ export const PreshowChecklistDocument = gql`
         }
         livestreamEventsWithoutRegisteredPresenter: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
                 _not: { eventPeople: { roleName: { _eq: PRESENTER }, person: { registrantId: { _is_null: false } } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -52354,16 +52146,16 @@ export const PreshowChecklistDocument = gql`
         }
         livestreamEventsWithoutRegisteredChair: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
                 _not: { eventPeople: { roleName: { _eq: CHAIR }, person: { registrantId: { _is_null: false } } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -52375,16 +52167,17 @@ export const PreshowChecklistDocument = gql`
         }
         prerecordedEventsWithoutVideo: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _eq: PRERECORDED }
+                modeName: { _eq: LIVESTREAM }
+                autoPlayElementId: { _is_null: false }
                 _not: { item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -52396,16 +52189,17 @@ export const PreshowChecklistDocument = gql`
         }
         prerecordedEventsWithVideo: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _eq: PRERECORDED }
+                modeName: { _eq: LIVESTREAM }
+                autoPlayElementId: { _is_null: false }
                 item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -52420,17 +52214,17 @@ export const PreshowChecklistDocument = gql`
                 }
             }
         }
-        zoomEvents: schedule_Event(
+        externalEvents: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _eq: ZOOM }
+                modeName: { _eq: EXTERNAL }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -52438,7 +52232,7 @@ export const PreshowChecklistDocument = gql`
             item {
                 id
                 title
-                elements(where: { typeName: { _eq: ZOOM } }) {
+                elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }) {
                     id
                     name
                     data
@@ -52447,14 +52241,14 @@ export const PreshowChecklistDocument = gql`
         }
         allLiveEventsWithPeople: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
             }
         ) {
             id
             name
-            intendedRoomModeName
+            modeName
             room {
                 id
                 name
@@ -52473,8 +52267,9 @@ export const PreshowChecklistDocument = gql`
                 id
                 name
             }
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
+            autoPlayElementId
             eventPeople {
                 id
                 personId
@@ -52490,16 +52285,16 @@ export const PreshowChecklistDocument = gql`
         }
         exhibitionEventsWithoutExhibition: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [EXHIBITION] }
+                modeName: { _in: [EXHIBITION] }
                 exhibitionId: { _is_null: true }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -52507,16 +52302,16 @@ export const PreshowChecklistDocument = gql`
         }
         exhibitionEventsWithoutDiscussionRooms: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [EXHIBITION, NONE] }
+                modeName: { _in: [EXHIBITION, NONE] }
                 exhibition: { items: { item: { _not: { room: {} } } } }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             room {
                 id
                 name
@@ -52535,17 +52330,17 @@ export const PreshowChecklistDocument = gql`
         }
         liveEventsWithoutContent: schedule_Event(
             where: {
-                endTime: { _gte: $now }
+                scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
-                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                modeName: { _eq: LIVESTREAM }
                 itemId: { _is_null: true }
                 enableRecording: { _eq: true }
             }
         ) {
             id
             name
-            startTime
-            endTime
+            scheduledStartTime
+            scheduledEndTime
             item {
                 id
                 title
@@ -52559,8 +52354,8 @@ export const PreshowChecklistDocument = gql`
             eventX {
                 id
                 name
-                startTime
-                endTime
+                scheduledStartTime
+                scheduledEndTime
                 room {
                     id
                     name
@@ -52569,24 +52364,8 @@ export const PreshowChecklistDocument = gql`
             eventY {
                 id
                 name
-                startTime
-                endTime
-            }
-        }
-        shortEvents: schedule_Event(
-            where: { endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId }, durationSeconds: { _lte: 60 } }
-        ) {
-            id
-            name
-            startTime
-            endTime
-            room {
-                id
-                name
-            }
-            item {
-                id
-                title
+                scheduledStartTime
+                scheduledEndTime
             }
         }
         roomsWithStreams: room_Room(where: { conferenceId: { _eq: $conferenceId }, livestreamDuration: {} }) {
@@ -52594,22 +52373,6 @@ export const PreshowChecklistDocument = gql`
             name
             livestreamDuration {
                 sum
-            }
-        }
-        eventsWithNegativeDuration: schedule_Event(
-            where: { endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId }, durationSeconds: { _lt: 0 } }
-        ) {
-            id
-            name
-            startTime
-            durationSeconds
-            room {
-                id
-                name
-            }
-            item {
-                id
-                title
             }
         }
     }
@@ -54691,9 +54454,9 @@ export const CreateContinuationModal_EventsDocument = gql`
             id
             conferenceId
             name
-            startTime
-            endTime
-            intendedRoomModeName
+            scheduledStartTime
+            scheduledEndTime
+            modeName
             itemId
             item {
                 id
@@ -54895,7 +54658,7 @@ export const SelectWholeScheduleDocument = gql`
         }
         schedule_Event(
             where: { conferenceId: { _eq: $conferenceId } }
-            order_by: [{ startTime: asc }, { endTime: asc }]
+            order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }]
         ) {
             ...EventInfo
         }
@@ -54947,10 +54710,10 @@ export const InsertEventInfoDocument = gql`
         $id: uuid!
         $roomId: uuid!
         $conferenceId: uuid!
-        $intendedRoomModeName: room_Mode_enum!
+        $modeName: schedule_Mode_enum!
         $name: String!
-        $startTime: timestamptz!
-        $durationSeconds: Int!
+        $scheduledStartTime: timestamptz!
+        $scheduledEndTime: timestamptz!
         $itemId: uuid = null
         $exhibitionId: uuid = null
         $shufflePeriodId: uuid = null
@@ -54963,10 +54726,10 @@ export const InsertEventInfoDocument = gql`
                 id: $id
                 roomId: $roomId
                 conferenceId: $conferenceId
-                intendedRoomModeName: $intendedRoomModeName
+                modeName: $modeName
                 name: $name
-                startTime: $startTime
-                durationSeconds: $durationSeconds
+                scheduledStartTime: $scheduledStartTime
+                scheduledEndTime: $scheduledEndTime
                 itemId: $itemId
                 exhibitionId: $exhibitionId
                 shufflePeriodId: $shufflePeriodId
@@ -55000,10 +54763,10 @@ export const UpdateEventInfoDocument = gql`
     mutation UpdateEventInfo(
         $eventId: uuid!
         $roomId: uuid!
-        $intendedRoomModeName: room_Mode_enum!
+        $modeName: schedule_Mode_enum!
         $name: String!
-        $startTime: timestamptz!
-        $durationSeconds: Int!
+        $scheduledStartTime: timestamptz!
+        $scheduledEndTime: timestamptz!
         $itemId: uuid = null
         $exhibitionId: uuid = null
         $shufflePeriodId: uuid = null
@@ -55014,10 +54777,10 @@ export const UpdateEventInfoDocument = gql`
             pk_columns: { id: $eventId }
             _set: {
                 roomId: $roomId
-                intendedRoomModeName: $intendedRoomModeName
+                modeName: $modeName
                 name: $name
-                startTime: $startTime
-                durationSeconds: $durationSeconds
+                scheduledStartTime: $scheduledStartTime
+                scheduledEndTime: $scheduledEndTime
                 itemId: $itemId
                 exhibitionId: $exhibitionId
                 shufflePeriodId: $shufflePeriodId
@@ -55377,7 +55140,11 @@ export function useInvitation_ConfirmCurrentMutation() {
 export const GetEventsInNextHourDocument = gql`
     query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
         schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                scheduledEndTime: { _gte: $now }
+                scheduledStartTime: { _lte: $cutoff }
+            }
         ) {
             ...MinimalEventInfo
         }
@@ -57129,12 +56896,6 @@ export type GraphCacheKeysConfig = {
     room_ManagementMode_mutation_response?: (
         data: WithTypename<Room_ManagementMode_Mutation_Response>
     ) => null | string;
-    room_Mode?: (data: WithTypename<Room_Mode>) => null | string;
-    room_Mode_aggregate?: (data: WithTypename<Room_Mode_Aggregate>) => null | string;
-    room_Mode_aggregate_fields?: (data: WithTypename<Room_Mode_Aggregate_Fields>) => null | string;
-    room_Mode_max_fields?: (data: WithTypename<Room_Mode_Max_Fields>) => null | string;
-    room_Mode_min_fields?: (data: WithTypename<Room_Mode_Min_Fields>) => null | string;
-    room_Mode_mutation_response?: (data: WithTypename<Room_Mode_Mutation_Response>) => null | string;
     room_PersonRole?: (data: WithTypename<Room_PersonRole>) => null | string;
     room_PersonRole_aggregate?: (data: WithTypename<Room_PersonRole_Aggregate>) => null | string;
     room_PersonRole_aggregate_fields?: (data: WithTypename<Room_PersonRole_Aggregate_Fields>) => null | string;
@@ -57272,28 +57033,10 @@ export type GraphCacheKeysConfig = {
     schedule_CurrentEvents_aggregate_fields?: (
         data: WithTypename<Schedule_CurrentEvents_Aggregate_Fields>
     ) => null | string;
-    schedule_CurrentEvents_avg_fields?: (data: WithTypename<Schedule_CurrentEvents_Avg_Fields>) => null | string;
     schedule_CurrentEvents_max_fields?: (data: WithTypename<Schedule_CurrentEvents_Max_Fields>) => null | string;
     schedule_CurrentEvents_min_fields?: (data: WithTypename<Schedule_CurrentEvents_Min_Fields>) => null | string;
     schedule_CurrentEvents_mutation_response?: (
         data: WithTypename<Schedule_CurrentEvents_Mutation_Response>
-    ) => null | string;
-    schedule_CurrentEvents_stddev_fields?: (data: WithTypename<Schedule_CurrentEvents_Stddev_Fields>) => null | string;
-    schedule_CurrentEvents_stddev_pop_fields?: (
-        data: WithTypename<Schedule_CurrentEvents_Stddev_Pop_Fields>
-    ) => null | string;
-    schedule_CurrentEvents_stddev_samp_fields?: (
-        data: WithTypename<Schedule_CurrentEvents_Stddev_Samp_Fields>
-    ) => null | string;
-    schedule_CurrentEvents_sum_fields?: (data: WithTypename<Schedule_CurrentEvents_Sum_Fields>) => null | string;
-    schedule_CurrentEvents_var_pop_fields?: (
-        data: WithTypename<Schedule_CurrentEvents_Var_Pop_Fields>
-    ) => null | string;
-    schedule_CurrentEvents_var_samp_fields?: (
-        data: WithTypename<Schedule_CurrentEvents_Var_Samp_Fields>
-    ) => null | string;
-    schedule_CurrentEvents_variance_fields?: (
-        data: WithTypename<Schedule_CurrentEvents_Variance_Fields>
     ) => null | string;
     schedule_Event?: (data: WithTypename<Schedule_Event>) => null | string;
     schedule_EventProgramPerson?: (data: WithTypename<Schedule_EventProgramPerson>) => null | string;
@@ -57330,17 +57073,15 @@ export type GraphCacheKeysConfig = {
     ) => null | string;
     schedule_Event_aggregate?: (data: WithTypename<Schedule_Event_Aggregate>) => null | string;
     schedule_Event_aggregate_fields?: (data: WithTypename<Schedule_Event_Aggregate_Fields>) => null | string;
-    schedule_Event_avg_fields?: (data: WithTypename<Schedule_Event_Avg_Fields>) => null | string;
     schedule_Event_max_fields?: (data: WithTypename<Schedule_Event_Max_Fields>) => null | string;
     schedule_Event_min_fields?: (data: WithTypename<Schedule_Event_Min_Fields>) => null | string;
     schedule_Event_mutation_response?: (data: WithTypename<Schedule_Event_Mutation_Response>) => null | string;
-    schedule_Event_stddev_fields?: (data: WithTypename<Schedule_Event_Stddev_Fields>) => null | string;
-    schedule_Event_stddev_pop_fields?: (data: WithTypename<Schedule_Event_Stddev_Pop_Fields>) => null | string;
-    schedule_Event_stddev_samp_fields?: (data: WithTypename<Schedule_Event_Stddev_Samp_Fields>) => null | string;
-    schedule_Event_sum_fields?: (data: WithTypename<Schedule_Event_Sum_Fields>) => null | string;
-    schedule_Event_var_pop_fields?: (data: WithTypename<Schedule_Event_Var_Pop_Fields>) => null | string;
-    schedule_Event_var_samp_fields?: (data: WithTypename<Schedule_Event_Var_Samp_Fields>) => null | string;
-    schedule_Event_variance_fields?: (data: WithTypename<Schedule_Event_Variance_Fields>) => null | string;
+    schedule_Mode?: (data: WithTypename<Schedule_Mode>) => null | string;
+    schedule_Mode_aggregate?: (data: WithTypename<Schedule_Mode_Aggregate>) => null | string;
+    schedule_Mode_aggregate_fields?: (data: WithTypename<Schedule_Mode_Aggregate_Fields>) => null | string;
+    schedule_Mode_max_fields?: (data: WithTypename<Schedule_Mode_Max_Fields>) => null | string;
+    schedule_Mode_min_fields?: (data: WithTypename<Schedule_Mode_Min_Fields>) => null | string;
+    schedule_Mode_mutation_response?: (data: WithTypename<Schedule_Mode_Mutation_Response>) => null | string;
     schedule_OverlappingEvents?: (data: WithTypename<Schedule_OverlappingEvents>) => null | string;
     schedule_OverlappingEvents_aggregate?: (data: WithTypename<Schedule_OverlappingEvents_Aggregate>) => null | string;
     schedule_OverlappingEvents_aggregate_fields?: (
@@ -58702,21 +58443,6 @@ export type GraphCacheResolvers = {
             Query_RootRoom_ManagementMode_By_PkArgs,
             WithTypename<Room_ManagementMode> | string
         >;
-        room_Mode?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootRoom_ModeArgs,
-            Array<WithTypename<Room_Mode> | string>
-        >;
-        room_Mode_aggregate?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootRoom_Mode_AggregateArgs,
-            WithTypename<Room_Mode_Aggregate> | string
-        >;
-        room_Mode_by_pk?: GraphCacheResolver<
-            WithTypename<Query_Root>,
-            Query_RootRoom_Mode_By_PkArgs,
-            WithTypename<Room_Mode> | string
-        >;
         room_PersonRole?: GraphCacheResolver<
             WithTypename<Query_Root>,
             Query_RootRoom_PersonRoleArgs,
@@ -58906,6 +58632,21 @@ export type GraphCacheResolvers = {
             WithTypename<Query_Root>,
             Query_RootSchedule_Event_By_PkArgs,
             WithTypename<Schedule_Event> | string
+        >;
+        schedule_Mode?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSchedule_ModeArgs,
+            Array<WithTypename<Schedule_Mode> | string>
+        >;
+        schedule_Mode_aggregate?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSchedule_Mode_AggregateArgs,
+            WithTypename<Schedule_Mode_Aggregate> | string
+        >;
+        schedule_Mode_by_pk?: GraphCacheResolver<
+            WithTypename<Query_Root>,
+            Query_RootSchedule_Mode_By_PkArgs,
+            WithTypename<Schedule_Mode> | string
         >;
         schedule_OverlappingEvents?: GraphCacheResolver<
             WithTypename<Query_Root>,
@@ -73206,7 +72947,7 @@ export type GraphCacheResolvers = {
         sum?: GraphCacheResolver<
             WithTypename<Room_LivestreamDurations>,
             Record<string, never>,
-            Scalars["bigint"] | string
+            Scalars["float8"] | string
         >;
     };
     room_LivestreamDurations_aggregate?: {
@@ -73304,7 +73045,7 @@ export type GraphCacheResolvers = {
         sum?: GraphCacheResolver<
             WithTypename<Room_LivestreamDurations_Max_Fields>,
             Record<string, never>,
-            Scalars["bigint"] | string
+            Scalars["float8"] | string
         >;
     };
     room_LivestreamDurations_min_fields?: {
@@ -73326,7 +73067,7 @@ export type GraphCacheResolvers = {
         sum?: GraphCacheResolver<
             WithTypename<Room_LivestreamDurations_Min_Fields>,
             Record<string, never>,
-            Scalars["bigint"] | string
+            Scalars["float8"] | string
         >;
     };
     room_LivestreamDurations_stddev_fields?: {
@@ -73354,7 +73095,7 @@ export type GraphCacheResolvers = {
         sum?: GraphCacheResolver<
             WithTypename<Room_LivestreamDurations_Sum_Fields>,
             Record<string, never>,
-            Scalars["bigint"] | string
+            Scalars["float8"] | string
         >;
     };
     room_LivestreamDurations_var_pop_fields?: {
@@ -73449,85 +73190,6 @@ export type GraphCacheResolvers = {
             WithTypename<Room_ManagementMode_Mutation_Response>,
             Record<string, never>,
             Array<WithTypename<Room_ManagementMode> | string>
-        >;
-    };
-    room_Mode?: {
-        description?: GraphCacheResolver<WithTypename<Room_Mode>, Record<string, never>, Scalars["String"] | string>;
-        events?: GraphCacheResolver<
-            WithTypename<Room_Mode>,
-            Room_ModeEventsArgs,
-            Array<WithTypename<Schedule_Event> | string>
-        >;
-        events_aggregate?: GraphCacheResolver<
-            WithTypename<Room_Mode>,
-            Room_ModeEvents_AggregateArgs,
-            WithTypename<Schedule_Event_Aggregate> | string
-        >;
-        name?: GraphCacheResolver<WithTypename<Room_Mode>, Record<string, never>, Scalars["String"] | string>;
-    };
-    room_Mode_aggregate?: {
-        aggregate?: GraphCacheResolver<
-            WithTypename<Room_Mode_Aggregate>,
-            Record<string, never>,
-            WithTypename<Room_Mode_Aggregate_Fields> | string
-        >;
-        nodes?: GraphCacheResolver<
-            WithTypename<Room_Mode_Aggregate>,
-            Record<string, never>,
-            Array<WithTypename<Room_Mode> | string>
-        >;
-    };
-    room_Mode_aggregate_fields?: {
-        count?: GraphCacheResolver<
-            WithTypename<Room_Mode_Aggregate_Fields>,
-            Room_Mode_Aggregate_FieldsCountArgs,
-            Scalars["Int"] | string
-        >;
-        max?: GraphCacheResolver<
-            WithTypename<Room_Mode_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Room_Mode_Max_Fields> | string
-        >;
-        min?: GraphCacheResolver<
-            WithTypename<Room_Mode_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Room_Mode_Min_Fields> | string
-        >;
-    };
-    room_Mode_max_fields?: {
-        description?: GraphCacheResolver<
-            WithTypename<Room_Mode_Max_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-        name?: GraphCacheResolver<
-            WithTypename<Room_Mode_Max_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-    };
-    room_Mode_min_fields?: {
-        description?: GraphCacheResolver<
-            WithTypename<Room_Mode_Min_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-        name?: GraphCacheResolver<
-            WithTypename<Room_Mode_Min_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
-    };
-    room_Mode_mutation_response?: {
-        affected_rows?: GraphCacheResolver<
-            WithTypename<Room_Mode_Mutation_Response>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
-        returning?: GraphCacheResolver<
-            WithTypename<Room_Mode_Mutation_Response>,
-            Record<string, never>,
-            Array<WithTypename<Room_Mode> | string>
         >;
     };
     room_PersonRole?: {
@@ -75782,6 +75444,16 @@ export type GraphCacheResolvers = {
         >;
     };
     schedule_CurrentEvents?: {
+        autoPlayElementId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
+        automaticParticipationSurvey?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["Boolean"] | string
+        >;
         conferenceId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents>,
             Record<string, never>,
@@ -75792,20 +75464,10 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["timestamptz"] | string
         >;
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
         enableRecording?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents>,
             Record<string, never>,
             Scalars["Boolean"] | string
-        >;
-        endTime?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
         >;
         eventPeople?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents>,
@@ -75823,15 +75485,15 @@ export type GraphCacheResolvers = {
             Scalars["uuid"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Schedule_CurrentEvents>, Record<string, never>, Scalars["uuid"] | string>;
-        intendedRoomModeName?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
         itemId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents>,
             Record<string, never>,
             Scalars["uuid"] | string
+        >;
+        modeName?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["String"] | string
         >;
         name?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents>,
@@ -75848,15 +75510,20 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        scheduledEndTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        scheduledStartTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
         shufflePeriodId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents>,
             Record<string, never>,
             Scalars["uuid"] | string
-        >;
-        startTime?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
         >;
         streamTextEventId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents>,
@@ -75897,11 +75564,6 @@ export type GraphCacheResolvers = {
         >;
     };
     schedule_CurrentEvents_aggregate_fields?: {
-        avg?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_CurrentEvents_Avg_Fields> | string
-        >;
         count?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
             Schedule_CurrentEvents_Aggregate_FieldsCountArgs,
@@ -75917,66 +75579,19 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             WithTypename<Schedule_CurrentEvents_Min_Fields> | string
         >;
-        stddev?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_CurrentEvents_Stddev_Fields> | string
-        >;
-        stddev_pop?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_CurrentEvents_Stddev_Pop_Fields> | string
-        >;
-        stddev_samp?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_CurrentEvents_Stddev_Samp_Fields> | string
-        >;
-        sum?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_CurrentEvents_Sum_Fields> | string
-        >;
-        var_pop?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_CurrentEvents_Var_Pop_Fields> | string
-        >;
-        var_samp?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_CurrentEvents_Var_Samp_Fields> | string
-        >;
-        variance?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_CurrentEvents_Variance_Fields> | string
-        >;
-    };
-    schedule_CurrentEvents_avg_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Avg_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
     };
     schedule_CurrentEvents_max_fields?: {
+        autoPlayElementId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         conferenceId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Max_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
         >;
         created_at?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Max_Fields>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
-        endTime?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Max_Fields>,
             Record<string, never>,
             Scalars["timestamptz"] | string
@@ -75991,15 +75606,15 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        intendedRoomModeName?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Max_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
         itemId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Max_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
+        >;
+        modeName?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
         >;
         name?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Max_Fields>,
@@ -76011,15 +75626,20 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        scheduledEndTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        scheduledStartTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
         shufflePeriodId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Max_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
-        >;
-        startTime?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
         >;
         streamTextEventId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Max_Fields>,
@@ -76048,22 +75668,17 @@ export type GraphCacheResolvers = {
         >;
     };
     schedule_CurrentEvents_min_fields?: {
+        autoPlayElementId?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         conferenceId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Min_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
         >;
         created_at?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Min_Fields>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
-        endTime?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Min_Fields>,
             Record<string, never>,
             Scalars["timestamptz"] | string
@@ -76078,15 +75693,15 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        intendedRoomModeName?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Min_Fields>,
-            Record<string, never>,
-            Scalars["String"] | string
-        >;
         itemId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Min_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
+        >;
+        modeName?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
         >;
         name?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Min_Fields>,
@@ -76098,15 +75713,20 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
+        scheduledEndTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        scheduledStartTime?: GraphCacheResolver<
+            WithTypename<Schedule_CurrentEvents_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
         shufflePeriodId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Min_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
-        >;
-        startTime?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
         >;
         streamTextEventId?: GraphCacheResolver<
             WithTypename<Schedule_CurrentEvents_Min_Fields>,
@@ -76146,56 +75766,17 @@ export type GraphCacheResolvers = {
             Array<WithTypename<Schedule_CurrentEvents> | string>
         >;
     };
-    schedule_CurrentEvents_stddev_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Stddev_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    schedule_CurrentEvents_stddev_pop_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Stddev_Pop_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    schedule_CurrentEvents_stddev_samp_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Stddev_Samp_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    schedule_CurrentEvents_sum_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Sum_Fields>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
-    };
-    schedule_CurrentEvents_var_pop_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Var_Pop_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    schedule_CurrentEvents_var_samp_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Var_Samp_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    schedule_CurrentEvents_variance_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_CurrentEvents_Variance_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
     schedule_Event?: {
+        autoPlayElement?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Record<string, never>,
+            WithTypename<Content_Element> | string
+        >;
+        autoPlayElementId?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         automaticParticipationSurvey?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
@@ -76226,20 +75807,10 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["timestamptz"] | string
         >;
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
         enableRecording?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
             Scalars["Boolean"] | string
-        >;
-        endTime?: GraphCacheResolver<
-            WithTypename<Schedule_Event>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
         >;
         eventPeople?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
@@ -76267,17 +75838,18 @@ export type GraphCacheResolvers = {
             Scalars["uuid"] | string
         >;
         id?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["uuid"] | string>;
-        intendedRoomModeName?: GraphCacheResolver<
-            WithTypename<Schedule_Event>,
-            Record<string, never>,
-            Room_Mode_Enum | string
-        >;
         item?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
             WithTypename<Content_Item> | string
         >;
         itemId?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["uuid"] | string>;
+        mode?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Record<string, never>,
+            WithTypename<Schedule_Mode> | string
+        >;
+        modeName?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Schedule_Mode_Enum | string>;
         name?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["String"] | string>;
         room?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
@@ -76285,12 +75857,22 @@ export type GraphCacheResolvers = {
             WithTypename<Room_Room> | string
         >;
         roomId?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["uuid"] | string>;
-        roomMode?: GraphCacheResolver<
+        roomName?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["String"] | string>;
+        scheduledEndTime?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
-            WithTypename<Room_Mode> | string
+            Scalars["timestamptz"] | string
         >;
-        roomName?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["String"] | string>;
+        scheduledStartTime?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        sessionEventId?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         shufflePeriod?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
@@ -76301,15 +75883,15 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        startTime?: GraphCacheResolver<
-            WithTypename<Schedule_Event>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
         streamTextEventId?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
             Scalars["String"] | string
+        >;
+        subconference?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Record<string, never>,
+            WithTypename<Conference_Subconference> | string
         >;
         subconferenceId?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
@@ -76574,11 +76156,6 @@ export type GraphCacheResolvers = {
         >;
     };
     schedule_Event_aggregate_fields?: {
-        avg?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_Event_Avg_Fields> | string
-        >;
         count?: GraphCacheResolver<
             WithTypename<Schedule_Event_Aggregate_Fields>,
             Schedule_Event_Aggregate_FieldsCountArgs,
@@ -76594,66 +76171,19 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             WithTypename<Schedule_Event_Min_Fields> | string
         >;
-        stddev?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_Event_Stddev_Fields> | string
-        >;
-        stddev_pop?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_Event_Stddev_Pop_Fields> | string
-        >;
-        stddev_samp?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_Event_Stddev_Samp_Fields> | string
-        >;
-        sum?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_Event_Sum_Fields> | string
-        >;
-        var_pop?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_Event_Var_Pop_Fields> | string
-        >;
-        var_samp?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_Event_Var_Samp_Fields> | string
-        >;
-        variance?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Aggregate_Fields>,
-            Record<string, never>,
-            WithTypename<Schedule_Event_Variance_Fields> | string
-        >;
-    };
-    schedule_Event_avg_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Avg_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
     };
     schedule_Event_max_fields?: {
+        autoPlayElementId?: GraphCacheResolver<
+            WithTypename<Schedule_Event_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         conferenceId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Max_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
         >;
         createdAt?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Max_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Max_Fields>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
-        endTime?: GraphCacheResolver<
             WithTypename<Schedule_Event_Max_Fields>,
             Record<string, never>,
             Scalars["timestamptz"] | string
@@ -76683,15 +76213,25 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        shufflePeriodId?: GraphCacheResolver<
+        scheduledEndTime?: GraphCacheResolver<
+            WithTypename<Schedule_Event_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        scheduledStartTime?: GraphCacheResolver<
+            WithTypename<Schedule_Event_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        sessionEventId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Max_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        startTime?: GraphCacheResolver<
+        shufflePeriodId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Max_Fields>,
             Record<string, never>,
-            Scalars["timestamptz"] | string
+            Scalars["uuid"] | string
         >;
         streamTextEventId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Max_Fields>,
@@ -76715,22 +76255,17 @@ export type GraphCacheResolvers = {
         >;
     };
     schedule_Event_min_fields?: {
+        autoPlayElementId?: GraphCacheResolver<
+            WithTypename<Schedule_Event_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         conferenceId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Min_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
         >;
         createdAt?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Min_Fields>,
-            Record<string, never>,
-            Scalars["timestamptz"] | string
-        >;
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Min_Fields>,
-            Record<string, never>,
-            Scalars["Int"] | string
-        >;
-        endTime?: GraphCacheResolver<
             WithTypename<Schedule_Event_Min_Fields>,
             Record<string, never>,
             Scalars["timestamptz"] | string
@@ -76760,15 +76295,25 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        shufflePeriodId?: GraphCacheResolver<
+        scheduledEndTime?: GraphCacheResolver<
+            WithTypename<Schedule_Event_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        scheduledStartTime?: GraphCacheResolver<
+            WithTypename<Schedule_Event_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
+        sessionEventId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Min_Fields>,
             Record<string, never>,
             Scalars["uuid"] | string
         >;
-        startTime?: GraphCacheResolver<
+        shufflePeriodId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Min_Fields>,
             Record<string, never>,
-            Scalars["timestamptz"] | string
+            Scalars["uuid"] | string
         >;
         streamTextEventId?: GraphCacheResolver<
             WithTypename<Schedule_Event_Min_Fields>,
@@ -76803,53 +76348,87 @@ export type GraphCacheResolvers = {
             Array<WithTypename<Schedule_Event> | string>
         >;
     };
-    schedule_Event_stddev_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Stddev_Fields>,
+    schedule_Mode?: {
+        description?: GraphCacheResolver<
+            WithTypename<Schedule_Mode>,
             Record<string, never>,
-            Scalars["Float"] | string
+            Scalars["String"] | string
+        >;
+        events?: GraphCacheResolver<
+            WithTypename<Schedule_Mode>,
+            Schedule_ModeEventsArgs,
+            Array<WithTypename<Schedule_Event> | string>
+        >;
+        events_aggregate?: GraphCacheResolver<
+            WithTypename<Schedule_Mode>,
+            Schedule_ModeEvents_AggregateArgs,
+            WithTypename<Schedule_Event_Aggregate> | string
+        >;
+        name?: GraphCacheResolver<WithTypename<Schedule_Mode>, Record<string, never>, Scalars["String"] | string>;
+    };
+    schedule_Mode_aggregate?: {
+        aggregate?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Aggregate>,
+            Record<string, never>,
+            WithTypename<Schedule_Mode_Aggregate_Fields> | string
+        >;
+        nodes?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Aggregate>,
+            Record<string, never>,
+            Array<WithTypename<Schedule_Mode> | string>
         >;
     };
-    schedule_Event_stddev_pop_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Stddev_Pop_Fields>,
+    schedule_Mode_aggregate_fields?: {
+        count?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Aggregate_Fields>,
+            Schedule_Mode_Aggregate_FieldsCountArgs,
+            Scalars["Int"] | string
+        >;
+        max?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Aggregate_Fields>,
             Record<string, never>,
-            Scalars["Float"] | string
+            WithTypename<Schedule_Mode_Max_Fields> | string
+        >;
+        min?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Aggregate_Fields>,
+            Record<string, never>,
+            WithTypename<Schedule_Mode_Min_Fields> | string
         >;
     };
-    schedule_Event_stddev_samp_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Stddev_Samp_Fields>,
+    schedule_Mode_max_fields?: {
+        description?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Max_Fields>,
             Record<string, never>,
-            Scalars["Float"] | string
+            Scalars["String"] | string
+        >;
+        name?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Max_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
         >;
     };
-    schedule_Event_sum_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Sum_Fields>,
+    schedule_Mode_min_fields?: {
+        description?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+        name?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Min_Fields>,
+            Record<string, never>,
+            Scalars["String"] | string
+        >;
+    };
+    schedule_Mode_mutation_response?: {
+        affected_rows?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Mutation_Response>,
             Record<string, never>,
             Scalars["Int"] | string
         >;
-    };
-    schedule_Event_var_pop_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Var_Pop_Fields>,
+        returning?: GraphCacheResolver<
+            WithTypename<Schedule_Mode_Mutation_Response>,
             Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    schedule_Event_var_samp_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Var_Samp_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
-        >;
-    };
-    schedule_Event_variance_fields?: {
-        durationSeconds?: GraphCacheResolver<
-            WithTypename<Schedule_Event_Variance_Fields>,
-            Record<string, never>,
-            Scalars["Float"] | string
+            Array<WithTypename<Schedule_Mode> | string>
         >;
     };
     schedule_OverlappingEvents?: {
@@ -81792,14 +81371,6 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootDelete_Room_ManagementMode_By_PkArgs,
         Maybe<WithTypename<Room_ManagementMode>>
     >;
-    delete_room_Mode?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootDelete_Room_ModeArgs,
-        Maybe<WithTypename<Room_Mode_Mutation_Response>>
-    >;
-    delete_room_Mode_by_pk?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootDelete_Room_Mode_By_PkArgs,
-        Maybe<WithTypename<Room_Mode>>
-    >;
     delete_room_PersonRole?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Room_PersonRoleArgs,
         Maybe<WithTypename<Room_PersonRole_Mutation_Response>>
@@ -81899,6 +81470,14 @@ export type GraphCacheOptimisticUpdaters = {
     delete_schedule_Event_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Schedule_Event_By_PkArgs,
         Maybe<WithTypename<Schedule_Event>>
+    >;
+    delete_schedule_Mode?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Schedule_ModeArgs,
+        Maybe<WithTypename<Schedule_Mode_Mutation_Response>>
+    >;
+    delete_schedule_Mode_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_Schedule_Mode_By_PkArgs,
+        Maybe<WithTypename<Schedule_Mode>>
     >;
     delete_schedule_StarredEvent?: GraphCacheOptimisticMutationResolver<
         Mutation_RootDelete_Schedule_StarredEventArgs,
@@ -82601,14 +82180,6 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootInsert_Room_ManagementMode_OneArgs,
         Maybe<WithTypename<Room_ManagementMode>>
     >;
-    insert_room_Mode?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootInsert_Room_ModeArgs,
-        Maybe<WithTypename<Room_Mode_Mutation_Response>>
-    >;
-    insert_room_Mode_one?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootInsert_Room_Mode_OneArgs,
-        Maybe<WithTypename<Room_Mode>>
-    >;
     insert_room_PersonRole?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Room_PersonRoleArgs,
         Maybe<WithTypename<Room_PersonRole_Mutation_Response>>
@@ -82712,6 +82283,14 @@ export type GraphCacheOptimisticUpdaters = {
     insert_schedule_Event_one?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Schedule_Event_OneArgs,
         Maybe<WithTypename<Schedule_Event>>
+    >;
+    insert_schedule_Mode?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Schedule_ModeArgs,
+        Maybe<WithTypename<Schedule_Mode_Mutation_Response>>
+    >;
+    insert_schedule_Mode_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Schedule_Mode_OneArgs,
+        Maybe<WithTypename<Schedule_Mode>>
     >;
     insert_schedule_StarredEvent?: GraphCacheOptimisticMutationResolver<
         Mutation_RootInsert_Schedule_StarredEventArgs,
@@ -83462,14 +83041,6 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootUpdate_Room_ManagementMode_By_PkArgs,
         Maybe<WithTypename<Room_ManagementMode>>
     >;
-    update_room_Mode?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootUpdate_Room_ModeArgs,
-        Maybe<WithTypename<Room_Mode_Mutation_Response>>
-    >;
-    update_room_Mode_by_pk?: GraphCacheOptimisticMutationResolver<
-        Mutation_RootUpdate_Room_Mode_By_PkArgs,
-        Maybe<WithTypename<Room_Mode>>
-    >;
     update_room_PersonRole?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Room_PersonRoleArgs,
         Maybe<WithTypename<Room_PersonRole_Mutation_Response>>
@@ -83569,6 +83140,14 @@ export type GraphCacheOptimisticUpdaters = {
     update_schedule_Event_by_pk?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Schedule_Event_By_PkArgs,
         Maybe<WithTypename<Schedule_Event>>
+    >;
+    update_schedule_Mode?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Schedule_ModeArgs,
+        Maybe<WithTypename<Schedule_Mode_Mutation_Response>>
+    >;
+    update_schedule_Mode_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_Schedule_Mode_By_PkArgs,
+        Maybe<WithTypename<Schedule_Mode>>
     >;
     update_schedule_StarredEvent?: GraphCacheOptimisticMutationResolver<
         Mutation_RootUpdate_Schedule_StarredEventArgs,
@@ -84338,14 +83917,6 @@ export type GraphCacheUpdaters = {
             { delete_room_ManagementMode_by_pk: Maybe<WithTypename<Room_ManagementMode>> },
             Mutation_RootDelete_Room_ManagementMode_By_PkArgs
         >;
-        delete_room_Mode?: GraphCacheUpdateResolver<
-            { delete_room_Mode: Maybe<WithTypename<Room_Mode_Mutation_Response>> },
-            Mutation_RootDelete_Room_ModeArgs
-        >;
-        delete_room_Mode_by_pk?: GraphCacheUpdateResolver<
-            { delete_room_Mode_by_pk: Maybe<WithTypename<Room_Mode>> },
-            Mutation_RootDelete_Room_Mode_By_PkArgs
-        >;
         delete_room_PersonRole?: GraphCacheUpdateResolver<
             { delete_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> },
             Mutation_RootDelete_Room_PersonRoleArgs
@@ -84449,6 +84020,14 @@ export type GraphCacheUpdaters = {
         delete_schedule_Event_by_pk?: GraphCacheUpdateResolver<
             { delete_schedule_Event_by_pk: Maybe<WithTypename<Schedule_Event>> },
             Mutation_RootDelete_Schedule_Event_By_PkArgs
+        >;
+        delete_schedule_Mode?: GraphCacheUpdateResolver<
+            { delete_schedule_Mode: Maybe<WithTypename<Schedule_Mode_Mutation_Response>> },
+            Mutation_RootDelete_Schedule_ModeArgs
+        >;
+        delete_schedule_Mode_by_pk?: GraphCacheUpdateResolver<
+            { delete_schedule_Mode_by_pk: Maybe<WithTypename<Schedule_Mode>> },
+            Mutation_RootDelete_Schedule_Mode_By_PkArgs
         >;
         delete_schedule_StarredEvent?: GraphCacheUpdateResolver<
             { delete_schedule_StarredEvent: Maybe<WithTypename<Schedule_StarredEvent_Mutation_Response>> },
@@ -85230,14 +84809,6 @@ export type GraphCacheUpdaters = {
             { insert_room_ManagementMode_one: Maybe<WithTypename<Room_ManagementMode>> },
             Mutation_RootInsert_Room_ManagementMode_OneArgs
         >;
-        insert_room_Mode?: GraphCacheUpdateResolver<
-            { insert_room_Mode: Maybe<WithTypename<Room_Mode_Mutation_Response>> },
-            Mutation_RootInsert_Room_ModeArgs
-        >;
-        insert_room_Mode_one?: GraphCacheUpdateResolver<
-            { insert_room_Mode_one: Maybe<WithTypename<Room_Mode>> },
-            Mutation_RootInsert_Room_Mode_OneArgs
-        >;
         insert_room_PersonRole?: GraphCacheUpdateResolver<
             { insert_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> },
             Mutation_RootInsert_Room_PersonRoleArgs
@@ -85345,6 +84916,14 @@ export type GraphCacheUpdaters = {
         insert_schedule_Event_one?: GraphCacheUpdateResolver<
             { insert_schedule_Event_one: Maybe<WithTypename<Schedule_Event>> },
             Mutation_RootInsert_Schedule_Event_OneArgs
+        >;
+        insert_schedule_Mode?: GraphCacheUpdateResolver<
+            { insert_schedule_Mode: Maybe<WithTypename<Schedule_Mode_Mutation_Response>> },
+            Mutation_RootInsert_Schedule_ModeArgs
+        >;
+        insert_schedule_Mode_one?: GraphCacheUpdateResolver<
+            { insert_schedule_Mode_one: Maybe<WithTypename<Schedule_Mode>> },
+            Mutation_RootInsert_Schedule_Mode_OneArgs
         >;
         insert_schedule_StarredEvent?: GraphCacheUpdateResolver<
             { insert_schedule_StarredEvent: Maybe<WithTypename<Schedule_StarredEvent_Mutation_Response>> },
@@ -86178,14 +85757,6 @@ export type GraphCacheUpdaters = {
             { update_room_ManagementMode_by_pk: Maybe<WithTypename<Room_ManagementMode>> },
             Mutation_RootUpdate_Room_ManagementMode_By_PkArgs
         >;
-        update_room_Mode?: GraphCacheUpdateResolver<
-            { update_room_Mode: Maybe<WithTypename<Room_Mode_Mutation_Response>> },
-            Mutation_RootUpdate_Room_ModeArgs
-        >;
-        update_room_Mode_by_pk?: GraphCacheUpdateResolver<
-            { update_room_Mode_by_pk: Maybe<WithTypename<Room_Mode>> },
-            Mutation_RootUpdate_Room_Mode_By_PkArgs
-        >;
         update_room_PersonRole?: GraphCacheUpdateResolver<
             { update_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> },
             Mutation_RootUpdate_Room_PersonRoleArgs
@@ -86289,6 +85860,14 @@ export type GraphCacheUpdaters = {
         update_schedule_Event_by_pk?: GraphCacheUpdateResolver<
             { update_schedule_Event_by_pk: Maybe<WithTypename<Schedule_Event>> },
             Mutation_RootUpdate_Schedule_Event_By_PkArgs
+        >;
+        update_schedule_Mode?: GraphCacheUpdateResolver<
+            { update_schedule_Mode: Maybe<WithTypename<Schedule_Mode_Mutation_Response>> },
+            Mutation_RootUpdate_Schedule_ModeArgs
+        >;
+        update_schedule_Mode_by_pk?: GraphCacheUpdateResolver<
+            { update_schedule_Mode_by_pk: Maybe<WithTypename<Schedule_Mode>> },
+            Mutation_RootUpdate_Schedule_Mode_By_PkArgs
         >;
         update_schedule_StarredEvent?: GraphCacheUpdateResolver<
             { update_schedule_StarredEvent: Maybe<WithTypename<Schedule_StarredEvent_Mutation_Response>> },
@@ -87329,18 +86908,6 @@ export type GraphCacheUpdaters = {
             { room_ManagementMode_by_pk: Maybe<WithTypename<Room_ManagementMode>> },
             Subscription_RootRoom_ManagementMode_By_PkArgs
         >;
-        room_Mode?: GraphCacheUpdateResolver<
-            { room_Mode: Array<WithTypename<Room_Mode>> },
-            Subscription_RootRoom_ModeArgs
-        >;
-        room_Mode_aggregate?: GraphCacheUpdateResolver<
-            { room_Mode_aggregate: WithTypename<Room_Mode_Aggregate> },
-            Subscription_RootRoom_Mode_AggregateArgs
-        >;
-        room_Mode_by_pk?: GraphCacheUpdateResolver<
-            { room_Mode_by_pk: Maybe<WithTypename<Room_Mode>> },
-            Subscription_RootRoom_Mode_By_PkArgs
-        >;
         room_PersonRole?: GraphCacheUpdateResolver<
             { room_PersonRole: Array<WithTypename<Room_PersonRole>> },
             Subscription_RootRoom_PersonRoleArgs
@@ -87492,6 +87059,18 @@ export type GraphCacheUpdaters = {
         schedule_Event_by_pk?: GraphCacheUpdateResolver<
             { schedule_Event_by_pk: Maybe<WithTypename<Schedule_Event>> },
             Subscription_RootSchedule_Event_By_PkArgs
+        >;
+        schedule_Mode?: GraphCacheUpdateResolver<
+            { schedule_Mode: Array<WithTypename<Schedule_Mode>> },
+            Subscription_RootSchedule_ModeArgs
+        >;
+        schedule_Mode_aggregate?: GraphCacheUpdateResolver<
+            { schedule_Mode_aggregate: WithTypename<Schedule_Mode_Aggregate> },
+            Subscription_RootSchedule_Mode_AggregateArgs
+        >;
+        schedule_Mode_by_pk?: GraphCacheUpdateResolver<
+            { schedule_Mode_by_pk: Maybe<WithTypename<Schedule_Mode>> },
+            Subscription_RootSchedule_Mode_By_PkArgs
         >;
         schedule_OverlappingEvents?: GraphCacheUpdateResolver<
             { schedule_OverlappingEvents: Array<WithTypename<Schedule_OverlappingEvents>> },

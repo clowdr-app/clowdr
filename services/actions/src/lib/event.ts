@@ -1,6 +1,10 @@
 import { gql } from "@apollo/client/core";
 import type { P } from "pino";
-import { GetEventVonageSessionDocument, Room_Mode_Enum, SetEventVonageSessionIdDocument } from "../generated/graphql";
+import {
+    GetEventVonageSessionDocument,
+    Schedule_Mode_Enum,
+    SetEventVonageSessionIdDocument,
+} from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import Vonage from "../lib/vonage/vonageClient";
 import { hasura } from "./hasura/hasuraMetadata";
@@ -8,24 +12,24 @@ import { hasura } from "./hasura/hasuraMetadata";
 export async function createEventStartTrigger(
     logger: P.Logger,
     eventId: string,
-    startTime: string,
+    scheduledStartTime: string,
     updatedAt: number
 ): Promise<void> {
-    const startTimeMillis = Date.parse(startTime);
+    const scheduledStartTimeMillis = Date.parse(scheduledStartTime);
 
-    if (startTimeMillis < new Date().getTime()) {
-        logger.info({ eventId, startTime }, "Start time of event is in the past, skipping.");
+    if (scheduledStartTimeMillis < new Date().getTime()) {
+        logger.info({ eventId, scheduledStartTime }, "Start time of event is in the past, skipping.");
         return;
     }
-    logger.info({ eventId, startTime }, "Creating new start time trigger for event");
+    logger.info({ eventId, scheduledStartTime }, "Creating new start time trigger for event");
     await hasura.createScheduledEvent({
-        schedule_at: new Date(startTimeMillis - 70000).toISOString(),
+        schedule_at: new Date(scheduledStartTimeMillis - 70000).toISOString(),
         webhook: "{{ACTION_BASE_URL}}/event/notifyStart",
-        comment: `Event ${eventId} starts at ${startTime}`,
+        comment: `Event ${eventId} starts at ${scheduledStartTime}`,
         headers: [{ name: "x-hasura-event-secret", value_from_env: "EVENT_SECRET" }],
         payload: {
             eventId,
-            startTime,
+            scheduledStartTime,
             updatedAt,
         },
     });
@@ -34,24 +38,24 @@ export async function createEventStartTrigger(
 export async function createEventEndTrigger(
     logger: P.Logger,
     eventId: string,
-    endTime: string,
+    scheduledEndTime: string,
     updatedAt: number
 ): Promise<void> {
-    const endTimeMillis = Date.parse(endTime);
+    const endTimeMillis = Date.parse(scheduledEndTime);
 
     if (endTimeMillis < new Date().getTime()) {
-        logger.info({ eventId, endTime }, "End time of event is in the past, skipping.");
+        logger.info({ eventId, scheduledEndTime }, "End time of event is in the past, skipping.");
         return;
     }
-    logger.info({ eventId, endTime }, "Creating new end time trigger for event");
+    logger.info({ eventId, scheduledEndTime }, "Creating new end time trigger for event");
     await hasura.createScheduledEvent({
         schedule_at: new Date(endTimeMillis - 70000).toISOString(),
         webhook: "{{ACTION_BASE_URL}}/event/notifyEnd",
-        comment: `Event ${eventId} ends at ${endTime}`,
+        comment: `Event ${eventId} ends at ${scheduledEndTime}`,
         headers: [{ name: "x-hasura-event-secret", value_from_env: "EVENT_SECRET" }],
         payload: {
             eventId,
-            endTime,
+            scheduledEndTime,
             updatedAt,
         },
     });
@@ -105,6 +109,6 @@ export async function createEventVonageSession(logger: P.Logger, eventId: string
     });
 }
 
-export function isLive(roomModeName: Room_Mode_Enum): boolean {
-    return [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(roomModeName);
+export function isLive(roomModeName: Schedule_Mode_Enum): boolean {
+    return Schedule_Mode_Enum.Livestream === roomModeName;
 }

@@ -7,7 +7,7 @@ import type {
     RoomPage_RoomDetailsFragment,
     Room_EventSummaryFragment,
 } from "../../../../generated/graphql";
-import { Room_Mode_Enum, Schedule_EventProgramPersonRole_Enum } from "../../../../generated/graphql";
+import { Schedule_EventProgramPersonRole_Enum, Schedule_Mode_Enum } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import ContinuationChoices from "../Continuation/ContinuationChoices";
@@ -51,26 +51,24 @@ export default function RoomContinuationChoices({
 
     useEffect(() => {
         if (currentRoomEvent) {
-            const nextEventHasBackstage =
-                nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.QAndA;
+            const nextEventHasBackstage = nextRoomEvent?.modeName === Schedule_Mode_Enum.Livestream;
 
             setSuppressContinuationChoices(nextEventHasBackstage && nextRoomEvent?.id === currentBackstageEventId);
 
-            const startTime = Date.parse(currentRoomEvent.startTime);
-            if (now5s - startTime > 30000) {
+            const scheduledStartTime = Date.parse(currentRoomEvent.scheduledStartTime);
+            if (now5s - scheduledStartTime > 30000) {
                 setContinuationChoicesFrom((old) =>
                     !old || !("eventId" in old) || old.eventId !== currentRoomEvent.id
                         ? {
                               eventId: currentRoomEvent.id,
                               itemId: currentRoomEvent.itemId ?? null,
-                              endsAt: currentRoomEvent.endTime ? Date.parse(currentRoomEvent.endTime) : 0,
+                              endsAt: currentRoomEvent.scheduledEndTime
+                                  ? Date.parse(currentRoomEvent.scheduledEndTime)
+                                  : 0,
                           }
                         : old
                 );
-                const noBackstage =
-                    currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Presentation &&
-                    currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.QAndA;
+                const noBackstage = currentRoomEvent.modeName !== Schedule_Mode_Enum.Livestream;
 
                 const currentRegistrantIsNeededOnNextEventBackstage =
                     nextEventHasBackstage &&
@@ -149,7 +147,7 @@ export default function RoomContinuationChoices({
         now5s,
         showBackstage,
         currentRegistrantId,
-        nextRoomEvent?.intendedRoomModeName,
+        nextRoomEvent?.modeName,
         nextRoomEvent?.eventPeople,
         currentRegistrant.id,
         moveToNextBackstage,

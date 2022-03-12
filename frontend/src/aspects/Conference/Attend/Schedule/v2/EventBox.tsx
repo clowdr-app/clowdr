@@ -57,10 +57,10 @@ gql`
     fragment ScheduleV2_Event on schedule_Event {
         id
         roomId
-        intendedRoomModeName
+        modeName
         name
-        startTime
-        durationSeconds
+        scheduledStartTime
+        scheduledEndTime
         itemId
         exhibitionId
         shufflePeriodId
@@ -210,15 +210,18 @@ function EventBoxContents({
     tags: readonly ScheduleV2_TagFragment[];
     timezone: luxon.Zone;
 }): JSX.Element {
-    const startTimeDT = useMemo(
-        () => luxon.DateTime.fromISO(eventInfo.startTime).setZone(timezone),
-        [eventInfo.startTime, timezone]
+    const scheduledStartTimeDT = useMemo(
+        () => luxon.DateTime.fromISO(eventInfo.scheduledStartTime).setZone(timezone),
+        [eventInfo.scheduledStartTime, timezone]
     );
     const endTimeDT = useMemo(
-        () => startTimeDT.plus({ seconds: eventInfo.durationSeconds }),
-        [eventInfo.durationSeconds, startTimeDT]
+        () => scheduledStartTimeDT.plus({ seconds: eventInfo.durationSeconds }),
+        [eventInfo.durationSeconds, scheduledStartTimeDT]
     );
-    const overlapsDayBoundary = useMemo(() => startTimeDT.day !== endTimeDT.day, [endTimeDT.day, startTimeDT.day]);
+    const overlapsDayBoundary = useMemo(
+        () => scheduledStartTimeDT.day !== endTimeDT.day,
+        [endTimeDT.day, scheduledStartTimeDT.day]
+    );
 
     return (
         <VStack
@@ -232,13 +235,13 @@ function EventBoxContents({
                 <StarEventButton eventIds={eventInfo.id} mt={1} />
                 <Text fontSize="sm" fontWeight="bold">
                     <EventModeIcon
-                        mode={eventInfo.intendedRoomModeName}
+                        mode={eventInfo.modeName}
                         durationSeconds={eventInfo.durationSeconds}
                         fontSize="inherit"
                     />
                 </Text>
                 <Text fontSize="sm" pl={2}>
-                    {startTimeDT.toLocaleString({
+                    {scheduledStartTimeDT.toLocaleString({
                         hour: "numeric",
                         minute: "numeric",
                     })}{" "}

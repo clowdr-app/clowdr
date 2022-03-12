@@ -6,7 +6,7 @@ import type {
     TestConferenceFragment,
     UsageFragment,
 } from "../src/generated/graphql";
-import { Room_ManagementMode_Enum, Room_Mode_Enum } from "../src/generated/graphql";
+import { Room_ManagementMode_Enum, Schedule_Mode_Enum } from "../src/generated/graphql";
 import { cleanupTestConference, createTestConference } from "../src/lib/conference";
 import { insertEvent } from "../src/lib/event";
 import { getQuota } from "../src/lib/quota";
@@ -63,9 +63,9 @@ describe("checkInsertRoom", () => {
         it("live-streaming consumption remains unchanged", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(now.getTime() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(now.getTime() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -116,9 +116,9 @@ describe("checkInsertRoom", () => {
         it("video-chat consumption remains unchanged", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(now.getTime() + 24 * 60 * 60 * 1000),
+                scheduledEndTime: new Date(now.getTime() + 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -171,9 +171,9 @@ describe("checkInsertRoom", () => {
         it("live-streaming consumption increases accurately", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: now.toISOString(),
-                durationSeconds: 20 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: now.toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 20 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -224,9 +224,9 @@ describe("checkInsertRoom", () => {
         it("video-chat consumption increases accurately", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: now.toISOString(),
-                durationSeconds: 20 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: now.toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 20 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -277,9 +277,9 @@ describe("checkInsertRoom", () => {
         it("streaming and video-chat consumption remains unchanged", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: now.toISOString(),
-                durationSeconds: 20 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                scheduledStartTime: now.toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 20 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Exhibition,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -332,9 +332,9 @@ describe("checkInsertRoom", () => {
         it("live-streaming consumption increases accurately", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(now.getTime() + 5 * 60 * 1000).toISOString(),
-                durationSeconds: 5 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(now.getTime() + 5 * 60 * 1000).toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -386,9 +386,9 @@ describe("checkInsertRoom", () => {
         it("video-chat consumption increases accurately", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(now.getTime() + 5 * 60 * 1000).toISOString(),
-                durationSeconds: 5 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(now.getTime() + 5 * 60 * 1000).toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -440,9 +440,9 @@ describe("checkInsertRoom", () => {
         it("streaming and video-chat consumption remains unchanged", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(now.getTime() + 5 * 60 * 1000).toISOString(),
-                durationSeconds: 5 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                scheduledStartTime: new Date(now.getTime() + 5 * 60 * 1000).toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 10 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Exhibition,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -493,9 +493,9 @@ describe("checkInsertRoom", () => {
         it("live-streaming consumption increases accurately and ignores older events", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(now.getTime() - 5 * 60 * 1000).toISOString(),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Prerecorded,
+                scheduledStartTime: new Date(now.getTime() - 5 * 60 * 1000).toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 5 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Livestream,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -547,9 +547,9 @@ describe("checkInsertRoom", () => {
         it("video-chat consumption increases accurately and ignores older events", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(now.getTime() - 5 * 60 * 1000).toISOString(),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.VideoChat,
+                scheduledStartTime: new Date(now.getTime() - 5 * 60 * 1000).toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 5 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.VideoChat,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });
@@ -601,9 +601,9 @@ describe("checkInsertRoom", () => {
         it("streaming and video-chat consumption remains unchanged and ignores older events", async () => {
             await insertEvent({
                 conferenceId: conference.id,
-                startTime: new Date(now.getTime() - 5 * 60 * 1000).toISOString(),
-                durationSeconds: 10 * 60,
-                intendedRoomModeName: Room_Mode_Enum.Exhibition,
+                scheduledStartTime: new Date(now.getTime() - 5 * 60 * 1000).toISOString(),
+                scheduledEndTime: new Date(now.getTime() + 5 * 60 * 1000),
+                modeName: Schedule_Mode_Enum.Exhibition,
                 name: "E2E Usage-and-Quotas Test Event",
                 roomId: room.id,
             });

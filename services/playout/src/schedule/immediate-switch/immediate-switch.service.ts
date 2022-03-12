@@ -49,7 +49,7 @@ export class ImmediateSwitchService {
                         return;
                     }
 
-                    if (now <= event.startTime) {
+                    if (now <= event.scheduledStartTime) {
                         this.logger.warn(
                             { event, now },
                             "Immediate switch request made before start of event, ignoring"
@@ -58,7 +58,7 @@ export class ImmediateSwitchService {
                         return;
                     }
 
-                    if (now > sub(event.endTime, { seconds: 20 }).getTime()) {
+                    if (now > sub(event.scheduledEndTime, { seconds: 20 }).getTime()) {
                         this.logger.warn(
                             { event, now },
                             "Immediate switch request made too close to or after end of event, ignoring"

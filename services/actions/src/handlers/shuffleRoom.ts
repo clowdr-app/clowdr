@@ -65,9 +65,9 @@ gql`
         activeRooms: shuffleRooms(where: { isEnded: { _eq: false } }) {
             ...ActiveShuffleRoom
         }
-        events(where: { startTime: { _lte: $now }, endTime: { _gte: $now } }) {
+        events(where: { scheduledStartTime: { _lte: $now }, scheduledEndTime: { _gte: $now } }) {
             id
-            endTime
+            scheduledEndTime
         }
     }
 
@@ -315,7 +315,7 @@ async function attemptToMatchEntry_FCFS(
             let roomDurationMinutes = activePeriod.roomDurationMinutes;
             if (activePeriod.events.length > 0) {
                 for (const event of activePeriod.events) {
-                    const endTimeMs = Date.parse(event.endTime);
+                    const endTimeMs = Date.parse(event.scheduledEndTime);
                     const msToEnd = endTimeMs - now;
                     roomDurationMinutes = Math.min(roomDurationMinutes, Math.max(1, Math.floor(msToEnd / (60 * 1000))));
                 }

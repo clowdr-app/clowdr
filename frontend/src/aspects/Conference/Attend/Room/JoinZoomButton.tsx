@@ -8,13 +8,13 @@ import { formatRemainingTime } from "./formatRemainingTime";
 
 export default function JoinZoomButton({
     zoomUrl,
-    startTime,
+    scheduledStartTime,
 }: {
     zoomUrl: {
         url: string;
         name: string;
     };
-    startTime?: number;
+    scheduledStartTime?: number;
 }): JSX.Element {
     const zoomButtonBgKeyframes = keyframes`
 0% {
@@ -30,7 +30,9 @@ export default function JoinZoomButton({
     const shadow = useColorModeValue("lg", "light-md");
 
     const now = useRealTime(1000);
-    const secondsTillStartStr = startTime ? formatRemainingTime((startTime - now) / 1000, false) : undefined;
+    const secondsTillStartStr = scheduledStartTime
+        ? formatRemainingTime((scheduledStartTime - now) / 1000, false)
+        : undefined;
 
     return (
         <ExternalLinkButton

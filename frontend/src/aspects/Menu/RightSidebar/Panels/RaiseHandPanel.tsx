@@ -31,7 +31,7 @@ export function RaiseHandPanel(): JSX.Element {
         userRole: Schedule_EventProgramPersonRole_Enum;
     } | null>(null);
     const [isBackstage, setIsBackstage] = useState<boolean>(false);
-    const [_startTimeOfNextBackstage, setStartTimeOfNextBackstage] = useState<number | null>(null);
+    const [_scheduledStartTimeOfNextBackstage, setStartTimeOfNextBackstage] = useState<number | null>(null);
     const [raisedHandUserIds, setRaisedHandUserIds] = useState<string[] | null>(null);
     const toast = useToast();
 
@@ -197,7 +197,7 @@ export function RaiseHandPanel(): JSX.Element {
             </VStack>
         );
     }
-    // else if (startTimeOfNextBackstage !== null) {
+    // else if (scheduledStartTimeOfNextBackstage !== null) {
     //     // RAISE_HAND_TODO: Show message explaining time until next backstage is available
     //     return <>Time until next backstage</>;
     // }

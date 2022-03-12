@@ -10,8 +10,8 @@ export interface OriginEndpoint {
 
 export async function createHarvestJob(
     mediaPackageChannelId: string,
-    startTime: string,
-    endTime: string
+    scheduledStartTime: string,
+    scheduledEndTime: string
 ): Promise<string> {
     const id = uuidv4();
 
@@ -37,8 +37,8 @@ export async function createHarvestJob(
     const originEndpoint = originEndpoints[0];
 
     const result = await MediaPackage.createHarvestJob({
-        EndTime: endTime,
-        StartTime: startTime,
+        EndTime: scheduledEndTime,
+        StartTime: scheduledStartTime,
         Id: id,
         OriginEndpointId: originEndpoint.Id,
         S3Destination: {

@@ -144,7 +144,10 @@ export default function EventBoxModal({
                             <Box mr={2}>
                                 <EventModeIcon
                                     mode={event0.modeName}
-                                    durationSeconds={event0.durationSeconds}
+                                    durationSeconds={Math.round(
+                                        (Date.parse(event0.scheduledEndTime) - Date.parse(event0.scheduledStartTime)) /
+                                            1000
+                                    )}
                                     fontSize="inherit"
                                 />
                             </Box>
@@ -251,18 +254,17 @@ export default function EventBoxModal({
                                         <GridItem>
                                             <EventModeIcon
                                                 mode={event.modeName}
-                                                durationSeconds={event.durationSeconds}
+                                                durationSeconds={Math.round(
+                                                    (Date.parse(event.scheduledEndTime) -
+                                                        Date.parse(event.scheduledStartTime)) /
+                                                        1000
+                                                )}
                                                 fontSize="inherit"
                                             />
                                         </GridItem>
                                         <GridItem>
                                             {format(new Date(event.scheduledStartTime), "HH:mm")} -{" "}
-                                            {format(
-                                                new Date(
-                                                    Date.parse(event.scheduledStartTime) + 1000 * event.durationSeconds
-                                                ),
-                                                "HH:mm"
-                                            )}
+                                            {format(new Date(event.scheduledEndTime), "HH:mm")}
                                         </GridItem>
                                         <Text whiteSpace="normal">{event.name}</Text>
                                     </>

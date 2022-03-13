@@ -154,20 +154,7 @@ function UrqlProviderInner({
                     //     schema: schema as any,
                     //     // storage,
                     //     resolvers: genericResolvers(
-                    //         {
-                    //             schedule_Event: {
-                    //                 scheduledEndTime: (data) =>
-                    //                     data.scheduledEndTime ??
-                    //                     (data.scheduledStartTime &&
-                    //                     data.durationSeconds !== null &&
-                    //                     data.durationSeconds !== undefined
-                    //                         ? new Date(
-                    //                               Date.parse(data.scheduledStartTime as string) +
-                    //                                   (data.durationSeconds as number) * 1000
-                    //                           ).toISOString()
-                    //                         : null),
-                    //             },
-                    //         },
+                    //         {},
                     //         schema as any,
                     //         augSchema as any
                     //     ),

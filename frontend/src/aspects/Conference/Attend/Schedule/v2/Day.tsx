@@ -41,6 +41,7 @@ gql`
                     { conferenceId: { _eq: $conferenceId } }
                     { scheduledStartTime: { _lt: $endOfDay } }
                     { scheduledEndTime: { _gt: $startOfDay } }
+                    { sessionEventId: { _is_null: true } }
                     $filter
                 ]
             }

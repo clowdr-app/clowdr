@@ -215,8 +215,8 @@ function EventBoxContents({
         [eventInfo.scheduledStartTime, timezone]
     );
     const endTimeDT = useMemo(
-        () => scheduledStartTimeDT.plus({ seconds: eventInfo.durationSeconds }),
-        [eventInfo.durationSeconds, scheduledStartTimeDT]
+        () => luxon.DateTime.fromISO(eventInfo.scheduledEndTime).setZone(timezone),
+        [eventInfo.scheduledEndTime, timezone]
     );
     const overlapsDayBoundary = useMemo(
         () => scheduledStartTimeDT.day !== endTimeDT.day,
@@ -236,7 +236,9 @@ function EventBoxContents({
                 <Text fontSize="sm" fontWeight="bold">
                     <EventModeIcon
                         mode={eventInfo.modeName}
-                        durationSeconds={eventInfo.durationSeconds}
+                        durationSeconds={Math.round(
+                            (Date.parse(eventInfo.scheduledEndTime) - Date.parse(eventInfo.scheduledStartTime)) / 1000
+                        )}
                         fontSize="inherit"
                     />
                 </Text>
@@ -245,7 +247,12 @@ function EventBoxContents({
                         hour: "numeric",
                         minute: "numeric",
                     })}{" "}
-                    for {Math.round(eventInfo.durationSeconds / 60)} minutes
+                    for{" "}
+                    {Math.round(
+                        (Date.parse(eventInfo.scheduledEndTime) - Date.parse(eventInfo.scheduledStartTime)) /
+                            (60 * 1000)
+                    )}{" "}
+                    minutes
                 </Text>
             </HStack>
             <Text fontSize="sm" fontWeight="bold" lineHeight="130%">

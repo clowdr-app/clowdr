@@ -61,7 +61,12 @@ const HlsPlayer = React.lazy(() => import("./Video/HlsPlayer"));
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) @cached {
         schedule_Event(
-            where: { roomId: { _eq: $roomId }, scheduledEndTime: { _gte: $now }, scheduledStartTime: { _lte: $cutoff } }
+            where: {
+                roomId: { _eq: $roomId }
+                sessionEventId: { _is_null: true }
+                scheduledEndTime: { _gte: $now }
+                scheduledStartTime: { _lte: $cutoff }
+            }
         ) {
             ...Room_EventSummary
         }

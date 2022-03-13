@@ -319,7 +319,7 @@ export class ScheduleSyncService {
 
     public async computeExpectedSchedule(roomId: string): Promise<LocalSchedule> {
         const initialSchedule = await this.localScheduleService.getScheduleData(roomId);
-        return await this.localScheduleService.ensureRtmpInputsAlternate(initialSchedule);
+        return this.localScheduleService.ensureRtmpInputsAlternate(initialSchedule);
     }
 
     public computeRequiredScheduleChanges(

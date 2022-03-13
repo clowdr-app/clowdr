@@ -1045,18 +1045,14 @@ export default function BatchAddEventPeople({
                     ? filteredByRoom.filter(
                           (event) =>
                               (!startsAfterTime || Date.parse(event.scheduledStartTime) >= startsAfterTime) &&
-                              (!endsBeforeTime ||
-                                  Date.parse(event.scheduledStartTime) + event.durationSeconds * 1000 <= endsBeforeTime)
+                              (!endsBeforeTime || Date.parse(event.scheduledEndTime) <= endsBeforeTime)
                       )
                     : filteredByRoom;
             setFilteredEvents(
                 R.sortWith(
                     [
                         (a, b) => Date.parse(a.scheduledStartTime) - Date.parse(b.scheduledStartTime),
-                        (a, b) =>
-                            Date.parse(a.scheduledStartTime) +
-                            a.durationSeconds * 1000 -
-                            (Date.parse(b.scheduledStartTime) + b.durationSeconds * 1000),
+                        (a, b) => Date.parse(a.scheduledEndTime) - Date.parse(b.scheduledEndTime),
                     ],
                     filteredByTime
                 )

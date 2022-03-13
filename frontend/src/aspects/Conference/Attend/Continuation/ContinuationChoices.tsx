@@ -50,6 +50,7 @@ gql`
                     {
                         scheduledStartTime: { _lte: $nowStart }
                         scheduledEndTime: { _gte: $nowEnd }
+                        sessionEventId: { _is_null: true }
                         shufflePeriodId: { _eq: $fromId }
                     }
                 ]

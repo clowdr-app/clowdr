@@ -145,7 +145,7 @@ gql`
         ) {
             ...Schedule_RoomSummary
         }
-        schedule_Event(where: { conferenceId: { _eq: $conferenceId } }) {
+        schedule_Event(where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }) {
             ...Schedule_EventSummary
         }
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -171,8 +171,7 @@ gql`
 
 type GroupableByTime<T> = T & {
     scheduledStartTimeMs: number;
-    endTimeMs: number;
-    durationMs: number;
+    scheduledEndTimeMs: number;
 };
 
 type Schedule_EventSummaryExt = GroupableByTime<Schedule_EventSummaryFragment>;
@@ -199,24 +198,22 @@ function recombineSessions(
         const roomIds = R.keys(groups);
         return {
             scheduledStartTimeMs: frame.scheduledStartTimeMs,
-            endTimeMs: frame.endTimeMs,
-            durationMs: frame.durationMs,
+            scheduledEndTimeMs: frame.scheduledEndTimeMs,
             items: roomIds.map((roomId) => {
                 const group = groups[roomId];
-                const { scheduledStartTimeMs, endTimeMs } = group.reduce(
+                const { scheduledStartTimeMs, scheduledEndTimeMs } = group.reduce(
                     (acc, session) => ({
                         scheduledStartTimeMs: Math.min(acc.scheduledStartTimeMs, session.scheduledStartTimeMs),
-                        endTimeMs: Math.max(acc.endTimeMs, session.endTimeMs),
+                        scheduledEndTimeMs: Math.max(acc.scheduledEndTimeMs, session.scheduledEndTimeMs),
                     }),
-                    { scheduledStartTimeMs: Number.POSITIVE_INFINITY, endTimeMs: Number.NEGATIVE_INFINITY }
+                    { scheduledStartTimeMs: Number.POSITIVE_INFINITY, scheduledEndTimeMs: Number.NEGATIVE_INFINITY }
                 );
 
                 const session: ColumnAssignedSession = {
                     column: -1,
                     session: {
                         scheduledStartTimeMs,
-                        endTimeMs,
-                        durationMs: endTimeMs - scheduledStartTimeMs,
+                        scheduledEndTimeMs,
                         roomId,
                         room: group[0].room,
                         events: R.sortBy(
@@ -253,36 +250,37 @@ function groupByTime<S, T extends GroupableByTime<S>>(
             // Save previous session
             if (session.length > 0) {
                 const scheduledStartTimeMs = session[0].scheduledStartTimeMs;
-                const endTimeMs = session.reduce(
-                    (acc, session) => Math.max(acc, session.endTimeMs),
+                const scheduledEndTimeMs = session.reduce(
+                    (acc, session) => Math.max(acc, session.scheduledEndTimeMs),
                     Number.NEGATIVE_INFINITY
                 );
                 result.push({
                     items: session,
                     scheduledStartTimeMs,
-                    endTimeMs,
-                    durationMs: endTimeMs - scheduledStartTimeMs,
+                    scheduledEndTimeMs,
                 });
             }
 
             // New session
             session = [event];
-            sessionEndTime = event.endTimeMs;
+            sessionEndTime = event.scheduledEndTimeMs;
         } else {
             // Add to current session
             session.push(event);
-            sessionEndTime = Math.max(sessionEndTime, event.endTimeMs);
+            sessionEndTime = Math.max(sessionEndTime, event.scheduledEndTimeMs);
         }
     }
     // Save last session
     if (session.length > 0) {
         const scheduledStartTimeMs = session[0].scheduledStartTimeMs;
-        const endTimeMs = session.reduce((acc, session) => Math.max(acc, session.endTimeMs), Number.NEGATIVE_INFINITY);
+        const scheduledEndTimeMs = session.reduce(
+            (acc, session) => Math.max(acc, session.scheduledEndTimeMs),
+            Number.NEGATIVE_INFINITY
+        );
         result.push({
             items: session,
             scheduledStartTimeMs,
-            endTimeMs,
-            durationMs: endTimeMs - scheduledStartTimeMs,
+            scheduledEndTimeMs,
         });
     }
 
@@ -539,12 +537,11 @@ export function ScheduleInner({
                 (x) => x.roomId,
                 R.map((event) => {
                     const scheduledStartTimeMs = Date.parse(event.scheduledStartTime);
-                    const durationMs = event.durationSeconds * 1000;
+                    const scheduledEndTimeMs = Date.parse(event.scheduledEndTime);
                     return {
                         ...event,
                         scheduledStartTimeMs,
-                        durationMs,
-                        endTimeMs: scheduledStartTimeMs + durationMs,
+                        scheduledEndTimeMs,
                     };
                 }, rawEvents)
             ),
@@ -566,8 +563,7 @@ export function ScheduleInner({
                         room,
                         events: group.items,
                         scheduledStartTimeMs: group.scheduledStartTimeMs,
-                        endTimeMs: group.endTimeMs,
-                        durationMs: group.durationMs,
+                        scheduledEndTimeMs: group.scheduledEndTimeMs,
                     }))
                 );
             } else {
@@ -580,8 +576,7 @@ export function ScheduleInner({
                         roomId,
                         events: group.items,
                         scheduledStartTimeMs: group.scheduledStartTimeMs,
-                        endTimeMs: group.endTimeMs,
-                        durationMs: group.durationMs,
+                        scheduledEndTimeMs: group.scheduledEndTimeMs,
                     }))
                 );
             }
@@ -613,7 +608,7 @@ export function ScheduleInner({
             const avgEventDurationI = frame.items.reduce(
                 (acc, item) =>
                     item.session.events.reduce((acc, event) => {
-                        acc.sum = acc.sum + event.durationMs;
+                        acc.sum = acc.sum + (event.scheduledEndTimeMs - event.scheduledStartTimeMs);
                         acc.count = acc.count + 1;
                         return acc;
                     }, acc),
@@ -636,7 +631,7 @@ export function ScheduleInner({
             return (
                 <TimelineParameters
                     earliestEventStart={frame.scheduledStartTimeMs}
-                    latestEventEnd={frame.endTimeMs}
+                    latestEventEnd={frame.scheduledEndTimeMs}
                     key={`frame-${frame.scheduledStartTimeMs}`}
                 >
                     <ScalingProvider avgEventDuration={avgEventDuration} avgEventsPerRoom={avgEventsPerRoom}>

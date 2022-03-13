@@ -83,7 +83,7 @@ export async function eventStarted(req: Request, res: Response, _next?: NextFunc
                                         event: {
                                             id: event.id,
                                             scheduledStartTime: event.scheduledStartTime,
-                                            durationSeconds: event.durationSeconds,
+                                            scheduledEndTime: event.scheduledEndTime,
                                             name: event.name,
                                         },
                                         room: {
@@ -151,7 +151,7 @@ export async function eventEnded(req: Request, res: Response, _next?: NextFuncti
                     ":" +
                     event.roomId +
                     "@" +
-                    new Date(Date.parse(event.scheduledStartTime) + event.durationSeconds * 1000).toISOString();
+                    event.scheduledEndTime.toISOString();
                 const redisClient = await redisClientPool.acquire("/http-handlers/chat/eventEnded");
                 try {
                     const systemIdsKey = `realtime:chat.${event.room.chatId}.recentSystemIdsSeen`;
@@ -178,7 +178,7 @@ export async function eventEnded(req: Request, res: Response, _next?: NextFuncti
                                         event: {
                                             id: event.id,
                                             scheduledStartTime: event.scheduledStartTime,
-                                            durationSeconds: event.durationSeconds,
+                                            scheduledEndTime: event.scheduledEndTime,
                                             name: event.name,
                                         },
                                         room: {

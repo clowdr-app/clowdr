@@ -9,7 +9,7 @@ import Schedule from "./Schedule";
 gql`
     query ScheduleV2_AllEvents_Params($conferenceId: uuid!) @cached {
         earliestStartingEvent: schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }
             limit: 1
             order_by: { scheduledStartTime: asc }
         ) {
@@ -18,7 +18,7 @@ gql`
             conferenceId
         }
         latestEndingEvent: schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }
             limit: 1
             order_by: { scheduledEndTime: desc }
         ) {

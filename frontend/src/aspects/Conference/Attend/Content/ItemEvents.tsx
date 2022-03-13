@@ -138,6 +138,7 @@ query ItemEvent_RoomNearbyEvents @cached {
             where: {
                 roomId: { _eq: "${roomId}" }
                 scheduledStartTime: { _lt: "${event.scheduledStartTime}" }
+                sessionEventId: { _is_null: true }
             }, 
             order_by: { scheduledStartTime: desc }, 
             limit: 3
@@ -147,9 +148,8 @@ query ItemEvent_RoomNearbyEvents @cached {
         Event_${index}_post: schedule_Event(
             where: {
                 roomId: { _eq: "${roomId}" }
-                scheduledEndTime: { _gt: "${new Date(
-                    Date.parse(event.scheduledStartTime) + 1000 * event.durationSeconds
-                ).toISOString()}" }
+                scheduledEndTime: { _gt: "${event.scheduledEndTime}" }
+                sessionEventId: { _is_null: true }
             }, 
             order_by: { scheduledStartTime: asc }, 
             limit: 3

@@ -48,9 +48,16 @@ export interface DuplicationMarkerMessageData extends BaseMessageData {
     type: "start" | "end";
     event: {
         id: string;
-        scheduledStartTime: number;
-        scheduledEndTime: number;
-    };
+    } & (
+        | {
+              startTime: number | string;
+              durationSeconds: number;
+          }
+        | {
+              scheduledStartTime?: number | string | null;
+              scheduledEndTime?: number | string | null;
+          }
+    );
     room: {
         id: string;
         name: string;
@@ -66,9 +73,16 @@ export interface DuplicationMarkerMessageData extends BaseMessageData {
 export interface EventStartData extends BaseMessageData {
     event: {
         id: string;
-        scheduledStartTime: number;
-        scheduledEndTime: number;
-    };
+    } & (
+        | {
+              startTime: number | string;
+              durationSeconds: number;
+          }
+        | {
+              scheduledStartTime?: number | string | null;
+              scheduledEndTime?: number | string | null;
+          }
+    );
     room: {
         id: string;
         name: string;
@@ -82,10 +96,17 @@ export interface EventStartData extends BaseMessageData {
 export interface ParticipationSurveyData extends BaseMessageData {
     event: {
         id: string;
-        scheduledStartTime: number;
-        scheduledEndTime: number;
         name: string;
-    };
+    } & (
+        | {
+              startTime: number | string;
+              durationSeconds: number;
+          }
+        | {
+              scheduledStartTime?: number | string | null;
+              scheduledEndTime?: number | string | null;
+          }
+    );
     room: {
         id: string;
         name: string;

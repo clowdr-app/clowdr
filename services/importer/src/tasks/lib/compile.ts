@@ -758,7 +758,6 @@ function generateEventEntities(
             conferenceId: context.conferenceId,
             subconferenceId: context.subconferenceId,
 
-            durationSeconds: event.duration * 60,
             enableRecording: true,
             exhibitionId: exhibitionOutputName ? composeOutputNames(exhibitionOutputName, "id") : undefined,
             modeName: modeMap[eventMode],
@@ -767,6 +766,7 @@ function generateEventEntities(
             roomId: composeOutputNames(roomOutputName, "id"),
             shufflePeriodId: shufflePeriodIdOutputName,
             scheduledStartTime: scheduledStartTime.toISOString(),
+            scheduledEndTime: new Date(scheduledStartTime.getTime() + event.duration * 60 * 1000).toISOString(),
         },
         ...[...(sessionChairs ? sessionChairs : []), ...event.chairs].map<Entity>((chair, idx) => ({
             __outputs: [

@@ -12,6 +12,7 @@ gql`
         schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
+                sessionEventId: { _is_null: true }
                 scheduledEndTime: { _gte: $now }
                 scheduledStartTime: { _lte: $cutoff }
             }

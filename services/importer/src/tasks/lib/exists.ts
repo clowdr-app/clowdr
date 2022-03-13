@@ -623,11 +623,7 @@ export async function entityExists(
             break;
         case "Event":
             {
-                const endTimeStr =
-                    data.value.scheduledEndTime ??
-                    new Date(
-                        Date.parse(data.value.scheduledStartTime) + data.value.durationSeconds! * 1000
-                    ).toISOString();
+                const endTimeStr = data.value.scheduledEndTime ?? new Date(data.value.scheduledEndTime).toISOString();
                 const response = await gqlClient
                     ?.query<ExistingSchedule_EventQuery, ExistingSchedule_EventQueryVariables>(
                         ExistingSchedule_EventDocument,

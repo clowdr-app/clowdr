@@ -14,6 +14,7 @@ gql`
                 conferenceId: { _eq: $conferenceId }
                 scheduledStartTime: { _lte: $startBefore }
                 scheduledEndTime: { _gte: $endAfter }
+                sessionEventId: { _is_null: true }
             }
         ) {
             ...Schedule_EventSummary

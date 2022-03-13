@@ -36,7 +36,7 @@ export default function EventBox({
     const eventStartMs = useMemo(() => Date.parse(event.scheduledStartTime), [event.scheduledStartTime]);
     const durationSeconds = useMemo(() => {
         const lastEvent = sortedEvents[sortedEvents.length - 1];
-        return (Date.parse(lastEvent.scheduledStartTime) + lastEvent.durationSeconds * 1000 - eventStartMs) / 1000;
+        return (Date.parse(lastEvent.scheduledEndTime) - eventStartMs) / 1000;
     }, [eventStartMs, sortedEvents]);
 
     const timelineParams = useTimelineParameters();
@@ -72,7 +72,9 @@ export default function EventBox({
                                     <EventModeIcon
                                         key={idx}
                                         mode={ev.modeName}
-                                        durationSeconds={ev.durationSeconds}
+                                        durationSeconds={Math.round(
+                                            (Date.parse(ev.scheduledEndTime) - Date.parse(ev.scheduledStartTime)) / 1000
+                                        )}
                                         fontSize="inherit"
                                     />
                                 ))

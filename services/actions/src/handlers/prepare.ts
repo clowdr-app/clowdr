@@ -243,7 +243,11 @@ async function createEventVonageSessionsBroadcastItems(logger: P.Logger, confere
     gql`
         query GetEventsWithoutVonageSession($conferenceId: uuid!) {
             schedule_Event(
-                where: { conferenceId: { _eq: $conferenceId }, _and: { _not: { eventVonageSession: {} } } }
+                where: {
+                    conferenceId: { _eq: $conferenceId }
+                    modeName: { _eq: LIVESTREAM }
+                    _not: { eventVonageSession: {} }
+                }
             ) {
                 id
             }

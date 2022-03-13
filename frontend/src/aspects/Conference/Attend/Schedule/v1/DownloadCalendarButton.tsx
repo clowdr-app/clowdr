@@ -30,9 +30,7 @@ const DownloadCalendarButton = React.forwardRef<HTMLButtonElement, Props>(functi
             onClick={() => {
                 const convertedEvents: EventAttributes[] = events().map((event) => {
                     const scheduledStartTime = new Date(event.scheduledStartTime);
-                    const scheduledEndTime = new Date(
-                        Date.parse(event.scheduledStartTime) + event.durationSeconds * 1000
-                    );
+                    const scheduledEndTime = new Date(event.scheduledEndTime);
                     return {
                         uid: event.id + "@" + window.location.hostname,
                         title: event.item ? `${event.item.title} (${event.name})` : event.name,

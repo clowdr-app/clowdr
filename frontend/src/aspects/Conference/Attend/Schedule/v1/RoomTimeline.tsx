@@ -67,11 +67,7 @@ function RoomTimelineInner({
                 !compareEvent ||
                 (compareEvent.item &&
                     compareEvent.item.id === event.item?.id &&
-                    Math.abs(
-                        Date.parse(event.scheduledStartTime) -
-                            (Date.parse(compareEvent.scheduledStartTime) + compareEvent.durationSeconds * 1000)
-                    ) <
-                        1000 * 330)
+                    Date.parse(event.scheduledStartTime) - Date.parse(compareEvent.scheduledEndTime) < 1000 * 330)
             ) {
                 currentEventsGroup.push(event);
             } else {

@@ -110,7 +110,13 @@ export class LocalScheduleService {
     public async getScheduleData(roomId: string): Promise<LocalSchedule> {
         gql`
             query LocalSchedule_GetSchedule($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
-                schedule_Event(where: { roomId: { _eq: $roomId }, scheduledEndTime: { _gte: $now, _lt: $cutoff } }) {
+                schedule_Event(
+                    where: {
+                        roomId: { _eq: $roomId }
+                        modeName: { _eq: LIVESTREAM }
+                        scheduledEndTime: { _gte: $now, _lt: $cutoff }
+                    }
+                ) {
                     ...LocalSchedule_EventDetails
                 }
                 room_Room_by_pk(id: $roomId) {

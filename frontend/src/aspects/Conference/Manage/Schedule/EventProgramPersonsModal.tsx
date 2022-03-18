@@ -89,6 +89,7 @@ gql`
         shufflePeriodId
         enableRecording
         automaticParticipationSurvey
+        autoPlayElementId
     }
 
     fragment EventProgramPersonInfo on schedule_EventProgramPerson {

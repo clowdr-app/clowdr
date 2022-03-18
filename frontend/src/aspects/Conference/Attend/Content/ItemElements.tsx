@@ -142,7 +142,7 @@ export function ItemElements({
 
     const zoomDetailsEls = useMemo(() => {
         return itemData.elements
-            .filter((element) => element.typeName === Content_ElementType_Enum.Zoom)
+            .filter((element) => element.typeName === Content_ElementType_Enum.ExternalEventLink)
             .sort((x, y) =>
                 maybeCompare(
                     (x.layoutData as LayoutDataBlob | undefined)?.priority,
@@ -182,7 +182,7 @@ export function ItemElements({
                 element.typeName !== Content_ElementType_Enum.PaperUrl &&
                 element.typeName !== Content_ElementType_Enum.PaperLink &&
                 element.typeName !== Content_ElementType_Enum.PaperFile &&
-                element.typeName !== Content_ElementType_Enum.Zoom
+                element.typeName !== Content_ElementType_Enum.ExternalEventLink
             ) {
                 if (
                     dontFilterOutVideos ||

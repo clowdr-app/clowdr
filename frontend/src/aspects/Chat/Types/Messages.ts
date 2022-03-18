@@ -48,6 +48,7 @@ export interface DuplicationMarkerMessageData extends BaseMessageData {
     type: "start" | "end";
     event: {
         id: string;
+        name: string;
     } & (
         | {
               startTime: number | string;
@@ -73,6 +74,7 @@ export interface DuplicationMarkerMessageData extends BaseMessageData {
 export interface EventStartData extends BaseMessageData {
     event: {
         id: string;
+        name: string;
     } & (
         | {
               startTime: number | string;

@@ -150,13 +150,13 @@ function ItemTile({
     const liveRoomUrl = liveEvent ? `${conferencePath}/room/${liveEvent.roomId}` : undefined;
 
     const discussionRoomUrl = item.discussionRoom ? `${conferencePath}/room/${item.discussionRoom.id}` : undefined;
-    const zoomInfo = useMemo(() => {
+    const externalEventInfo = useMemo(() => {
         if (discussionRoomUrl) {
             return undefined;
         }
 
         const element = item.elements.find((x) => {
-            if (x.typeName === Content_ElementType_Enum.Zoom) {
+            if (x.typeName === Content_ElementType_Enum.ExternalEventLink) {
                 const dataBlob = x.data as ElementDataBlob;
                 if (dataBlob.length) {
                     const latestVersion: ElementBlob = dataBlob[dataBlob.length - 1].data;
@@ -238,11 +238,15 @@ function ItemTile({
                         <PageCountText path={discussionRoomUrl} fontSize="inherit" />
                     </LinkButton>
                 ) : undefined}
-                {zoomInfo ? (
-                    <ExternalLinkButton colorScheme="PrimaryActionButton" to={zoomInfo.url} textDecoration="none">
+                {externalEventInfo ? (
+                    <ExternalLinkButton
+                        colorScheme="PrimaryActionButton"
+                        to={externalEventInfo.url}
+                        textDecoration="none"
+                    >
                         <FAIcon iconStyle="s" icon="video" mr={2} />
                         <Text as="span" ml={1} mr={2}>
-                            Join in {zoomInfo.name}
+                            Join in {externalEventInfo.name}
                         </Text>
                     </ExternalLinkButton>
                 ) : undefined}

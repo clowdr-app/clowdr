@@ -293,8 +293,10 @@ export async function handleVonageArchiveMonitoringWebhook(
                 const source: SourceBlob = {
                     source: SourceType.EventRecording,
                     eventId: eventId,
-                    scheduledStartTimeMillis: Date.parse(event.scheduledStartTime),
-                    durationSeconds: event.durationSeconds,
+                    startTimeMillis: Date.parse(event.scheduledStartTime),
+                    durationSeconds: Math.round(
+                        (Date.parse(event.scheduledEndTime) - Date.parse(event.scheduledStartTime)) / 1000
+                    ),
                 };
 
                 const data: ElementDataBlob = [

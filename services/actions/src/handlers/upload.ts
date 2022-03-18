@@ -136,7 +136,7 @@ async function createBlob(
         case Content_ElementType_Enum.PaperUrl:
         case Content_ElementType_Enum.PosterUrl:
         case Content_ElementType_Enum.VideoUrl:
-        case Content_ElementType_Enum.Zoom:
+        case Content_ElementType_Enum.ExternalEventLink:
             if (!inputData.url) {
                 return { error: "No URL supplied" };
             }

@@ -73,17 +73,19 @@ insert_permissions:
         - subconferenceId:
             _is_null: true
     columns:
+    - autoPlayElementId
     - automaticParticipationSurvey
     - conferenceId
     - enableRecording
-    - scheduledEndTime
     - exhibitionId
     - id
     - itemId
     - modeName
     - name
     - roomId
+    - scheduledEndTime
     - scheduledStartTime
+    - sessionEventId
     - shufflePeriodId
     - streamTextEventId
     - subconferenceId
@@ -101,18 +103,20 @@ insert_permissions:
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
     columns:
+    - autoPlayElementId
     - automaticParticipationSurvey
     - conferenceId
     - enableRecording
-    - scheduledEndTime
     - exhibitionId
     - id
-    - modeName
     - itemId
+    - modeName
     - name
     - roomId
-    - shufflePeriodId
+    - scheduledEndTime
     - scheduledStartTime
+    - sessionEventId
+    - shufflePeriodId
     - streamTextEventId
     - subconferenceId
     - visibilityLevel
@@ -120,18 +124,21 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
+    - autoPlayElementId
+    - automaticParticipationSurvey
     - conferenceId
     - created_at
     - enableRecording
-    - scheduledEndTime
     - exhibitionId
     - id
-    - modeName
     - itemId
+    - modeName
     - name
     - roomId
-    - shufflePeriodId
+    - scheduledEndTime
     - scheduledStartTime
+    - sessionEventId
+    - shufflePeriodId
     - streamTextEventId
     - subconferenceId
     - updated_at
@@ -158,19 +165,21 @@ select_permissions:
   role: attendee
 - permission:
     columns:
+    - autoPlayElementId
     - automaticParticipationSurvey
     - conferenceId
     - created_at
     - enableRecording
-    - scheduledEndTime
     - exhibitionId
     - id
-    - modeName
     - itemId
+    - modeName
     - name
     - roomId
-    - shufflePeriodId
+    - scheduledEndTime
     - scheduledStartTime
+    - sessionEventId
+    - shufflePeriodId
     - streamTextEventId
     - subconferenceId
     - updated_at
@@ -187,19 +196,21 @@ select_permissions:
   role: conference-organizer
 - permission:
     columns:
+    - autoPlayElementId
     - automaticParticipationSurvey
     - conferenceId
     - created_at
     - enableRecording
-    - scheduledEndTime
     - exhibitionId
     - id
-    - modeName
     - itemId
+    - modeName
     - name
     - roomId
-    - shufflePeriodId
+    - scheduledEndTime
     - scheduledStartTime
+    - sessionEventId
+    - shufflePeriodId
     - streamTextEventId
     - subconferenceId
     - updated_at
@@ -220,15 +231,16 @@ select_permissions:
     columns:
     - conferenceId
     - created_at
-    - scheduledEndTime
     - exhibitionId
     - id
-    - modeName
     - itemId
+    - modeName
     - name
     - roomId
-    - shufflePeriodId
+    - scheduledEndTime
     - scheduledStartTime
+    - sessionEventId
+    - shufflePeriodId
     - subconferenceId
     - updated_at
     - visibilityLevel
@@ -256,16 +268,18 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - autoPlayElementId
     - automaticParticipationSurvey
     - enableRecording
-    - scheduledEndTime
     - exhibitionId
-    - modeName
     - itemId
+    - modeName
     - name
     - roomId
-    - shufflePeriodId
+    - scheduledEndTime
     - scheduledStartTime
+    - sessionEventId
+    - shufflePeriodId
     - streamTextEventId
     - visibilityLevel
     filter:
@@ -279,16 +293,18 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - autoPlayElementId
     - automaticParticipationSurvey
     - enableRecording
-    - scheduledEndTime
     - exhibitionId
-    - modeName
     - itemId
+    - modeName
     - name
     - roomId
-    - shufflePeriodId
+    - scheduledEndTime
     - scheduledStartTime
+    - sessionEventId
+    - shufflePeriodId
     - streamTextEventId
     - visibilityLevel
     filter:

@@ -83,7 +83,7 @@ function ElementInner({
                         <Markdown>{latestVersion.data.text}</Markdown>
                     </Container>
                 );
-            case Content_ElementType_Enum.Zoom:
+            case Content_ElementType_Enum.ExternalEventLink:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
                         Go to {name}

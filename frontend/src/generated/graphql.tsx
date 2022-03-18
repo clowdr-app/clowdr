@@ -46297,6 +46297,7 @@ export type EventInfoFragment = {
     readonly shufflePeriodId?: any | null;
     readonly enableRecording: boolean;
     readonly automaticParticipationSurvey: boolean;
+    readonly autoPlayElementId?: any | null;
     readonly eventPeople: ReadonlyArray<{
         readonly __typename?: "schedule_EventProgramPerson";
         readonly id: any;
@@ -46511,6 +46512,7 @@ export type SelectWholeScheduleQuery = {
         readonly shufflePeriodId?: any | null;
         readonly enableRecording: boolean;
         readonly automaticParticipationSurvey: boolean;
+        readonly autoPlayElementId?: any | null;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -46615,19 +46617,7 @@ export type ShufflePeriodInfoFragment = {
 };
 
 export type InsertEventInfoMutationVariables = Exact<{
-    id: Scalars["uuid"];
-    roomId: Scalars["uuid"];
-    conferenceId: Scalars["uuid"];
-    modeName: Schedule_Mode_Enum;
-    name: Scalars["String"];
-    scheduledStartTime: Scalars["timestamptz"];
-    scheduledEndTime: Scalars["timestamptz"];
-    itemId?: InputMaybe<Scalars["uuid"]>;
-    exhibitionId?: InputMaybe<Scalars["uuid"]>;
-    shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    insertContinuation: Scalars["Boolean"];
-    enableRecording: Scalars["Boolean"];
-    automaticParticipationSurvey: Scalars["Boolean"];
+    object: Schedule_Event_Insert_Input;
 }>;
 
 export type InsertEventInfoMutation = {
@@ -46646,6 +46636,7 @@ export type InsertEventInfoMutation = {
         readonly shufflePeriodId?: any | null;
         readonly enableRecording: boolean;
         readonly automaticParticipationSurvey: boolean;
+        readonly autoPlayElementId?: any | null;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -46654,24 +46645,11 @@ export type InsertEventInfoMutation = {
             readonly personId: any;
         }>;
     } | null;
-    readonly insert_schedule_Continuation_one?: {
-        readonly __typename?: "schedule_Continuation";
-        readonly id: any;
-    } | null;
 };
 
 export type UpdateEventInfoMutationVariables = Exact<{
     eventId: Scalars["uuid"];
-    roomId: Scalars["uuid"];
-    modeName: Schedule_Mode_Enum;
-    name: Scalars["String"];
-    scheduledStartTime: Scalars["timestamptz"];
-    scheduledEndTime: Scalars["timestamptz"];
-    itemId?: InputMaybe<Scalars["uuid"]>;
-    exhibitionId?: InputMaybe<Scalars["uuid"]>;
-    shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
-    enableRecording: Scalars["Boolean"];
-    automaticParticipationSurvey: Scalars["Boolean"];
+    set: Schedule_Event_Set_Input;
 }>;
 
 export type UpdateEventInfoMutation = {
@@ -46690,6 +46668,7 @@ export type UpdateEventInfoMutation = {
         readonly shufflePeriodId?: any | null;
         readonly enableRecording: boolean;
         readonly automaticParticipationSurvey: boolean;
+        readonly autoPlayElementId?: any | null;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
@@ -49958,6 +49937,7 @@ export const EventInfoFragmentDoc = gql`
         shufflePeriodId
         enableRecording
         automaticParticipationSurvey
+        autoPlayElementId
     }
     ${EventProgramPersonInfoFragmentDoc}
 `;
@@ -50632,6 +50612,7 @@ export const ContinuationChoices_ContinuationsDocument = gql`
                     {
                         scheduledStartTime: { _lte: $nowStart }
                         scheduledEndTime: { _gte: $nowEnd }
+                        sessionEventId: { _is_null: true }
                         shufflePeriodId: { _eq: $fromId }
                     }
                 ]
@@ -50928,7 +50909,12 @@ export function useRemoveRegistrantFromRoomMutation() {
 export const Room_GetEventsDocument = gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) @cached {
         schedule_Event(
-            where: { roomId: { _eq: $roomId }, scheduledEndTime: { _gte: $now }, scheduledStartTime: { _lte: $cutoff } }
+            where: {
+                roomId: { _eq: $roomId }
+                sessionEventId: { _is_null: true }
+                scheduledEndTime: { _gte: $now }
+                scheduledStartTime: { _lte: $cutoff }
+            }
         ) {
             ...Room_EventSummary
         }
@@ -51549,6 +51535,7 @@ export const Schedule_HappeningSoonDocument = gql`
                 conferenceId: { _eq: $conferenceId }
                 scheduledStartTime: { _lte: $startBefore }
                 scheduledEndTime: { _gte: $endAfter }
+                sessionEventId: { _is_null: true }
             }
         ) {
             ...Schedule_EventSummary
@@ -51644,7 +51631,7 @@ export const Schedule_SelectSummariesDocument = gql`
         ) {
             ...Schedule_RoomSummary
         }
-        schedule_Event(where: { conferenceId: { _eq: $conferenceId } }) {
+        schedule_Event(where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }) {
             ...Schedule_EventSummary
         }
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -51702,6 +51689,7 @@ export const ScheduleV2_DayLightweightEventsDocument = gql`
                     { conferenceId: { _eq: $conferenceId } }
                     { scheduledStartTime: { _lt: $endOfDay } }
                     { scheduledEndTime: { _gt: $startOfDay } }
+                    { sessionEventId: { _is_null: true } }
                     $filter
                 ]
             }
@@ -51761,7 +51749,7 @@ export function useScheduleV2_TagsQuery(options: Omit<Urql.UseQueryArgs<Schedule
 export const ScheduleV2_AllEvents_ParamsDocument = gql`
     query ScheduleV2_AllEvents_Params($conferenceId: uuid!) @cached {
         earliestStartingEvent: schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }
             limit: 1
             order_by: { scheduledStartTime: asc }
         ) {
@@ -51770,7 +51758,7 @@ export const ScheduleV2_AllEvents_ParamsDocument = gql`
             conferenceId
         }
         latestEndingEvent: schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }
             limit: 1
             order_by: { scheduledEndTime: desc }
         ) {
@@ -54706,51 +54694,9 @@ export function useManageSchedule_ShufflePeriodsQuery(
     });
 }
 export const InsertEventInfoDocument = gql`
-    mutation InsertEventInfo(
-        $id: uuid!
-        $roomId: uuid!
-        $conferenceId: uuid!
-        $modeName: schedule_Mode_enum!
-        $name: String!
-        $scheduledStartTime: timestamptz!
-        $scheduledEndTime: timestamptz!
-        $itemId: uuid = null
-        $exhibitionId: uuid = null
-        $shufflePeriodId: uuid = null
-        $insertContinuation: Boolean!
-        $enableRecording: Boolean!
-        $automaticParticipationSurvey: Boolean!
-    ) {
-        insert_schedule_Event_one(
-            object: {
-                id: $id
-                roomId: $roomId
-                conferenceId: $conferenceId
-                modeName: $modeName
-                name: $name
-                scheduledStartTime: $scheduledStartTime
-                scheduledEndTime: $scheduledEndTime
-                itemId: $itemId
-                exhibitionId: $exhibitionId
-                shufflePeriodId: $shufflePeriodId
-                enableRecording: $enableRecording
-                automaticParticipationSurvey: $automaticParticipationSurvey
-            }
-        ) {
+    mutation InsertEventInfo($object: schedule_Event_insert_input!) {
+        insert_schedule_Event_one(object: $object) {
             ...EventInfo
-        }
-        insert_schedule_Continuation_one(
-            object: {
-                colour: "#4471de"
-                defaultFor: "Presenters"
-                description: "Join the discussion room"
-                fromEvent: $id
-                isActiveChoice: false
-                priority: 0
-                to: { type: "AutoDiscussionRoom", id: null }
-            }
-        ) @include(if: $insertContinuation) {
-            id
         }
     }
     ${EventInfoFragmentDoc}
@@ -54760,34 +54706,8 @@ export function useInsertEventInfoMutation() {
     return Urql.useMutation<InsertEventInfoMutation, InsertEventInfoMutationVariables>(InsertEventInfoDocument);
 }
 export const UpdateEventInfoDocument = gql`
-    mutation UpdateEventInfo(
-        $eventId: uuid!
-        $roomId: uuid!
-        $modeName: schedule_Mode_enum!
-        $name: String!
-        $scheduledStartTime: timestamptz!
-        $scheduledEndTime: timestamptz!
-        $itemId: uuid = null
-        $exhibitionId: uuid = null
-        $shufflePeriodId: uuid = null
-        $enableRecording: Boolean!
-        $automaticParticipationSurvey: Boolean!
-    ) {
-        update_schedule_Event_by_pk(
-            pk_columns: { id: $eventId }
-            _set: {
-                roomId: $roomId
-                modeName: $modeName
-                name: $name
-                scheduledStartTime: $scheduledStartTime
-                scheduledEndTime: $scheduledEndTime
-                itemId: $itemId
-                exhibitionId: $exhibitionId
-                shufflePeriodId: $shufflePeriodId
-                enableRecording: $enableRecording
-                automaticParticipationSurvey: $automaticParticipationSurvey
-            }
-        ) {
+    mutation UpdateEventInfo($eventId: uuid!, $set: schedule_Event_set_input!) {
+        update_schedule_Event_by_pk(pk_columns: { id: $eventId }, _set: $set) {
             ...EventInfo
         }
     }
@@ -55142,6 +55062,7 @@ export const GetEventsInNextHourDocument = gql`
         schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
+                sessionEventId: { _is_null: true }
                 scheduledEndTime: { _gte: $now }
                 scheduledStartTime: { _lte: $cutoff }
             }

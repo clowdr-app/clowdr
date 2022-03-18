@@ -54,7 +54,7 @@ export default function Backstages({
     const sortedEvents = useMemo(
         () =>
             R.sortWith(
-                [R.ascend(R.prop("scheduledStartTime"))],
+                [R.ascend((x) => x.scheduledStartTime ?? Number.POSITIVE_INFINITY)],
                 roomEvents.filter((event) => Schedule_Mode_Enum.Livestream === event.modeName)
             ),
         [roomEvents]

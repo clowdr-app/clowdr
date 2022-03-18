@@ -33,6 +33,7 @@ export interface LocalScheduleAction {
     videoData: VideoBroadcastBlob | null;
     scheduledStartTime: number;
     scheduledEndTime: number;
+    autoPlayElementId: string | null;
     sequenceNumber?: number;
 }
 
@@ -84,6 +85,7 @@ export class LocalScheduleService {
             videoData,
             scheduledStartTime: Date.parse(event.scheduledStartTime),
             scheduledEndTime: Date.parse(event.scheduledEndTime ?? event.scheduledStartTime),
+            autoPlayElementId: event.autoPlayElementId,
         };
     }
 
@@ -142,6 +144,7 @@ export class LocalScheduleService {
                 }
                 scheduledEndTime
                 scheduledStartTime
+                autoPlayElementId
                 eventVonageSession {
                     id
                     rtmpInputName

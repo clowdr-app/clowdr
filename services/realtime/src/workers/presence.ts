@@ -9,7 +9,10 @@ async function processKeys(redisClient: RedisClient, keys: string[]) {
         try {
             await maintainPresenceList(redisClient, key);
         } catch (error: any) {
-            logger.error({ error, listKey: key }, "SEVERE ERROR: Cannot maintain one of the presence lists!");
+            logger.error(
+                { error, errorMsg: error.toString(), listKey: key },
+                "SEVERE ERROR: Cannot maintain one of the presence lists!"
+            );
         }
     }
 }

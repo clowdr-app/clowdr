@@ -228,82 +228,14 @@ gql`
         endAt
     }
 
-    mutation InsertEventInfo(
-        $id: uuid!
-        $roomId: uuid!
-        $conferenceId: uuid!
-        $modeName: schedule_Mode_enum!
-        $name: String!
-        $scheduledStartTime: timestamptz!
-        $scheduledEndTime: timestamptz!
-        $itemId: uuid = null
-        $exhibitionId: uuid = null
-        $shufflePeriodId: uuid = null
-        $insertContinuation: Boolean!
-        $enableRecording: Boolean!
-        $automaticParticipationSurvey: Boolean!
-    ) {
-        insert_schedule_Event_one(
-            object: {
-                id: $id
-                roomId: $roomId
-                conferenceId: $conferenceId
-                modeName: $modeName
-                name: $name
-                scheduledStartTime: $scheduledStartTime
-                scheduledEndTime: $scheduledEndTime
-                itemId: $itemId
-                exhibitionId: $exhibitionId
-                shufflePeriodId: $shufflePeriodId
-                enableRecording: $enableRecording
-                automaticParticipationSurvey: $automaticParticipationSurvey
-            }
-        ) {
+    mutation InsertEventInfo($object: schedule_Event_insert_input!) {
+        insert_schedule_Event_one(object: $object) {
             ...EventInfo
-        }
-        insert_schedule_Continuation_one(
-            object: {
-                colour: "#4471de"
-                defaultFor: "Presenters"
-                description: "Join the discussion room"
-                fromEvent: $id
-                isActiveChoice: false
-                priority: 0
-                to: { type: "AutoDiscussionRoom", id: null }
-            }
-        ) @include(if: $insertContinuation) {
-            id
         }
     }
 
-    mutation UpdateEventInfo(
-        $eventId: uuid!
-        $roomId: uuid!
-        $modeName: schedule_Mode_enum!
-        $name: String!
-        $scheduledStartTime: timestamptz!
-        $scheduledEndTime: timestamptz!
-        $itemId: uuid = null
-        $exhibitionId: uuid = null
-        $shufflePeriodId: uuid = null
-        $enableRecording: Boolean!
-        $automaticParticipationSurvey: Boolean!
-    ) {
-        update_schedule_Event_by_pk(
-            pk_columns: { id: $eventId }
-            _set: {
-                roomId: $roomId
-                modeName: $modeName
-                name: $name
-                scheduledStartTime: $scheduledStartTime
-                scheduledEndTime: $scheduledEndTime
-                itemId: $itemId
-                exhibitionId: $exhibitionId
-                shufflePeriodId: $shufflePeriodId
-                enableRecording: $enableRecording
-                automaticParticipationSurvey: $automaticParticipationSurvey
-            }
-        ) {
+    mutation UpdateEventInfo($eventId: uuid!, $set: schedule_Event_set_input!) {
+        update_schedule_Event_by_pk(pk_columns: { id: $eventId }, _set: $set) {
             ...EventInfo
         }
     }
@@ -532,7 +464,9 @@ function EditableScheduleTable(): JSX.Element {
                     const start = staleRecord.scheduledStartTime
                         ? Date.parse(staleRecord.scheduledStartTime)
                         : Date.now();
-                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
+                    const end = staleRecord.scheduledEndTime
+                        ? Date.parse(staleRecord.scheduledEndTime)
+                        : start + 1000 * 300;
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end) && !allowOngoingEventCreation;
@@ -575,14 +509,11 @@ function EditableScheduleTable(): JSX.Element {
                     );
                 },
                 get: (record) =>
-                    record.scheduledStartTime
-                        ? new Date(Date.parse(record.scheduledStartTime) + 1000 * (record.durationSeconds ?? 300))
-                        : new Date(Date.now() + 1000 * (record.durationSeconds ?? 300)),
+                    record.scheduledEndTime
+                        ? new Date(record.scheduledEndTime)
+                        : new Date(Date.parse(record.scheduledStartTime) + 1000 * 300),
                 set: (record, v: Date) => {
-                    const start = record.scheduledStartTime
-                        ? Date.parse(record.scheduledStartTime as unknown as string)
-                        : Date.now();
-                    record.durationSeconds = Math.max(60, Math.round((v.getTime() - start) / 1000));
+                    record.scheduledEndTime = v.toISOString();
                 },
                 filterFn: dateTimeFilterFn(["scheduledEndTime"]),
                 filterEl: DateTimeColumnFilter,
@@ -599,7 +530,9 @@ function EditableScheduleTable(): JSX.Element {
                     const start = staleRecord.scheduledStartTime
                         ? Date.parse(staleRecord.scheduledStartTime)
                         : Date.now();
-                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
+                    const end = staleRecord.scheduledEndTime
+                        ? Date.parse(staleRecord.scheduledEndTime)
+                        : start + 1000 * 300;
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing =
@@ -677,7 +610,9 @@ function EditableScheduleTable(): JSX.Element {
                     const start = staleRecord.scheduledStartTime
                         ? Date.parse(staleRecord.scheduledStartTime)
                         : Date.now();
-                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
+                    const end = staleRecord.scheduledEndTime
+                        ? Date.parse(staleRecord.scheduledEndTime)
+                        : start + 1000 * 300;
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end) && !allowOngoingEventCreation;
@@ -757,7 +692,9 @@ function EditableScheduleTable(): JSX.Element {
                     const start = staleRecord.scheduledStartTime
                         ? Date.parse(staleRecord.scheduledStartTime)
                         : Date.now();
-                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
+                    const end = staleRecord.scheduledEndTime
+                        ? Date.parse(staleRecord.scheduledEndTime)
+                        : start + 1000 * 300;
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end) && !allowOngoingEventCreation;
@@ -888,7 +825,9 @@ function EditableScheduleTable(): JSX.Element {
                     const start = staleRecord.scheduledStartTime
                         ? Date.parse(staleRecord.scheduledStartTime)
                         : Date.now();
-                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
+                    const end = staleRecord.scheduledEndTime
+                        ? Date.parse(staleRecord.scheduledEndTime)
+                        : start + 1000 * 300;
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end) && !allowOngoingEventCreation;
@@ -1211,13 +1150,13 @@ function EditableScheduleTable(): JSX.Element {
             warning: (record) => rowWarning(record),
             invalid: (record, isNew, dependentData) => {
                 const start = record.scheduledStartTime ? Date.parse(record.scheduledStartTime) : Date.now();
-                const end = start + 1000 * (record.durationSeconds ?? 300);
+                const end = record.scheduledEndTime ? Date.parse(record.scheduledEndTime) : start + 1000 * 300;
                 const now = Date.now();
                 const startLeeway = 9.9 * 60 * 1000;
                 const endLeeway = 4 * 60 * 1000;
                 const ongoing = isOngoing(now, startLeeway, endLeeway, start, end) && !allowOngoingEventCreation;
                 const past = end < now - endLeeway;
-                const isLivestream = record.modeName ? liveStreamRoomModes.includes(record.modeName) : false;
+                const isLivestream = record.modeName === Schedule_Mode_Enum.Livestream;
                 if (isNew && isLivestream && (ongoing || past)) {
                     return {
                         reason: "Cannot create a livestream event that is already ongoing or in the past.",
@@ -1254,7 +1193,7 @@ function EditableScheduleTable(): JSX.Element {
             },
             canSelect: (record) => {
                 const start = record.scheduledStartTime ? Date.parse(record.scheduledStartTime) : Date.now();
-                const end = start + 1000 * (record.durationSeconds ?? 300);
+                const end = record.scheduledEndTime ? Date.parse(record.scheduledEndTime) : start + 1000 * 300;
                 const now = Date.now();
                 const startLeeway = 5 * 60 * 1000;
                 const endLeeway = 4 * 60 * 1000;
@@ -1264,7 +1203,7 @@ function EditableScheduleTable(): JSX.Element {
             },
             canDelete: (record) => {
                 const start = record.scheduledStartTime ? Date.parse(record.scheduledStartTime) : Date.now();
-                const end = start + 1000 * (record.durationSeconds ?? 300);
+                const end = record.scheduledEndTime ? Date.parse(record.scheduledEndTime) : start + 1000 * 300;
                 const now = Date.now();
                 const startLeeway = 5 * 60 * 1000;
                 const endLeeway = 4 * 60 * 1000;
@@ -1328,7 +1267,6 @@ function EditableScheduleTable(): JSX.Element {
                       ongoing: insertEventResponse.fetching,
                       generateDefaults: () => ({
                           id: uuidv4(),
-                          durationSeconds: 300,
                           conferenceId: conference.id,
                           modeName: Schedule_Mode_Enum.VideoChat,
                           name: "Innominate event",
@@ -1342,19 +1280,55 @@ function EditableScheduleTable(): JSX.Element {
                                   milliseconds: 1,
                               })
                               .toISO(),
+                          scheduledEndTime: DateTime.local()
+                              .plus({
+                                  minutes: 10,
+                              })
+                              .endOf("hour")
+                              .plus({
+                                  minutes: 5,
+                              })
+                              .toISO(),
                           itemId: null,
                           exhibitionId: null,
                           shufflePeriodId: null,
                           enableRecording: true,
                           automaticParticipationSurvey: false,
+                          autoPlayElementId: null,
                       }),
                       makeWhole: (d) => d as EventInfoFragment,
                       start: (record) => {
                           insertEvent(
                               {
-                                  ...record,
-                                  insertContinuation:
-                                      record.modeName === Schedule_Mode_Enum.Livestream && record.itemId ? true : false,
+                                  object: {
+                                      id: record.id,
+                                      conferenceId: record.conferenceId,
+                                      modeName: record.modeName,
+                                      name: record.name,
+                                      roomId: record.roomId,
+                                      scheduledStartTime: record.scheduledStartTime,
+                                      scheduledEndTime: record.scheduledEndTime,
+                                      itemId: record.itemId,
+                                      exhibitionId: record.exhibitionId,
+                                      shufflePeriodId: record.shufflePeriodId,
+                                      enableRecording: record.enableRecording,
+                                      automaticParticipationSurvey: record.automaticParticipationSurvey,
+                                      continuations:
+                                          record.modeName === Schedule_Mode_Enum.Livestream && record.itemId
+                                              ? {
+                                                    data: [
+                                                        {
+                                                            colour: "#4471de",
+                                                            defaultFor: "Presenters",
+                                                            description: "Join the discussion room",
+                                                            isActiveChoice: false,
+                                                            priority: 0,
+                                                            to: { type: "AutoDiscussionRoom", id: null },
+                                                        },
+                                                    ],
+                                                }
+                                              : undefined,
+                                  },
                               },
                               {
                                   fetchOptions: {
@@ -1380,23 +1354,27 @@ function EditableScheduleTable(): JSX.Element {
         () => ({
             ongoing: updateEventResponse.fetching,
             start: (record) => {
-                const variables: any = {
+                const set: any = {
                     ...record,
-                    eventId: record.id,
                 };
-                delete variables.id;
-                delete variables.scheduledEndTime;
-                delete variables.eventPeople;
-                delete variables.conferenceId;
-                delete variables.__typename;
-                updateEvent(variables, {
-                    fetchOptions: {
-                        headers: {
-                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-                        },
+                delete set.id;
+                delete set.eventPeople;
+                delete set.conferenceId;
+                delete set.__typename;
+                updateEvent(
+                    {
+                        eventId: record.id,
+                        set,
                     },
-                    additionalTypenames: ["schedule_Event"],
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                        additionalTypenames: ["schedule_Event"],
+                    }
+                );
             },
         }),
         [updateEvent, updateEventResponse.fetching]
@@ -1452,13 +1430,10 @@ function EditableScheduleTable(): JSX.Element {
                                 "Conference Id": event.conferenceId,
                                 "Event Id": event.id,
 
-                                Start: new Date(event.scheduledStartTime).toISOString(),
-                                End: event.scheduledEndTime
-                                    ? new Date(event.scheduledEndTime)
-                                    : new Date(
-                                          Date.parse(event.scheduledStartTime) + event.durationSeconds * 1000
-                                      ).toISOString(),
-                                "Duration (seconds)": event.durationSeconds,
+                                Start: event.scheduledStartTime
+                                    ? new Date(event.scheduledStartTime).toISOString()
+                                    : null,
+                                End: event.scheduledEndTime ? new Date(event.scheduledEndTime).toISOString() : null,
                                 Mode: event.modeName,
 
                                 "Room Id": event.roomId,
@@ -1530,6 +1505,7 @@ function EditableScheduleTable(): JSX.Element {
 
                                 "Recording Enabled": event.enableRecording,
                                 "Automatic Participation Survey Enabled": event.automaticParticipationSurvey,
+                                "Auto Play Element Id": event.autoPlayElementId,
                             })),
                             {
                                 columns: [

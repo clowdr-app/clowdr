@@ -32,7 +32,7 @@ export const contentSortOrder = [
     Content_ElementType_Enum.ImageUrl,
     Content_ElementType_Enum.Link,
     Content_ElementType_Enum.LinkButton,
-    Content_ElementType_Enum.Zoom,
+    Content_ElementType_Enum.ExternalEventLink,
     Content_ElementType_Enum.ContentGroupList,
     Content_ElementType_Enum.WholeSchedule,
     Content_ElementType_Enum.ExploreProgramButton,

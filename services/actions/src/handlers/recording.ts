@@ -233,7 +233,9 @@ export async function completeMediaPackageHarvestJob(
         source: SourceType.EventRecording,
         eventId: job.event.id,
         startTimeMillis: Date.parse(job.event.scheduledStartTime),
-        durationSeconds: job.event.durationSeconds,
+        durationSeconds: Math.round(
+            (Date.parse(job.event.scheduledEndTime) - Date.parse(job.event.scheduledStartTime)) / 1000
+        ),
     };
 
     logger.info({ eventId: job.event.id, jobId: job.id }, "Completing MediaPackage harvest job");

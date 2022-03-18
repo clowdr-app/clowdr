@@ -48,7 +48,8 @@ import CenteredSpinner from "../Chakra/CenteredSpinner";
 import FAIcon from "../Chakra/FAIcon";
 import { useRestorableState } from "../Hooks/useRestorableState";
 
-export type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+type Primitive = string | number | Date | null | undefined;
+export type DeepWriteable<T> = { -readonly [P in keyof T]: T[P] extends Primitive ? T[P] : DeepWriteable<T[P]> };
 
 export enum SortDirection {
     Asc = "⬆",

@@ -39606,6 +39606,7 @@ export type LocalSchedule_GetEventScheduleQuery = {
         id: any;
         scheduledEndTime?: any | null;
         scheduledStartTime?: any | null;
+        autoPlayElementId?: any | null;
         modeName: Schedule_Mode_Enum;
         item?: {
             __typename?: "content_Item";
@@ -39633,6 +39634,7 @@ export type LocalSchedule_GetScheduleQuery = {
         id: any;
         scheduledEndTime?: any | null;
         scheduledStartTime?: any | null;
+        autoPlayElementId?: any | null;
         modeName: Schedule_Mode_Enum;
         item?: {
             __typename?: "content_Item";
@@ -39657,6 +39659,7 @@ export type LocalSchedule_EventDetailsFragment = {
     id: any;
     scheduledEndTime?: any | null;
     scheduledStartTime?: any | null;
+    autoPlayElementId?: any | null;
     modeName: Schedule_Mode_Enum;
     item?: {
         __typename?: "content_Item";
@@ -39872,6 +39875,7 @@ export const LocalSchedule_EventDetailsFragmentDoc = {
                     },
                     { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                     { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
+                    { kind: "Field", name: { kind: "Name", value: "autoPlayElementId" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "eventVonageSession" },
@@ -43615,6 +43619,20 @@ export const LocalSchedule_GetScheduleDocument = {
                                                             kind: "Variable",
                                                             name: { kind: "Name", value: "roomId" },
                                                         },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "modeName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: { kind: "EnumValue", value: "LIVESTREAM" },
                                                     },
                                                 ],
                                             },

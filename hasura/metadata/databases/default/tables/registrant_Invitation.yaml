@@ -9,7 +9,13 @@ configuration:
 object_relationships:
 - name: registrant
   using:
-    foreign_key_constraint_on: registrantId
+    manual_configuration:
+      column_mapping:
+        registrantId: id
+      insertion_order: before_parent
+      remote_table:
+        name: Registrant
+        schema: registrant
 - name: user
   using:
     foreign_key_constraint_on: linkToUserId

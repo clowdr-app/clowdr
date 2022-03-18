@@ -112,6 +112,7 @@ export async function maintainPresenceList(redisClient: RedisClient, listKey: st
         discard = false;
         const results = await promisify((cb: Callback<any[]>) => multi.exec(cb))();
         const userIds = results[0];
+        logger.info({ userIds }, "maintainPresentList user ids");
         for (const userId of userIds) {
             socketServer.in(chan).emit("left", { listId, userId });
         }

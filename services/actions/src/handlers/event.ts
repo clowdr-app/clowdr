@@ -46,27 +46,19 @@ export async function handleEventUpdated(logger: P.Logger, payload: EventPayload
     }
 
     try {
-        if (newRow) {
+        if (newRow && newRow.scheduledStartTime && newRow.scheduledEndTime) {
             await createEventStartTrigger(
                 logger,
                 newRow.id,
                 newRow.scheduledStartTime,
                 Date.parse(newRow.timings_updated_at)
             );
-            if (newRow.scheduledEndTime) {
-                await createEventEndTrigger(
-                    logger,
-                    newRow.id,
-                    newRow.scheduledEndTime,
-                    Date.parse(newRow.timings_updated_at)
-                );
-            } else {
-                logger.error(
-                    { eventId: newRow.id },
-                    "Event does not have end time (this should never happen). Didn't create event end trigger."
-                );
-                throw new Error("Event does not have end time.");
-            }
+            await createEventEndTrigger(
+                logger,
+                newRow.id,
+                newRow.scheduledEndTime,
+                Date.parse(newRow.timings_updated_at)
+            );
         }
     } catch (err) {
         logger.error({ eventId: newRow.id, err }, "Could not insert event start/end triggers");

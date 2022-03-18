@@ -23821,7 +23821,7 @@ export type Registrant_Invitation = {
     readonly invitedEmailAddress: Scalars["String"];
     readonly linkToUserId?: Maybe<Scalars["String"]>;
     /** An object relationship */
-    readonly registrant: Registrant_Registrant;
+    readonly registrant?: Maybe<Registrant_Registrant>;
     readonly registrantId: Scalars["uuid"];
     readonly updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -29482,8 +29482,8 @@ export type Schedule_Event = {
     readonly item?: Maybe<Content_Item>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
-    readonly mode: Schedule_Mode;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly mode?: Maybe<Schedule_Mode>;
+    readonly modeName?: Maybe<Schedule_Mode_Enum>;
     readonly name: Scalars["String"];
     /** An object relationship */
     readonly room: Room_Room;
@@ -39771,7 +39771,7 @@ export type ItemRoomEventFragment = {
     readonly id: any;
     readonly scheduledEndTime?: any | null;
     readonly name: string;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
 };
 
@@ -39959,7 +39959,7 @@ export type GetItemQuery = {
         readonly id: any;
         readonly scheduledEndTime?: any | null;
         readonly name: string;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
     }>;
@@ -39978,7 +39978,7 @@ export type ItemEventFragment = {
     readonly id: any;
     readonly scheduledEndTime?: any | null;
     readonly name: string;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly itemId?: any | null;
     readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
 };
@@ -40388,7 +40388,7 @@ export type SelectExhibitionQuery = {
         readonly id: any;
         readonly scheduledEndTime?: any | null;
         readonly name: string;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly room: { readonly __typename?: "room_Room"; readonly name: string; readonly id: any };
     }>;
@@ -40626,7 +40626,7 @@ export type MyBackstages_EventFragment = {
     readonly conferenceId: any;
     readonly itemId?: any | null;
     readonly scheduledEndTime?: any | null;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly name: string;
     readonly roomId: any;
     readonly scheduledStartTime?: any | null;
@@ -40646,7 +40646,7 @@ export type RegistrantEventsWithBackstagesQuery = {
         readonly conferenceId: any;
         readonly itemId?: any | null;
         readonly scheduledEndTime?: any | null;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
         readonly roomId: any;
         readonly scheduledStartTime?: any | null;
@@ -40907,7 +40907,7 @@ export type Room_GetEventsQuery = {
         readonly scheduledStartTime?: any | null;
         readonly name: string;
         readonly scheduledEndTime?: any | null;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly streamTextEventId?: string | null;
@@ -40983,7 +40983,7 @@ export type Room_EventSummaryFragment = {
     readonly scheduledStartTime?: any | null;
     readonly name: string;
     readonly scheduledEndTime?: any | null;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly itemId?: any | null;
     readonly exhibitionId?: any | null;
     readonly streamTextEventId?: string | null;
@@ -41731,7 +41731,7 @@ export type RoomTile_GetRoomQuery = {
             readonly id: any;
             readonly roomId: any;
             readonly name: string;
-            readonly modeName: Schedule_Mode_Enum;
+            readonly modeName?: Schedule_Mode_Enum | null;
             readonly scheduledStartTime?: any | null;
             readonly scheduledEndTime?: any | null;
             readonly exhibitionId?: any | null;
@@ -41758,7 +41758,7 @@ export type RoomTile_RoomFragment = {
         readonly id: any;
         readonly roomId: any;
         readonly name: string;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
         readonly exhibitionId?: any | null;
@@ -41777,7 +41777,7 @@ export type RoomTile_EventFragment = {
     readonly id: any;
     readonly roomId: any;
     readonly name: string;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly scheduledStartTime?: any | null;
     readonly scheduledEndTime?: any | null;
     readonly exhibitionId?: any | null;
@@ -41946,7 +41946,7 @@ export type Schedule_HappeningSoonQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
@@ -42204,7 +42204,7 @@ export type Schedule_EventSummaryFragment = {
     readonly id: any;
     readonly conferenceId: any;
     readonly roomId: any;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly name: string;
     readonly scheduledStartTime?: any | null;
     readonly scheduledEndTime?: any | null;
@@ -42250,7 +42250,7 @@ export type Schedule_SelectSummariesQuery = {
         readonly id: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
@@ -42357,7 +42357,7 @@ export type ScheduleV2_DayEventsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly roomId: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
@@ -42473,7 +42473,7 @@ export type ScheduleV2_EventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly roomId: any;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly name: string;
     readonly scheduledStartTime?: any | null;
     readonly scheduledEndTime?: any | null;
@@ -42711,7 +42711,7 @@ export type ConferenceStatsQuery = {
                 readonly exhibitionId?: any | null;
                 readonly scheduledStartTime?: any | null;
                 readonly scheduledEndTime?: any | null;
-                readonly modeName: Schedule_Mode_Enum;
+                readonly modeName?: Schedule_Mode_Enum | null;
                 readonly item?: {
                     readonly __typename?: "content_Item";
                     readonly id: any;
@@ -42780,7 +42780,7 @@ export type EventVonageControls_GetEventsQuery = {
         readonly id: any;
         readonly name: string;
         readonly conferenceId: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
     }>;
@@ -42810,7 +42810,7 @@ export type MonitorLivestreamsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly conferenceId: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
@@ -42862,7 +42862,7 @@ export type MonitorLivestreamsQuery = {
         readonly conferenceId: any;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly roomId: any;
         readonly room: {
             readonly __typename?: "room_Room";
@@ -42879,7 +42879,7 @@ export type MonitorLivestreams_PrerecEventFragment = {
     readonly conferenceId: any;
     readonly scheduledStartTime?: any | null;
     readonly scheduledEndTime?: any | null;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly roomId: any;
     readonly room: {
         readonly __typename?: "room_Room";
@@ -42913,7 +42913,7 @@ export type MonitorLivestreams_EventFragment = {
     readonly __typename?: "schedule_Event";
     readonly id: any;
     readonly conferenceId: any;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly name: string;
     readonly scheduledStartTime?: any | null;
     readonly scheduledEndTime?: any | null;
@@ -43227,7 +43227,7 @@ export type PreshowChecklistQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly name: string;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
         readonly autoPlayElementId?: any | null;
@@ -46177,7 +46177,7 @@ export type CreateContinuationModal_EventsQuery = {
         readonly name: string;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
@@ -46296,7 +46296,7 @@ export type EventInfoFragment = {
     readonly __typename?: "schedule_Event";
     readonly conferenceId: any;
     readonly id: any;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly name: string;
     readonly roomId: any;
     readonly scheduledStartTime?: any | null;
@@ -46511,7 +46511,7 @@ export type SelectWholeScheduleQuery = {
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
         readonly id: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
         readonly roomId: any;
         readonly scheduledStartTime?: any | null;
@@ -46635,7 +46635,7 @@ export type InsertEventInfoMutation = {
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
         readonly id: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
         readonly roomId: any;
         readonly scheduledStartTime?: any | null;
@@ -46667,7 +46667,7 @@ export type UpdateEventInfoMutation = {
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
         readonly id: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
         readonly roomId: any;
         readonly scheduledStartTime?: any | null;
@@ -47488,7 +47488,7 @@ export type RaiseHandPanel_GetEventDetailsQuery = {
         readonly scheduledStartTime?: any | null;
         readonly name: string;
         readonly scheduledEndTime?: any | null;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly streamTextEventId?: string | null;

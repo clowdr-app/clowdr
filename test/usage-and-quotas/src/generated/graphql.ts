@@ -23814,7 +23814,7 @@ export type Registrant_Invitation = {
     readonly invitedEmailAddress: Scalars["String"];
     readonly linkToUserId?: Maybe<Scalars["String"]>;
     /** An object relationship */
-    readonly registrant: Registrant_Registrant;
+    readonly registrant?: Maybe<Registrant_Registrant>;
     readonly registrantId: Scalars["uuid"];
     readonly updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -29475,8 +29475,8 @@ export type Schedule_Event = {
     readonly item?: Maybe<Content_Item>;
     readonly itemId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
-    readonly mode: Schedule_Mode;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly mode?: Maybe<Schedule_Mode>;
+    readonly modeName?: Maybe<Schedule_Mode_Enum>;
     readonly name: Scalars["String"];
     /** An object relationship */
     readonly room: Room_Room;
@@ -39264,7 +39264,7 @@ export type EventFragment = {
     readonly updatedAt: any;
     readonly conferenceId: any;
     readonly roomId: any;
-    readonly modeName: Schedule_Mode_Enum;
+    readonly modeName?: Schedule_Mode_Enum | null;
     readonly itemId?: any | null;
     readonly name: string;
     readonly scheduledStartTime?: any | null;
@@ -39292,7 +39292,7 @@ export type GetEventQuery = {
         readonly updatedAt: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly name: string;
         readonly scheduledStartTime?: any | null;
@@ -39321,7 +39321,7 @@ export type InsertEventMutation = {
         readonly updatedAt: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly name: string;
         readonly scheduledStartTime?: any | null;
@@ -39351,7 +39351,7 @@ export type UpdateEventMutation = {
         readonly updatedAt: any;
         readonly conferenceId: any;
         readonly roomId: any;
-        readonly modeName: Schedule_Mode_Enum;
+        readonly modeName?: Schedule_Mode_Enum | null;
         readonly itemId?: any | null;
         readonly name: string;
         readonly scheduledStartTime?: any | null;

@@ -35083,7 +35083,7 @@ type registrant_Invitation {
     """
     An object relationship
     """
-    registrant: registrant_Registrant!
+    registrant: registrant_Registrant
     registrantId: uuid!
     updatedAt: timestamptz!
     """
@@ -42863,8 +42863,8 @@ type schedule_Event {
     """
     An object relationship
     """
-    mode: schedule_Mode!
-    modeName: schedule_Mode_enum!
+    mode: schedule_Mode
+    modeName: schedule_Mode_enum
     name: String!
     """
     An object relationship

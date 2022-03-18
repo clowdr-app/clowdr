@@ -23812,7 +23812,7 @@ export type Registrant_Invitation = {
     invitedEmailAddress: Scalars["String"];
     linkToUserId?: Maybe<Scalars["String"]>;
     /** An object relationship */
-    registrant: Registrant_Registrant;
+    registrant?: Maybe<Registrant_Registrant>;
     registrantId: Scalars["uuid"];
     updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -29473,8 +29473,8 @@ export type Schedule_Event = {
     item?: Maybe<Content_Item>;
     itemId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
-    mode: Schedule_Mode;
-    modeName: Schedule_Mode_Enum;
+    mode?: Maybe<Schedule_Mode>;
+    modeName?: Maybe<Schedule_Mode_Enum>;
     name: Scalars["String"];
     /** An object relationship */
     room: Room_Room;
@@ -39534,7 +39534,7 @@ export type GetEventTimingsQuery = {
         scheduledStartTime?: any | null;
         scheduledEndTime?: any | null;
         conferenceId: any;
-        modeName: Schedule_Mode_Enum;
+        modeName?: Schedule_Mode_Enum | null;
         roomId: any;
         enableRecording: boolean;
         eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
@@ -39714,12 +39714,12 @@ export type InvitationPartsFragment = {
     linkToUserId?: string | null;
     updatedAt: any;
     createdAt: any;
-    registrant: {
+    registrant?: {
         __typename?: "registrant_Registrant";
         displayName: string;
         userId?: string | null;
         conference: { __typename?: "conference_Conference"; name: string; slug: string };
-    };
+    } | null;
     user?: { __typename?: "User"; email?: string | null } | null;
 };
 
@@ -39742,12 +39742,12 @@ export type SelectInvitationAndUserQuery = {
         linkToUserId?: string | null;
         updatedAt: any;
         createdAt: any;
-        registrant: {
+        registrant?: {
             __typename?: "registrant_Registrant";
             displayName: string;
             userId?: string | null;
             conference: { __typename?: "conference_Conference"; name: string; slug: string };
-        };
+        } | null;
         user?: { __typename?: "User"; email?: string | null } | null;
     }>;
     conference_Conference: Array<{
@@ -40704,7 +40704,7 @@ export type Vonage_GetEventDetailsQuery = {
         __typename?: "schedule_Event";
         conferenceId: any;
         id: any;
-        modeName: Schedule_Mode_Enum;
+        modeName?: Schedule_Mode_Enum | null;
         enableRecording: boolean;
         scheduledStartTime?: any | null;
         scheduledEndTime?: any | null;
@@ -47189,23 +47189,28 @@ export const GetEventsWithoutVonageSessionDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "_and" },
+                                            name: { kind: "Name", value: "modeName" },
                                             value: {
                                                 kind: "ObjectValue",
                                                 fields: [
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_not" },
-                                                        value: {
-                                                            kind: "ObjectValue",
-                                                            fields: [
-                                                                {
-                                                                    kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "eventVonageSession" },
-                                                                    value: { kind: "ObjectValue", fields: [] },
-                                                                },
-                                                            ],
-                                                        },
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: { kind: "EnumValue", value: "LIVESTREAM" },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_not" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "eventVonageSession" },
+                                                        value: { kind: "ObjectValue", fields: [] },
                                                     },
                                                 ],
                                             },

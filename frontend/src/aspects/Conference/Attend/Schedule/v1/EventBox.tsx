@@ -68,16 +68,20 @@ export default function EventBox({
                         <Text fontSize="sm" fontWeight="bold">
                             {R.intersperse(
                                 <>&nbsp;/&nbsp;</>,
-                                sortedEvents.map((ev, idx) => (
-                                    <EventModeIcon
-                                        key={idx}
-                                        mode={ev.modeName}
-                                        durationSeconds={Math.round(
-                                            (Date.parse(ev.scheduledEndTime) - Date.parse(ev.scheduledStartTime)) / 1000
-                                        )}
-                                        fontSize="inherit"
-                                    />
-                                ))
+                                sortedEvents
+                                    .filter((ev) => ev.modeName)
+                                    .map((ev, idx) => (
+                                        <EventModeIcon
+                                            key={idx}
+                                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                            mode={ev.modeName!}
+                                            durationSeconds={Math.round(
+                                                (Date.parse(ev.scheduledEndTime) - Date.parse(ev.scheduledStartTime)) /
+                                                    1000
+                                            )}
+                                            fontSize="inherit"
+                                        />
+                                    ))
                             )}
                         </Text>
                         <Text fontSize="sm" fontWeight="bold" lineHeight="130%">

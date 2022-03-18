@@ -295,7 +295,7 @@ async function confirmUser(
 
         if (ok === true) {
             if (invitation && !globalInvite) {
-                if (!invitation.registrant.userId) {
+                if (!invitation.registrant?.userId) {
                     try {
                         await apolloClient.mutate({
                             mutation: SetRegistrantUserIdDocument,
@@ -335,7 +335,7 @@ async function confirmUser(
         return {
             ok: ok === true ? "true" : ok,
             confSlug:
-                invitation?.registrant.conference.slug ?? (globalInvite ? globalInvite.conferenceSlug : undefined),
+                invitation?.registrant?.conference.slug ?? (globalInvite ? globalInvite.conferenceSlug : undefined),
         };
     } catch (e: any) {
         return {
@@ -359,7 +359,7 @@ export async function invitationConfirmCurrentHandler(
                 ? "No invitation"
                 : !user.email && !isGlobalInviteCode
                 ? "User email address invalid"
-                : !isGlobalInviteCode && invitation?.registrant.userId && invitation?.registrant.userId !== user.id
+                : !isGlobalInviteCode && invitation?.registrant?.userId && invitation?.registrant.userId !== user.id
                 ? "Invitation already used"
                 : true;
         }

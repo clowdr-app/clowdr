@@ -435,7 +435,7 @@ export class ScheduleSyncService {
         const immediate = startMode.mode === "immediate";
         const offsetMillis = startMode.mode === "immediate" ? startMode.now - localAction.scheduledStartTime : 0;
         const sequenceNumber = Math.round(localAction.sequenceNumber ?? 0);
-        if (this.localScheduleService.isLive(localAction.roomModeName)) {
+        if (this.localScheduleService.isLive(localAction.modeName)) {
             return [
                 {
                     ActionName: immediate ? `i/${uuidv4()}` : `e/${localAction.eventId}/${sequenceNumber}`,
@@ -464,7 +464,7 @@ export class ScheduleSyncService {
             ];
         }
 
-        if (localAction.roomModeName === Schedule_Mode_Enum.Livestream && localAction.autoPlayElementId) {
+        if (localAction.modeName === Schedule_Mode_Enum.Livestream && localAction.autoPlayElementId) {
             const videoKey = localAction.videoData
                 ? this.contentElementDataService.getVideoKey(localAction.videoData)
                 : null;

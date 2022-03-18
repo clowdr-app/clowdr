@@ -23813,7 +23813,7 @@ export type Registrant_Invitation = {
     invitedEmailAddress: Scalars["String"];
     linkToUserId?: Maybe<Scalars["String"]>;
     /** An object relationship */
-    registrant: Registrant_Registrant;
+    registrant?: Maybe<Registrant_Registrant>;
     registrantId: Scalars["uuid"];
     updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -29474,8 +29474,8 @@ export type Schedule_Event = {
     item?: Maybe<Content_Item>;
     itemId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
-    mode: Schedule_Mode;
-    modeName: Schedule_Mode_Enum;
+    mode?: Maybe<Schedule_Mode>;
+    modeName?: Maybe<Schedule_Mode_Enum>;
     name: Scalars["String"];
     /** An object relationship */
     room: Room_Room;
@@ -39253,7 +39253,7 @@ export type ExistingSchedule_EventQuery = {
         scheduledEndTime?: any | null;
         enableRecording: boolean;
         exhibitionId?: any | null;
-        modeName: Schedule_Mode_Enum;
+        modeName?: Schedule_Mode_Enum | null;
         itemId?: any | null;
         roomId: any;
         shufflePeriodId?: any | null;

@@ -233,15 +233,18 @@ function EventBoxContents({
         >
             <HStack alignItems="flex-start" justifyContent="flex-start">
                 <StarEventButton eventIds={eventInfo.id} mt={1} />
-                <Text fontSize="sm" fontWeight="bold">
-                    <EventModeIcon
-                        mode={eventInfo.modeName}
-                        durationSeconds={Math.round(
-                            (Date.parse(eventInfo.scheduledEndTime) - Date.parse(eventInfo.scheduledStartTime)) / 1000
-                        )}
-                        fontSize="inherit"
-                    />
-                </Text>
+                {eventInfo.modeName ? (
+                    <Text fontSize="sm" fontWeight="bold">
+                        <EventModeIcon
+                            mode={eventInfo.modeName}
+                            durationSeconds={Math.round(
+                                (Date.parse(eventInfo.scheduledEndTime) - Date.parse(eventInfo.scheduledStartTime)) /
+                                    1000
+                            )}
+                            fontSize="inherit"
+                        />
+                    </Text>
+                ) : undefined}
                 <Text fontSize="sm" pl={2}>
                     {scheduledStartTimeDT.toLocaleString({
                         hour: "numeric",

@@ -28,7 +28,7 @@ export interface LocalSchedule {
 
 export interface LocalScheduleAction {
     eventId: string;
-    roomModeName: Schedule_Mode_Enum;
+    modeName: Schedule_Mode_Enum;
     rtmpInputName: Video_RtmpInput_Enum | null;
     videoData: VideoBroadcastBlob | null;
     scheduledStartTime: number;
@@ -74,6 +74,11 @@ export class LocalScheduleService {
 
         const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;
 
+        if (!event.modeName) {
+            this.logger.error({ eventId: event.id }, "Live event is missing mode");
+            throw new Error("Cannot convert an event to a local schedule action that does not have a mode");
+        }
+
         if (!event.eventVonageSession && this.isLive(event.modeName)) {
             this.logger.warn({ eventId: event.id }, "Live event is missing a Vonage session");
         }
@@ -81,10 +86,10 @@ export class LocalScheduleService {
         return {
             eventId: event.id,
             rtmpInputName,
-            roomModeName: event.modeName,
+            modeName: event.modeName,
             videoData,
             scheduledStartTime: Date.parse(event.scheduledStartTime),
-            scheduledEndTime: Date.parse(event.scheduledEndTime ?? event.scheduledStartTime),
+            scheduledEndTime: Date.parse(event.scheduledEndTime),
             autoPlayElementId: event.autoPlayElementId,
         };
     }
@@ -180,7 +185,7 @@ export class LocalScheduleService {
 
     public async ensureRtmpInputsAlternate(scheduleData: LocalSchedule): Promise<LocalSchedule> {
         const liveEvents = scheduleData.items
-            .filter((item) => this.isLive(item.roomModeName))
+            .filter((item) => this.isLive(item.modeName))
             .filter((item) => item.scheduledStartTime > add(Date.now(), { seconds: 30 }).getTime())
             .sort((a, b) => a.scheduledStartTime - b.scheduledStartTime);
 

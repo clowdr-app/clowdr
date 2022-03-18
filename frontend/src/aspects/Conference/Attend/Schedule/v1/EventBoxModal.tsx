@@ -140,7 +140,7 @@ export default function EventBoxModal({
                         <Box display="flex" pb={1} mr={2} justifyContent="center" alignItems="center">
                             <StarEventButton eventIds={eventIds} />
                         </Box>
-                        {events.length === 1 ? (
+                        {events.length === 1 && event0.modeName ? (
                             <Box mr={2}>
                                 <EventModeIcon
                                     mode={event0.modeName}
@@ -252,15 +252,17 @@ export default function EventBoxModal({
                                             <StarEventButton eventIds={event.id} />
                                         </GridItem>
                                         <GridItem>
-                                            <EventModeIcon
-                                                mode={event.modeName}
-                                                durationSeconds={Math.round(
-                                                    (Date.parse(event.scheduledEndTime) -
-                                                        Date.parse(event.scheduledStartTime)) /
-                                                        1000
-                                                )}
-                                                fontSize="inherit"
-                                            />
+                                            {event.modeName ? (
+                                                <EventModeIcon
+                                                    mode={event.modeName}
+                                                    durationSeconds={Math.round(
+                                                        (Date.parse(event.scheduledEndTime) -
+                                                            Date.parse(event.scheduledStartTime)) /
+                                                            1000
+                                                    )}
+                                                    fontSize="inherit"
+                                                />
+                                            ) : undefined}
                                         </GridItem>
                                         <GridItem>
                                             {format(new Date(event.scheduledStartTime), "HH:mm")} -{" "}

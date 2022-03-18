@@ -9,8 +9,12 @@ export default function EventHighlight({ event }: { event: RoomTile_EventFragmen
     return (
         <AspectRatio ratio={16 / 9} w="100%">
             <VStack bgColor="rgba(7,7,10,0.85)" color="gray.50" flexDir="column" pt={6} h="100%" overflow="hidden">
-                <EventModeIcon mode={event.modeName} />
-                <EventModeName mode={event.modeName} />
+                {event.modeName ? (
+                    <>
+                        <EventModeIcon mode={event.modeName} />
+                        <EventModeName mode={event.modeName} />
+                    </>
+                ) : undefined}
                 <Spacer />
                 <Box>
                     <Text>

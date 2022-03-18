@@ -882,7 +882,7 @@ function RenderedCRUDTable<T>({
             <Center flexDir="column">
                 Filtered to {filteredDataLength} out of {fullDataLength} ({selectedKeys.size} selected)
             </Center>
-            <chakra.div maxWidth="100%" minHeight="10em" width="auto" overflow="auto">
+            <chakra.div maxWidth="100%" minHeight="10em" width="auto" overflow="auto" pr={8}>
                 <Table bgColor={bgColour} size="sm" variant="striped" pt={1} colorScheme="gray" width="max-content">
                     <Thead borderBottom="2px solid" borderBottomColor={headerBottomColour}>
                         <Tr>

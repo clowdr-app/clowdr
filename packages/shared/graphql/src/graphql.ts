@@ -7011,6 +7011,7 @@ export type Conference_Conference = {
     items: Array<Content_Item>;
     /** An aggregate relationship */
     items_aggregate: Content_Item_Aggregate;
+    lowestRoleWithAccess?: Maybe<Registrant_RegistrantRole_Enum>;
     name: Scalars["String"];
     /** An array relationship */
     programPeople: Array<Collection_ProgramPerson>;
@@ -7323,6 +7324,7 @@ export type Conference_Conference_Bool_Exp = {
     globalInviteCode?: InputMaybe<Uuid_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
     items?: InputMaybe<Content_Item_Bool_Exp>;
+    lowestRoleWithAccess?: InputMaybe<Registrant_RegistrantRole_Enum_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
     quota?: InputMaybe<Conference_Quota_Bool_Exp>;
@@ -7373,6 +7375,7 @@ export type Conference_Conference_Insert_Input = {
     globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     items?: InputMaybe<Content_Item_Arr_Rel_Insert_Input>;
+    lowestRoleWithAccess?: InputMaybe<Registrant_RegistrantRole_Enum>;
     name?: InputMaybe<Scalars["String"]>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Arr_Rel_Insert_Input>;
     quota?: InputMaybe<Conference_Quota_Obj_Rel_Insert_Input>;
@@ -7492,6 +7495,7 @@ export type Conference_Conference_Order_By = {
     globalInviteCode?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
     items_aggregate?: InputMaybe<Content_Item_Aggregate_Order_By>;
+    lowestRoleWithAccess?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     quota?: InputMaybe<Conference_Quota_Order_By>;
@@ -7532,6 +7536,8 @@ export enum Conference_Conference_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
+    LowestRoleWithAccess = "lowestRoleWithAccess",
+    /** column name */
     Name = "name",
     /** column name */
     ShortName = "shortName",
@@ -7551,6 +7557,7 @@ export type Conference_Conference_Set_Input = {
     demoCodeId?: InputMaybe<Scalars["uuid"]>;
     globalInviteCode?: InputMaybe<Scalars["uuid"]>;
     id?: InputMaybe<Scalars["uuid"]>;
+    lowestRoleWithAccess?: InputMaybe<Registrant_RegistrantRole_Enum>;
     name?: InputMaybe<Scalars["String"]>;
     shortName?: InputMaybe<Scalars["String"]>;
     slug?: InputMaybe<Scalars["String"]>;
@@ -7575,6 +7582,8 @@ export enum Conference_Conference_Update_Column {
     GlobalInviteCode = "globalInviteCode",
     /** column name */
     Id = "id",
+    /** column name */
+    LowestRoleWithAccess = "lowestRoleWithAccess",
     /** column name */
     Name = "name",
     /** column name */

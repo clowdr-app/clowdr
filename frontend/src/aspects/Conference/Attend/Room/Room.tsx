@@ -9,7 +9,6 @@ import {
     Heading,
     HStack,
     Spacer,
-    Spinner,
     Text,
     useColorModeValue,
     useToast,
@@ -204,7 +203,9 @@ function Room({
     return (
         <>
             {roomInner}
-            {loadingEvents && cachedRoomEvents === null ? <Spinner label="Loading events" /> : undefined}
+            {loadingEvents && cachedRoomEvents === null ? (
+                <CenteredSpinner caller="Room:200" spinnerProps={{ label: "Loading events" }} />
+            ) : undefined}
         </>
     );
 }
@@ -533,7 +534,7 @@ function RoomInner({
 
     const backStageEl = useMemo(
         () => (
-            <Suspense fallback={<Spinner />}>
+            <Suspense fallback={<CenteredSpinner caller="Room:542" />}>
                 <Backstages
                     showBackstage={showBackstage}
                     roomName={roomDetails.name}
@@ -669,7 +670,7 @@ function RoomInner({
                 <Box pos="relative">
                     <VideoAspectWrapper maxHeight={mainPaneHeight} maxWidth={mainPaneWidth}>
                         {(onAspectRatioChange) => (
-                            <Suspense fallback={<Spinner />}>
+                            <Suspense fallback={<CenteredSpinner caller="Room:678" />}>
                                 <HlsPlayer
                                     roomId={roomDetails.id}
                                     canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}

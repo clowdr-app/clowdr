@@ -21,6 +21,7 @@ export function DeviceSetup(): JSX.Element {
                 status: "error",
                 title: "Cannot connect to room",
                 description: typeof e === "string" ? e : e?.message ?? undefined,
+                isClosable: true,
             });
         }
     }, [meetingManager, toast]);

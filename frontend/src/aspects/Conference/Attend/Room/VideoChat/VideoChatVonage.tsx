@@ -1,4 +1,4 @@
-import { Spinner, Text, VStack } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import React, { useContext, useEffect, useState } from "react";
 import * as portals from "react-reverse-portal";
@@ -9,6 +9,7 @@ import type {
     RoomPage_RoomDetailsFragment,
 } from "../../../../../generated/graphql";
 import { GetRoomVonageSessionIdDocument } from "../../../../../generated/graphql";
+import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import type { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
@@ -91,7 +92,7 @@ export function VideoChatVonage({
     ) : (
         <VStack spacing={2} p={4}>
             <Text>Please wait while the video-chat initializes...</Text>
-            <Spinner />
+            <CenteredSpinner caller="VideoChatVonage:94" />
         </VStack>
     );
 }

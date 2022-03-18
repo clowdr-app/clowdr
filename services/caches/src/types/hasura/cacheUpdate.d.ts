@@ -8,9 +8,11 @@ import type {
 declare namespace CacheUpdate {
     interface ConferenceData {
         id: string;
+        slug: string;
         shortName: string;
         conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
         createdBy: string;
+        lowestRoleWithAccess?: Registrant_RegistrantRole_Enum | null;
     }
 
     interface SubconferenceData {

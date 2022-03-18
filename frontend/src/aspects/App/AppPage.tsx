@@ -1,7 +1,8 @@
 import { Box, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
+import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import HeaderBar from "../HeaderBar/HeaderBar";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
@@ -10,9 +11,8 @@ import LeftMenu from "../Menu/LeftMenu";
 import RightMenu from "../Menu/RightMenu";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { AppLayoutContext } from "./AppLayoutContext";
-import Routing from "./AppRouting";
 
-export default function AppPage(): JSX.Element {
+export default function AppPage({ children }: React.PropsWithChildren<Record<string, any>>): JSX.Element {
     const user = useMaybeCurrentUser();
     const conference = useMaybeConference();
     const authParams = useAuthParameters();
@@ -27,8 +27,6 @@ export default function AppPage(): JSX.Element {
     const isAppLandingPage = isRootPage && !user?.user;
 
     const { mainPaneRef } = useContext(AppLayoutContext);
-
-    const center = useMemo(() => <Routing />, []);
 
     const [rightMenuOpen, setRightMenuOpen] = useState<boolean>(false);
     const locationMatchRoom = useRouteMatch({
@@ -68,6 +66,8 @@ export default function AppPage(): JSX.Element {
             setRightMenuOpen(false);
         }
     }, [isRoomOrItemPage, location, narrowView]);
+
+    const maybeRegistrant = useMaybeCurrentRegistrant();
 
     return (
         <Flex
@@ -122,10 +122,10 @@ export default function AppPage(): JSX.Element {
                         }}
                         ref={mainPaneRef}
                     >
-                        {center}
+                        {children}
                     </VStack>
                 </Box>
-                {user.user ? <RightMenu isOpen={rightMenuOpen} setIsOpen={setRightMenuOpen} /> : undefined}
+                {maybeRegistrant ? <RightMenu isOpen={rightMenuOpen} setIsOpen={setRightMenuOpen} /> : undefined}
             </Flex>
         </Flex>
     );

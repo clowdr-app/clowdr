@@ -1,8 +1,8 @@
 import { useDisclosure } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import React, { Suspense, useCallback, useMemo, useRef } from "react";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRestorableState } from "../../../Hooks/useRestorableState";
-import { useConference } from "../../useConference";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 
 const SocialiseModal = React.lazy(() => import("./SocialiseModal"));
@@ -18,6 +18,8 @@ interface SocialiseModalContext {
     onOpen: (tab?: SocialiseModalTab) => void;
     onClose: () => void;
     finalFocusRef: React.RefObject<FocusableElement>;
+    selectedTab: SocialiseModalTab;
+    setSelectedTab: (value: SocialiseModalTab) => void;
 }
 
 const SocialiseModalContext = React.createContext<SocialiseModalContext | undefined>(undefined);
@@ -31,11 +33,11 @@ export function useSocialiseModal(): SocialiseModalContext {
 }
 
 export function SocialiseModalProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
-    const conference = useConference();
+    const { conferenceId } = useAuthParameters();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const socialiseButtonRef = useRef<FocusableElement>(null);
     const [selectedTab, setSelectedTab] = useRestorableState<SocialiseModalTab>(
-        "SocialiseModal_SelectedTab" + conference.id,
+        "SocialiseModal_SelectedTab:" + conferenceId,
         SocialiseModalTab.Rooms,
         (x) => x,
         (x) => x as SocialiseModalTab
@@ -61,15 +63,27 @@ export function SocialiseModalProvider({ children }: React.PropsWithChildren<any
             isOpen,
             onOpen: doOnOpen,
             onClose: doOnClose,
+            selectedTab,
+            setSelectedTab,
         }),
-        [doOnOpen, isOpen, doOnClose]
+        [isOpen, doOnOpen, doOnClose, selectedTab, setSelectedTab]
     );
 
+    return <SocialiseModalContext.Provider value={ctx}>{children}</SocialiseModalContext.Provider>;
+}
+
+export function SocialiseModalInstance(): JSX.Element {
+    const {
+        finalFocusRef: socialiseButtonRef,
+        isOpen,
+        onClose: doOnClose,
+        selectedTab,
+        setSelectedTab,
+    } = useSocialiseModal();
     const maybeRegistrant = useMaybeCurrentRegistrant();
 
     return (
-        <SocialiseModalContext.Provider value={ctx}>
-            {children}
+        <>
             {maybeRegistrant ? (
                 <Suspense fallback={null}>
                     <SocialiseModal
@@ -81,6 +95,6 @@ export function SocialiseModalProvider({ children }: React.PropsWithChildren<any
                     />
                 </Suspense>
             ) : undefined}
-        </SocialiseModalContext.Provider>
+        </>
     );
 }

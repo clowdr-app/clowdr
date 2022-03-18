@@ -1,9 +1,10 @@
-import { Box, Heading, Spinner, useColorModeValue } from "@chakra-ui/react";
+import { Box, Heading, useColorModeValue } from "@chakra-ui/react";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { Content_ElementType_Enum, useConferenceLandingPageItemQuery } from "../../../generated/graphql";
+import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
@@ -65,10 +66,10 @@ function ConferenceLandingPageInner(): JSX.Element {
 
     if (!item) {
         return (
-            <Box>
+            <>
                 {title}
-                <Spinner />
-            </Box>
+                <CenteredSpinner caller="ConferenceLandingPage:70" />
+            </>
         );
     }
 

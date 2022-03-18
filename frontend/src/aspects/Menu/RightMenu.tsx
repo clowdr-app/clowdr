@@ -27,7 +27,7 @@ export default function RightMenu({
                     }}
                 />
             ) : undefined,
-        [maybeRegistrant, isOpen]
+        [maybeRegistrant, isOpen, setIsOpen]
     );
 
     const bgColor = useColorModeValue("RightMenu.50", "RightMenu.900");

@@ -99,6 +99,49 @@ function formatArrayForHasuraHeader(values: string | string[]): string {
     }
 }
 
+/**
+ * Sorts by highest privilege first: null, organizer, moderator, attendee
+ * -1 indicates x before y
+ * 0 indicates x equals y
+ * 1 indicates x after y
+ *
+ * Note that null comes first since it denotes such a high level of privilege
+ * that no attendee shall ever have it.
+ */
+function compareRoles(x: Registrant_RegistrantRole_Enum, y?: Registrant_RegistrantRole_Enum | null): -1 | 0 | 1 {
+    if (!y) {
+        return 1;
+    }
+
+    switch (x) {
+        case Registrant_RegistrantRole_Enum.Organizer:
+            switch (y) {
+                case Registrant_RegistrantRole_Enum.Organizer:
+                    return 0;
+                default:
+                    return -1;
+            }
+        case Registrant_RegistrantRole_Enum.Moderator:
+            switch (y) {
+                case Registrant_RegistrantRole_Enum.Organizer:
+                    return 1;
+                case Registrant_RegistrantRole_Enum.Moderator:
+                    return 0;
+                default:
+                    return -1;
+            }
+        case Registrant_RegistrantRole_Enum.Attendee:
+            switch (y) {
+                case Registrant_RegistrantRole_Enum.Organizer:
+                    return 1;
+                case Registrant_RegistrantRole_Enum.Moderator:
+                    return 1;
+                case Registrant_RegistrantRole_Enum.Attendee:
+                    return 0;
+            }
+    }
+}
+
 export async function computeAuthHeaders(
     logger: P.Logger,
     verifiedParams: Partial<{ userId: string }>,
@@ -181,7 +224,11 @@ export async function computeAuthHeaders(
                     const registrant = await new RegistrantCache(logger).getEntity(registrantId.id);
                     const conference = await new ConferenceCache(logger).getEntity(unverifiedParams.conferenceId);
 
-                    if (registrant && conference) {
+                    if (
+                        registrant &&
+                        conference &&
+                        compareRoles(registrant.conferenceRole, conference.lowestRoleWithAccess) <= 0
+                    ) {
                         result[AuthSessionVariables.RegistrantIds] = formatArrayForHasuraHeader(registrant.id);
                         result[AuthSessionVariables.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
 

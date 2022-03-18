@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useClient } from "urql";
-import { useConference } from "../Conference/useConference";
+import { useMaybeConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { GlobalChatState } from "./ChatGlobalState";
 import { ReportMessageProvider } from "./Moderation/ReportMessageDialog";
@@ -18,11 +18,11 @@ export function useGlobalChatState(): GlobalChatState {
 }
 
 function useValue() {
-    const conference = useConference();
+    const conference = useMaybeConference();
     const registrant = useMaybeCurrentRegistrant();
     const client = useClient();
     const state = useMemo(
-        () => (registrant ? new GlobalChatState(conference, registrant, client) : undefined),
+        () => (registrant && conference ? new GlobalChatState(conference, registrant, client) : undefined),
         [registrant, conference, client]
     );
 

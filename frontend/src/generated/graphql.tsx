@@ -9015,6 +9015,10 @@ export type Conference_Subconference = {
     readonly created_at: Scalars["timestamptz"];
     readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
     readonly id: Scalars["uuid"];
+    /** An array relationship */
+    readonly memberships: ReadonlyArray<Registrant_SubconferenceMembership>;
+    /** An aggregate relationship */
+    readonly memberships_aggregate: Registrant_SubconferenceMembership_Aggregate;
     readonly name: Scalars["String"];
     readonly shortName: Scalars["String"];
     readonly slug: Scalars["String"];
@@ -9023,6 +9027,24 @@ export type Conference_Subconference = {
     /** An aggregate relationship */
     readonly sponsorshipTiers_aggregate: Sponsor_Tier_Aggregate;
     readonly updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceMembershipsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Registrant_SubconferenceMembership_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Registrant_SubconferenceMembership_Order_By>>;
+    where?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceMemberships_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Registrant_SubconferenceMembership_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Registrant_SubconferenceMembership_Order_By>>;
+    where?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Subconference" */
@@ -9089,6 +9111,7 @@ export type Conference_Subconference_Bool_Exp = {
     readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum_Comparison_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly memberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly shortName?: InputMaybe<String_Comparison_Exp>;
     readonly slug?: InputMaybe<String_Comparison_Exp>;
@@ -9116,6 +9139,7 @@ export type Conference_Subconference_Insert_Input = {
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly memberships?: InputMaybe<Registrant_SubconferenceMembership_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly shortName?: InputMaybe<Scalars["String"]>;
     readonly slug?: InputMaybe<Scalars["String"]>;
@@ -9200,6 +9224,7 @@ export type Conference_Subconference_Order_By = {
     readonly created_at?: InputMaybe<Order_By>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
+    readonly memberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly shortName?: InputMaybe<Order_By>;
     readonly slug?: InputMaybe<Order_By>;
@@ -40528,6 +40553,12 @@ export type RegistrantByIdQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -40602,6 +40633,12 @@ export type UpdateRegistrantDisplayNameMutation = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     } | null;
 };
 
@@ -40783,6 +40820,12 @@ export type SelectRegistrantsQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -40817,6 +40860,12 @@ export type SearchRegistrantsQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -46950,6 +46999,12 @@ export type RegistrantsByIdQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -46984,6 +47039,12 @@ export type RegistrantsByUserIdQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -47001,6 +47062,15 @@ export type ConferenceById_WithUserQuery = {
         readonly shortName: string;
         readonly slug: string;
         readonly announcementsChatId?: any | null;
+        readonly subconferences: ReadonlyArray<{
+            readonly __typename?: "conference_Subconference";
+            readonly id: any;
+            readonly name: string;
+            readonly shortName: string;
+            readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+            readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+            readonly slug: string;
+        }>;
         readonly supportAddress: ReadonlyArray<{
             readonly __typename?: "conference_Configuration";
             readonly conferenceId: any;
@@ -47091,6 +47161,12 @@ export type ConferenceById_WithUserQuery = {
                 readonly photoURL_350x350?: string | null;
                 readonly hasBeenEdited: boolean;
             } | null;
+            readonly subconferenceMemberships: ReadonlyArray<{
+                readonly __typename?: "registrant_SubconferenceMembership";
+                readonly id: any;
+                readonly role: Registrant_RegistrantRole_Enum;
+                readonly subconferenceId: any;
+            }>;
         }>;
         readonly myBackstagesNotice: ReadonlyArray<{
             readonly __typename?: "conference_Configuration";
@@ -47113,6 +47189,15 @@ export type ConferenceById_WithoutUserQuery = {
         readonly name: string;
         readonly shortName: string;
         readonly slug: string;
+        readonly subconferences: ReadonlyArray<{
+            readonly __typename?: "conference_Subconference";
+            readonly id: any;
+            readonly name: string;
+            readonly shortName: string;
+            readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+            readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+            readonly slug: string;
+        }>;
         readonly supportAddress: ReadonlyArray<{
             readonly __typename?: "conference_Configuration";
             readonly conferenceId: any;
@@ -47209,6 +47294,12 @@ export type AuthdConferenceInfoFragment = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
     readonly myBackstagesNotice: ReadonlyArray<{
         readonly __typename?: "conference_Configuration";
@@ -47224,6 +47315,15 @@ export type PublicConferenceInfoFragment = {
     readonly name: string;
     readonly shortName: string;
     readonly slug: string;
+    readonly subconferences: ReadonlyArray<{
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+        readonly name: string;
+        readonly shortName: string;
+        readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly slug: string;
+    }>;
     readonly supportAddress: ReadonlyArray<{
         readonly __typename?: "conference_Configuration";
         readonly conferenceId: any;
@@ -47310,6 +47410,13 @@ export type ProfileDataFragment = {
     readonly hasBeenEdited: boolean;
 };
 
+export type SubconferenceMembershipDataFragment = {
+    readonly __typename?: "registrant_SubconferenceMembership";
+    readonly id: any;
+    readonly role: Registrant_RegistrantRole_Enum;
+    readonly subconferenceId: any;
+};
+
 export type RegistrantDataFragment = {
     readonly __typename?: "registrant_Registrant";
     readonly id: any;
@@ -47334,6 +47441,12 @@ export type RegistrantDataFragment = {
         readonly photoURL_350x350?: string | null;
         readonly hasBeenEdited: boolean;
     } | null;
+    readonly subconferenceMemberships: ReadonlyArray<{
+        readonly __typename?: "registrant_SubconferenceMembership";
+        readonly id: any;
+        readonly role: Registrant_RegistrantRole_Enum;
+        readonly subconferenceId: any;
+    }>;
 };
 
 export type GetForceUserRefreshConfigQueryVariables = Exact<{
@@ -50119,6 +50232,13 @@ export const ProfileDataFragmentDoc = gql`
         hasBeenEdited
     }
 `;
+export const SubconferenceMembershipDataFragmentDoc = gql`
+    fragment SubconferenceMembershipData on registrant_SubconferenceMembership {
+        id
+        role
+        subconferenceId
+    }
+`;
 export const RegistrantDataFragmentDoc = gql`
     fragment RegistrantData on registrant_Registrant {
         id
@@ -50129,8 +50249,12 @@ export const RegistrantDataFragmentDoc = gql`
         profile {
             ...ProfileData
         }
+        subconferenceMemberships {
+            ...SubconferenceMembershipData
+        }
     }
     ${ProfileDataFragmentDoc}
+    ${SubconferenceMembershipDataFragmentDoc}
 `;
 export const AuthdConferenceInfoFragmentDoc = gql`
     fragment AuthdConferenceInfo on conference_Conference {
@@ -50152,6 +50276,14 @@ export const PublicConferenceInfoFragmentDoc = gql`
         name
         shortName
         slug
+        subconferences {
+            id
+            name
+            shortName
+            conferenceVisibilityLevel
+            defaultProgramVisibilityLevel
+            slug
+        }
         supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
             conferenceId
             key
@@ -66295,6 +66427,16 @@ export type GraphCacheResolvers = {
             WithTypename<Conference_Subconference>,
             Record<string, never>,
             Scalars["uuid"] | string
+        >;
+        memberships?: GraphCacheResolver<
+            WithTypename<Conference_Subconference>,
+            Conference_SubconferenceMembershipsArgs,
+            Array<WithTypename<Registrant_SubconferenceMembership> | string>
+        >;
+        memberships_aggregate?: GraphCacheResolver<
+            WithTypename<Conference_Subconference>,
+            Conference_SubconferenceMemberships_AggregateArgs,
+            WithTypename<Registrant_SubconferenceMembership_Aggregate> | string
         >;
         name?: GraphCacheResolver<
             WithTypename<Conference_Subconference>,

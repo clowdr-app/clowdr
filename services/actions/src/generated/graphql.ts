@@ -9006,6 +9006,10 @@ export type Conference_Subconference = {
     created_at: Scalars["timestamptz"];
     defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
     id: Scalars["uuid"];
+    /** An array relationship */
+    memberships: Array<Registrant_SubconferenceMembership>;
+    /** An aggregate relationship */
+    memberships_aggregate: Registrant_SubconferenceMembership_Aggregate;
     name: Scalars["String"];
     shortName: Scalars["String"];
     slug: Scalars["String"];
@@ -9014,6 +9018,24 @@ export type Conference_Subconference = {
     /** An aggregate relationship */
     sponsorshipTiers_aggregate: Sponsor_Tier_Aggregate;
     updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceMembershipsArgs = {
+    distinct_on?: InputMaybe<Array<Registrant_SubconferenceMembership_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_SubconferenceMembership_Order_By>>;
+    where?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceMemberships_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Registrant_SubconferenceMembership_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_SubconferenceMembership_Order_By>>;
+    where?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Subconference" */
@@ -9080,6 +9102,7 @@ export type Conference_Subconference_Bool_Exp = {
     created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
     defaultProgramVisibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
+    memberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
     shortName?: InputMaybe<String_Comparison_Exp>;
     slug?: InputMaybe<String_Comparison_Exp>;
@@ -9107,6 +9130,7 @@ export type Conference_Subconference_Insert_Input = {
     created_at?: InputMaybe<Scalars["timestamptz"]>;
     defaultProgramVisibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum>;
     id?: InputMaybe<Scalars["uuid"]>;
+    memberships?: InputMaybe<Registrant_SubconferenceMembership_Arr_Rel_Insert_Input>;
     name?: InputMaybe<Scalars["String"]>;
     shortName?: InputMaybe<Scalars["String"]>;
     slug?: InputMaybe<Scalars["String"]>;
@@ -9191,6 +9215,7 @@ export type Conference_Subconference_Order_By = {
     created_at?: InputMaybe<Order_By>;
     defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
+    memberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
     name?: InputMaybe<Order_By>;
     shortName?: InputMaybe<Order_By>;
     slug?: InputMaybe<Order_By>;

@@ -160,7 +160,8 @@
         "videojs-hls-quality-selector": "^1.1.4",
         "vite": "^2.8.4",
         "wonka": "^4.0.15",
-        "xml-js": "^1.6.11"
+        "xml-js": "^1.6.11",
+        "zod": "^3.11.6"
     },
     "devDependencies": {
         "@graphql-codegen/cli": "^2.5.0",

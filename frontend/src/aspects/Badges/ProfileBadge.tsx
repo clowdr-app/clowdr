@@ -2,11 +2,14 @@ import type { BadgeProps } from "@chakra-ui/react";
 import { Badge } from "@chakra-ui/react";
 import React from "react";
 import Color from "tinycolor2";
+import { z } from "zod";
 
-export interface BadgeData {
-    name: string;
-    colour: string;
-}
+export const badgeData = z.object({
+    name: z.string(),
+    colour: z.string(),
+});
+
+export type BadgeData = z.infer<typeof badgeData>;
 
 export default function ProfileBadge({
     badge,

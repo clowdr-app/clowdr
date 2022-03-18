@@ -259,6 +259,7 @@ importers:
       webpack: ^5.69.0
       wonka: ^4.0.15
       xml-js: ^1.6.11
+      zod: ^3.11.6
     dependencies:
       '@ahanapediatrics/ahana-fp': 2.6.0
       '@ahanapediatrics/react-volume-meter': 5.9.0_1cdbadec2b4667c83f11b0407fa7fc39
@@ -403,6 +404,7 @@ importers:
       vite: 2.8.4
       wonka: 4.0.15
       xml-js: 1.6.11
+      zod: 3.11.6
     devDependencies:
       '@graphql-codegen/cli': 2.5.0_graphql@15.7.2+typescript@4.5.5
       '@graphql-codegen/typescript': 2.4.3_graphql@15.7.2

@@ -1,4 +1,4 @@
-import { useColorModeValue } from "@chakra-ui/react";
+ import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React, { Suspense } from "react";
 import { HelmetProvider } from "react-helmet-async";
@@ -16,7 +16,7 @@ import { LiveProgramRoomsProvider } from "../Conference/Attend/Rooms/useLiveProg
 import { ProgramModal, ScheduleModalStateProvider } from "../Conference/Attend/Schedule/ProgramModal";
 import useConferenceIdUpdater from "../Conference/ConferenceIdUpdater";
 import RegistrantsContextProvider from "../Conference/RegistrantsContext";
-import ConferenceProvider from "../Conference/useConference";
+import { ConferenceProvider } from "../Conference/useConference";
 import { CurrentRegistrantProvider, CurrentRegistrantUpdater } from "../Conference/useCurrentRegistrant";
 import { EmojiFloatProvider } from "../Emoji/EmojiFloat";
 import ForceUserRefresh from "../ForceUserRefresh/ForceUserRefresh";

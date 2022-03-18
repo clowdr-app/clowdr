@@ -9008,6 +9008,10 @@ export type Conference_Subconference = {
     readonly created_at: Scalars["timestamptz"];
     readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
     readonly id: Scalars["uuid"];
+    /** An array relationship */
+    readonly memberships: ReadonlyArray<Registrant_SubconferenceMembership>;
+    /** An aggregate relationship */
+    readonly memberships_aggregate: Registrant_SubconferenceMembership_Aggregate;
     readonly name: Scalars["String"];
     readonly shortName: Scalars["String"];
     readonly slug: Scalars["String"];
@@ -9016,6 +9020,24 @@ export type Conference_Subconference = {
     /** An aggregate relationship */
     readonly sponsorshipTiers_aggregate: Sponsor_Tier_Aggregate;
     readonly updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceMembershipsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Registrant_SubconferenceMembership_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Registrant_SubconferenceMembership_Order_By>>;
+    where?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Subconference" */
+export type Conference_SubconferenceMemberships_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Registrant_SubconferenceMembership_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Registrant_SubconferenceMembership_Order_By>>;
+    where?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Subconference" */
@@ -9082,6 +9104,7 @@ export type Conference_Subconference_Bool_Exp = {
     readonly created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum_Comparison_Exp>;
     readonly id?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly memberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly shortName?: InputMaybe<String_Comparison_Exp>;
     readonly slug?: InputMaybe<String_Comparison_Exp>;
@@ -9109,6 +9132,7 @@ export type Conference_Subconference_Insert_Input = {
     readonly created_at?: InputMaybe<Scalars["timestamptz"]>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum>;
     readonly id?: InputMaybe<Scalars["uuid"]>;
+    readonly memberships?: InputMaybe<Registrant_SubconferenceMembership_Arr_Rel_Insert_Input>;
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly shortName?: InputMaybe<Scalars["String"]>;
     readonly slug?: InputMaybe<Scalars["String"]>;
@@ -9193,6 +9217,7 @@ export type Conference_Subconference_Order_By = {
     readonly created_at?: InputMaybe<Order_By>;
     readonly defaultProgramVisibilityLevel?: InputMaybe<Order_By>;
     readonly id?: InputMaybe<Order_By>;
+    readonly memberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
     readonly name?: InputMaybe<Order_By>;
     readonly shortName?: InputMaybe<Order_By>;
     readonly slug?: InputMaybe<Order_By>;

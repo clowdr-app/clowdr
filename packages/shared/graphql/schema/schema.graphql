@@ -12224,6 +12224,56 @@ type conference_Subconference {
     created_at: timestamptz!
     defaultProgramVisibilityLevel: conference_VisibilityLevel_enum!
     id: uuid!
+    """
+    An array relationship
+    """
+    memberships(
+        """
+        distinct select on columns
+        """
+        distinct_on: [registrant_SubconferenceMembership_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [registrant_SubconferenceMembership_order_by!]
+        """
+        filter the rows returned
+        """
+        where: registrant_SubconferenceMembership_bool_exp
+    ): [registrant_SubconferenceMembership!]!
+    """
+    An aggregate relationship
+    """
+    memberships_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [registrant_SubconferenceMembership_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [registrant_SubconferenceMembership_order_by!]
+        """
+        filter the rows returned
+        """
+        where: registrant_SubconferenceMembership_bool_exp
+    ): registrant_SubconferenceMembership_aggregate!
     name: String!
     shortName: String!
     slug: String!
@@ -12330,6 +12380,7 @@ input conference_Subconference_bool_exp {
     created_at: timestamptz_comparison_exp
     defaultProgramVisibilityLevel: conference_VisibilityLevel_enum_comparison_exp
     id: uuid_comparison_exp
+    memberships: registrant_SubconferenceMembership_bool_exp
     name: String_comparison_exp
     shortName: String_comparison_exp
     slug: String_comparison_exp
@@ -12369,6 +12420,7 @@ input conference_Subconference_insert_input {
     created_at: timestamptz
     defaultProgramVisibilityLevel: conference_VisibilityLevel_enum
     id: uuid
+    memberships: registrant_SubconferenceMembership_arr_rel_insert_input
     name: String
     shortName: String
     slug: String
@@ -12472,6 +12524,7 @@ input conference_Subconference_order_by {
     created_at: order_by
     defaultProgramVisibilityLevel: order_by
     id: order_by
+    memberships_aggregate: registrant_SubconferenceMembership_aggregate_order_by
     name: order_by
     shortName: order_by
     slug: order_by

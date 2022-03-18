@@ -49,6 +49,15 @@ gql`
         shortName
         slug
 
+        subconferences {
+            id
+            name
+            shortName
+            conferenceVisibilityLevel
+            defaultProgramVisibilityLevel
+            slug
+        }
+
         supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
             conferenceId
             key
@@ -128,6 +137,12 @@ gql`
         hasBeenEdited
     }
 
+    fragment SubconferenceMembershipData on registrant_SubconferenceMembership {
+        id
+        role
+        subconferenceId
+    }
+
     fragment RegistrantData on registrant_Registrant {
         id
         userId
@@ -136,6 +151,9 @@ gql`
         conferenceRole
         profile {
             ...ProfileData
+        }
+        subconferenceMemberships {
+            ...SubconferenceMembershipData
         }
     }
 `;
@@ -313,7 +331,7 @@ function ConferenceProvider_WithUser({
     );
 }
 
-export default function ConferenceProvider({
+export function ConferenceProvider({
     children,
     conferenceId,
 }: {

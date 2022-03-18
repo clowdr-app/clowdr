@@ -85,7 +85,7 @@ export default function StarEventButton({
                 justifyContent="center"
                 alignItems="center"
                 verticalAlign="middle"
-                minW="1em"
+                w="1em"
                 {...props}
             >
                 {inner}
@@ -115,11 +115,19 @@ function StarEventButtonInner({
     const [deleteStarsResponse, deleteStars] = useStarEventButton_DeleteStarsMutation();
 
     if (starsResponse.fetching) {
-        return <Spinner size="xs" speed="0.6s" />;
+        return (
+            <Box display="inline-flex" justifyContent="center" alignItems="center" verticalAlign="middle" w="1.19em">
+                <Spinner size="xs" color="blue" speed="0.4s" />
+            </Box>
+        );
     }
 
     if (insertStarsResponse.fetching || deleteStarsResponse.fetching) {
-        return <Spinner size="xs" color="gold" speed="0.4s" />;
+        return (
+            <Box display="inline-flex" justifyContent="center" alignItems="center" verticalAlign="middle" w="1.19em">
+                <Spinner size="xs" color="blue" speed="0.4s" />
+            </Box>
+        );
     }
 
     if (!starsResponse.data) {
@@ -145,10 +153,10 @@ function StarEventButtonInner({
                     }
                 }}
                 variant="ghost"
-                size="sm"
+                size="md"
                 m={0}
                 p={0}
-                w="auto"
+                w="1.1em"
                 h="auto"
                 minW={0}
                 minH={0}
@@ -156,12 +164,12 @@ function StarEventButtonInner({
                 justifyContent="center"
                 alignItems="center"
                 _hover={{
-                    bgColor: "gold",
+                    bgColor: "blue",
                 }}
                 fontWeight="bold"
                 flex="0 0 auto"
             >
-                <FAIcon iconStyle="s" icon="star" color="gold" aria-hidden />
+                <FAIcon iconStyle="s" icon="calendar-minus" color="blue" aria-hidden />
             </Button>
         );
     } else {
@@ -183,10 +191,10 @@ function StarEventButtonInner({
                     );
                 }}
                 variant="ghost"
-                size="sm"
+                size="md"
                 m={0}
                 p={0}
-                w="auto"
+                w="1.1em"
                 h="auto"
                 minW={0}
                 minH={0}
@@ -194,12 +202,12 @@ function StarEventButtonInner({
                 justifyContent="center"
                 alignItems="center"
                 _hover={{
-                    bgColor: "gold",
+                    bgColor: "blue",
                 }}
                 fontWeight="bold"
                 flex="0 0 auto"
             >
-                <FAIcon iconStyle="r" icon="star" color="gold" aria-hidden />
+                <FAIcon iconStyle="s" icon="calendar-plus" color="blue" aria-hidden />
             </Button>
         );
     }

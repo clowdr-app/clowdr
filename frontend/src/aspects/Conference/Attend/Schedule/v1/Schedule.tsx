@@ -739,7 +739,7 @@ export function ScheduleInner({
                     size="sm"
                     mr={2}
                 >
-                    <FAIcon iconStyle={filterToStarredEvents ? "s" : "r"} icon="star" />
+                    <FAIcon iconStyle="s" icon={filterToStarredEvents ? "calendar-minus" : "calendar-plus"} />
                     &nbsp;&nbsp;{filterToStarredEvents ? "Show full schedule" : "Show my schedule"}
                 </Button>
                 <Tooltip

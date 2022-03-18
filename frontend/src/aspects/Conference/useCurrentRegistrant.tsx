@@ -1,5 +1,5 @@
 import { assert } from "@midspace/assert";
-import type { ReactNode, ReactNodeArray } from "react";
+import type { PropsWithChildren } from "react";
 import React, { useMemo } from "react";
 import type { Maybe, Registrant_RegistrantRole_Enum } from "../../generated/graphql";
 import type { BadgeData } from "../Badges/ProfileBadge";
@@ -45,7 +45,7 @@ export function useMaybeCurrentRegistrant(): RegistrantContextT | undefined {
     return React.useContext(CurrentRegistrantContext);
 }
 
-export function CurrentRegistrantProvider({ children }: { children: ReactNode | ReactNodeArray }): JSX.Element {
+export function CurrentRegistrantProvider({ children }: PropsWithChildren<Record<string, never>>): JSX.Element {
     const conference = useConference();
 
     const ctx = useMemo(() => {

@@ -6,6 +6,13 @@ object_relationships:
   using:
     foreign_key_constraint_on: conferenceId
 array_relationships:
+- name: memberships
+  using:
+    foreign_key_constraint_on:
+      column: subconferenceId
+      table:
+        name: SubconferenceMembership
+        schema: registrant
 - name: sponsorshipTiers
   using:
     manual_configuration:
@@ -48,12 +55,14 @@ select_permissions:
       _and:
       - conferenceId:
           _in: X-Hasura-Conference-Ids
-      - id:
-          _in: X-Hasura-Subconference-Ids
-      - conferenceVisibilityLevel:
-          _in:
-          - PUBLIC
-          - EXTERNAL
+      - _or:
+        - id:
+            _in: X-Hasura-Subconference-Ids
+        - conferenceVisibilityLevel:
+            _in:
+            - PUBLIC
+            - EXTERNAL
+            - INTERNAL
   role: attendee
 - permission:
     columns:

@@ -40743,6 +40743,12 @@ export type RegistrantByIdQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -40817,6 +40823,12 @@ export type UpdateRegistrantDisplayNameMutation = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     } | null;
 };
 
@@ -40998,6 +41010,12 @@ export type SelectRegistrantsQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -41032,6 +41050,12 @@ export type SearchRegistrantsQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -47218,6 +47242,12 @@ export type RegistrantsByIdQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -47252,6 +47282,12 @@ export type RegistrantsByUserIdQuery = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
 };
 
@@ -47269,6 +47305,15 @@ export type ConferenceById_WithUserQuery = {
         readonly shortName: string;
         readonly slug: string;
         readonly announcementsChatId?: any | null;
+        readonly subconferences: ReadonlyArray<{
+            readonly __typename?: "conference_Subconference";
+            readonly id: any;
+            readonly name: string;
+            readonly shortName: string;
+            readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+            readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+            readonly slug: string;
+        }>;
         readonly supportAddress: ReadonlyArray<{
             readonly __typename?: "conference_Configuration";
             readonly conferenceId: any;
@@ -47359,6 +47404,12 @@ export type ConferenceById_WithUserQuery = {
                 readonly photoURL_350x350?: string | null;
                 readonly hasBeenEdited: boolean;
             } | null;
+            readonly subconferenceMemberships: ReadonlyArray<{
+                readonly __typename?: "registrant_SubconferenceMembership";
+                readonly id: any;
+                readonly role: Registrant_RegistrantRole_Enum;
+                readonly subconferenceId: any;
+            }>;
         }>;
         readonly myBackstagesNotice: ReadonlyArray<{
             readonly __typename?: "conference_Configuration";
@@ -47381,6 +47432,15 @@ export type ConferenceById_WithoutUserQuery = {
         readonly name: string;
         readonly shortName: string;
         readonly slug: string;
+        readonly subconferences: ReadonlyArray<{
+            readonly __typename?: "conference_Subconference";
+            readonly id: any;
+            readonly name: string;
+            readonly shortName: string;
+            readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+            readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+            readonly slug: string;
+        }>;
         readonly supportAddress: ReadonlyArray<{
             readonly __typename?: "conference_Configuration";
             readonly conferenceId: any;
@@ -47477,6 +47537,12 @@ export type AuthdConferenceInfoFragment = {
             readonly photoURL_350x350?: string | null;
             readonly hasBeenEdited: boolean;
         } | null;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+            readonly subconferenceId: any;
+        }>;
     }>;
     readonly myBackstagesNotice: ReadonlyArray<{
         readonly __typename?: "conference_Configuration";
@@ -47492,6 +47558,15 @@ export type PublicConferenceInfoFragment = {
     readonly name: string;
     readonly shortName: string;
     readonly slug: string;
+    readonly subconferences: ReadonlyArray<{
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+        readonly name: string;
+        readonly shortName: string;
+        readonly conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly defaultProgramVisibilityLevel: Conference_VisibilityLevel_Enum;
+        readonly slug: string;
+    }>;
     readonly supportAddress: ReadonlyArray<{
         readonly __typename?: "conference_Configuration";
         readonly conferenceId: any;
@@ -47578,6 +47653,13 @@ export type ProfileDataFragment = {
     readonly hasBeenEdited: boolean;
 };
 
+export type SubconferenceMembershipDataFragment = {
+    readonly __typename?: "registrant_SubconferenceMembership";
+    readonly id: any;
+    readonly role: Registrant_RegistrantRole_Enum;
+    readonly subconferenceId: any;
+};
+
 export type RegistrantDataFragment = {
     readonly __typename?: "registrant_Registrant";
     readonly id: any;
@@ -47602,6 +47684,12 @@ export type RegistrantDataFragment = {
         readonly photoURL_350x350?: string | null;
         readonly hasBeenEdited: boolean;
     } | null;
+    readonly subconferenceMemberships: ReadonlyArray<{
+        readonly __typename?: "registrant_SubconferenceMembership";
+        readonly id: any;
+        readonly role: Registrant_RegistrantRole_Enum;
+        readonly subconferenceId: any;
+    }>;
 };
 
 export type GetForceUserRefreshConfigQueryVariables = Exact<{
@@ -50393,6 +50481,13 @@ export const ProfileDataFragmentDoc = gql`
         hasBeenEdited
     }
 `;
+export const SubconferenceMembershipDataFragmentDoc = gql`
+    fragment SubconferenceMembershipData on registrant_SubconferenceMembership {
+        id
+        role
+        subconferenceId
+    }
+`;
 export const RegistrantDataFragmentDoc = gql`
     fragment RegistrantData on registrant_Registrant {
         id
@@ -50403,8 +50498,12 @@ export const RegistrantDataFragmentDoc = gql`
         profile {
             ...ProfileData
         }
+        subconferenceMemberships {
+            ...SubconferenceMembershipData
+        }
     }
     ${ProfileDataFragmentDoc}
+    ${SubconferenceMembershipDataFragmentDoc}
 `;
 export const AuthdConferenceInfoFragmentDoc = gql`
     fragment AuthdConferenceInfo on conference_Conference {
@@ -50426,6 +50525,14 @@ export const PublicConferenceInfoFragmentDoc = gql`
         name
         shortName
         slug
+        subconferences {
+            id
+            name
+            shortName
+            conferenceVisibilityLevel
+            defaultProgramVisibilityLevel
+            slug
+        }
         supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
             conferenceId
             key

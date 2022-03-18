@@ -2,4 +2,5 @@ function:
   name: updateEventUsage
   schema: conference
 configuration:
+  custom_root_fields: {}
   exposed_as: mutation

@@ -18,7 +18,7 @@ import { LiveProgramRoomsProvider } from "../Conference/Attend/Rooms/useLiveProg
 import { ScheduleModalProvider } from "../Conference/Attend/Schedule/ProgramModal";
 import useConferenceIdUpdater from "../Conference/ConferenceIdUpdater";
 import AttendeesContextProvider from "../Conference/RegistrantsContext";
-import ConferenceProvider from "../Conference/useConference";
+import { ConferenceProvider } from "../Conference/useConference";
 import { CurrentRegistrantProvider } from "../Conference/useCurrentRegistrant";
 import { EmojiFloatProvider } from "../Emoji/EmojiFloat";
 import ForceUserRefresh from "../ForceUserRefresh/ForceUserRefresh";

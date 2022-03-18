@@ -1,4 +1,4 @@
-import { Box, Flex, Link, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Box, Flex, useColorModeValue, useToken } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useEffect, useMemo } from "react";
@@ -309,18 +309,6 @@ export default function LeftMenu({
                             isDisabled={navState.disabled}
                         />
                     </RequireRole>
-                    <MenuButton
-                        label="Feedback"
-                        iconStyle="s"
-                        icon="comment-medical"
-                        borderTopRadius={0}
-                        colorScheme={colorScheme}
-                        as={navState.disabled ? undefined : Link}
-                        href="https://form.asana.com?k=TOpJbWqoZ36fWafSStJ9dQ&d=1198973227684402"
-                        showLabel={isExpanded}
-                        textDecoration="none"
-                        isDisabled={navState.disabled}
-                    />
                 </Flex>
             </Flex>
         </>

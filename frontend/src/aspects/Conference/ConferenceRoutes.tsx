@@ -46,10 +46,13 @@ export default function ConferenceRoutes(): JSX.Element {
     }, [conference.themeComponentColors, setTheme]);
 
     const isOnManagementPage = useRouteMatch(`${path}/manage`);
-    const { setIsOnManagementPage } = useAuthParameters();
+    const { setIsOnManagementPage, setSubconferenceId } = useAuthParameters();
     useEffect(() => {
         setIsOnManagementPage(Boolean(isOnManagementPage));
-    }, [setIsOnManagementPage, isOnManagementPage]);
+        if (!isOnManagementPage) {
+            setSubconferenceId(null);
+        }
+    }, [setIsOnManagementPage, isOnManagementPage, setSubconferenceId]);
 
     return (
         <Suspense fallback={<CenteredSpinner caller="ConferenceRoutes:56" />}>

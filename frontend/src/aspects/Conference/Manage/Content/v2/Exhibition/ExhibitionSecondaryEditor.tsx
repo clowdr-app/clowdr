@@ -132,7 +132,7 @@ function SecondaryEditorInner({
     setDescriptiveItemId: (id: string | null) => void;
 }): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -152,6 +152,7 @@ function SecondaryEditorInner({
     const [itemsResponse] = useManageContent_SelectAllItemsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });

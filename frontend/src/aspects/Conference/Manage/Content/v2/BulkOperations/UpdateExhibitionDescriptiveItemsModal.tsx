@@ -19,12 +19,22 @@ import {
     useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery,
 } from "../../../../../../generated/graphql";
 import CenteredSpinner from "../../../../../Chakra/CenteredSpinner";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../../GQL/make-context";
 import { useConference } from "../../../../useConference";
 
 gql`
-    query UpdateExhibitionDescriptiveItems_SelectExhibitions($conferenceId: uuid!) {
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, descriptiveItemId: { _is_null: true } }) {
+    query UpdateExhibitionDescriptiveItems_SelectExhibitions(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+    ) {
+        collection_Exhibition(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                descriptiveItemId: { _is_null: true }
+            }
+        ) {
             id
             name
             conferenceId
@@ -69,6 +79,7 @@ function ModalInner({
     items: readonly ManageContent_ItemFragment[];
 }): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -79,6 +90,7 @@ function ModalInner({
     const [exhibitionsResponse] = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         requestPolicy: "network-only",
         context,

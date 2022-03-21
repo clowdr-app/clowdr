@@ -181,7 +181,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                             );
                         }
 
-                        await refetchRtmpOutputResponse();
+                        refetchRtmpOutputResponse();
                     }
                 }
 

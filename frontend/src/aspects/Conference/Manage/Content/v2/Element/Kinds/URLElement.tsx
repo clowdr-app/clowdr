@@ -28,7 +28,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.PosterUrl,
         Content_ElementType_Enum.ExternalEventLink,
     ],
-    createDefault: (type, conferenceId, itemId) => {
+    createDefault: (type, conferenceId, subconferenceId, itemId) => {
         assert.truthy(
             type === Content_ElementType_Enum.ImageUrl ||
                 type === Content_ElementType_Enum.PaperUrl ||
@@ -53,6 +53,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
             __typename: "content_Element",
             updatedAt: new Date().toISOString(),
             conferenceId,
+            subconferenceId,
             itemId,
             id: uuidv4(),
             name,

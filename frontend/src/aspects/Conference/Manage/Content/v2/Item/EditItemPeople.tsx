@@ -90,8 +90,8 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
 }
 
 gql`
-    query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageContent_SelectProgramPeople($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageContent_ProgramPerson
         }
     }
@@ -131,10 +131,11 @@ function AddItemPersonBody({
     onClose,
 }: {
     itemId: string;
-    existingPeopleIds: string[]; // TODO: This needs to be a pair of id and role
+    existingPeopleIds: string[];
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -145,6 +146,7 @@ function AddItemPersonBody({
     const [peopleResponse] = useManageContent_SelectProgramPeopleQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });

@@ -27,6 +27,7 @@ import {
     useCombineVideosModal_GetCombineVideosJobQuery,
     useCombineVideosModal_GetElementsQuery,
 } from "../../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../../GQL/make-context";
 import { useConference } from "../../../../useConference";
 import useCurrentRegistrant from "../../../../useCurrentRegistrant";
@@ -58,6 +59,7 @@ export function CombineVideosModal({
 gql`
     mutation CombineVideosModal_CreateCombineVideosJob(
         $conferenceId: uuid!
+        $subconferenceId: uuid
         $createdByRegistrantId: uuid!
         $outputName: String!
         $data: jsonb!
@@ -65,6 +67,7 @@ gql`
         insert_job_queues_CombineVideosJob_one(
             object: {
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
                 createdByRegistrantId: $createdByRegistrantId
                 outputName: $outputName
                 data: $data
@@ -74,9 +77,13 @@ gql`
         }
     }
 
-    query CombineVideosModal_GetCombineVideosJob($conferenceId: uuid!) {
+    query CombineVideosModal_GetCombineVideosJob($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
         job_queues_CombineVideosJob(
-            where: { conferenceId: { _eq: $conferenceId }, jobStatusName: { _in: [NEW, IN_PROGRESS] } }
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                jobStatusName: { _in: [NEW, IN_PROGRESS] }
+            }
         ) {
             id
             message
@@ -115,6 +122,7 @@ function ModalInner({
     const itemIds = useMemo(() => elementsByItem.map((x) => x.itemId), [elementsByItem]);
 
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -125,6 +133,7 @@ function ModalInner({
     const [combineVideosResponse] = useCombineVideosModal_GetCombineVideosJobQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         requestPolicy: "network-only",
         context,

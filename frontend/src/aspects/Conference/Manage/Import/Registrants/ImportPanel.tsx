@@ -29,6 +29,7 @@ import {
     useSelectAllRegistrantsQuery,
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { useConference } from "../../../useConference";
@@ -69,6 +70,7 @@ export default function ImportPanel({
     data: Record<string, IntermediaryRegistrantData[]>;
 }): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const [hasImported, setHasImported] = useState<boolean>(false);
 
     const context = useMemo(
@@ -81,6 +83,7 @@ export default function ImportPanel({
     const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });

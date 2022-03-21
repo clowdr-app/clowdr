@@ -76,6 +76,7 @@ gql`
     fragment ManageProgramPeople_ProgramPersonWithAccessToken on collection_ProgramPerson {
         id
         conferenceId
+        subconferenceId
         name
         affiliation
         email
@@ -83,8 +84,8 @@ gql`
         accessToken
     }
 
-    query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageProgramPeople_ProgramPersonWithAccessToken
         }
     }
@@ -129,7 +130,7 @@ gql`
 
 export default function ManageProgramPeople(): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const title = useTitle(`Manage program people at ${conference.shortName}`);
 
     const context = useMemo(
@@ -500,6 +501,7 @@ export default function ManageProgramPeople(): JSX.Element {
             requestPolicy: "network-only",
             variables: {
                 conferenceId: conference.id,
+                subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
             },
             context,
         });
@@ -521,6 +523,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 return {
                     id: programpersonId,
                     conferenceId: conference.id,
+                    subconferenceId,
                 };
             },
             makeWhole: (d) =>
@@ -531,6 +534,7 @@ export default function ManageProgramPeople(): JSX.Element {
                         person: {
                             id: record.id,
                             conferenceId: conference.id,
+                            subconferenceId,
                             affiliation: record.affiliation,
                             registrantId: record.registrantId,
                             email: record.email,
@@ -547,7 +551,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 );
             },
         }),
-        [conference.id, insertProgramPerson, insertProgramPersonResponse.fetching]
+        [conference.id, insertProgramPerson, insertProgramPersonResponse.fetching, subconferenceId]
     );
 
     const startUpdate = useCallback(
@@ -721,6 +725,7 @@ export default function ManageProgramPeople(): JSX.Element {
                         const csvText = Papa.unparse(
                             dataToExport.map((person) => ({
                                 "Conference Id": person.conferenceId,
+                                "Subconference Id": person.subconferenceId,
                                 "Person Id": person.id,
                                 "Registrant Id": person.registrantId ?? "",
                                 Name: person.name,
@@ -731,6 +736,7 @@ export default function ManageProgramPeople(): JSX.Element {
                             {
                                 columns: [
                                     "Conference Id",
+                                    "Subconference Id",
                                     "Person Id",
                                     "Registrant Id",
                                     "Name",

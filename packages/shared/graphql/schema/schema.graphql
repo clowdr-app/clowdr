@@ -17357,6 +17357,7 @@ type job_queues_CombineVideosJob {
     An object relationship
     """
     registrant: registrant_Registrant
+    subconferenceId: uuid
     updated_at: timestamptz!
 }
 
@@ -17403,6 +17404,7 @@ input job_queues_CombineVideosJob_bool_exp {
     message: String_comparison_exp
     outputName: String_comparison_exp
     registrant: registrant_Registrant_bool_exp
+    subconferenceId: uuid_comparison_exp
     updated_at: timestamptz_comparison_exp
 }
 
@@ -17453,6 +17455,7 @@ input job_queues_CombineVideosJob_insert_input {
     message: String
     outputName: String
     registrant: registrant_Registrant_obj_rel_insert_input
+    subconferenceId: uuid
     updated_at: timestamptz
 }
 
@@ -17467,6 +17470,7 @@ type job_queues_CombineVideosJob_max_fields {
     mediaConvertJobId: String
     message: String
     outputName: String
+    subconferenceId: uuid
     updated_at: timestamptz
 }
 
@@ -17481,6 +17485,7 @@ type job_queues_CombineVideosJob_min_fields {
     mediaConvertJobId: String
     message: String
     outputName: String
+    subconferenceId: uuid
     updated_at: timestamptz
 }
 
@@ -17523,6 +17528,7 @@ input job_queues_CombineVideosJob_order_by {
     message: order_by
     outputName: order_by
     registrant: registrant_Registrant_order_by
+    subconferenceId: order_by
     updated_at: order_by
 }
 
@@ -17583,6 +17589,10 @@ enum job_queues_CombineVideosJob_select_column {
     """
     column name
     """
+    subconferenceId
+    """
+    column name
+    """
     updated_at
 }
 
@@ -17599,6 +17609,7 @@ input job_queues_CombineVideosJob_set_input {
     mediaConvertJobId: String
     message: String
     outputName: String
+    subconferenceId: uuid
     updated_at: timestamptz
 }
 
@@ -17642,6 +17653,10 @@ enum job_queues_CombineVideosJob_update_column {
     column name
     """
     outputName
+    """
+    column name
+    """
+    subconferenceId
     """
     column name
     """
@@ -20774,7 +20789,7 @@ type mutation_root {
         """
         where: conference_Usage_bool_exp
     ): [conference_Usage!]!
-    createItemRoom(conferenceId: uuid!, itemId: uuid!): CreateItemRoomOutput
+    createItemRoom(conferenceId: uuid!, itemId: uuid!, subconferenceId: uuid): CreateItemRoomOutput
     createRoomDm(conferenceId: uuid!, registrantIds: [uuid]!): CreateRoomDmOutput
     """
     delete data from the table: "Email"

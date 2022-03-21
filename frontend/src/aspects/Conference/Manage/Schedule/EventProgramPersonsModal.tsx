@@ -74,6 +74,7 @@ interface Props {
 gql`
     fragment EventInfo on schedule_Event {
         conferenceId
+        subconferenceId
         id
         eventPeople {
             ...EventProgramPersonInfo
@@ -222,6 +223,7 @@ export function AddEventProgramPerson_RegistrantModal({
                         .toPromise(),
                 insertProgramPeople,
                 event.conferenceId,
+                event.subconferenceId,
                 [event],
                 selectedRole,
                 insertEventPeopleQ

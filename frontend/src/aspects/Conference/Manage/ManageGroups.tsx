@@ -12,6 +12,7 @@ import {
 import type { CRUDTableProps, PrimaryField, UpdateResult } from "../../CRUDTable/CRUDTable";
 import CRUDTable, { defaultStringFilter, FieldType } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Hooks/useTitle";
@@ -25,8 +26,8 @@ gql`
         name
     }
 
-    query SelectAllGroups($conferenceId: uuid!) {
-        registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    query SelectAllGroups($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        registrant_Group(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageGroups_Group
         }
     }
@@ -41,6 +42,7 @@ gql`
             returning {
                 id
                 conferenceId
+                subconferenceId
                 name
             }
         }
@@ -52,6 +54,7 @@ gql`
                 id
                 name
                 conferenceId
+                subconferenceId
             }
         }
     }
@@ -67,6 +70,7 @@ const GroupsCRUDTable = (props: Readonly<CRUDTableProps<GroupDescriptor, "id">>)
 
 export default function ManageGroups(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const title = useTitle(`Manage groups of ${conference.shortName}`);
 
     const context = useMemo(
@@ -81,6 +85,7 @@ export default function ManageGroups(): JSX.Element {
             requestPolicy: "network-only",
             variables: {
                 conferenceId: conference.id,
+                subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
             },
             context,
         });
@@ -260,6 +265,7 @@ export default function ManageGroups(): JSX.Element {
                                             assert.truthy(item);
                                             return {
                                                 conferenceId: conference.id,
+                                                subconferenceId,
                                                 name: item.name,
                                             };
                                         }),

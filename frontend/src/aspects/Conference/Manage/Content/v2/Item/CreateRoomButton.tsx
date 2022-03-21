@@ -7,8 +7,8 @@ import { useItem_CreateRoomMutation } from "../../../../../../generated/graphql"
 import { useConference } from "../../../../useConference";
 
 gql`
-    mutation Item_CreateRoom($conferenceId: uuid!, $itemId: uuid!) {
-        createItemRoom(conferenceId: $conferenceId, itemId: $itemId) {
+    mutation Item_CreateRoom($conferenceId: uuid!, $subconferenceId: uuid, $itemId: uuid!) {
+        createItemRoom(conferenceId: $conferenceId, subconferenceId: $subconferenceId, itemId: $itemId) {
             roomId
             message
         }

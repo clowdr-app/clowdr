@@ -14,6 +14,7 @@ import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
 import usePolling from "../../../Hooks/usePolling";
 import { useRealTime } from "../../../Hooks/useRealTime";
@@ -27,9 +28,9 @@ gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
         id
         conferenceId
+        subconferenceId
         created_at
         updated_at
-        conferenceId
         startAt
         endAt
         roomDurationMinutes
@@ -58,8 +59,8 @@ gql`
         }
     }
 
-    query ManageShufflePeriods_SelectAll($conferenceId: uuid!) {
-        room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageShufflePeriods_SelectAll($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageShufflePeriods_ShufflePeriod
         }
     }
@@ -67,6 +68,7 @@ gql`
 
 export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
 
     const context = useMemo(
@@ -79,6 +81,7 @@ export default function ManageShuffle(): JSX.Element {
     const [shufflePeriodsQ, refetchShufflePeriodsQ] = useManageShufflePeriods_SelectAllQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         requestPolicy: "cache-and-network",
         context,

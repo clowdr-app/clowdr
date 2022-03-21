@@ -28,6 +28,7 @@ import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
 import { Room_ShuffleAlgorithm_Enum, useInsertShufflePeriodMutation } from "../../../../generated/graphql";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { roundUpToNearest } from "../../../Utils/MathUtils";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
@@ -39,6 +40,7 @@ gql`
             created_at
             updated_at
             conferenceId
+            subconferenceId
             startAt
             endAt
             roomDurationMinutes
@@ -55,6 +57,7 @@ gql`
 export default function CreateQueueModal(): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const registrant = useCurrentRegistrant();
 
     const [insertResponse, insert] = useInsertShufflePeriodMutation();
@@ -142,6 +145,7 @@ export default function CreateQueueModal(): JSX.Element {
                         name,
                         algorithm,
                         conferenceId: conference.id,
+                        subconferenceId,
                         endAt: endAt.toISOString(),
                         maxRegistrantsPerRoom: maxRegistrants,
                         roomDurationMinutes,
@@ -187,6 +191,7 @@ export default function CreateQueueModal(): JSX.Element {
         startAt,
         targetRegistrants,
         toast,
+        subconferenceId,
     ]);
 
     return (

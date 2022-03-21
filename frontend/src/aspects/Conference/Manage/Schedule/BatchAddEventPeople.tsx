@@ -66,6 +66,7 @@ import {
 import FAIcon from "../../../Chakra/FAIcon";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
 import { maybeCompare } from "../../../Utils/maybeCompare";
 import RequireRole from "../../RequireRole";
@@ -122,8 +123,8 @@ gql`
         }
     }
 
-    query AddEventPeople_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+    query AddEventPeople_SelectProgramPeople($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...AddEventPeople_ProgramPerson
         }
     }
@@ -140,8 +141,8 @@ gql`
         }
     }
 
-    query AddEventPeople_SelectGroups($conferenceId: uuid!) {
-        registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    query AddEventPeople_SelectGroups($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        registrant_Group(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...AddEventPeople_Group
         }
     }
@@ -364,6 +365,7 @@ function AddEventPeople_SingleProgramPersonPanel({
     onClose: () => void;
 }) {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const [hasBeenExpanded, setHasBeenExpanded] = useState<boolean>(false);
     useEffect(() => {
         if (isExpanded) {
@@ -382,6 +384,7 @@ function AddEventPeople_SingleProgramPersonPanel({
         pause: !hasBeenExpanded,
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -527,6 +530,7 @@ function AddEventPeople_FromGroupPanel({
     onClose: () => void;
 }) {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const [hasBeenExpanded, setHasBeenExpanded] = useState<boolean>(false);
     useEffect(() => {
         if (isExpanded) {
@@ -552,6 +556,7 @@ function AddEventPeople_FromGroupPanel({
         pause: !hasBeenExpanded,
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -646,6 +651,7 @@ function AddEventPeople_FromGroupPanel({
                         .toPromise(),
                 insertProgramPeople,
                 conference.id,
+                subconferenceId,
                 events,
                 selectedRole,
                 insertEventPeopleQ
@@ -665,16 +671,17 @@ function AddEventPeople_FromGroupPanel({
             setAdding(false);
         }
     }, [
+        client,
         selectedGroupId,
         selectRegistrantsQuery,
         insertProgramPeople,
         conference.id,
+        subconferenceId,
         events,
         selectedRole,
         insertEventPeopleQ,
         onClose,
         toast,
-        client,
     ]);
 
     return (
@@ -732,6 +739,7 @@ function AddEventPeople_SingleRegistrantPanel({
     onClose: () => void;
 }) {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const [hasBeenExpanded, setHasBeenExpanded] = useState<boolean>(false);
     useEffect(() => {
         if (isExpanded) {
@@ -827,6 +835,7 @@ function AddEventPeople_SingleRegistrantPanel({
                         .toPromise(),
                 insertProgramPeople,
                 conference.id,
+                subconferenceId,
                 events,
                 selectedRole,
                 insertEventPeopleQ
@@ -850,6 +859,7 @@ function AddEventPeople_SingleRegistrantPanel({
         selectRegistrantsQuery,
         insertProgramPeople,
         conference.id,
+        subconferenceId,
         events,
         selectedRole,
         insertEventPeopleQ,
@@ -936,6 +946,7 @@ export async function addRegistrantsToEvent(
         AddEventPeople_InsertProgramPeopleMutationVariables
     >,
     conferenceId: string,
+    subconferenceId: string | null,
     events: EventInfoFragment[],
     selectedRole: Schedule_EventProgramPersonRole_Enum,
     insertEventPeopleQ: UseMutationResponse<
@@ -959,6 +970,7 @@ export async function addRegistrantsToEvent(
                 affiliation: registrant.profile?.affiliation,
                 registrantId: registrant.id,
                 conferenceId,
+                subconferenceId,
                 email: registrant.invitation?.invitedEmailAddress,
             });
         }

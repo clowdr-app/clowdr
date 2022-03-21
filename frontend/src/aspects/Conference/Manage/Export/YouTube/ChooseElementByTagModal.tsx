@@ -31,15 +31,20 @@ import {
     useChooseElementByTagModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
 
 gql`
-    query ChooseElementByTagModal_GetTags($conferenceId: uuid!) {
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }, order_by: { name: asc }) {
+    query ChooseElementByTagModal_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Tag(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+            order_by: { name: asc }
+        ) {
             id
             name
             conferenceId
+            subconferenceId
         }
     }
 
@@ -74,6 +79,7 @@ export function ChooseElementByTagModal({
     chooseItems: (elementIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -84,6 +90,7 @@ export function ChooseElementByTagModal({
     const [tagsResult] = useChooseElementByTagModal_GetTagsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });

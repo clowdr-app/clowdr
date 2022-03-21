@@ -16,7 +16,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.PaperFile,
         Content_ElementType_Enum.PosterFile,
     ],
-    createDefault: (type, conferenceId, itemId) => {
+    createDefault: (type, conferenceId, subconferenceId, itemId) => {
         assert.truthy(
             type === Content_ElementType_Enum.ImageFile ||
                 type === Content_ElementType_Enum.PaperFile ||
@@ -43,6 +43,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
             data: [],
             layoutData: null,
             conferenceId,
+            subconferenceId,
             itemId,
             uploadsRemaining: 3,
         };

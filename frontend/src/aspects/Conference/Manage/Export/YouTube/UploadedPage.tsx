@@ -13,6 +13,7 @@ import {
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
 } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import usePolling from "../../../../Hooks/usePolling";
@@ -21,9 +22,12 @@ import { useConference } from "../../../useConference";
 import { DashboardPage } from "../../DashboardPage";
 
 gql`
-    query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
+    query UploadYouTubeVideos_GetUploadYouTubeVideoJobs(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+    ) {
         job_queues_UploadYouTubeVideoJob(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
             order_by: { createdAt: desc }
             limit: 100
         ) {
@@ -38,12 +42,14 @@ gql`
         videoStatus
         videoTitle
         conferenceId
+        subconferenceId
         createdAt
     }
 
     fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
         id
         conferenceId
+        subconferenceId
         createdAt
         jobStatusName
         message
@@ -59,6 +65,7 @@ gql`
 
 export function UploadedPage(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const title = useTitle(`YouTube Uploads from ${conference.shortName}`);
     const context = useMemo(
         () =>
@@ -70,6 +77,7 @@ export function UploadedPage(): JSX.Element {
     const [existingJobsResult, refetchExistingJobsResult] = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         requestPolicy: "network-only",
         context,

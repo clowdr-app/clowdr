@@ -227,6 +227,7 @@ function ModalInner({
                                     };
                                     return {
                                         conferenceId: item.conferenceId,
+                                        subconferenceId: item.subconferenceId,
                                         data: [],
                                         isHidden: hidden,
                                         itemId: item.id,

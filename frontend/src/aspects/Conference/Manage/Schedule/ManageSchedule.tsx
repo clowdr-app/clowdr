@@ -99,6 +99,7 @@ gql`
     fragment RoomInfo on room_Room {
         capacity
         conferenceId
+        subconferenceId
         id
         name
         priority
@@ -109,6 +110,7 @@ gql`
 
     fragment ElementInfo on content_Element {
         conferenceId
+        subconferenceId
         itemId
         typeName
         data
@@ -122,6 +124,7 @@ gql`
     fragment ProgramPersonInfo on collection_ProgramPerson {
         id
         conferenceId
+        subconferenceId
         name
         affiliation
         email
@@ -153,6 +156,7 @@ gql`
     fragment ItemFullNestedInfo on content_Item {
         id
         conferenceId
+        subconferenceId
         typeName
         title
         shortTitle
@@ -177,6 +181,7 @@ gql`
     fragment TagInfo on collection_Tag {
         id
         conferenceId
+        subconferenceId
         colour
         name
         priority
@@ -185,38 +190,51 @@ gql`
     fragment ExhibitionInfo on collection_Exhibition {
         id
         conferenceId
+        subconferenceId
         colour
         name
         priority
         isHidden
     }
 
-    query SelectWholeSchedule($conferenceId: uuid!) {
-        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
+    query SelectWholeSchedule($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
+            }
+        ) {
             ...RoomInfo
         }
         schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
             order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }]
         ) {
             ...EventInfo
         }
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...TagInfo
         }
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ExhibitionInfo
         }
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ItemFullNestedInfo
         }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ProgramPersonInfo
         }
     }
 
-    query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
-        room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gt: $now } }) {
+    query ManageSchedule_ShufflePeriods(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+        $now: timestamptz!
+    ) {
+        room_ShufflePeriod(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond, endAt: { _gt: $now } }
+        ) {
             ...ShufflePeriodInfo
         }
     }
@@ -291,7 +309,7 @@ function areOverlapping(start1: number, end1: number, start2: number, end2: numb
 
 function EditableScheduleTable(): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const {
         developer: { allowOngoingEventCreation },
     } = useAppSettings();
@@ -319,6 +337,7 @@ function EditableScheduleTable(): JSX.Element {
     const [wholeSchedule] = useSelectWholeScheduleQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         requestPolicy: "cache-and-network",
         context: wholeScheduleContext,
@@ -329,6 +348,7 @@ function EditableScheduleTable(): JSX.Element {
     const [shufflePeriodsResponse] = useManageSchedule_ShufflePeriodsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
             now: shufflePeriodsNow,
         },
         context,
@@ -1428,6 +1448,7 @@ function EditableScheduleTable(): JSX.Element {
                         const csvText = Papa.unparse(
                             dataToExport.map((event) => ({
                                 "Conference Id": event.conferenceId,
+                                "Subconference Id": event.subconferenceId,
                                 "Event Id": event.id,
 
                                 Start: event.scheduledStartTime
@@ -1510,6 +1531,7 @@ function EditableScheduleTable(): JSX.Element {
                             {
                                 columns: [
                                     "Conference Id",
+                                    "Subconference Id",
                                     "Event Id",
                                     "Start",
                                     "End",
@@ -1534,6 +1556,7 @@ function EditableScheduleTable(): JSX.Element {
                                     "Tag Ids",
                                     "Recording Enabled",
                                     "Automatic Participation Survey Enabled",
+                                    "Auto Play Element Id",
                                 ],
                             }
                         );

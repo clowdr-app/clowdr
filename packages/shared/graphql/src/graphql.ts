@@ -12746,6 +12746,7 @@ export type Job_Queues_CombineVideosJob = {
     outputName: Scalars["String"];
     /** An object relationship */
     registrant?: Maybe<Registrant_Registrant>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at: Scalars["timestamptz"];
 };
 
@@ -12797,6 +12798,7 @@ export type Job_Queues_CombineVideosJob_Bool_Exp = {
     message?: InputMaybe<String_Comparison_Exp>;
     outputName?: InputMaybe<String_Comparison_Exp>;
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -12835,6 +12837,7 @@ export type Job_Queues_CombineVideosJob_Insert_Input = {
     message?: InputMaybe<Scalars["String"]>;
     outputName?: InputMaybe<Scalars["String"]>;
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -12848,6 +12851,7 @@ export type Job_Queues_CombineVideosJob_Max_Fields = {
     mediaConvertJobId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
     outputName?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -12861,6 +12865,7 @@ export type Job_Queues_CombineVideosJob_Min_Fields = {
     mediaConvertJobId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
     outputName?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -12894,6 +12899,7 @@ export type Job_Queues_CombineVideosJob_Order_By = {
     message?: InputMaybe<Order_By>;
     outputName?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
 
@@ -12928,6 +12934,8 @@ export enum Job_Queues_CombineVideosJob_Select_Column {
     /** column name */
     OutputName = "outputName",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     UpdatedAt = "updated_at",
 }
 
@@ -12942,6 +12950,7 @@ export type Job_Queues_CombineVideosJob_Set_Input = {
     mediaConvertJobId?: InputMaybe<Scalars["String"]>;
     message?: InputMaybe<Scalars["String"]>;
     outputName?: InputMaybe<Scalars["String"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -12965,6 +12974,8 @@ export enum Job_Queues_CombineVideosJob_Update_Column {
     Message = "message",
     /** column name */
     OutputName = "outputName",
+    /** column name */
+    SubconferenceId = "subconferenceId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -16516,6 +16527,7 @@ export type Mutation_RootConference_UpdateEventUsageArgs = {
 export type Mutation_RootCreateItemRoomArgs = {
     conferenceId: Scalars["uuid"];
     itemId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** mutation root */

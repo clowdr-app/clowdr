@@ -21,15 +21,20 @@ import {
     useChooseElementModal_GetItemsQuery,
     useChooseElementModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
 
 gql`
-    query ChooseElementModal_GetItems($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }, order_by: { title: asc }) {
+    query ChooseElementModal_GetItems($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        content_Item(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+            order_by: { title: asc }
+        ) {
             id
             title
             conferenceId
+            subconferenceId
         }
     }
 
@@ -56,6 +61,7 @@ export function ChooseElementModal({
     chooseItem: (elementId: string) => void;
 }): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -66,6 +72,7 @@ export function ChooseElementModal({
     const [itemsResult] = useChooseElementModal_GetItemsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });

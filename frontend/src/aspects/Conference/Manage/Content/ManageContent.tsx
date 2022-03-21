@@ -49,7 +49,6 @@ import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    DeepWriteable,
     ExtraButton,
     RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
@@ -94,6 +93,7 @@ gql`
     fragment ManageContent_ItemScalars on content_Item {
         id
         conferenceId
+        subconferenceId
         title
         shortTitle
         typeName
@@ -110,6 +110,7 @@ gql`
         id
         name
         conferenceId
+        subconferenceId
     }
 
     fragment ManageContent_Element on content_Element {
@@ -123,6 +124,7 @@ gql`
         isHidden
         updatedAt
         conferenceId
+        subconferenceId
     }
 
     fragment ManageContent_ProgramPerson on collection_ProgramPerson {
@@ -132,6 +134,7 @@ gql`
         email
         registrantId
         conferenceId
+        subconferenceId
     }
 
     fragment ManageContent_ItemProgramPerson on content_ItemProgramPerson {
@@ -156,6 +159,7 @@ gql`
     fragment ManageContent_ItemForExport on content_Item {
         id
         conferenceId
+        subconferenceId
         title
         shortTitle
         typeName
@@ -183,8 +187,8 @@ gql`
         }
     }
 
-    query ManageContent_SelectAllItems($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageContent_SelectAllItems($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageContent_Item
         }
     }
@@ -258,13 +262,14 @@ gql`
     fragment ManageContent_Tag on collection_Tag {
         id
         conferenceId
+        subconferenceId
         name
         colour
         priority
     }
 
-    query ManageContent_SelectAllTags($conferenceId: uuid!) {
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageContent_SelectAllTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageContent_Tag
         }
     }
@@ -274,6 +279,7 @@ gql`
     fragment ManageContent_Exhibition on collection_Exhibition {
         id
         conferenceId
+        subconferenceId
         name
         colour
         priority
@@ -285,8 +291,8 @@ gql`
         }
     }
 
-    query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageContent_SelectAllExhibitions($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageContent_Exhibition
         }
     }
@@ -299,7 +305,7 @@ function formatEnumValueForLabel(value: string): string {
 
 export default function ManageContentV2(): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const title = useTitle(`Manage content at ${conference.shortName}`);
 
     const context = useMemo(
@@ -320,6 +326,7 @@ export default function ManageContentV2(): JSX.Element {
             requestPolicy: "network-only",
             variables: {
                 conferenceId: conference.id,
+                subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
             },
             context: tagsContext,
         });
@@ -330,6 +337,7 @@ export default function ManageContentV2(): JSX.Element {
             requestPolicy: "network-only",
             variables: {
                 conferenceId: conference.id,
+                subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
             },
             context: exhibitionsContext,
         });
@@ -340,6 +348,7 @@ export default function ManageContentV2(): JSX.Element {
             requestPolicy: "network-only",
             variables: {
                 conferenceId: conference.id,
+                subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
             },
             context: itemsContext,
         });
@@ -563,9 +572,9 @@ export default function ManageContentV2(): JSX.Element {
                     ) ?? [],
                 set: (record, value: { label: string; value: string }[]) => {
                     record.itemTags = value.map((x) => ({
-                        itemId: record.id as any as DeepWriteable<any>,
-                        tagId: x.value as any as DeepWriteable<any>,
-                        id: undefined as any as DeepWriteable<any>,
+                        itemId: record.id,
+                        tagId: x.value,
+                        id: undefined,
                     }));
                 },
                 filterFn: (
@@ -658,6 +667,7 @@ export default function ManageContentV2(): JSX.Element {
                 ({
                     id: uuidv4(),
                     conferenceId: conference.id,
+                    subconferenceId,
                     itemTags: [],
                     title: "",
                     typeName: Content_ItemType_Enum.Paper,
@@ -668,6 +678,7 @@ export default function ManageContentV2(): JSX.Element {
                     {
                         item: {
                             conferenceId: record.conferenceId,
+                            subconferenceId,
                             id: record.id,
                             title: record.title,
                             shortTitle: record.shortTitle,
@@ -686,7 +697,7 @@ export default function ManageContentV2(): JSX.Element {
                 );
             },
         }),
-        [conference.id, insertItem, insertItemResponse.fetching]
+        [conference.id, insertItem, insertItemResponse.fetching, subconferenceId]
     );
 
     const [updateItemResponse, updateItem] = useManageContent_UpdateItemMutation();
@@ -803,13 +814,14 @@ export default function ManageContentV2(): JSX.Element {
                         const csvText = Papa.unparse(
                             dataToExport.map((tag) => ({
                                 "Conference Id": tag.conferenceId,
+                                "Subconference Id": tag.subconferenceId,
                                 "Tag Id": tag.id,
                                 Name: tag.name,
                                 Priority: tag.priority,
                                 Colour: tag.colour,
                             })),
                             {
-                                columns: ["Conference Id", "Tag Id", "Name", "Priority", "Colour"],
+                                columns: ["Conference Id", "Subconference Id", "Tag Id", "Name", "Priority", "Colour"],
                             }
                         );
 
@@ -836,6 +848,7 @@ export default function ManageContentV2(): JSX.Element {
                         const csvText = Papa.unparse(
                             dataToExport.map((exhibition) => ({
                                 "Conference Id": exhibition.conferenceId,
+                                "Subconference Id": exhibition.subconferenceId,
                                 "Exhibition Id": exhibition.id,
                                 Name: exhibition.name,
                                 Priority: exhibition.priority,
@@ -843,7 +856,15 @@ export default function ManageContentV2(): JSX.Element {
                                 Hidden: exhibition.isHidden ? "Yes" : "No",
                             })),
                             {
-                                columns: ["Conference Id", "Exhibition Id", "Name", "Priority", "Colour", "Hidden"],
+                                columns: [
+                                    "Conference Id",
+                                    "Subconference Id",
+                                    "Exhibition Id",
+                                    "Name",
+                                    "Priority",
+                                    "Colour",
+                                    "Hidden",
+                                ],
                             }
                         );
 
@@ -889,6 +910,7 @@ export default function ManageContentV2(): JSX.Element {
                         if (contentForExport.data) {
                             const columns: Set<string> = new Set([
                                 "Conference Id",
+                                "Subconference Id",
                                 "Content Id",
                                 "Externally Sourced Data Id",
                                 "Title",
@@ -903,6 +925,7 @@ export default function ManageContentV2(): JSX.Element {
                             const data = contentForExport.data.content_Item.map((item) => {
                                 const result: any = {
                                     "Conference Id": item.conferenceId,
+                                    "Subconference Id": item.subconferenceId,
                                     "Content Id": item.id,
 
                                     Title: item.title,

@@ -20,7 +20,7 @@ function s3UrlToHttpUrl(s3Url: string): string {
 export const AudioElementTemplate: SupportedElementBaseTemplate = {
     supported: true,
     allowCreate: [Content_ElementType_Enum.AudioFile],
-    createDefault: (type, conferenceId, itemId) => {
+    createDefault: (type, conferenceId, subconferenceId, itemId) => {
         assert.truthy(
             type === Content_ElementType_Enum.AudioFile,
             `Audio Element Template mistakenly used for type ${type}.`
@@ -32,6 +32,7 @@ export const AudioElementTemplate: SupportedElementBaseTemplate = {
             __typename: "content_Element",
             updatedAt: new Date().toISOString(),
             conferenceId,
+            subconferenceId,
             itemId,
             id: uuidv4(),
             name,

@@ -53,6 +53,7 @@ import type {
     RowSpecification,
 } from "../../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../../CRUDTable2/CRUDTable2";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import extractActualError from "../../../../../GQL/ExtractActualError";
 import { makeContext } from "../../../../../GQL/make-context";
 import { maybeCompare } from "../../../../../Utils/maybeCompare";
@@ -108,6 +109,7 @@ export default function ManageExhibitionsModal({ onClose: onCloseCb }: { onClose
 
 function ManageExhibitionsModalBody(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -118,6 +120,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
     const [exhibitionsResponse] = useManageContent_SelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -396,6 +399,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 ({
                     id: uuidv4(),
                     conferenceId: conference.id,
+                    subconferenceId,
                     name: "",
                     colour: "rgba(0,0,0,0)",
                     priority: data?.length ?? 0,
@@ -407,6 +411,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     {
                         exhibition: {
                             conferenceId: record.conferenceId,
+                            subconferenceId,
                             id: record.id,
                             name: record.name,
                             colour: record.colour,
@@ -424,7 +429,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 );
             },
         }),
-        [conference.id, data?.length, insertExhibition, insertExhibitionResponse.fetching]
+        [conference.id, data?.length, insertExhibition, insertExhibitionResponse.fetching, subconferenceId]
     );
 
     const [updateExhibitionResponse, updateExhibition] = useManageContent_UpdateExhibitionMutation();

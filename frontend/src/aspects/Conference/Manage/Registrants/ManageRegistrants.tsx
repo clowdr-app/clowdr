@@ -60,7 +60,6 @@ import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    DeepWriteable,
     Delete,
     ExtraButton,
     Insert,
@@ -103,6 +102,12 @@ gql`
             id
             groupId
         }
+        subconferenceMemberships {
+            id
+            subconferenceId
+            registrantId
+            role
+        }
         userId
         updatedAt
         createdAt
@@ -127,9 +132,20 @@ gql`
         hasBeenEdited
     }
 
+    fragment SubconferenceParts on conference_Subconference {
+        id
+        conferenceId
+        name
+        shortName
+        slug
+    }
+
     query SelectAllRegistrants($conferenceId: uuid!) {
         registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }) {
             ...RegistrantParts
+        }
+        conference_Subconference(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...SubconferenceParts
         }
     }
 
@@ -170,6 +186,8 @@ gql`
         $registrantUpdates: registrant_Registrant_set_input!
         $upsertGroups: [registrant_GroupRegistrant_insert_input!]!
         $remainingGroupIds: [uuid!]
+        $upsertSubconferences: [registrant_SubconferenceMembership_insert_input!]!
+        $remainingSubconferenceIds: [uuid!]
     ) {
         update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: $registrantUpdates) {
             ...RegistrantParts
@@ -191,6 +209,23 @@ gql`
                 id
             }
         }
+        insert_registrant_SubconferenceMembership(
+            objects: $upsertSubconferences
+            on_conflict: { constraint: SubconferenceMembership_subconferenceId_registrantId_key, update_columns: [] }
+        ) {
+            returning {
+                id
+                registrantId
+                subconferenceId
+            }
+        }
+        delete_registrant_SubconferenceMembership(
+            where: { registrantId: { _eq: $registrantId }, subconferenceId: { _nin: $remainingSubconferenceIds } }
+        ) {
+            returning {
+                id
+            }
+        }
     }
 
     mutation InsertInvitationEmailJobs($registrantIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
@@ -205,6 +240,7 @@ gql`
         $markdownBody: String!
         $subject: String!
         $conferenceId: uuid!
+        $subconferenceId: uuid
         $registrantIds: jsonb!
     ) {
         insert_job_queues_CustomEmailJob(
@@ -212,6 +248,7 @@ gql`
                 markdownBody: $markdownBody
                 subject: $subject
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
                 registrantIds: $registrantIds
             }
         ) {
@@ -237,11 +274,16 @@ type RegistrantDescriptor = RegistrantPartsFragment & {
             id?: string;
         }
     >;
+    subconferenceMemberships?: ReadonlyArray<
+        RegistrantPartsFragment["subconferenceMemberships"][0] & {
+            id?: string;
+        }
+    >;
 };
 
 export default function ManageRegistrants(): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
     const context = useMemo(
@@ -255,6 +297,7 @@ export default function ManageRegistrants(): JSX.Element {
         requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -345,6 +388,12 @@ export default function ManageRegistrants(): JSX.Element {
             allGroups?.registrant_Group.map((group) => ({
                 value: group.id,
                 label: group.name,
+            })) ?? [];
+
+        const subconferenceOptions: { value: string; label: string }[] =
+            allRegistrants?.conference_Subconference.map((group) => ({
+                value: group.id,
+                label: group.shortName,
             })) ?? [];
 
         const result: ColumnSpecification<RegistrantDescriptor>[] = [
@@ -535,12 +584,12 @@ export default function ManageRegistrants(): JSX.Element {
                     if (!record.invitation) {
                         assert.truthy(record.id);
                         record.invitation = {
-                            registrantId: record.id as DeepWriteable<any>,
-                            createdAt: new Date().toISOString() as any as DeepWriteable<any>,
-                            updatedAt: new Date().toISOString() as any as DeepWriteable<any>,
+                            registrantId: record.id,
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString(),
                             invitedEmailAddress: value,
-                            inviteCode: "" as any as DeepWriteable<any>,
-                            id: "" as any as DeepWriteable<any>,
+                            inviteCode: "",
+                            id: "",
                         };
                     } else {
                         record.invitation.invitedEmailAddress = value;
@@ -701,9 +750,9 @@ export default function ManageRegistrants(): JSX.Element {
                     ) ?? [],
                 set: (record, value: { label: string; value: string }[]) => {
                     record.groupRegistrants = value.map((x) => ({
-                        registrantId: record.id as any as DeepWriteable<any>,
-                        groupId: x.value as any as DeepWriteable<any>,
-                        id: undefined as any as DeepWriteable<any>,
+                        registrantId: record.id,
+                        groupId: x.value,
+                        id: undefined,
                     }));
                 },
                 filterFn: (
@@ -738,9 +787,72 @@ export default function ManageRegistrants(): JSX.Element {
                     );
                 },
             },
+            {
+                id: "subconferences",
+                header: function ContentHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
+                        <FormLabel>Subconferences</FormLabel>
+                    ) : (
+                        <Text fontSize="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                            Subconferences
+                        </Text>
+                    );
+                },
+                get: (data) =>
+                    data.subconferenceMemberships?.map(
+                        (ga) =>
+                            subconferenceOptions.find(
+                                (subconference) => subconference.value === ga.subconferenceId
+                            ) ?? {
+                                label: "<Unknown>",
+                                value: ga.subconferenceId,
+                            }
+                    ) ?? [],
+                set: (record, value: { label: string; value: string }[]) => {
+                    record.subconferenceMemberships = value.map((x) => ({
+                        registrantId: record.id,
+                        subconferenceId: x.value,
+                        id: undefined,
+                        role: Registrant_RegistrantRole_Enum.Attendee,
+                    }));
+                },
+                filterFn: (
+                    rows: Array<RegistrantDescriptor>,
+                    filterValue: ReadonlyArray<{ label: string; value: string }>
+                ) => {
+                    return filterValue.length === 0
+                        ? rows
+                        : rows.filter((row) => {
+                              return row.subconferenceMemberships.some((x) =>
+                                  filterValue.some((y) => y.value === x.subconferenceId)
+                              );
+                          });
+                },
+                filterEl: MultiSelectColumnFilter(subconferenceOptions),
+                cell: function ContentCell({
+                    value,
+                    onChange,
+                    onBlur,
+                }: CellProps<
+                    Partial<RegistrantDescriptor>,
+                    ReadonlyArray<{ label: string; value: string }> | undefined
+                >) {
+                    return (
+                        <MultiSelect
+                            name="subconferences"
+                            options={subconferenceOptions}
+                            value={value ?? []}
+                            placeholder="Select one or more subconferences"
+                            onChange={(ev) => onChange?.(ev)}
+                            onBlur={onBlur}
+                            styles={{ container: (base) => ({ ...base, maxWidth: 450 }) }}
+                        />
+                    );
+                },
+            },
         ];
         return result;
-    }, [allGroups?.registrant_Group, inviteStatusFilterOptions, roleOptions]);
+    }, [allGroups?.registrant_Group, allRegistrants?.conference_Subconference, inviteStatusFilterOptions, roleOptions]);
 
     const [{ fetching: insertInvitationEmailJobsLoading }, insertInvitationEmailJobsMutation] =
         useInsertInvitationEmailJobsMutation();
@@ -758,7 +870,9 @@ export default function ManageRegistrants(): JSX.Element {
                 return {
                     id: registrantId,
                     conferenceId: conference.id,
+                    conferenceRole: Registrant_RegistrantRole_Enum.Attendee,
                     groupRegistrants: [],
+                    subconferenceMemberships: [],
                 };
             },
             makeWhole: (d) => (d.displayName?.length ? (d as RegistrantDescriptor) : undefined),
@@ -770,8 +884,14 @@ export default function ManageRegistrants(): JSX.Element {
                                 id: record.id,
                                 conferenceId: conference.id,
                                 displayName: record.displayName,
+                                conferenceRole: record.conferenceRole,
                                 groupRegistrants: {
                                     data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
+                                },
+                                subconferenceMemberships: {
+                                    data: record.subconferenceMemberships.map((x) => ({
+                                        subconferenceId: x.subconferenceId,
+                                    })),
                                 },
                             },
                             invitation: {
@@ -797,6 +917,11 @@ export default function ManageRegistrants(): JSX.Element {
                                 conferenceRole: record.conferenceRole,
                                 groupRegistrants: {
                                     data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
+                                },
+                                subconferenceMemberships: {
+                                    data: record.subconferenceMemberships.map((x) => ({
+                                        subconferenceId: x.subconferenceId,
+                                    })),
                                 },
                             },
                         },
@@ -830,6 +955,11 @@ export default function ManageRegistrants(): JSX.Element {
                             registrantId: x.registrantId,
                         })),
                         remainingGroupIds: record.groupRegistrants.map((x) => x.groupId),
+                        upsertSubconferences: record.subconferenceMemberships.map((x) => ({
+                            subconferenceId: x.subconferenceId,
+                            registrantId: x.registrantId,
+                        })),
+                        remainingSubconferenceIds: record.subconferenceMemberships.map((x) => x.subconferenceId),
                     },
                     {
                         fetchOptions: {
@@ -921,6 +1051,16 @@ export default function ManageRegistrants(): JSX.Element {
                                             allGroups?.registrant_Group.find((g) => g.id === x.groupId)?.name ??
                                             "<Hidden>"
                                     ),
+                                    "Subconference Ids": registrant.subconferenceMemberships.map(
+                                        (x) => x.subconferenceId
+                                    ),
+                                    "Subconference Names": registrant.subconferenceMemberships.map(
+                                        (x) =>
+                                            allRegistrants?.conference_Subconference.find(
+                                                (g) => g.id === x.subconferenceId
+                                            )?.name ?? "<Hidden>"
+                                    ),
+                                    "Subconference Roles": registrant.subconferenceMemberships.map((x) => x.role),
                                     "Created At": registrant.createdAt,
                                     "Updated At": registrant.updatedAt,
                                 };
@@ -959,6 +1099,9 @@ export default function ManageRegistrants(): JSX.Element {
                                     "Invite accepted",
                                     "Group Ids",
                                     "Group Names",
+                                    "Subconference Ids",
+                                    "Subconference Names",
+                                    "Subconference Roles",
                                     "Created At",
                                     "Updated At",
                                     "Profile Data Exportable",
@@ -998,11 +1141,12 @@ export default function ManageRegistrants(): JSX.Element {
                         tempLink.click();
                     }
 
-                    const tooltip = (filler: string) => `Exports the name, email and groups of ${filler}.`;
+                    const tooltip = (filler: string) =>
+                        `Exports the name, email, groups and subconferences of ${filler}.`;
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                <Tooltip label={tooltip("all registrants (from a chosen group)")}>
+                                <Tooltip label={tooltip("all registrants (from a chosen group or subconference)")}>
                                     <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                         Export
                                     </MenuButton>
@@ -1015,7 +1159,7 @@ export default function ManageRegistrants(): JSX.Element {
                                             setExportWithProfileData(!exportWithProfileData);
                                         }}
                                     >
-                                        With profile data
+                                        With profile data?
                                     </MenuItemOption>
                                     <MenuItem
                                         onClick={() => {
@@ -1038,6 +1182,26 @@ export default function ManageRegistrants(): JSX.Element {
                                                     }}
                                                 >
                                                     {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : undefined}
+                                    {allRegistrants?.conference_Subconference.length ? (
+                                        <MenuGroup title="Subconferences">
+                                            {allRegistrants.conference_Subconference.map((subconference) => (
+                                                <MenuItem
+                                                    key={subconference.id}
+                                                    onClick={() => {
+                                                        doExport(
+                                                            data.filter((a) =>
+                                                                a.subconferenceMemberships.some(
+                                                                    (ga) => ga.subconferenceId === subconference.id
+                                                                )
+                                                            )
+                                                        );
+                                                    }}
+                                                >
+                                                    {subconference.shortName}
                                                 </MenuItem>
                                             ))}
                                         </MenuGroup>
@@ -1069,7 +1233,7 @@ export default function ManageRegistrants(): JSX.Element {
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                <Tooltip label={tooltip("all registrants (from a group)")}>
+                                <Tooltip label={tooltip("all registrants (from a group or subconference)")}>
                                     <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                         Send initial invitations
                                     </MenuButton>
@@ -1161,6 +1325,57 @@ export default function ManageRegistrants(): JSX.Element {
                                             ))}
                                         </MenuGroup>
                                     ) : undefined}
+                                    {allRegistrants?.conference_Subconference.length ? (
+                                        <MenuGroup title="Subconferences">
+                                            {allRegistrants.conference_Subconference.map((subconference) => (
+                                                <MenuItem
+                                                    key={subconference.id}
+                                                    onClick={async () => {
+                                                        const result = await insertInvitationEmailJobsMutation(
+                                                            {
+                                                                registrantIds: data
+                                                                    .filter((a) =>
+                                                                        a.subconferenceMemberships.some(
+                                                                            (ga) =>
+                                                                                ga.subconferenceId === subconference.id
+                                                                        )
+                                                                    )
+                                                                    .map((a) => a.id),
+                                                                conferenceId: conference.id,
+                                                                sendRepeat: false,
+                                                            },
+                                                            {
+                                                                fetchOptions: {
+                                                                    headers: {
+                                                                        [AuthHeader.Role]:
+                                                                            HasuraRoleName.ConferenceOrganizer,
+                                                                    },
+                                                                },
+                                                            }
+                                                        );
+                                                        if (result.error) {
+                                                            toast({
+                                                                title: "Failed to send invitation emails",
+                                                                description: result.error.message,
+                                                                isClosable: true,
+                                                                status: "error",
+                                                            });
+                                                        } else {
+                                                            toast({
+                                                                title: "Invitation emails sent",
+                                                                duration: 8000,
+                                                                status: "success",
+                                                            });
+                                                        }
+
+                                                        refetchAllRegistrants();
+                                                    }}
+                                                >
+                                                    {subconference.shortName}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : undefined}
                                 </MenuList>
                             </Menu>
                         );
@@ -1219,7 +1434,7 @@ export default function ManageRegistrants(): JSX.Element {
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                <Tooltip label={tooltip("all registrants (from a group)")}>
+                                <Tooltip label={tooltip("all registrants (from a group or subconference)")}>
                                     <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                         Send repeat invitations
                                     </MenuButton>
@@ -1311,6 +1526,57 @@ export default function ManageRegistrants(): JSX.Element {
                                             ))}
                                         </MenuGroup>
                                     ) : undefined}
+                                    {allRegistrants?.conference_Subconference.length ? (
+                                        <MenuGroup title="Subconferences">
+                                            {allRegistrants.conference_Subconference.map((subconference) => (
+                                                <MenuItem
+                                                    key={subconference.id}
+                                                    onClick={async () => {
+                                                        const result = await insertInvitationEmailJobsMutation(
+                                                            {
+                                                                registrantIds: data
+                                                                    .filter((a) =>
+                                                                        a.subconferenceMemberships.some(
+                                                                            (ga) =>
+                                                                                ga.subconferenceId === subconference.id
+                                                                        )
+                                                                    )
+                                                                    .map((a) => a.id),
+                                                                conferenceId: conference.id,
+                                                                sendRepeat: true,
+                                                            },
+                                                            {
+                                                                fetchOptions: {
+                                                                    headers: {
+                                                                        [AuthHeader.Role]:
+                                                                            HasuraRoleName.ConferenceOrganizer,
+                                                                    },
+                                                                },
+                                                            }
+                                                        );
+                                                        if (result.error) {
+                                                            toast({
+                                                                title: "Failed to send invitation emails",
+                                                                description: result.error.message,
+                                                                isClosable: true,
+                                                                status: "error",
+                                                            });
+                                                        } else {
+                                                            toast({
+                                                                title: "Invitation emails sent",
+                                                                duration: 8000,
+                                                                status: "success",
+                                                            });
+                                                        }
+
+                                                        refetchAllRegistrants();
+                                                    }}
+                                                >
+                                                    {subconference.shortName}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : undefined}
                                 </MenuList>
                             </Menu>
                         );
@@ -1369,7 +1635,7 @@ export default function ManageRegistrants(): JSX.Element {
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                {/*<Tooltip label={tooltip("all registrants (from a group)")}>*/}
+                                {/*<Tooltip label={tooltip("all registrants (from a group or subconference)")}>*/}
                                 <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                     Send custom email
                                 </MenuButton>
@@ -1398,6 +1664,27 @@ export default function ManageRegistrants(): JSX.Element {
                                                     }}
                                                 >
                                                     {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : undefined}
+                                    {allRegistrants?.conference_Subconference.length ? (
+                                        <MenuGroup title="Subconferences">
+                                            {allRegistrants.conference_Subconference.map((subconference) => (
+                                                <MenuItem
+                                                    key={subconference.id}
+                                                    onClick={() => {
+                                                        setSendCustomEmailRegistrants(
+                                                            data.filter((a) =>
+                                                                a.subconferenceMemberships.some(
+                                                                    (ga) => ga.subconferenceId === subconference.id
+                                                                )
+                                                            )
+                                                        );
+                                                        sendCustomEmailModal.onOpen();
+                                                    }}
+                                                >
+                                                    {subconference.shortName}
                                                 </MenuItem>
                                             ))}
                                         </MenuGroup>
@@ -1431,6 +1718,7 @@ export default function ManageRegistrants(): JSX.Element {
             exportWithProfileData,
             client,
             allGroups?.registrant_Group,
+            allRegistrants?.conference_Subconference,
             data,
             insertInvitationEmailJobsMutation,
             conference.id,

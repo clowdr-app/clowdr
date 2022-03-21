@@ -20,7 +20,7 @@ export const LinkElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.PaperLink,
         Content_ElementType_Enum.VideoLink,
     ],
-    createDefault: (type, conferenceId, itemId) => {
+    createDefault: (type, conferenceId, subconferenceId, itemId) => {
         assert.truthy(
             type === Content_ElementType_Enum.Link ||
                 type === Content_ElementType_Enum.LinkButton ||
@@ -42,6 +42,7 @@ export const LinkElementTemplate: ElementBaseTemplate = {
             __typename: "content_Element",
             updatedAt: new Date().toISOString(),
             conferenceId,
+            subconferenceId,
             itemId,
             id: uuidv4(),
             name,

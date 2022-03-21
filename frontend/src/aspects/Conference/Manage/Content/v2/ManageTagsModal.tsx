@@ -44,6 +44,7 @@ import type {
     RowSpecification,
 } from "../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../CRUDTable2/CRUDTable2";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import extractActualError from "../../../../GQL/ExtractActualError";
 import { makeContext } from "../../../../GQL/make-context";
 import { maybeCompare } from "../../../../Utils/maybeCompare";
@@ -98,6 +99,7 @@ export default function ManageTagsModal({ onClose: onCloseCb }: { onClose?: () =
 
 function ManageTagsModalBody(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -108,6 +110,7 @@ function ManageTagsModalBody(): JSX.Element {
     const [tagsResponse] = useManageContent_SelectAllTagsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -300,6 +303,7 @@ function ManageTagsModalBody(): JSX.Element {
                 ({
                     id: uuidv4(),
                     conferenceId: conference.id,
+                    subconferenceId,
                     name: "",
                     colour: "rgba(0,0,0,0)",
                     priority: data?.length ?? 0,
@@ -310,6 +314,7 @@ function ManageTagsModalBody(): JSX.Element {
                     {
                         tag: {
                             conferenceId: record.conferenceId,
+                            subconferenceId,
                             id: record.id,
                             name: record.name,
                             colour: record.colour,
@@ -326,7 +331,7 @@ function ManageTagsModalBody(): JSX.Element {
                 );
             },
         }),
-        [conference.id, data?.length, insertTag, insertTagResponse.fetching]
+        [conference.id, data?.length, insertTag, insertTagResponse.fetching, subconferenceId]
     );
 
     const [updateTagResponse, updateTag] = useManageContent_UpdateTagMutation();

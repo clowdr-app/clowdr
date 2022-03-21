@@ -36,6 +36,7 @@ import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalPro
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import MessageBox from "../../../../Chat/Messages/MessageBox";
 import PageNotFound from "../../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { useRestorableState } from "../../../../Hooks/useRestorableState";
 import { useTitle } from "../../../../Hooks/useTitle";
@@ -51,8 +52,10 @@ gql`
         }
     }
 
-    query ManageModeration_SelectFlags($conferenceId: uuid!) {
-        chat_Flag(where: { message: { chat: { conferenceId: { _eq: $conferenceId } } } }) {
+    query ManageModeration_SelectFlags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        chat_Flag(
+            where: { message: { chat: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond } } }
+        ) {
             ...ManageModeration_ChatFlag
         }
     }
@@ -86,6 +89,7 @@ export default function ManageModeration(): JSX.Element {
 
 function ModerationList(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -96,6 +100,7 @@ function ModerationList(): JSX.Element {
     const [flagsResponse] = useManageModeration_SelectFlagsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });

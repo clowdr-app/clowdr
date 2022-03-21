@@ -4,6 +4,7 @@ import { gql, useClient } from "urql";
 import type { StartImportJobMutation, StartImportJobMutationVariables } from "../../../../../generated/graphql";
 import { StartImportJobDocument, useGetImportJobsQuery } from "../../../../../generated/graphql";
 import PageNotFound from "../../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import usePolling from "../../../../Hooks/usePolling";
 import { useTitle } from "../../../../Hooks/useTitle";
@@ -24,9 +25,9 @@ gql`
         errors
     }
 
-    query GetImportJobs($conferenceId: uuid!) {
+    query GetImportJobs($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
         job_queues_ImportJob(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
             order_by: [{ created_at: desc }]
             limit: 1
         ) {
@@ -43,6 +44,7 @@ gql`
 
 export default function ImportProgramPage(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const registrant = useCurrentRegistrant();
     const title = useTitle(`Import program to ${conference.shortName}`);
 
@@ -56,6 +58,7 @@ export default function ImportProgramPage(): JSX.Element {
     const [response, refetch] = useGetImportJobsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
         requestPolicy: "network-only",
@@ -91,6 +94,7 @@ export default function ImportProgramPage(): JSX.Element {
                                 {
                                     object: {
                                         conferenceId: conference.id,
+                                        subconferenceId,
                                         createdBy: registrant.id,
                                         data,
                                         options,

@@ -79,7 +79,6 @@ import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    DeepWriteable,
     ExtraButton,
     RowSpecification,
 } from "../../CRUDTable2/CRUDTable2";
@@ -102,6 +101,7 @@ gql`
         id
         created_at
         conferenceId
+        subconferenceId
         name
         capacity
         priority
@@ -119,25 +119,33 @@ gql`
         }
     }
 
-    query SelectAllRoomsWithParticipants($conferenceId: uuid!) {
-        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
+    query SelectAllRoomsWithParticipants($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
+            }
+        ) {
             ...RoomWithParticipantInfo
         }
     }
 
-    query ManageRooms_SelectGroups($conferenceId: uuid!) {
-        registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageRooms_SelectGroups($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        registrant_Group(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             id
             name
             conferenceId
+            subconferenceId
         }
     }
 
-    query ManageRooms_SelectItems($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageRooms_SelectItems($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             id
             title
             conferenceId
+            subconferenceId
         }
     }
 
@@ -270,7 +278,7 @@ function RoomSecondaryEditor({
     externalRtmpInputEnabled: boolean;
 }): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
@@ -281,6 +289,7 @@ function RoomSecondaryEditor({
     const [groups] = useManageRooms_SelectGroupsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -581,6 +590,7 @@ function RoomSecondaryEditor({
 
 function EditableRoomsCRUDTable() {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const [insertRoomResponse, insertRoom] = useCreateRoomMutation();
     const [deleteRoomsResponse, deleteRooms] = useDeleteRoomsMutation();
     const [updateRoomResponse, updateRoom] = useUpdateRoomsWithParticipantsMutation();
@@ -604,6 +614,7 @@ function EditableRoomsCRUDTable() {
     const [items] = useManageRooms_SelectItemsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -611,6 +622,7 @@ function EditableRoomsCRUDTable() {
     const [selectAllRoomsResult] = useSelectAllRoomsWithParticipantsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -966,7 +978,7 @@ function EditableRoomsCRUDTable() {
                 },
                 get: (data) => items.data?.content_Item.find((group) => group.id === data.itemId),
                 set: (record, value: { id: string; title: string } | undefined) => {
-                    record.itemId = value?.id as any as DeepWriteable<any> | undefined;
+                    record.itemId = value?.id;
                 },
                 sortType: (rowA: { id: string; title: string }, rowB: { id: string; title: string }) => {
                     const compared = rowA && rowB ? rowA.title.localeCompare(rowB.title) : rowA ? 1 : rowB ? -1 : 0;
@@ -1284,6 +1296,7 @@ function EditableRoomsCRUDTable() {
                         const csvText = Papa.unparse(
                             dataToExport.map((room) => ({
                                 "Conference Id": room.conferenceId,
+                                "Subconference Id": room.subconferenceId,
                                 "Room Id": room.id,
                                 Name: room.name,
                                 "Is program room?": room.isProgramRoom ? "Yes" : "No",
@@ -1316,6 +1329,7 @@ function EditableRoomsCRUDTable() {
                             {
                                 columns: [
                                     "Conference Id",
+                                    "Subconference Id",
                                     "Room Id",
                                     "Name",
                                     "Is program room?",
@@ -1473,6 +1487,7 @@ function EditableRoomsCRUDTable() {
                     generateDefaults: () => ({
                         id: uuidv4(),
                         conferenceId: conference.id,
+                        subconferenceId,
                         capacity: 350,
                         priority: 10,
                         name: "New room " + (data.length + 1),
@@ -1486,6 +1501,7 @@ function EditableRoomsCRUDTable() {
                                 room: {
                                     id: record.id,
                                     conferenceId: record.conferenceId,
+                                    subconferenceId,
                                     capacity: record.capacity,
                                     priority: record.priority,
                                     name: record.name,

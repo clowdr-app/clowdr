@@ -12740,6 +12740,7 @@ export type Job_Queues_CombineVideosJob = {
     readonly outputName: Scalars["String"];
     /** An object relationship */
     readonly registrant?: Maybe<Registrant_Registrant>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at: Scalars["timestamptz"];
 };
 
@@ -12791,6 +12792,7 @@ export type Job_Queues_CombineVideosJob_Bool_Exp = {
     readonly message?: InputMaybe<String_Comparison_Exp>;
     readonly outputName?: InputMaybe<String_Comparison_Exp>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -12829,6 +12831,7 @@ export type Job_Queues_CombineVideosJob_Insert_Input = {
     readonly message?: InputMaybe<Scalars["String"]>;
     readonly outputName?: InputMaybe<Scalars["String"]>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -12842,6 +12845,7 @@ export type Job_Queues_CombineVideosJob_Max_Fields = {
     readonly mediaConvertJobId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
     readonly outputName?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -12855,6 +12859,7 @@ export type Job_Queues_CombineVideosJob_Min_Fields = {
     readonly mediaConvertJobId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
     readonly outputName?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -12888,6 +12893,7 @@ export type Job_Queues_CombineVideosJob_Order_By = {
     readonly message?: InputMaybe<Order_By>;
     readonly outputName?: InputMaybe<Order_By>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
 
@@ -12922,6 +12928,8 @@ export enum Job_Queues_CombineVideosJob_Select_Column {
     /** column name */
     OutputName = "outputName",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     UpdatedAt = "updated_at",
 }
 
@@ -12936,6 +12944,7 @@ export type Job_Queues_CombineVideosJob_Set_Input = {
     readonly mediaConvertJobId?: InputMaybe<Scalars["String"]>;
     readonly message?: InputMaybe<Scalars["String"]>;
     readonly outputName?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -12959,6 +12968,8 @@ export enum Job_Queues_CombineVideosJob_Update_Column {
     Message = "message",
     /** column name */
     OutputName = "outputName",
+    /** column name */
+    SubconferenceId = "subconferenceId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -16510,6 +16521,7 @@ export type Mutation_RootConference_UpdateEventUsageArgs = {
 export type Mutation_RootCreateItemRoomArgs = {
     conferenceId: Scalars["uuid"];
     itemId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** mutation root */
@@ -43086,6 +43098,7 @@ export type ManageModeration_ChatFlagFragment = {
 
 export type ManageModeration_SelectFlagsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageModeration_SelectFlagsQuery = {
@@ -43522,6 +43535,7 @@ export type ManageContent_ItemScalarsFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly title: string;
     readonly shortTitle?: string | null;
     readonly typeName: Content_ItemType_Enum;
@@ -43531,6 +43545,7 @@ export type ManageContent_ItemFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly title: string;
     readonly shortTitle?: string | null;
     readonly typeName: Content_ItemType_Enum;
@@ -43547,6 +43562,7 @@ export type ManageContent_RoomFragment = {
     readonly id: any;
     readonly name: string;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
 };
 
 export type ManageContent_ElementFragment = {
@@ -43561,6 +43577,7 @@ export type ManageContent_ElementFragment = {
     readonly isHidden: boolean;
     readonly updatedAt: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
 };
 
 export type ManageContent_ProgramPersonFragment = {
@@ -43571,6 +43588,7 @@ export type ManageContent_ProgramPersonFragment = {
     readonly email?: string | null;
     readonly registrantId?: any | null;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
 };
 
 export type ManageContent_ItemProgramPersonFragment = {
@@ -43588,6 +43606,7 @@ export type ManageContent_ItemProgramPersonFragment = {
         readonly email?: string | null;
         readonly registrantId?: any | null;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     };
 };
 
@@ -43600,6 +43619,7 @@ export type ManageContent_ItemSecondaryFragment = {
         readonly id: any;
         readonly name: string;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     } | null;
 };
 
@@ -43607,6 +43627,7 @@ export type ManageContent_ItemForExportFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly title: string;
     readonly shortTitle?: string | null;
     readonly typeName: Content_ItemType_Enum;
@@ -43640,6 +43661,7 @@ export type ManageContent_ItemForExportFragment = {
             readonly email?: string | null;
             readonly registrantId?: any | null;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
         };
     }>;
     readonly elements: ReadonlyArray<{
@@ -43654,11 +43676,13 @@ export type ManageContent_ItemForExportFragment = {
         readonly isHidden: boolean;
         readonly updatedAt: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     }>;
 };
 
 export type ManageContent_SelectAllItemsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageContent_SelectAllItemsQuery = {
@@ -43667,6 +43691,7 @@ export type ManageContent_SelectAllItemsQuery = {
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly title: string;
         readonly shortTitle?: string | null;
         readonly typeName: Content_ItemType_Enum;
@@ -43689,6 +43714,7 @@ export type ManageContent_SelectItemsForExportQuery = {
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly title: string;
         readonly shortTitle?: string | null;
         readonly typeName: Content_ItemType_Enum;
@@ -43722,6 +43748,7 @@ export type ManageContent_SelectItemsForExportQuery = {
                 readonly email?: string | null;
                 readonly registrantId?: any | null;
                 readonly conferenceId: any;
+                readonly subconferenceId?: any | null;
             };
         }>;
         readonly elements: ReadonlyArray<{
@@ -43736,6 +43763,7 @@ export type ManageContent_SelectItemsForExportQuery = {
             readonly isHidden: boolean;
             readonly updatedAt: any;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
         }>;
     }>;
 };
@@ -43755,6 +43783,7 @@ export type ManageContent_SelectItemQuery = {
             readonly id: any;
             readonly name: string;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
         } | null;
     } | null;
     readonly content_Element: ReadonlyArray<{
@@ -43769,6 +43798,7 @@ export type ManageContent_SelectItemQuery = {
         readonly isHidden: boolean;
         readonly updatedAt: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     }>;
 };
 
@@ -43793,6 +43823,7 @@ export type ManageContent_SelectItemPeopleQuery = {
             readonly email?: string | null;
             readonly registrantId?: any | null;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
         };
     }>;
 };
@@ -43808,6 +43839,7 @@ export type ManageContent_InsertItemMutation = {
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly title: string;
         readonly shortTitle?: string | null;
         readonly typeName: Content_ItemType_Enum;
@@ -43850,6 +43882,7 @@ export type ManageContent_UpdateItemMutation = {
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly title: string;
         readonly shortTitle?: string | null;
         readonly typeName: Content_ItemType_Enum;
@@ -43872,6 +43905,7 @@ export type ManageContent_TagFragment = {
     readonly __typename?: "collection_Tag";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly name: string;
     readonly colour: string;
     readonly priority: number;
@@ -43879,6 +43913,7 @@ export type ManageContent_TagFragment = {
 
 export type ManageContent_SelectAllTagsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageContent_SelectAllTagsQuery = {
@@ -43887,6 +43922,7 @@ export type ManageContent_SelectAllTagsQuery = {
         readonly __typename?: "collection_Tag";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly colour: string;
         readonly priority: number;
@@ -43897,6 +43933,7 @@ export type ManageContent_ExhibitionFragment = {
     readonly __typename?: "collection_Exhibition";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly name: string;
     readonly colour: string;
     readonly priority: number;
@@ -43911,6 +43948,7 @@ export type ManageContent_ExhibitionFragment = {
 
 export type ManageContent_SelectAllExhibitionsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageContent_SelectAllExhibitionsQuery = {
@@ -43919,6 +43957,7 @@ export type ManageContent_SelectAllExhibitionsQuery = {
         readonly __typename?: "collection_Exhibition";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly colour: string;
         readonly priority: number;
@@ -43946,6 +43985,7 @@ export type BulkEdit_AddElementsMutation = {
 
 export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     createdByRegistrantId: Scalars["uuid"];
     outputName: Scalars["String"];
     data: Scalars["jsonb"];
@@ -43961,6 +44001,7 @@ export type CombineVideosModal_CreateCombineVideosJobMutation = {
 
 export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type CombineVideosModal_GetCombineVideosJobQuery = {
@@ -44043,6 +44084,7 @@ export type SEoUm_InfosQuery = {
 
 export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery = {
@@ -44137,6 +44179,7 @@ export type ManageContent_UpdateElementMutation = {
         readonly isHidden: boolean;
         readonly updatedAt: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     } | null;
 };
 
@@ -44216,6 +44259,7 @@ export type ManageContent_InsertExhibitionMutation = {
         readonly __typename?: "collection_Exhibition";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly colour: string;
         readonly priority: number;
@@ -44240,6 +44284,7 @@ export type ManageContent_UpdateExhibitionMutation = {
         readonly __typename?: "collection_Exhibition";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly colour: string;
         readonly priority: number;
@@ -44283,11 +44328,13 @@ export type AddContentMenu_CreateElementMutation = {
         readonly isHidden: boolean;
         readonly updatedAt: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     } | null;
 };
 
 export type Item_CreateRoomMutationVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     itemId: Scalars["uuid"];
 }>;
 
@@ -44302,6 +44349,7 @@ export type Item_CreateRoomMutation = {
 
 export type ManageContent_SelectProgramPeopleQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageContent_SelectProgramPeopleQuery = {
@@ -44314,6 +44362,7 @@ export type ManageContent_SelectProgramPeopleQuery = {
         readonly email?: string | null;
         readonly registrantId?: any | null;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     }>;
 };
 
@@ -44341,6 +44390,7 @@ export type ManageContent_InsertItemProgramPersonMutation = {
             readonly email?: string | null;
             readonly registrantId?: any | null;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
         };
     } | null;
 };
@@ -44368,6 +44418,7 @@ export type ManageContent_UpdateItemProgramPersonMutation = {
             readonly email?: string | null;
             readonly registrantId?: any | null;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
         };
     } | null;
 };
@@ -44394,6 +44445,7 @@ export type ManageContent_InsertTagMutation = {
         readonly __typename?: "collection_Tag";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly colour: string;
         readonly priority: number;
@@ -44411,6 +44463,7 @@ export type ManageContent_UpdateTagMutation = {
         readonly __typename?: "collection_Tag";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly colour: string;
         readonly priority: number;
@@ -44608,6 +44661,7 @@ export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutation = {
 
 export type DownloadVideos_GetAllVideosQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type DownloadVideos_GetAllVideosQuery = {
@@ -44616,6 +44670,7 @@ export type DownloadVideos_GetAllVideosQuery = {
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly typeName: Content_ItemType_Enum;
         readonly title: string;
         readonly elements: ReadonlyArray<{
@@ -44631,6 +44686,7 @@ export type DownloadVideos_GetAllVideosQuery = {
 
 export type ChooseElementByTagModal_GetTagsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ChooseElementByTagModal_GetTagsQuery = {
@@ -44640,6 +44696,7 @@ export type ChooseElementByTagModal_GetTagsQuery = {
         readonly id: any;
         readonly name: string;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     }>;
 };
 
@@ -44662,6 +44719,7 @@ export type ChooseElementByTagModal_GetVideoElementsQuery = {
 
 export type ChooseElementModal_GetItemsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ChooseElementModal_GetItemsQuery = {
@@ -44671,6 +44729,7 @@ export type ChooseElementModal_GetItemsQuery = {
         readonly id: any;
         readonly title: string;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     }>;
 };
 
@@ -44886,6 +44945,7 @@ export type UploadYouTubeVideos_RefreshYouTubeDataMutation = {
 
 export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = {
@@ -44894,6 +44954,7 @@ export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = {
         readonly __typename?: "job_queues_UploadYouTubeVideoJob";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly createdAt: any;
         readonly jobStatusName: Job_Queues_JobStatus_Enum;
         readonly message?: string | null;
@@ -44906,6 +44967,7 @@ export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = {
             readonly videoStatus: string;
             readonly videoTitle: string;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
             readonly createdAt: any;
         }>;
     }>;
@@ -44919,6 +44981,7 @@ export type UploadYouTubeVideos_YouTubeUploadFragment = {
     readonly videoStatus: string;
     readonly videoTitle: string;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly createdAt: any;
 };
 
@@ -44926,6 +44989,7 @@ export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = {
     readonly __typename?: "job_queues_UploadYouTubeVideoJob";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly createdAt: any;
     readonly jobStatusName: Job_Queues_JobStatus_Enum;
     readonly message?: string | null;
@@ -44938,6 +45002,7 @@ export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = {
         readonly videoStatus: string;
         readonly videoTitle: string;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly createdAt: any;
     }>;
 };
@@ -44955,6 +45020,7 @@ export type ImportJobFragment = {
 
 export type GetImportJobsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type GetImportJobsQuery = {
@@ -45016,6 +45082,7 @@ export type ManageGroups_GroupFragment = {
 
 export type SelectAllGroupsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type SelectAllGroupsQuery = {
@@ -45045,6 +45112,7 @@ export type CreateDeleteGroupsMutation = {
             readonly __typename?: "registrant_Group";
             readonly id: any;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
             readonly name: string;
         }>;
     } | null;
@@ -45064,6 +45132,7 @@ export type UpdateGroupMutation = {
             readonly id: any;
             readonly name: string;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
         }>;
     } | null;
 };
@@ -45088,6 +45157,7 @@ export type ManageProgramPeople_ProgramPersonWithAccessTokenFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly name: string;
     readonly affiliation?: string | null;
     readonly email?: string | null;
@@ -45097,6 +45167,7 @@ export type ManageProgramPeople_ProgramPersonWithAccessTokenFragment = {
 
 export type ManageProgramPeople_SelectAllPeopleQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageProgramPeople_SelectAllPeopleQuery = {
@@ -45105,6 +45176,7 @@ export type ManageProgramPeople_SelectAllPeopleQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly affiliation?: string | null;
         readonly email?: string | null;
@@ -45146,6 +45218,7 @@ export type ManageProgramPeople_InsertProgramPersonMutation = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly affiliation?: string | null;
         readonly email?: string | null;
@@ -45182,6 +45255,7 @@ export type ManageProgramPeople_UpdateProgramPersonMutation = {
             readonly __typename?: "collection_ProgramPerson";
             readonly id: any;
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
             readonly name: string;
             readonly affiliation?: string | null;
             readonly email?: string | null;
@@ -45196,6 +45270,7 @@ export type RoomWithParticipantInfoFragment = {
     readonly id: any;
     readonly created_at: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly name: string;
     readonly capacity?: number | null;
     readonly priority: number;
@@ -45216,6 +45291,7 @@ export type RoomWithParticipantInfoFragment = {
 
 export type SelectAllRoomsWithParticipantsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type SelectAllRoomsWithParticipantsQuery = {
@@ -45225,6 +45301,7 @@ export type SelectAllRoomsWithParticipantsQuery = {
         readonly id: any;
         readonly created_at: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly capacity?: number | null;
         readonly priority: number;
@@ -45246,6 +45323,7 @@ export type SelectAllRoomsWithParticipantsQuery = {
 
 export type ManageRooms_SelectGroupsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageRooms_SelectGroupsQuery = {
@@ -45255,11 +45333,13 @@ export type ManageRooms_SelectGroupsQuery = {
         readonly id: any;
         readonly name: string;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     }>;
 };
 
 export type ManageRooms_SelectItemsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageRooms_SelectItemsQuery = {
@@ -45269,6 +45349,7 @@ export type ManageRooms_SelectItemsQuery = {
         readonly id: any;
         readonly title: string;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
     }>;
 };
 
@@ -45328,6 +45409,7 @@ export type CreateRoomMutation = {
         readonly id: any;
         readonly created_at: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly capacity?: number | null;
         readonly priority: number;
@@ -45368,6 +45450,7 @@ export type UpdateRoomsWithParticipantsMutation = {
         readonly id: any;
         readonly created_at: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly capacity?: number | null;
         readonly priority: number;
@@ -45517,6 +45600,13 @@ export type RegistrantPartsFragment = {
         readonly id: any;
         readonly groupId: any;
     }>;
+    readonly subconferenceMemberships: ReadonlyArray<{
+        readonly __typename?: "registrant_SubconferenceMembership";
+        readonly id: any;
+        readonly subconferenceId: any;
+        readonly registrantId: any;
+        readonly role: Registrant_RegistrantRole_Enum;
+    }>;
 };
 
 export type ManageRegistrants_ProfileFragment = {
@@ -45535,6 +45625,15 @@ export type ManageRegistrants_ProfileFragment = {
     readonly photoURL_50x50?: string | null;
     readonly photoURL_350x350?: string | null;
     readonly hasBeenEdited: boolean;
+};
+
+export type SubconferencePartsFragment = {
+    readonly __typename?: "conference_Subconference";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly name: string;
+    readonly shortName: string;
+    readonly slug: string;
 };
 
 export type SelectAllRegistrantsQueryVariables = Exact<{
@@ -45570,6 +45669,21 @@ export type SelectAllRegistrantsQuery = {
             readonly id: any;
             readonly groupId: any;
         }>;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly subconferenceId: any;
+            readonly registrantId: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+        }>;
+    }>;
+    readonly conference_Subconference: ReadonlyArray<{
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly name: string;
+        readonly shortName: string;
+        readonly slug: string;
     }>;
 };
 
@@ -45632,6 +45746,13 @@ export type InsertRegistrantMutation = {
             readonly id: any;
             readonly groupId: any;
         }>;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly subconferenceId: any;
+            readonly registrantId: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+        }>;
     } | null;
     readonly insert_registrant_Invitation_one?: {
         readonly __typename?: "registrant_Invitation";
@@ -45679,6 +45800,13 @@ export type InsertRegistrantWithoutInviteMutation = {
             readonly id: any;
             readonly groupId: any;
         }>;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly subconferenceId: any;
+            readonly registrantId: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+        }>;
     } | null;
 };
 
@@ -45699,6 +45827,10 @@ export type UpdateRegistrantMutationVariables = Exact<{
     registrantUpdates: Registrant_Registrant_Set_Input;
     upsertGroups: ReadonlyArray<Registrant_GroupRegistrant_Insert_Input> | Registrant_GroupRegistrant_Insert_Input;
     remainingGroupIds?: InputMaybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
+    upsertSubconferences:
+        | ReadonlyArray<Registrant_SubconferenceMembership_Insert_Input>
+        | Registrant_SubconferenceMembership_Insert_Input;
+    remainingSubconferenceIds?: InputMaybe<ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"]>;
 }>;
 
 export type UpdateRegistrantMutation = {
@@ -45730,6 +45862,13 @@ export type UpdateRegistrantMutation = {
             readonly id: any;
             readonly groupId: any;
         }>;
+        readonly subconferenceMemberships: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly subconferenceId: any;
+            readonly registrantId: any;
+            readonly role: Registrant_RegistrantRole_Enum;
+        }>;
     } | null;
     readonly insert_registrant_GroupRegistrant?: {
         readonly __typename?: "registrant_GroupRegistrant_mutation_response";
@@ -45743,6 +45882,22 @@ export type UpdateRegistrantMutation = {
     readonly delete_registrant_GroupRegistrant?: {
         readonly __typename?: "registrant_GroupRegistrant_mutation_response";
         readonly returning: ReadonlyArray<{ readonly __typename?: "registrant_GroupRegistrant"; readonly id: any }>;
+    } | null;
+    readonly insert_registrant_SubconferenceMembership?: {
+        readonly __typename?: "registrant_SubconferenceMembership_mutation_response";
+        readonly returning: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+            readonly registrantId: any;
+            readonly subconferenceId: any;
+        }>;
+    } | null;
+    readonly delete_registrant_SubconferenceMembership?: {
+        readonly __typename?: "registrant_SubconferenceMembership_mutation_response";
+        readonly returning: ReadonlyArray<{
+            readonly __typename?: "registrant_SubconferenceMembership";
+            readonly id: any;
+        }>;
     } | null;
 };
 
@@ -45764,6 +45919,7 @@ export type ManagePeople_InsertCustomEmailJobMutationVariables = Exact<{
     markdownBody: Scalars["String"];
     subject: Scalars["String"];
     conferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     registrantIds: Scalars["jsonb"];
 }>;
 
@@ -45963,6 +46119,7 @@ export type AddEventPeople_SelectItemPeopleQuery = {
 
 export type AddEventPeople_SelectProgramPeopleQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type AddEventPeople_SelectProgramPeopleQuery = {
@@ -46018,6 +46175,7 @@ export type AddEventPeople_SelectProgramPeople_ByRegistrantQuery = {
 
 export type AddEventPeople_SelectGroupsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type AddEventPeople_SelectGroupsQuery = {
@@ -46344,6 +46502,7 @@ export type UpdateEventStreamTextEventIdMutation = {
 export type EventInfoFragment = {
     readonly __typename?: "schedule_Event";
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly id: any;
     readonly modeName?: Schedule_Mode_Enum | null;
     readonly name: string;
@@ -46420,6 +46579,7 @@ export type RoomInfoFragment = {
     readonly __typename?: "room_Room";
     readonly capacity?: number | null;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly id: any;
     readonly name: string;
     readonly priority: number;
@@ -46431,6 +46591,7 @@ export type RoomInfoFragment = {
 export type ElementInfoFragment = {
     readonly __typename?: "content_Element";
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly itemId: any;
     readonly typeName: Content_ElementType_Enum;
     readonly data: any;
@@ -46445,6 +46606,7 @@ export type ProgramPersonInfoFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly name: string;
     readonly affiliation?: string | null;
     readonly email?: string | null;
@@ -46480,12 +46642,14 @@ export type ItemFullNestedInfoFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly typeName: Content_ItemType_Enum;
     readonly title: string;
     readonly shortTitle?: string | null;
     readonly elements: ReadonlyArray<{
         readonly __typename?: "content_Element";
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly itemId: any;
         readonly typeName: Content_ElementType_Enum;
         readonly data: any;
@@ -46524,6 +46688,7 @@ export type TagInfoFragment = {
     readonly __typename?: "collection_Tag";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly colour: string;
     readonly name: string;
     readonly priority: number;
@@ -46533,6 +46698,7 @@ export type ExhibitionInfoFragment = {
     readonly __typename?: "collection_Exhibition";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly colour: string;
     readonly name: string;
     readonly priority: number;
@@ -46541,6 +46707,7 @@ export type ExhibitionInfoFragment = {
 
 export type SelectWholeScheduleQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type SelectWholeScheduleQuery = {
@@ -46549,6 +46716,7 @@ export type SelectWholeScheduleQuery = {
         readonly __typename?: "room_Room";
         readonly capacity?: number | null;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly id: any;
         readonly name: string;
         readonly priority: number;
@@ -46559,6 +46727,7 @@ export type SelectWholeScheduleQuery = {
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly id: any;
         readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
@@ -46583,6 +46752,7 @@ export type SelectWholeScheduleQuery = {
         readonly __typename?: "collection_Tag";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly colour: string;
         readonly name: string;
         readonly priority: number;
@@ -46591,6 +46761,7 @@ export type SelectWholeScheduleQuery = {
         readonly __typename?: "collection_Exhibition";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly colour: string;
         readonly name: string;
         readonly priority: number;
@@ -46600,12 +46771,14 @@ export type SelectWholeScheduleQuery = {
         readonly __typename?: "content_Item";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly typeName: Content_ItemType_Enum;
         readonly title: string;
         readonly shortTitle?: string | null;
         readonly elements: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
             readonly itemId: any;
             readonly typeName: Content_ElementType_Enum;
             readonly data: any;
@@ -46643,6 +46816,7 @@ export type SelectWholeScheduleQuery = {
         readonly __typename?: "collection_ProgramPerson";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly affiliation?: string | null;
         readonly email?: string | null;
@@ -46652,6 +46826,7 @@ export type SelectWholeScheduleQuery = {
 
 export type ManageSchedule_ShufflePeriodsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
     now: Scalars["timestamptz"];
 }>;
 
@@ -46683,6 +46858,7 @@ export type InsertEventInfoMutation = {
     readonly insert_schedule_Event_one?: {
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly id: any;
         readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
@@ -46715,6 +46891,7 @@ export type UpdateEventInfoMutation = {
     readonly update_schedule_Event_by_pk?: {
         readonly __typename?: "schedule_Event";
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly id: any;
         readonly modeName?: Schedule_Mode_Enum | null;
         readonly name: string;
@@ -46762,6 +46939,7 @@ export type UpdateShufflePeriodMutation = {
         readonly created_at: any;
         readonly updated_at: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly startAt: any;
         readonly endAt: any;
         readonly roomDurationMinutes: number;
@@ -46786,6 +46964,7 @@ export type InsertShufflePeriodMutation = {
         readonly created_at: any;
         readonly updated_at: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly startAt: any;
         readonly endAt: any;
         readonly roomDurationMinutes: number;
@@ -46802,6 +46981,7 @@ export type ManageShufflePeriods_ShufflePeriodFragment = {
     readonly __typename?: "room_ShufflePeriod";
     readonly id: any;
     readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly created_at: any;
     readonly updated_at: any;
     readonly startAt: any;
@@ -46838,6 +47018,7 @@ export type ManageShufflePeriods_ShufflePeriodFragment = {
 
 export type ManageShufflePeriods_SelectAllQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
 }>;
 
 export type ManageShufflePeriods_SelectAllQuery = {
@@ -46846,6 +47027,7 @@ export type ManageShufflePeriods_SelectAllQuery = {
         readonly __typename?: "room_ShufflePeriod";
         readonly id: any;
         readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly created_at: any;
         readonly updated_at: any;
         readonly startAt: any;
@@ -49600,6 +49782,7 @@ export const ManageContent_ItemScalarsFragmentDoc = gql`
     fragment ManageContent_ItemScalars on content_Item {
         id
         conferenceId
+        subconferenceId
         title
         shortTitle
         typeName
@@ -49627,6 +49810,7 @@ export const ManageContent_RoomFragmentDoc = gql`
         id
         name
         conferenceId
+        subconferenceId
     }
 `;
 export const ManageContent_ItemSecondaryFragmentDoc = gql`
@@ -49647,6 +49831,7 @@ export const ManageContent_ProgramPersonFragmentDoc = gql`
         email
         registrantId
         conferenceId
+        subconferenceId
     }
 `;
 export const ManageContent_ItemProgramPersonFragmentDoc = gql`
@@ -49674,12 +49859,14 @@ export const ManageContent_ElementFragmentDoc = gql`
         isHidden
         updatedAt
         conferenceId
+        subconferenceId
     }
 `;
 export const ManageContent_ItemForExportFragmentDoc = gql`
     fragment ManageContent_ItemForExport on content_Item {
         id
         conferenceId
+        subconferenceId
         title
         shortTitle
         typeName
@@ -49713,6 +49900,7 @@ export const ManageContent_TagFragmentDoc = gql`
     fragment ManageContent_Tag on collection_Tag {
         id
         conferenceId
+        subconferenceId
         name
         colour
         priority
@@ -49722,6 +49910,7 @@ export const ManageContent_ExhibitionFragmentDoc = gql`
     fragment ManageContent_Exhibition on collection_Exhibition {
         id
         conferenceId
+        subconferenceId
         name
         colour
         priority
@@ -49836,6 +50025,7 @@ export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
         videoStatus
         videoTitle
         conferenceId
+        subconferenceId
         createdAt
     }
 `;
@@ -49843,6 +50033,7 @@ export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
     fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
         id
         conferenceId
+        subconferenceId
         createdAt
         jobStatusName
         message
@@ -49892,6 +50083,7 @@ export const ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc = gql`
     fragment ManageProgramPeople_ProgramPersonWithAccessToken on collection_ProgramPerson {
         id
         conferenceId
+        subconferenceId
         name
         affiliation
         email
@@ -49904,6 +50096,7 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
         id
         created_at
         conferenceId
+        subconferenceId
         name
         capacity
         priority
@@ -49957,6 +50150,12 @@ export const RegistrantPartsFragmentDoc = gql`
             id
             groupId
         }
+        subconferenceMemberships {
+            id
+            subconferenceId
+            registrantId
+            role
+        }
         userId
         updatedAt
         createdAt
@@ -49981,6 +50180,15 @@ export const ManageRegistrants_ProfileFragmentDoc = gql`
         photoURL_50x50
         photoURL_350x350
         hasBeenEdited
+    }
+`;
+export const SubconferencePartsFragmentDoc = gql`
+    fragment SubconferenceParts on conference_Subconference {
+        id
+        conferenceId
+        name
+        shortName
+        slug
     }
 `;
 export const AddEventPeople_ItemPersonFragmentDoc = gql`
@@ -50044,6 +50252,7 @@ export const EventProgramPersonInfoFragmentDoc = gql`
 export const EventInfoFragmentDoc = gql`
     fragment EventInfo on schedule_Event {
         conferenceId
+        subconferenceId
         id
         eventPeople {
             ...EventProgramPersonInfo
@@ -50067,6 +50276,7 @@ export const RoomInfoFragmentDoc = gql`
     fragment RoomInfo on room_Room {
         capacity
         conferenceId
+        subconferenceId
         id
         name
         priority
@@ -50079,6 +50289,7 @@ export const ProgramPersonInfoFragmentDoc = gql`
     fragment ProgramPersonInfo on collection_ProgramPerson {
         id
         conferenceId
+        subconferenceId
         name
         affiliation
         email
@@ -50088,6 +50299,7 @@ export const ProgramPersonInfoFragmentDoc = gql`
 export const ElementInfoFragmentDoc = gql`
     fragment ElementInfo on content_Element {
         conferenceId
+        subconferenceId
         itemId
         typeName
         data
@@ -50127,6 +50339,7 @@ export const ItemFullNestedInfoFragmentDoc = gql`
     fragment ItemFullNestedInfo on content_Item {
         id
         conferenceId
+        subconferenceId
         typeName
         title
         shortTitle
@@ -50156,6 +50369,7 @@ export const TagInfoFragmentDoc = gql`
     fragment TagInfo on collection_Tag {
         id
         conferenceId
+        subconferenceId
         colour
         name
         priority
@@ -50165,6 +50379,7 @@ export const ExhibitionInfoFragmentDoc = gql`
     fragment ExhibitionInfo on collection_Exhibition {
         id
         conferenceId
+        subconferenceId
         colour
         name
         priority
@@ -50183,9 +50398,9 @@ export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
         id
         conferenceId
+        subconferenceId
         created_at
         updated_at
-        conferenceId
         startAt
         endAt
         roomDurationMinutes
@@ -52160,8 +52375,10 @@ export function useGetConferencePrepareJobsQuery(
     return Urql.useQuery<GetConferencePrepareJobsQuery>({ query: GetConferencePrepareJobsDocument, ...options });
 }
 export const ManageModeration_SelectFlagsDocument = gql`
-    query ManageModeration_SelectFlags($conferenceId: uuid!) {
-        chat_Flag(where: { message: { chat: { conferenceId: { _eq: $conferenceId } } } }) {
+    query ManageModeration_SelectFlags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        chat_Flag(
+            where: { message: { chat: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond } } }
+        ) {
             ...ManageModeration_ChatFlag
         }
     }
@@ -52653,8 +52870,8 @@ export function useSettingUpdater_DeleteConfigurationMutation() {
     >(SettingUpdater_DeleteConfigurationDocument);
 }
 export const ManageContent_SelectAllItemsDocument = gql`
-    query ManageContent_SelectAllItems($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageContent_SelectAllItems($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageContent_Item
         }
     }
@@ -52789,8 +53006,8 @@ export function useManageContent_DeleteItemsMutation() {
     );
 }
 export const ManageContent_SelectAllTagsDocument = gql`
-    query ManageContent_SelectAllTags($conferenceId: uuid!) {
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageContent_SelectAllTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageContent_Tag
         }
     }
@@ -52803,8 +53020,8 @@ export function useManageContent_SelectAllTagsQuery(
     return Urql.useQuery<ManageContent_SelectAllTagsQuery>({ query: ManageContent_SelectAllTagsDocument, ...options });
 }
 export const ManageContent_SelectAllExhibitionsDocument = gql`
-    query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageContent_SelectAllExhibitions($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageContent_Exhibition
         }
     }
@@ -52835,6 +53052,7 @@ export function useBulkEdit_AddElementsMutation() {
 export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
     mutation CombineVideosModal_CreateCombineVideosJob(
         $conferenceId: uuid!
+        $subconferenceId: uuid
         $createdByRegistrantId: uuid!
         $outputName: String!
         $data: jsonb!
@@ -52842,6 +53060,7 @@ export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
         insert_job_queues_CombineVideosJob_one(
             object: {
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
                 createdByRegistrantId: $createdByRegistrantId
                 outputName: $outputName
                 data: $data
@@ -52859,9 +53078,13 @@ export function useCombineVideosModal_CreateCombineVideosJobMutation() {
     >(CombineVideosModal_CreateCombineVideosJobDocument);
 }
 export const CombineVideosModal_GetCombineVideosJobDocument = gql`
-    query CombineVideosModal_GetCombineVideosJob($conferenceId: uuid!) {
+    query CombineVideosModal_GetCombineVideosJob($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
         job_queues_CombineVideosJob(
-            where: { conferenceId: { _eq: $conferenceId }, jobStatusName: { _in: [NEW, IN_PROGRESS] } }
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                jobStatusName: { _in: [NEW, IN_PROGRESS] }
+            }
         ) {
             id
             message
@@ -52917,8 +53140,17 @@ export function useSEoUm_InfosQuery(options: Omit<Urql.UseQueryArgs<SEoUm_InfosQ
     return Urql.useQuery<SEoUm_InfosQuery>({ query: SEoUm_InfosDocument, ...options });
 }
 export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
-    query UpdateExhibitionDescriptiveItems_SelectExhibitions($conferenceId: uuid!) {
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, descriptiveItemId: { _is_null: true } }) {
+    query UpdateExhibitionDescriptiveItems_SelectExhibitions(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+    ) {
+        collection_Exhibition(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                descriptiveItemId: { _is_null: true }
+            }
+        ) {
             id
             name
             conferenceId
@@ -53132,8 +53364,8 @@ export function useAddContentMenu_CreateElementMutation() {
     );
 }
 export const Item_CreateRoomDocument = gql`
-    mutation Item_CreateRoom($conferenceId: uuid!, $itemId: uuid!) {
-        createItemRoom(conferenceId: $conferenceId, itemId: $itemId) {
+    mutation Item_CreateRoom($conferenceId: uuid!, $subconferenceId: uuid, $itemId: uuid!) {
+        createItemRoom(conferenceId: $conferenceId, subconferenceId: $subconferenceId, itemId: $itemId) {
             roomId
             message
         }
@@ -53144,8 +53376,8 @@ export function useItem_CreateRoomMutation() {
     return Urql.useMutation<Item_CreateRoomMutation, Item_CreateRoomMutationVariables>(Item_CreateRoomDocument);
 }
 export const ManageContent_SelectProgramPeopleDocument = gql`
-    query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageContent_SelectProgramPeople($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageContent_ProgramPerson
         }
     }
@@ -53344,10 +53576,11 @@ export function useConfigureEmailTemplates_UpdateConferenceConfigurationMutation
     >(ConfigureEmailTemplates_UpdateConferenceConfigurationDocument);
 }
 export const DownloadVideos_GetAllVideosDocument = gql`
-    query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+    query DownloadVideos_GetAllVideos($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             id
             conferenceId
+            subconferenceId
             elements(where: { typeName: { _in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] } }) {
                 name
                 id
@@ -53367,11 +53600,15 @@ export function useDownloadVideos_GetAllVideosQuery(
     return Urql.useQuery<DownloadVideos_GetAllVideosQuery>({ query: DownloadVideos_GetAllVideosDocument, ...options });
 }
 export const ChooseElementByTagModal_GetTagsDocument = gql`
-    query ChooseElementByTagModal_GetTags($conferenceId: uuid!) {
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }, order_by: { name: asc }) {
+    query ChooseElementByTagModal_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Tag(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+            order_by: { name: asc }
+        ) {
             id
             name
             conferenceId
+            subconferenceId
         }
     }
 `;
@@ -53415,11 +53652,15 @@ export function useChooseElementByTagModal_GetVideoElementsQuery(
     });
 }
 export const ChooseElementModal_GetItemsDocument = gql`
-    query ChooseElementModal_GetItems($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }, order_by: { title: asc }) {
+    query ChooseElementModal_GetItems($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        content_Item(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+            order_by: { title: asc }
+        ) {
             id
             title
             conferenceId
+            subconferenceId
         }
     }
 `;
@@ -53641,9 +53882,12 @@ export function useUploadYouTubeVideos_RefreshYouTubeDataMutation() {
     >(UploadYouTubeVideos_RefreshYouTubeDataDocument);
 }
 export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
-    query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
+    query UploadYouTubeVideos_GetUploadYouTubeVideoJobs(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+    ) {
         job_queues_UploadYouTubeVideoJob(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
             order_by: { createdAt: desc }
             limit: 100
         ) {
@@ -53662,9 +53906,9 @@ export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(
     });
 }
 export const GetImportJobsDocument = gql`
-    query GetImportJobs($conferenceId: uuid!) {
+    query GetImportJobs($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
         job_queues_ImportJob(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
             order_by: [{ created_at: desc }]
             limit: 1
         ) {
@@ -53710,8 +53954,8 @@ export function useImportRegistrantsMutation() {
     return Urql.useMutation<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>(ImportRegistrantsDocument);
 }
 export const SelectAllGroupsDocument = gql`
-    query SelectAllGroups($conferenceId: uuid!) {
-        registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    query SelectAllGroups($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        registrant_Group(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageGroups_Group
         }
     }
@@ -53732,6 +53976,7 @@ export const CreateDeleteGroupsDocument = gql`
             returning {
                 id
                 conferenceId
+                subconferenceId
                 name
             }
         }
@@ -53750,6 +53995,7 @@ export const UpdateGroupDocument = gql`
                 id
                 name
                 conferenceId
+                subconferenceId
             }
         }
     }
@@ -53759,8 +54005,8 @@ export function useUpdateGroupMutation() {
     return Urql.useMutation<UpdateGroupMutation, UpdateGroupMutationVariables>(UpdateGroupDocument);
 }
 export const ManageProgramPeople_SelectAllPeopleDocument = gql`
-    query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageProgramPeople_ProgramPersonWithAccessToken
         }
     }
@@ -53850,8 +54096,14 @@ export function useManageProgramPeople_UpdateProgramPersonMutation() {
     >(ManageProgramPeople_UpdateProgramPersonDocument);
 }
 export const SelectAllRoomsWithParticipantsDocument = gql`
-    query SelectAllRoomsWithParticipants($conferenceId: uuid!) {
-        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
+    query SelectAllRoomsWithParticipants($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
+            }
+        ) {
             ...RoomWithParticipantInfo
         }
     }
@@ -53867,11 +54119,12 @@ export function useSelectAllRoomsWithParticipantsQuery(
     });
 }
 export const ManageRooms_SelectGroupsDocument = gql`
-    query ManageRooms_SelectGroups($conferenceId: uuid!) {
-        registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageRooms_SelectGroups($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        registrant_Group(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             id
             name
             conferenceId
+            subconferenceId
         }
     }
 `;
@@ -53882,11 +54135,12 @@ export function useManageRooms_SelectGroupsQuery(
     return Urql.useQuery<ManageRooms_SelectGroupsQuery>({ query: ManageRooms_SelectGroupsDocument, ...options });
 }
 export const ManageRooms_SelectItemsDocument = gql`
-    query ManageRooms_SelectItems($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageRooms_SelectItems($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             id
             title
             conferenceId
+            subconferenceId
         }
     }
 `;
@@ -54081,8 +54335,12 @@ export const SelectAllRegistrantsDocument = gql`
         registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }) {
             ...RegistrantParts
         }
+        conference_Subconference(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...SubconferenceParts
+        }
     }
     ${RegistrantPartsFragmentDoc}
+    ${SubconferencePartsFragmentDoc}
 `;
 
 export function useSelectAllRegistrantsQuery(
@@ -54159,6 +54417,8 @@ export const UpdateRegistrantDocument = gql`
         $registrantUpdates: registrant_Registrant_set_input!
         $upsertGroups: [registrant_GroupRegistrant_insert_input!]!
         $remainingGroupIds: [uuid!]
+        $upsertSubconferences: [registrant_SubconferenceMembership_insert_input!]!
+        $remainingSubconferenceIds: [uuid!]
     ) {
         update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: $registrantUpdates) {
             ...RegistrantParts
@@ -54175,6 +54435,23 @@ export const UpdateRegistrantDocument = gql`
         }
         delete_registrant_GroupRegistrant(
             where: { registrantId: { _eq: $registrantId }, groupId: { _nin: $remainingGroupIds } }
+        ) {
+            returning {
+                id
+            }
+        }
+        insert_registrant_SubconferenceMembership(
+            objects: $upsertSubconferences
+            on_conflict: { constraint: SubconferenceMembership_subconferenceId_registrantId_key, update_columns: [] }
+        ) {
+            returning {
+                id
+                registrantId
+                subconferenceId
+            }
+        }
+        delete_registrant_SubconferenceMembership(
+            where: { registrantId: { _eq: $registrantId }, subconferenceId: { _nin: $remainingSubconferenceIds } }
         ) {
             returning {
                 id
@@ -54207,6 +54484,7 @@ export const ManagePeople_InsertCustomEmailJobDocument = gql`
         $markdownBody: String!
         $subject: String!
         $conferenceId: uuid!
+        $subconferenceId: uuid
         $registrantIds: jsonb!
     ) {
         insert_job_queues_CustomEmailJob(
@@ -54214,6 +54492,7 @@ export const ManagePeople_InsertCustomEmailJobDocument = gql`
                 markdownBody: $markdownBody
                 subject: $subject
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
                 registrantIds: $registrantIds
             }
         ) {
@@ -54363,8 +54642,8 @@ export function useAddEventPeople_SelectItemPeopleQuery(
     });
 }
 export const AddEventPeople_SelectProgramPeopleDocument = gql`
-    query AddEventPeople_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+    query AddEventPeople_SelectProgramPeople($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...AddEventPeople_ProgramPerson
         }
     }
@@ -54414,8 +54693,8 @@ export function useAddEventPeople_SelectProgramPeople_ByRegistrantQuery(
     });
 }
 export const AddEventPeople_SelectGroupsDocument = gql`
-    query AddEventPeople_SelectGroups($conferenceId: uuid!) {
-        registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    query AddEventPeople_SelectGroups($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        registrant_Group(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...AddEventPeople_Group
         }
     }
@@ -54781,26 +55060,32 @@ export function useUpdateEventProgramPersonMutation() {
     );
 }
 export const SelectWholeScheduleDocument = gql`
-    query SelectWholeSchedule($conferenceId: uuid!) {
-        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
+    query SelectWholeSchedule($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
+            }
+        ) {
             ...RoomInfo
         }
         schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId } }
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
             order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }]
         ) {
             ...EventInfo
         }
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...TagInfo
         }
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ExhibitionInfo
         }
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ItemFullNestedInfo
         }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ProgramPersonInfo
         }
     }
@@ -54818,8 +55103,14 @@ export function useSelectWholeScheduleQuery(
     return Urql.useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
 }
 export const ManageSchedule_ShufflePeriodsDocument = gql`
-    query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
-        room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gt: $now } }) {
+    query ManageSchedule_ShufflePeriods(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+        $now: timestamptz!
+    ) {
+        room_ShufflePeriod(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond, endAt: { _gt: $now } }
+        ) {
             ...ShufflePeriodInfo
         }
     }
@@ -54878,6 +55169,7 @@ export const UpdateShufflePeriodDocument = gql`
             created_at
             updated_at
             conferenceId
+            subconferenceId
             startAt
             endAt
             roomDurationMinutes
@@ -54903,6 +55195,7 @@ export const InsertShufflePeriodDocument = gql`
             created_at
             updated_at
             conferenceId
+            subconferenceId
             startAt
             endAt
             roomDurationMinutes
@@ -54922,8 +55215,8 @@ export function useInsertShufflePeriodMutation() {
     );
 }
 export const ManageShufflePeriods_SelectAllDocument = gql`
-    query ManageShufflePeriods_SelectAll($conferenceId: uuid!) {
-        room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageShufflePeriods_SelectAll($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             ...ManageShufflePeriods_ShufflePeriod
         }
     }
@@ -69098,6 +69391,11 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             WithTypename<Registrant_Registrant> | string
         >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_CombineVideosJob>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         updated_at?: GraphCacheResolver<
             WithTypename<Job_Queues_CombineVideosJob>,
             Record<string, never>,
@@ -69169,6 +69467,11 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_CombineVideosJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
+        >;
         updated_at?: GraphCacheResolver<
             WithTypename<Job_Queues_CombineVideosJob_Max_Fields>,
             Record<string, never>,
@@ -69210,6 +69513,11 @@ export type GraphCacheResolvers = {
             WithTypename<Job_Queues_CombineVideosJob_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
+        >;
+        subconferenceId?: GraphCacheResolver<
+            WithTypename<Job_Queues_CombineVideosJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["uuid"] | string
         >;
         updated_at?: GraphCacheResolver<
             WithTypename<Job_Queues_CombineVideosJob_Min_Fields>,

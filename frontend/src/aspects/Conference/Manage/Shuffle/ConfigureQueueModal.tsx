@@ -38,6 +38,7 @@ gql`
             created_at
             updated_at
             conferenceId
+            subconferenceId
             startAt
             endAt
             roomDurationMinutes

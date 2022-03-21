@@ -13,16 +13,18 @@ import * as R from "ramda";
 import React, { useCallback, useContext, useMemo } from "react";
 import { useDownloadVideos_GetAllVideosQuery } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
 import { VideoDownloadContext } from "./VideoDownloadContext";
 import { VideoDownloadLink } from "./VideoDownloadLink";
 
 gql`
-    query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+    query DownloadVideos_GetAllVideos($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             id
             conferenceId
+            subconferenceId
             elements(where: { typeName: { _in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] } }) {
                 name
                 id
@@ -62,6 +64,7 @@ function toS3Url(s3Url: string): string | undefined {
 
 export function AllVideoElements(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const { reset } = useContext(VideoDownloadContext);
     const context = useMemo(
         () =>
@@ -73,6 +76,7 @@ export function AllVideoElements(): JSX.Element {
     const [result] = useDownloadVideos_GetAllVideosQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });

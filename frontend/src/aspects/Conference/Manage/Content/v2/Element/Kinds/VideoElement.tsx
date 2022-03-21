@@ -20,7 +20,7 @@ function s3UrlToHttpUrl(s3Url: string): string {
 export const VideoElementTemplate: SupportedElementBaseTemplate = {
     supported: true,
     allowCreate: [Content_ElementType_Enum.VideoBroadcast, Content_ElementType_Enum.VideoFile],
-    createDefault: (type, conferenceId, itemId) => {
+    createDefault: (type, conferenceId, subconferenceId, itemId) => {
         assert.truthy(
             type === Content_ElementType_Enum.VideoBroadcast ||
                 type === Content_ElementType_Enum.VideoCountdown ||
@@ -51,6 +51,7 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
             __typename: "content_Element",
             updatedAt: new Date().toISOString(),
             conferenceId,
+            subconferenceId,
             itemId,
             id: uuidv4(),
             name,

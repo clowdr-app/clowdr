@@ -8,6 +8,7 @@ import { gql } from "@urql/core";
 import React, { useMemo } from "react";
 import type { Content_Element_Insert_Input } from "../../../../../../generated/graphql";
 import { Content_ElementType_Enum, useAddContentMenu_CreateElementMutation } from "../../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { useConference } from "../../../../useConference";
 import { ElementBaseTemplates } from "../Element/Kinds/Templates";
 
@@ -28,6 +29,7 @@ export function AddContentMenu({
 }): JSX.Element {
     const toast = useToast();
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
 
     const [, createElement] = useAddContentMenu_CreateElementMutation();
 
@@ -68,9 +70,15 @@ export function AddContentMenu({
                             try {
                                 const template = ElementBaseTemplates[ElementBaseTypes[typeOpt.value]];
                                 assert.truthy(template.supported);
-                                const newContent = template.createDefault(typeOpt.value, conference.id, itemId);
+                                const newContent = template.createDefault(
+                                    typeOpt.value,
+                                    conference.id,
+                                    subconferenceId,
+                                    itemId
+                                );
                                 const obj: Content_Element_Insert_Input = {
                                     conferenceId: conference.id,
+                                    subconferenceId,
                                     itemId,
                                     data: newContent.data,
                                     typeName: newContent.typeName,

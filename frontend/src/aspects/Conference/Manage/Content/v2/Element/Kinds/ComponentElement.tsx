@@ -16,7 +16,7 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.Divider,
         Content_ElementType_Enum.SponsorBooths,
     ],
-    createDefault: (type, conferenceId, itemId) => {
+    createDefault: (type, conferenceId, subconferenceId, itemId) => {
         assert.truthy(
             type === Content_ElementType_Enum.ContentGroupList ||
                 type === Content_ElementType_Enum.WholeSchedule ||
@@ -36,6 +36,7 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
         return {
             __typename: "content_Element",
             conferenceId,
+            subconferenceId,
             itemId,
             updatedAt: new Date().toISOString(),
             id: uuidv4(),

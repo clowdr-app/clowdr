@@ -18,7 +18,7 @@ interface TextElementVersionData {
 export const TextElementTemplate: ElementBaseTemplate = {
     supported: true,
     allowCreate: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Text],
-    createDefault: (type, conferenceId, itemId) => {
+    createDefault: (type, conferenceId, subconferenceId, itemId) => {
         assert.truthy(
             type === Content_ElementType_Enum.Abstract || type === Content_ElementType_Enum.Text,
             `Text Element Template mistakenly used for type ${type}.`
@@ -29,6 +29,7 @@ export const TextElementTemplate: ElementBaseTemplate = {
             __typename: "content_Element",
             updatedAt: new Date().toISOString(),
             conferenceId,
+            subconferenceId,
             itemId,
             id: uuidv4(),
             name,

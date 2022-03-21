@@ -57,7 +57,7 @@ export default function CurrentUserProvider({
     }
 }
 
-function CurrentUserProvider_NotAuthenticated({ children }: { children: (children: JSX.Element) => JSX.Element }) {
+function CurrentUserProvider_NotAuthenticated({ children }: { children: (children?: JSX.Element) => JSX.Element }) {
     const ctx = useMemo(
         () => ({
             ...defaultCurrentUserContext,
@@ -65,7 +65,7 @@ function CurrentUserProvider_NotAuthenticated({ children }: { children: (childre
         }),
         []
     );
-    return <CurrentUserContext.Provider value={ctx}>{children}</CurrentUserContext.Provider>;
+    return <CurrentUserContext.Provider value={ctx}>{children()}</CurrentUserContext.Provider>;
 }
 
 gql`

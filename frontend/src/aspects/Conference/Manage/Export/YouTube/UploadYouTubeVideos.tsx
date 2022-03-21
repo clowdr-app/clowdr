@@ -47,6 +47,7 @@ import {
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
 } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { useRestorableState } from "../../../../Hooks/useRestorableState";
 import { useConference } from "../../../useConference";
@@ -181,6 +182,7 @@ function VideoIcon() {
 
 export function UploadYouTubeVideos(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const toast = useToast();
     const registrant = useCurrentRegistrant();
     const { selectedGoogleAccountId, googleAccounts, finished, setFinished } = useContext(YouTubeExportContext);
@@ -197,7 +199,9 @@ export function UploadYouTubeVideos(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -209,7 +213,7 @@ export function UploadYouTubeVideos(): JSX.Element {
             }
         }
         fn();
-    }, [googleAccounts, refreshYouTubeData, registrant.id, selectedGoogleAccountId]);
+    }, [googleAccounts, refreshYouTubeData, registrant.id, selectedGoogleAccountId, subconferenceId]);
 
     const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
         "clowdr-youTubeTitleTemplate",
@@ -333,9 +337,11 @@ export function UploadYouTubeVideos(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [{ data }] = useUploadYouTubeVideos_GetElementsQuery({
         variables: {
@@ -368,7 +374,9 @@ export function UploadYouTubeVideos(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -496,7 +504,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
             return R.fromPairs(pairs);
         },
-        [client]
+        [client, subconferenceId]
     );
 
     const getDescriptionError = useCallback((description: string) => {
@@ -582,7 +590,9 @@ export function UploadYouTubeVideos(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -614,6 +624,7 @@ export function UploadYouTubeVideos(): JSX.Element {
             selectedGoogleAccountId,
             setFinished,
             setValue,
+            subconferenceId,
             titleCorrectionsFields,
             toast,
             trigger,

@@ -57,6 +57,7 @@ import type {
     RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import { maybeCompare } from "../../../Utils/maybeCompare";
@@ -135,14 +136,17 @@ export function AddEventProgramPerson_RegistrantModal({
     event: EventInfoFragment;
     closeOuter: () => void;
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         variables: {
@@ -215,7 +219,9 @@ export function AddEventProgramPerson_RegistrantModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -254,6 +260,7 @@ export function AddEventProgramPerson_RegistrantModal({
         closeOuter,
         toast,
         client,
+        subconferenceId,
     ]);
 
     return (
@@ -559,7 +566,9 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        [AuthHeader.Role]: event.subconferenceId
+                                                            ? HasuraRoleName.SubconferenceOrganizer
+                                                            : HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -577,7 +586,9 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        [AuthHeader.Role]: event.subconferenceId
+                                                            ? HasuraRoleName.SubconferenceOrganizer
+                                                            : HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -594,7 +605,9 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        [AuthHeader.Role]: event.subconferenceId
+                                                            ? HasuraRoleName.SubconferenceOrganizer
+                                                            : HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }

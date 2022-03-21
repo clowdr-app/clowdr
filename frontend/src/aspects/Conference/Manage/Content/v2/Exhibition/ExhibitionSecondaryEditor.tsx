@@ -136,9 +136,11 @@ function SecondaryEditorInner({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [itemExhibitionsResponse] = useManageContent_SelectItemExhibitionsQuery({
         variables: {
@@ -232,6 +234,8 @@ function AddItemExhibitionBody({
     onClose: () => void;
     sortedItems: undefined | readonly ManageContent_ItemFragment[];
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
     const [insertItemExhibitionResponse, insertItemExhibition] = useManageContent_InsertItemExhibitionMutation();
 
@@ -273,7 +277,9 @@ function AddItemExhibitionBody({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }
@@ -329,6 +335,8 @@ function ItemExhibitionsList({
 }: {
     exhibitionItems: readonly ManageContent_ItemExhibitionFragment[];
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const sortedItems = useMemo(
         () =>
             R.sortWith(
@@ -366,7 +374,9 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    [AuthHeader.Role]: subconferenceId
+                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                        : HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -380,7 +390,9 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    [AuthHeader.Role]: subconferenceId
+                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                        : HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -404,7 +416,9 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    [AuthHeader.Role]: subconferenceId
+                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                        : HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -418,7 +432,9 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    [AuthHeader.Role]: subconferenceId
+                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                        : HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -444,7 +460,9 @@ function ItemExhibitionsList({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    [AuthHeader.Role]: subconferenceId
+                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                        : HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }

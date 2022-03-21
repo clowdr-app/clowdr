@@ -25,6 +25,7 @@ import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useCallback, useMemo, useState } from "react";
 import { gql } from "urql";
 import { useUpdateUploadsRemainingMutation } from "../../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 
 gql`
     mutation UpdateUploadsRemaining($elementIds: [uuid!]!, $count: Int!) {
@@ -68,6 +69,8 @@ function ModalInner({
         elementIds: string[];
     }[];
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const elementIds = useMemo(() => elementsByItem.flatMap((x) => x.elementIds), [elementsByItem]);
     const [newValue, setNewValue] = useState<number>(3);
 
@@ -83,7 +86,9 @@ function ModalInner({
                 {
                     fetchOptions: {
                         headers: {
-                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            [AuthHeader.Role]: subconferenceId
+                                ? HasuraRoleName.SubconferenceOrganizer
+                                : HasuraRoleName.ConferenceOrganizer,
                         },
                     },
                 }
@@ -93,7 +98,7 @@ function ModalInner({
         } catch (e) {
             console.error("Failed to update uploads remaining", e);
         }
-    }, [doUpdate, elementIds, newValue, onClose]);
+    }, [doUpdate, elementIds, newValue, onClose, subconferenceId]);
 
     return (
         <>

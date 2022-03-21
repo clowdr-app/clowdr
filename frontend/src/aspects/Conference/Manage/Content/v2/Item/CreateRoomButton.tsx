@@ -4,6 +4,7 @@ import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
 import { useItem_CreateRoomMutation } from "../../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { useConference } from "../../../../useConference";
 
 gql`
@@ -26,6 +27,8 @@ export function CreateRoomButton({
     refetch?: () => void;
 } & ButtonProps): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
+
     const toast = useToast();
     const [, createVideoChatMutation] = useItem_CreateRoomMutation();
     const [creatingVideoChat, setCreatingVideoChat] = useState<boolean>(false);
@@ -44,7 +47,9 @@ export function CreateRoomButton({
                 {
                     fetchOptions: {
                         headers: {
-                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            [AuthHeader.Role]: subconferenceId
+                                ? HasuraRoleName.SubconferenceOrganizer
+                                : HasuraRoleName.ConferenceOrganizer,
                         },
                     },
                 }
@@ -63,7 +68,7 @@ export function CreateRoomButton({
             });
             setCreatingVideoChat(false);
         }
-    }, [conference.id, createVideoChatMutation, groupId, refetch, toast]);
+    }, [conference.id, createVideoChatMutation, groupId, refetch, subconferenceId, toast]);
 
     return (
         <Button isLoading={creatingVideoChat} onClick={createVideoChat} {...props}>

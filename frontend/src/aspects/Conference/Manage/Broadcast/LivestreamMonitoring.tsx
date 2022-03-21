@@ -489,14 +489,14 @@ export default function LivestreamMonitoring(): JSX.Element {
 
     const [liveRooms, setLiveRooms] = useState<{ id: string; name: string }[]>([]);
     useEffect(() => {
-        if (response.data?.liveEvents) {
+        if (response.data?.liveEvents && response.data?.prerecordedEvents) {
             const newLiveRoomsIds = R.sortWith(
                 [(x, y) => x.priority - y.priority, (x, y) => x.name.localeCompare(y.name)],
                 R.uniq([
-                    ...response.data?.liveEvents
+                    ...response.data.liveEvents
                         .filter((x) => Date.parse(x.scheduledStartTime) <= nowRoundedUp + 10 * 60 * 1000)
                         .map((x) => x.room),
-                    ...response.data?.prerecordedEvents
+                    ...response.data.prerecordedEvents
                         .filter((x) => Date.parse(x.scheduledStartTime) <= nowRoundedUp + 10 * 60 * 1000)
                         .map((x) => x.room),
                 ])

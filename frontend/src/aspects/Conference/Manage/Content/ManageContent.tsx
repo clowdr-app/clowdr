@@ -311,9 +311,11 @@ export default function ManageContentV2(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const tagsContext = useMemo(() => ({ ...context, additionalTypenames: ["content_ItemTag"] }), [context]);
     const itemsContext = useMemo(() => ({ ...context, additionalTypenames: ["content_Item"] }), [context]);
@@ -689,7 +691,9 @@ export default function ManageContentV2(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                         additionalTypenames: ["content_Item"],
@@ -728,7 +732,9 @@ export default function ManageContentV2(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                         additionalTypenames: ["content_Item"],
@@ -736,7 +742,7 @@ export default function ManageContentV2(): JSX.Element {
                 );
             },
         }),
-        [updateItem, updateItemResponse.fetching]
+        [subconferenceId, updateItem, updateItemResponse.fetching]
     );
 
     const [deleteItemsResponse, deleteItems] = useManageContent_DeleteItemsMutation();
@@ -756,7 +762,9 @@ export default function ManageContentV2(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                         additionalTypenames: ["content_Item"],
@@ -764,7 +772,7 @@ export default function ManageContentV2(): JSX.Element {
                 );
             },
         }),
-        [deleteItems, deleteItemsResponse.fetching]
+        [deleteItems, deleteItemsResponse.fetching, subconferenceId]
     );
 
     const forceReloadRef = useRef<() => void>(() => {
@@ -900,7 +908,9 @@ export default function ManageContentV2(): JSX.Element {
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }
@@ -1257,6 +1267,7 @@ export default function ManageContentV2(): JSX.Element {
         [
             conferencePath,
             client,
+            subconferenceId,
             allTags?.collection_Tag,
             allExhibitions?.collection_Exhibition,
             allItems?.content_Item,

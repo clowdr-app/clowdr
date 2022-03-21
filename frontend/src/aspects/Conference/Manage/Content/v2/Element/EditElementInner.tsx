@@ -17,9 +17,11 @@ export function EditElementInner(props: {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: props.element.subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [props.element.subconferenceId]
     );
     const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation();
 

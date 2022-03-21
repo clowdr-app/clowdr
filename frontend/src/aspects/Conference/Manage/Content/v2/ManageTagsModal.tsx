@@ -103,7 +103,9 @@ function ManageTagsModalBody(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -324,7 +326,9 @@ function ManageTagsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -357,7 +361,9 @@ function ManageTagsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -384,7 +390,9 @@ function ManageTagsModalBody(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }

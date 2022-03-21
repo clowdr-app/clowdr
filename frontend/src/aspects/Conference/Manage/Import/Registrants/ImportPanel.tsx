@@ -76,7 +76,9 @@ export default function ImportPanel({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -278,7 +280,9 @@ export default function ImportPanel({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }

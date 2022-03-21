@@ -196,6 +196,8 @@ function AddEventPeople_FromContentPanel({
     isExpanded: boolean;
     onClose: () => void;
 }) {
+    const { subconferenceId } = useAuthParameters();
+
     const client = useClient();
     const insert = useAddEventPeople_InsertEventPeopleMutation();
     const toast = useToast();
@@ -224,7 +226,9 @@ function AddEventPeople_FromContentPanel({
                         {
                             fetchOptions: {
                                 headers: {
-                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                    [AuthHeader.Role]: subconferenceId
+                                        ? HasuraRoleName.SubconferenceOrganizer
+                                        : HasuraRoleName.ConferenceOrganizer,
                                 },
                             },
                         }
@@ -303,7 +307,7 @@ function AddEventPeople_FromContentPanel({
                 }
 
                 if (newEventPeople.length > 0) {
-                    await insertEventPeople(newEventPeople, insert);
+                    await insertEventPeople(newEventPeople, insert, subconferenceId);
                 }
 
                 setCopying(false);
@@ -320,7 +324,7 @@ function AddEventPeople_FromContentPanel({
                 setCopying(false);
             }
         },
-        [events, insert, onClose, client, toast]
+        [events, client, subconferenceId, onClose, toast, insert]
     );
 
     return (
@@ -376,9 +380,11 @@ function AddEventPeople_SingleProgramPersonPanel({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [selectProgramPeopleQuery] = useAddEventPeople_SelectProgramPeopleQuery({
         pause: !hasBeenExpanded,
@@ -457,7 +463,7 @@ function AddEventPeople_SingleProgramPersonPanel({
                 }
             }
 
-            await insertEventPeople(newEventPeople, insert);
+            await insertEventPeople(newEventPeople, insert, subconferenceId);
 
             setAdding(false);
             onClose();
@@ -472,7 +478,16 @@ function AddEventPeople_SingleProgramPersonPanel({
             setError(e.message || e.toString());
             setAdding(false);
         }
-    }, [events, insert, onClose, selectProgramPeopleQuery.data, selectedPersonId, selectedRole, toast]);
+    }, [
+        events,
+        insert,
+        onClose,
+        selectProgramPeopleQuery.data,
+        selectedPersonId,
+        selectedRole,
+        subconferenceId,
+        toast,
+    ]);
 
     return (
         <>
@@ -541,9 +556,11 @@ function AddEventPeople_FromGroupPanel({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         pause: !hasBeenExpanded,
@@ -620,7 +637,9 @@ function AddEventPeople_FromGroupPanel({
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -643,7 +662,9 @@ function AddEventPeople_FromGroupPanel({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -750,9 +771,11 @@ function AddEventPeople_SingleRegistrantPanel({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         pause: !hasBeenExpanded,
@@ -827,7 +850,9 @@ function AddEventPeople_SingleRegistrantPanel({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -918,7 +943,8 @@ async function insertEventPeople(
     insert: UseMutationResponse<
         AddEventPeople_InsertEventPeopleMutation,
         AddEventPeople_InsertEventPeopleMutationVariables
-    >
+    >,
+    subconferenceId: string | null
 ): Promise<void> {
     await insert[1](
         {
@@ -927,7 +953,9 @@ async function insertEventPeople(
         {
             fetchOptions: {
                 headers: {
-                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
                 },
             },
         }
@@ -984,7 +1012,9 @@ export async function addRegistrantsToEvent(
             {
                 fetchOptions: {
                     headers: {
-                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                        [AuthHeader.Role]: subconferenceId
+                            ? HasuraRoleName.SubconferenceOrganizer
+                            : HasuraRoleName.ConferenceOrganizer,
                     },
                 },
             }
@@ -1009,7 +1039,7 @@ export async function addRegistrantsToEvent(
         }
     }
 
-    await insertEventPeople(newEventPeople, insertEventPeopleQ);
+    await insertEventPeople(newEventPeople, insertEventPeopleQ, subconferenceId);
     return newEventPeople;
 }
 

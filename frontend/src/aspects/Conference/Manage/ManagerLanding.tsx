@@ -23,14 +23,16 @@ gql`
 
 export default function ManagerLandingPage(): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const title = useTitle(`Manage ${conference.shortName}`);
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [techSupportAddressResponse] = useConferenceTechSupportAddressQuery({
         variables: {

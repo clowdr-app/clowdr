@@ -12,6 +12,7 @@ import {
 } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
 import { useGoogleOAuthRedirectPath } from "../../../../Google/useGoogleOAuthRedirectUrl";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { YouTubeExportContext } from "./YouTubeExportContext";
@@ -44,6 +45,7 @@ gql`
 `;
 export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
     const toast = useToast();
+    const { subconferenceId } = useAuthParameters();
 
     const [, mutation] = useManageExport_GetGoogleOAuthUrlMutation();
 
@@ -75,7 +77,9 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -94,7 +98,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                 setDeleting((x) => R.set(R.lensProp(accountId), false, x));
             }
         },
-        [deleteAccount, googleAccounts, toast]
+        [deleteAccount, googleAccounts, subconferenceId, toast]
     );
 
     const addAccount = useCallback(async () => {
@@ -111,7 +115,9 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                 {
                     fetchOptions: {
                         headers: {
-                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            [AuthHeader.Role]: subconferenceId
+                                ? HasuraRoleName.SubconferenceOrganizer
+                                : HasuraRoleName.ConferenceOrganizer,
                         },
                     },
                 }
@@ -130,7 +136,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                 status: "error",
             });
         }
-    }, [history.location.pathname, mutation, registrant.id, setGoogleOAuthRedirectUrl, toast]);
+    }, [history.location.pathname, mutation, registrant.id, setGoogleOAuthRedirectUrl, subconferenceId, toast]);
 
     return finished ? (
         <></>

@@ -25,6 +25,7 @@ import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import React, { useCallback, useState } from "react";
 import { gql } from "urql";
 import { useUpdateIsHiddenMutation, useUpdateLayoutMutation } from "../../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 
 gql`
     mutation UpdateLayout($elementIds: [uuid!]!, $layoutData: jsonb!) {
@@ -74,6 +75,7 @@ function ModalInner({
         elementIds: string[];
     }[];
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
     const [hidden, setHidden] = useState<boolean | null>(null);
     const [wide, setWide] = useState<boolean | null>(null);
     const [priority, setPriority] = useState<string | null>(null);
@@ -93,7 +95,9 @@ function ModalInner({
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
@@ -113,7 +117,9 @@ function ModalInner({
                 {
                     fetchOptions: {
                         headers: {
-                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            [AuthHeader.Role]: subconferenceId
+                                ? HasuraRoleName.SubconferenceOrganizer
+                                : HasuraRoleName.ConferenceOrganizer,
                         },
                     },
                 }
@@ -123,7 +129,7 @@ function ModalInner({
         } catch (e) {
             console.error("Failed to element layouts", e);
         }
-    }, [hidden, wide, priority, doUpdate, elementsByItem, onClose, doUpdateIsHidden]);
+    }, [hidden, wide, priority, doUpdate, elementsByItem, subconferenceId, onClose, doUpdateIsHidden]);
 
     return (
         <>

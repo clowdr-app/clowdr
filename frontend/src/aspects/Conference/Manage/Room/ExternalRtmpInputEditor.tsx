@@ -22,14 +22,16 @@ gql`
 `;
 
 export default function ExternalRtmpInputEditor({ roomId }: { roomId: string }): JSX.Element {
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
                 [AuthHeader.RoomId]: roomId,
             }),
-        [roomId]
+        [roomId, subconferenceId]
     );
     const [rtmpInputResponse] = useGetRoomRtmpInputQuery({
         variables: {

@@ -66,6 +66,7 @@ import {
     useContinuationsEditor_InsertMutation,
 } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useConference } from "../../useConference";
 
 function LazySelectFromQuery({
@@ -211,6 +212,7 @@ export default function CreateContinuationModal({
     eventItemId?: string;
 }): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
     const client = useClient();
 
     const leastDestructiveRef = useRef<HTMLButtonElement>(null);
@@ -507,7 +509,9 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -531,7 +535,7 @@ export default function CreateContinuationModal({
                 label="Room"
             />
         ),
-        [client, conference.id, to]
+        [client, conference.id, subconferenceId, to]
     );
 
     const toEventsSelect = useMemo(
@@ -547,7 +551,9 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -579,7 +585,7 @@ export default function CreateContinuationModal({
                 label="Event"
             />
         ),
-        [client, conference.id, to]
+        [client, conference.id, subconferenceId, to]
     );
     const toItemsSelect = useMemo(
         () => (
@@ -594,7 +600,9 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -618,7 +626,7 @@ export default function CreateContinuationModal({
                 label="Item"
             />
         ),
-        [to, client, conference.id]
+        [to, client, conference.id, subconferenceId]
     );
     const toAutoItemsSelect = useMemo(
         () => (
@@ -633,7 +641,9 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -661,7 +671,7 @@ export default function CreateContinuationModal({
                 label="Item"
             />
         ),
-        [to, client, conference.id]
+        [to, client, conference.id, subconferenceId]
     );
 
     const toExhibitionsSelect = useMemo(
@@ -680,7 +690,9 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -704,7 +716,7 @@ export default function CreateContinuationModal({
                 label="Exhibition"
             />
         ),
-        [to, client, conference.id]
+        [to, client, conference.id, subconferenceId]
     );
 
     const toShufflePeriodsSelect = useMemo(
@@ -723,7 +735,9 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -747,7 +761,7 @@ export default function CreateContinuationModal({
                 label="Shuffle period"
             />
         ),
-        [to, client, conference.id]
+        [to, client, conference.id, subconferenceId]
     );
     const toProfileSelect = useMemo(
         () => (
@@ -762,7 +776,9 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -786,7 +802,7 @@ export default function CreateContinuationModal({
                 label="Profile"
             />
         ),
-        [to, client, conference.id]
+        [to, client, conference.id, subconferenceId]
     );
 
     const toTagsSelect = useMemo(
@@ -802,7 +818,9 @@ export default function CreateContinuationModal({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -833,7 +851,7 @@ export default function CreateContinuationModal({
                 label="Tag (optional)"
             />
         ),
-        [client, conference.id, to]
+        [client, conference.id, to, subconferenceId]
     );
 
     const [defaultFor, setDefaultFor] = useState<ContinuationDefaultFor>(ContinuationDefaultFor.None);
@@ -1102,7 +1120,9 @@ export default function CreateContinuationModal({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }

@@ -2,17 +2,22 @@ import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { useManageExport_GetRegistrantGoogleAccountsQuery } from "../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
 function useValue() {
     const registrant = useCurrentRegistrant();
+    const { subconferenceId } = useAuthParameters();
+
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const googleAccounts = useManageExport_GetRegistrantGoogleAccountsQuery({
         variables: {

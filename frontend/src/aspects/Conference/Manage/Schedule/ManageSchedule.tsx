@@ -316,7 +316,9 @@ function EditableScheduleTable(): JSX.Element {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
         []
     );
@@ -1353,7 +1355,9 @@ function EditableScheduleTable(): JSX.Element {
                               {
                                   fetchOptions: {
                                       headers: {
-                                          [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                          [AuthHeader.Role]: subconferenceId
+                                              ? HasuraRoleName.SubconferenceOrganizer
+                                              : HasuraRoleName.ConferenceOrganizer,
                                       },
                                   },
                                   additionalTypenames: ["schedule_Event"],
@@ -1389,7 +1393,9 @@ function EditableScheduleTable(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                         additionalTypenames: ["schedule_Event"],
@@ -1416,7 +1422,9 @@ function EditableScheduleTable(): JSX.Element {
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                         additionalTypenames: ["schedule_Event"],

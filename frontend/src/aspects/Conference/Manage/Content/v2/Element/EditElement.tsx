@@ -31,6 +31,7 @@ import {
     useManageContent_UpdateElementMutation,
 } from "../../../../../../generated/graphql";
 import FAIcon from "../../../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { EditElementInner } from "./EditElementInner";
 
 gql`
@@ -60,6 +61,8 @@ export function EditElement({
     nextElement?: ManageContent_ElementFragment | ManageContent_ElementFragment;
     openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation();
     const [deleteElementResponse, deleteElement] = useManageContent_DeleteElementMutation();
 
@@ -118,8 +121,9 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    [AuthHeader.Role]:
-                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                    [AuthHeader.Role]: subconferenceId
+                                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                                        : HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -141,8 +145,9 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    [AuthHeader.Role]:
-                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                    [AuthHeader.Role]: subconferenceId
+                                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                                        : HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -182,8 +187,9 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    [AuthHeader.Role]:
-                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                    [AuthHeader.Role]: subconferenceId
+                                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                                        : HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -205,8 +211,9 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    [AuthHeader.Role]:
-                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                    [AuthHeader.Role]: subconferenceId
+                                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                                        : HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -252,7 +259,9 @@ export function EditElement({
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        [AuthHeader.Role]: subconferenceId
+                                                            ? HasuraRoleName.SubconferenceOrganizer
+                                                            : HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -309,8 +318,9 @@ export function EditElement({
                                                         {
                                                             fetchOptions: {
                                                                 headers: {
-                                                                    [AuthHeader.Role]:
-                                                                        HasuraRoleName.ConferenceOrganizer,
+                                                                    [AuthHeader.Role]: subconferenceId
+                                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                                        : HasuraRoleName.ConferenceOrganizer,
                                                                 },
                                                             },
                                                         }
@@ -451,7 +461,9 @@ export function EditElement({
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        [AuthHeader.Role]: subconferenceId
+                                                            ? HasuraRoleName.SubconferenceOrganizer
+                                                            : HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }

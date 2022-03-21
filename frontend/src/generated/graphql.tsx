@@ -43167,6 +43167,7 @@ export type ManageModeration_UpdateFlagMutation = {
 
 export type PreshowChecklistQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
     now: Scalars["timestamptz"];
 }>;
 
@@ -52408,14 +52409,15 @@ export function useManageModeration_UpdateFlagMutation() {
     );
 }
 export const PreshowChecklistDocument = gql`
-    query PreshowChecklist($conferenceId: uuid!, $now: timestamptz!) {
-        allTags: collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+    query PreshowChecklist($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!, $now: timestamptz!) {
+        allTags: collection_Tag(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
             id
             name
         }
         itemsWithNoLinkedProgramPeople: content_Item(
             where: {
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 _not: { itemPeople: { person: { registrantId: { _is_null: false } } } }
             }
         ) {
@@ -52439,6 +52441,7 @@ export const PreshowChecklistDocument = gql`
         requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 eventPeople: { event: { modeName: { _eq: LIVESTREAM }, scheduledEndTime: { _gte: $now } } }
                 registrantId: { _is_null: true }
             }
@@ -52451,6 +52454,7 @@ export const PreshowChecklistDocument = gql`
         requiredProgramPeopleNotRegistered: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 eventPeople: { event: { modeName: { _eq: LIVESTREAM }, scheduledEndTime: { _gte: $now } } }
                 registrant: { userId: { _is_null: true } }
             }
@@ -52460,7 +52464,9 @@ export const PreshowChecklistDocument = gql`
             affiliation
             email
         }
-        submissionsNotReceived: content_Element(where: { conferenceId: { _eq: $conferenceId }, data: { _eq: [] } }) {
+        submissionsNotReceived: content_Element(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond, data: { _eq: [] } }
+        ) {
             id
             name
             typeName
@@ -52473,6 +52479,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _eq: LIVESTREAM }
                 _not: { eventPeople: { roleName: { _eq: PRESENTER }, person: { registrantId: { _is_null: false } } } }
             }
@@ -52494,6 +52501,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _eq: LIVESTREAM }
                 _not: { eventPeople: { roleName: { _eq: CHAIR }, person: { registrantId: { _is_null: false } } } }
             }
@@ -52515,6 +52523,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _eq: LIVESTREAM }
                 autoPlayElementId: { _is_null: false }
                 _not: { item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } } }
@@ -52537,6 +52546,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _eq: LIVESTREAM }
                 autoPlayElementId: { _is_null: false }
                 item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } }
@@ -52564,6 +52574,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _eq: EXTERNAL }
             }
         ) {
@@ -52589,6 +52600,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _eq: LIVESTREAM }
             }
         ) {
@@ -52621,11 +52633,15 @@ export const PreshowChecklistDocument = gql`
                 personId
             }
         }
-        emptyExhibitions: collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, _not: { items: {} } }) {
+        emptyExhibitions: collection_Exhibition(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond, _not: { items: {} } }
+        ) {
             id
             name
         }
-        emptyTags: collection_Tag(where: { conferenceId: { _eq: $conferenceId }, _not: { itemTags: {} } }) {
+        emptyTags: collection_Tag(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond, _not: { itemTags: {} } }
+        ) {
             id
             name
         }
@@ -52633,6 +52649,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _in: [EXHIBITION] }
                 exhibitionId: { _is_null: true }
             }
@@ -52650,6 +52667,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _in: [EXHIBITION, NONE] }
                 exhibition: { items: { item: { _not: { room: {} } } } }
             }
@@ -52678,6 +52696,7 @@ export const PreshowChecklistDocument = gql`
             where: {
                 scheduledEndTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
                 modeName: { _eq: LIVESTREAM }
                 itemId: { _is_null: true }
                 enableRecording: { _eq: true }
@@ -52696,7 +52715,9 @@ export const PreshowChecklistDocument = gql`
                 name
             }
         }
-        overlappingEvents: schedule_OverlappingEvents(where: { conferenceId: { _eq: $conferenceId } }) {
+        overlappingEvents: schedule_OverlappingEvents(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+        ) {
             eventX {
                 id
                 name
@@ -52714,7 +52735,9 @@ export const PreshowChecklistDocument = gql`
                 scheduledEndTime
             }
         }
-        roomsWithStreams: room_Room(where: { conferenceId: { _eq: $conferenceId }, livestreamDuration: {} }) {
+        roomsWithStreams: room_Room(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond, livestreamDuration: {} }
+        ) {
             id
             name
             livestreamDuration {

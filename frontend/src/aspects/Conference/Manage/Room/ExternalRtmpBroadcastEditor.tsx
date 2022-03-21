@@ -23,6 +23,7 @@ import {
     useUpdateRoomRtmpOutputMutation,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
 
 gql`
@@ -91,13 +92,17 @@ gql`
 `;
 
 export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
                 [AuthHeader.RoomId]: roomId,
             }),
-        [roomId]
+        [roomId, subconferenceId]
     );
     const [rtmpOutputResponse, refetchRtmpOutputResponse] = useGetRoomRtmpOutputQuery({
         variables: {
@@ -143,7 +148,9 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                [AuthHeader.Role]: subconferenceId
+                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                    : HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }
@@ -158,7 +165,9 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                [AuthHeader.Role]: subconferenceId
+                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                    : HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }
@@ -174,7 +183,9 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }
@@ -204,6 +215,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
             rtmpOutput,
             refetchRtmpOutputResponse,
             doDelete,
+            subconferenceId,
             doUpdate,
             doInsert,
             roomId,

@@ -147,7 +147,9 @@ export default function ConfigureQueueModal({
                 {
                     fetchOptions: {
                         headers: {
-                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                            [AuthHeader.Role]: initialQueue.subconferenceId
+                                ? HasuraRoleName.SubconferenceOrganizer
+                                : HasuraRoleName.ConferenceOrganizer,
                         },
                     },
                 }
@@ -167,6 +169,7 @@ export default function ConfigureQueueModal({
     }, [
         update,
         initialQueue.id,
+        initialQueue.subconferenceId,
         name,
         algorithm,
         endAt,

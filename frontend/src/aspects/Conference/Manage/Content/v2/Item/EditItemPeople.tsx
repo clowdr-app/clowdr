@@ -44,13 +44,15 @@ import { maybeCompare } from "../../../../../Utils/maybeCompare";
 import { useConference } from "../../../../useConference";
 
 export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element {
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [itemPeopleResponse] = useManageContent_SelectItemPeopleQuery({
         variables: {
@@ -139,9 +141,11 @@ function AddItemPersonBody({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [peopleResponse] = useManageContent_SelectProgramPeopleQuery({
         variables: {
@@ -221,7 +225,9 @@ function AddItemPersonBody({
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                [AuthHeader.Role]: subconferenceId
+                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                    : HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }
@@ -273,6 +279,8 @@ function ItemPersonsList({
 }: {
     itemPeople: readonly ManageContent_ItemProgramPersonFragment[];
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const sortedReps = useMemo(
         () =>
             R.sortWith(
@@ -337,7 +345,9 @@ function ItemPersonsList({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -352,7 +362,9 @@ function ItemPersonsList({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -380,7 +392,9 @@ function ItemPersonsList({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -395,7 +409,9 @@ function ItemPersonsList({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -452,7 +468,9 @@ function ItemPersonsList({
                                             {
                                                 fetchOptions: {
                                                     headers: {
-                                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                        [AuthHeader.Role]: subconferenceId
+                                                            ? HasuraRoleName.SubconferenceOrganizer
+                                                            : HasuraRoleName.ConferenceOrganizer,
                                                     },
                                                 },
                                             }
@@ -482,7 +500,9 @@ function ItemPersonsList({
                                                 {
                                                     fetchOptions: {
                                                         headers: {
-                                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                            [AuthHeader.Role]: subconferenceId
+                                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                                : HasuraRoleName.ConferenceOrganizer,
                                                         },
                                                     },
                                                 }

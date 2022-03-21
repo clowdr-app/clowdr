@@ -28,6 +28,7 @@ import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { SubmissionsReviewModal_ElementFragment } from "../../../../../../generated/graphql";
 import { useSubmissionsReviewModalDataQuery } from "../../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../../GQL/make-context";
 import { Element } from "../../../../Attend/Content/Element/Element";
 
@@ -85,12 +86,16 @@ export function SubmissionsReviewModal({
 }
 
 function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [itemsResponse] = useSubmissionsReviewModalDataQuery({
         variables: {

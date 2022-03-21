@@ -144,7 +144,9 @@ export default function ShuffleQueueTile({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    [AuthHeader.Role]: queue.subconferenceId
+                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                        : HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }

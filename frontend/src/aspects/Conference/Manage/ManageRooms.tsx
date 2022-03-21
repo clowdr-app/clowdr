@@ -282,9 +282,11 @@ function RoomSecondaryEditor({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [groups] = useManageRooms_SelectGroupsQuery({
         variables: {
@@ -326,7 +328,9 @@ function RoomSecondaryEditor({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -345,7 +349,9 @@ function RoomSecondaryEditor({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -358,7 +364,7 @@ function RoomSecondaryEditor({
                 }
             }
         },
-        [client, insertRoomPeople, refetchPeople, room]
+        [client, insertRoomPeople, refetchPeople, room, subconferenceId]
     );
 
     const { onCopy: onCopyRoomId, hasCopied: hasCopiedRoomId } = useClipboard(room?.id ?? "");
@@ -598,9 +604,11 @@ function EditableRoomsCRUDTable() {
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [externalRtmpEnabledResponse] = useGetIsExternalRtmpEnabledQuery({
         variables: {
@@ -1512,7 +1520,9 @@ function EditableRoomsCRUDTable() {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }
@@ -1539,7 +1549,9 @@ function EditableRoomsCRUDTable() {
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }

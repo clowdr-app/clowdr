@@ -34,6 +34,7 @@ import {
     useContinuationsEditor_UpdateMutation,
 } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useRestorableState } from "../../../Hooks/useRestorableState";
@@ -96,6 +97,8 @@ export default function ContinuationsEditor({
     from: { eventId: string } | { shufflePeriodId: string };
     itemId?: string;
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const eventId = "eventId" in from ? from.eventId : undefined;
     const shufflePeriodId = "shufflePeriodId" in from ? from.shufflePeriodId : undefined;
     const fromNoun = "eventId" in from ? "an event" : "a shuffle period";
@@ -103,9 +106,11 @@ export default function ContinuationsEditor({
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [response] = useContinuationsEditor_SelectContinuationsQuery({
         variables: {
@@ -225,7 +230,9 @@ export default function ContinuationsEditor({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -241,7 +248,9 @@ export default function ContinuationsEditor({
                                                     {
                                                         fetchOptions: {
                                                             headers: {
-                                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
                                                             },
                                                         },
                                                     }
@@ -272,6 +281,8 @@ function ContinuationOption({
     idx: number;
     fromId: string;
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const [updateResponse, update] = useContinuationsEditor_UpdateMutation();
     useQueryErrorToast(updateResponse.error, false, "Update continuation");
 
@@ -307,7 +318,9 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }
@@ -323,7 +336,9 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }
@@ -346,7 +361,9 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }
@@ -362,7 +379,9 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }
@@ -417,7 +436,9 @@ function ContinuationOption({
                                         {
                                             fetchOptions: {
                                                 headers: {
-                                                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                    [AuthHeader.Role]: subconferenceId
+                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                        : HasuraRoleName.ConferenceOrganizer,
                                                 },
                                             },
                                         }
@@ -442,7 +463,9 @@ function ContinuationOption({
                                 {
                                     fetchOptions: {
                                         headers: {
-                                            [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
                                         },
                                     },
                                 }

@@ -97,7 +97,9 @@ export function AddContentMenu({
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                [AuthHeader.Role]: subconferenceId
+                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                    : HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }

@@ -102,13 +102,15 @@ function SecondaryEditorInner({
     itemType: Content_ItemType_Enum;
     openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 }): JSX.Element {
-    const { conferencePath } = useAuthParameters();
+    const { conferencePath, subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [itemResponse, refetchItem] = useManageContent_SelectItemQuery({
         variables: {

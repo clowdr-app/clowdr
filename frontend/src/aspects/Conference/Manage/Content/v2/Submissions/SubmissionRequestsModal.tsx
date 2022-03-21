@@ -46,6 +46,7 @@ import {
 } from "../../../../../../generated/graphql";
 import FAIcon from "../../../../../Chakra/FAIcon";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../../GQL/make-context";
 import QueryWrapper from "../../../../../GQL/QueryWrapper";
 import { useConference } from "../../../../useConference";
@@ -127,12 +128,16 @@ function SendSubmissionRequestsModalLazyInner({
     personIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
+
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [result] = useSubmissionRequestsModalDataQuery({
         variables: {
@@ -215,6 +220,8 @@ export function SendSubmissionRequestsModalInner({
     existingTemplate: EmailTemplate_BaseConfig;
     personIds: string[] | null;
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const types = useMemo(() => Object.values(Content_ItemType_Enum), []);
     const [selectedType, setSelectedType] = useState<string>();
     const [onlyUnsubmitted, setOnlyUnsubmitted] = useState<boolean>(true);
@@ -313,7 +320,9 @@ export function SendSubmissionRequestsModalInner({
                             {
                                 fetchOptions: {
                                     headers: {
-                                        [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
                                     },
                                 },
                             }

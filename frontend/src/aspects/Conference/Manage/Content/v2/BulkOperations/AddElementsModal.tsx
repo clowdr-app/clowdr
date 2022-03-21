@@ -245,7 +245,9 @@ function ModalInner({
                                     {
                                         fetchOptions: {
                                             headers: {
-                                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                                [AuthHeader.Role]: items[0]?.subconferenceId
+                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                    : HasuraRoleName.ConferenceOrganizer,
                                             },
                                         },
                                     }

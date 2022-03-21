@@ -22,6 +22,7 @@ import {
     useSelectEventStreamTextEventIdQuery,
     useUpdateEventStreamTextEventIdMutation,
 } from "../../../../generated/graphql";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
 
 gql`
@@ -41,12 +42,16 @@ gql`
 `;
 
 export default function EditStreamTextIntegration({ eventId }: { eventId: string }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const context = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [response] = useSelectEventStreamTextEventIdQuery({
         variables: {
@@ -72,6 +77,8 @@ function EditStreamTextIntegrationInner({
     eventId: string;
     outerValue: string | null | undefined;
 }): JSX.Element {
+    const { subconferenceId } = useAuthParameters();
+
     const [initialValue, setInitialValue] = useState<string | null>(outerValue ?? null);
     const [value, setValue] = useState<string | null>(initialValue);
 
@@ -90,14 +97,16 @@ function EditStreamTextIntegrationInner({
                     {
                         fetchOptions: {
                             headers: {
-                                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
                             },
                         },
                     }
                 );
             }
         },
-        [eventId, initialValue, updateMutation]
+        [eventId, initialValue, subconferenceId, updateMutation]
     );
 
     return (

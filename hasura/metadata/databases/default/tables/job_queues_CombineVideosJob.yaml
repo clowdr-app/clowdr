@@ -25,6 +25,7 @@ insert_permissions:
     - createdByRegistrantId
     - data
     - outputName
+    - subconferenceId
   role: conference-organizer
 - permission:
     backend_only: false
@@ -39,6 +40,7 @@ insert_permissions:
     - createdByRegistrantId
     - data
     - outputName
+    - subconferenceId
   role: subconference-organizer
 select_permissions:
 - permission:
@@ -51,6 +53,7 @@ select_permissions:
     - jobStatusName
     - message
     - outputName
+    - subconferenceId
     - updated_at
     filter:
       conferenceId:
@@ -66,6 +69,7 @@ select_permissions:
     - jobStatusName
     - message
     - outputName
+    - subconferenceId
     - updated_at
     filter:
       conferenceId:

@@ -2,6 +2,7 @@ type Mutation {
   createItemRoom(
     itemId: uuid!
     conferenceId: uuid!
+    subconferenceId: uuid
   ): CreateItemRoomOutput
 }
 

@@ -45891,6 +45891,7 @@ export type UpdateRegistrantMutation = {
             readonly id: any;
             readonly registrantId: any;
             readonly subconferenceId: any;
+            readonly role: Registrant_RegistrantRole_Enum;
         }>;
     } | null;
     readonly delete_registrant_SubconferenceMembership?: {
@@ -54465,12 +54466,16 @@ export const UpdateRegistrantDocument = gql`
         }
         insert_registrant_SubconferenceMembership(
             objects: $upsertSubconferences
-            on_conflict: { constraint: SubconferenceMembership_subconferenceId_registrantId_key, update_columns: [] }
+            on_conflict: {
+                constraint: SubconferenceMembership_subconferenceId_registrantId_key
+                update_columns: [role]
+            }
         ) {
             returning {
                 id
                 registrantId
                 subconferenceId
+                role
             }
         }
         delete_registrant_SubconferenceMembership(

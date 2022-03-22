@@ -24,6 +24,7 @@ import { assert } from "@midspace/assert";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import Papa from "papaparse";
+import * as R from "ramda";
 import type { LegacyRef } from "react";
 import React, { useMemo, useState } from "react";
 import { useClient } from "urql";
@@ -211,12 +212,16 @@ gql`
         }
         insert_registrant_SubconferenceMembership(
             objects: $upsertSubconferences
-            on_conflict: { constraint: SubconferenceMembership_subconferenceId_registrantId_key, update_columns: [] }
+            on_conflict: {
+                constraint: SubconferenceMembership_subconferenceId_registrantId_key
+                update_columns: [role]
+            }
         ) {
             returning {
                 id
                 registrantId
                 subconferenceId
+                role
             }
         }
         delete_registrant_SubconferenceMembership(
@@ -395,10 +400,16 @@ export default function ManageRegistrants(): JSX.Element {
             })) ?? [];
 
         const subconferenceOptions: { value: string; label: string }[] =
-            allRegistrants?.conference_Subconference.map((group) => ({
-                value: group.id,
-                label: group.shortName,
-            })) ?? [];
+            allRegistrants?.conference_Subconference.flatMap((group) => [
+                {
+                    value: group.id + "¬" + Registrant_RegistrantRole_Enum.Organizer,
+                    label: `${group.shortName} (Organizer)`,
+                },
+                {
+                    value: group.id + "¬" + Registrant_RegistrantRole_Enum.Attendee,
+                    label: `${group.shortName} (Attendee)`,
+                },
+            ]) ?? [];
 
         const result: ColumnSpecification<RegistrantDescriptor>[] = [
             {
@@ -806,18 +817,35 @@ export default function ManageRegistrants(): JSX.Element {
                     data.subconferenceMemberships?.map(
                         (ga) =>
                             subconferenceOptions.find(
-                                (subconference) => subconference.value === ga.subconferenceId
+                                (subconference) =>
+                                    subconference.value.startsWith(ga.subconferenceId) &&
+                                    subconference.value.endsWith(ga.role)
                             ) ?? {
                                 label: "<Unknown>",
                                 value: ga.subconferenceId,
                             }
                     ) ?? [],
                 set: (record, value: { label: string; value: string }[]) => {
-                    record.subconferenceMemberships = value.map((x) => ({
+                    record.subconferenceMemberships = R.uniqBy<
+                        {
+                            label: string;
+                            value: string;
+                        },
+                        string
+                    >(
+                        (a) => a.value.split("¬")[0],
+                        R.sortWith(
+                            [
+                                (a, b) => a.value.split("¬")[0].localeCompare(b.value.split("¬")[0]),
+                                (a, b) => -a.value.split("¬")[1].localeCompare(b.value.split("¬")[1]),
+                            ],
+                            value
+                        )
+                    ).map((x) => ({
                         registrantId: record.id,
-                        subconferenceId: x.value,
+                        subconferenceId: x.value.split("¬")[0],
                         id: undefined,
-                        role: Registrant_RegistrantRole_Enum.Attendee,
+                        role: x.value.split("¬")[1] as Registrant_RegistrantRole_Enum,
                     }));
                 },
                 filterFn: (
@@ -827,8 +855,10 @@ export default function ManageRegistrants(): JSX.Element {
                     return filterValue.length === 0
                         ? rows
                         : rows.filter((row) => {
-                              return row.subconferenceMemberships.some((x) =>
-                                  filterValue.some((y) => y.value === x.subconferenceId)
+                              return row.subconferenceMemberships.some(
+                                  (x) =>
+                                      filterValue.some((y) => y.value.startsWith(x.subconferenceId)) &&
+                                      filterValue.some((y) => y.value.endsWith(x.role))
                               );
                           });
                 },
@@ -895,6 +925,7 @@ export default function ManageRegistrants(): JSX.Element {
                                 subconferenceMemberships: {
                                     data: record.subconferenceMemberships.map((x) => ({
                                         subconferenceId: x.subconferenceId,
+                                        role: x.role,
                                     })),
                                 },
                             },
@@ -927,6 +958,7 @@ export default function ManageRegistrants(): JSX.Element {
                                 subconferenceMemberships: {
                                     data: record.subconferenceMemberships.map((x) => ({
                                         subconferenceId: x.subconferenceId,
+                                        role: x.role,
                                     })),
                                 },
                             },
@@ -972,6 +1004,7 @@ export default function ManageRegistrants(): JSX.Element {
                         upsertSubconferences: record.subconferenceMemberships.map((x) => ({
                             subconferenceId: x.subconferenceId,
                             registrantId: x.registrantId,
+                            role: x.role,
                         })),
                         remainingSubconferenceIds: record.subconferenceMemberships.map((x) => x.subconferenceId),
                     },

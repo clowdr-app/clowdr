@@ -2,6 +2,7 @@ import { Flex } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useTitle } from "../../../Hooks/useTitle";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
@@ -12,14 +13,17 @@ import ImportRegistrantsPage from "./Registrants/ImportRegistrantsPage";
 
 export default function ManageImport(): JSX.Element {
     const { path } = useRouteMatch();
+    const { subconferenceId } = useAuthParameters();
     return (
         <Switch>
             <Route path={`${path}/program`}>
                 <ImportProgramPage />
             </Route>
-            <Route path={`${path}/registrants`}>
-                <ImportRegistrantsPage />
-            </Route>
+            {!subconferenceId ? (
+                <Route path={`${path}/registrants`}>
+                    <ImportRegistrantsPage />
+                </Route>
+            ) : undefined}
             <Route path={`${path}/`}>
                 <InnerManageImport />
             </Route>
@@ -30,6 +34,7 @@ export default function ManageImport(): JSX.Element {
 function InnerManageImport(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Import to ${conference.shortName}`);
+    const { subconferenceId } = useAuthParameters();
 
     return (
         <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
@@ -50,14 +55,16 @@ function InnerManageImport(): JSX.Element {
                         organizerRole
                         colorScheme="purple"
                     />
-                    <RestrictedDashboardButton
-                        to="import/registrants"
-                        name="Registrants"
-                        icon="users"
-                        description="Import your registrants, organisers and other users."
-                        organizerRole
-                        colorScheme="pink"
-                    />
+                    {!subconferenceId ? (
+                        <RestrictedDashboardButton
+                            to="import/registrants"
+                            name="Registrants"
+                            icon="users"
+                            description="Import your registrants, organisers and other users."
+                            organizerRole
+                            colorScheme="pink"
+                        />
+                    ) : undefined}
                 </Flex>
             </DashboardPage>
         </RequireRole>

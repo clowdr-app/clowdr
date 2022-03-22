@@ -73,7 +73,7 @@ export function AllVideoElements(): JSX.Element {
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [result] = useDownloadVideos_GetAllVideosQuery({
         variables: {

@@ -320,7 +320,7 @@ function EditableScheduleTable(): JSX.Element {
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const wholeScheduleContext = useMemo(
         () => ({
@@ -1366,7 +1366,7 @@ function EditableScheduleTable(): JSX.Element {
                       },
                   }
                 : undefined,
-        [conference.id, insertEvent, insertEventResponse.fetching, roomOptions]
+        [conference.id, insertEvent, insertEventResponse.fetching, roomOptions, subconferenceId]
     );
 
     const update:
@@ -1403,7 +1403,7 @@ function EditableScheduleTable(): JSX.Element {
                 );
             },
         }),
-        [updateEvent, updateEventResponse.fetching]
+        [subconferenceId, updateEvent, updateEventResponse.fetching]
     );
 
     const deleteProps:
@@ -1432,7 +1432,7 @@ function EditableScheduleTable(): JSX.Element {
                 );
             },
         }),
-        [deleteEvents, deleteEventsResponse.fetching]
+        [deleteEvents, deleteEventsResponse.fetching, subconferenceId]
     );
 
     const batchAddPeopleDisclosure = useDisclosure();

@@ -140,7 +140,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [{ data: registrantsData }] = useManageProgramPeople_SelectAllRegistrantsQuery({
         variables: {
@@ -579,7 +579,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 }
             );
         },
-        [updateProgramPerson]
+        [subconferenceId, updateProgramPerson]
     );
 
     const update: Update<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
@@ -610,7 +610,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 );
             },
         }),
-        [deleteProgramPersons, deleteProgramPersonsResponse.fetching]
+        [deleteProgramPersons, deleteProgramPersonsResponse.fetching, subconferenceId]
     );
 
     const toast = useToast();

@@ -117,7 +117,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [exhibitionsResponse] = useManageContent_SelectAllExhibitionsQuery({
         variables: {
@@ -469,7 +469,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 );
             },
         }),
-        [updateExhibition, updateExhibitionResponse.fetching]
+        [subconferenceId, updateExhibition, updateExhibitionResponse.fetching]
     );
 
     const [deleteExhibitionsResponse, deleteExhibitions] = useManageContent_DeleteExhibitionsMutation();
@@ -498,7 +498,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 );
             },
         }),
-        [deleteExhibitions, deleteExhibitionsResponse.fetching]
+        [deleteExhibitions, deleteExhibitionsResponse.fetching, subconferenceId]
     );
 
     const updateDescriptiveItemId = useCallback(
@@ -519,7 +519,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 );
             }
         },
-        [editingId, updateExhibition]
+        [editingId, subconferenceId, updateExhibition]
     );
 
     return (

@@ -55,7 +55,7 @@ export default function ImportProgramPage(): JSX.Element {
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [response, refetch] = useGetImportJobsQuery({
         variables: {

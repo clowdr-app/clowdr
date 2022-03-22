@@ -87,7 +87,7 @@ export function ChooseElementByTagModal({
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [tagsResult] = useChooseElementByTagModal_GetTagsQuery({
         variables: {

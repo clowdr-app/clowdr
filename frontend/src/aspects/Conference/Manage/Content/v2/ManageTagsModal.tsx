@@ -107,7 +107,7 @@ function ManageTagsModalBody(): JSX.Element {
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [tagsResponse] = useManageContent_SelectAllTagsQuery({
         variables: {
@@ -370,7 +370,7 @@ function ManageTagsModalBody(): JSX.Element {
                 );
             },
         }),
-        [updateTag, updateTagResponse.fetching]
+        [subconferenceId, updateTag, updateTagResponse.fetching]
     );
 
     const [deleteTagsResponse, deleteTags] = useManageContent_DeleteTagsMutation();
@@ -399,7 +399,7 @@ function ManageTagsModalBody(): JSX.Element {
                 );
             },
         }),
-        [deleteTags, deleteTagsResponse.fetching]
+        [deleteTags, deleteTagsResponse.fetching, subconferenceId]
     );
 
     return (

@@ -69,7 +69,7 @@ export function ChooseElementModal({
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [itemsResult] = useChooseElementModal_GetItemsQuery({
         variables: {

@@ -130,7 +130,7 @@ function ModalInner({
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [combineVideosResponse] = useCombineVideosModal_GetCombineVideosJobQuery({
         variables: {
@@ -249,7 +249,7 @@ function ModalInner({
             }
             onClose();
         }
-    }, [returnedElementsByItem, onClose, mutate, conference.id, registrant.id, toast]);
+    }, [returnedElementsByItem, onClose, mutate, conference.id, registrant.id, subconferenceId, toast]);
 
     return (
         <>

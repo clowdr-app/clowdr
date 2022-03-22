@@ -97,7 +97,7 @@ function ModerationList(): JSX.Element {
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [flagsResponse] = useManageModeration_SelectFlagsQuery({
         variables: {

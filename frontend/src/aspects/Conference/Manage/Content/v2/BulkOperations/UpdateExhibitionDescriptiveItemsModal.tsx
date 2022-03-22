@@ -87,7 +87,7 @@ function ModalInner({
                     ? HasuraRoleName.SubconferenceOrganizer
                     : HasuraRoleName.ConferenceOrganizer,
             }),
-        []
+        [subconferenceId]
     );
     const [exhibitionsResponse] = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
         variables: {
@@ -150,7 +150,7 @@ function ModalInner({
         } catch (e) {
             console.error("Failed to update exhibition descriptive item", e);
         }
-    }, [doUpdate, exhibitionMatches, onClose]);
+    }, [doUpdate, exhibitionMatches, onClose, subconferenceId]);
 
     return (
         <>

@@ -257,6 +257,7 @@ gql`
         content_Element_by_pk(id: $elementId) {
             id
             conferenceId
+            subconferenceId
             conference {
                 ...Configuration_SubmissionNotificationRoles
             }
@@ -341,7 +342,13 @@ async function sendSubmittedEmail(
             });
         }
 
-        await insertEmails(logger, emails, uploaders.data.content_Element_by_pk.conferenceId, undefined);
+        await insertEmails(
+            logger,
+            emails,
+            uploaders.data.content_Element_by_pk.conferenceId,
+            uploaders.data.content_Element_by_pk.subconferenceId,
+            undefined
+        );
     }
 }
 
@@ -559,6 +566,11 @@ gql`
                 name
                 email
                 accessToken
+                subconference {
+                    id
+                    name
+                    shortName
+                }
                 conference {
                     id
                     name
@@ -603,6 +615,7 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
     for (const job of jobsToProcess.data.job_queues_SubmissionRequestEmailJob) {
         let result: SubmissionRequestEmail | undefined;
         let conferenceId: string | undefined;
+        let subconferenceId: string | null | undefined;
 
         if (job.person) {
             const uploadLink = `{{frontendHost}}/submissions/${job.person.accessToken}`;
@@ -612,8 +625,8 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
                     name: job.person.name,
                 },
                 conference: {
-                    name: job.person.conference.name,
-                    shortName: job.person.conference.shortName,
+                    name: job.person.subconference?.name ?? job.person.conference.name,
+                    shortName: job.person.subconference?.shortName ?? job.person.conference.shortName,
                 },
                 uploadLink,
             };
@@ -644,25 +657,37 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
                 idempotencyKey: generateIdempotencyKey(job.id),
             };
             conferenceId = job.person.conference.id;
+            subconferenceId = job.person.subconference?.id;
 
             result = { email: newEmail, personId: job.person.id, jobId: job.id };
         }
 
         if (result && conferenceId) {
-            let arr = emails.get(conferenceId);
-            if (!arr) {
-                arr = [];
-                emails.set(conferenceId, arr);
+            if (subconferenceId) {
+                let arr = emails.get(conferenceId + "¬" + subconferenceId);
+                if (!arr) {
+                    arr = [];
+                    emails.set(conferenceId + "¬" + subconferenceId, arr);
+                }
+                arr.push(result);
+            } else {
+                let arr = emails.get(conferenceId);
+                if (!arr) {
+                    arr = [];
+                    emails.set(conferenceId, arr);
+                }
+                arr.push(result);
             }
-            arr.push(result);
         }
     }
 
-    emails.forEach(async (emailsRecords, conferenceId) => {
+    emails.forEach(async (emailsRecords, conferenceIdSubconferenceId) => {
         try {
+            const conferenceId = conferenceIdSubconferenceId.split("¬")[0];
+            const subconferenceId = conferenceIdSubconferenceId.split("¬")[1];
             const emailsToInsert = emailsRecords.map((x) => x.email).filter(isNotUndefined);
             if (emailsToInsert.length > 0) {
-                await insertEmails(logger, emailsToInsert, conferenceId, undefined);
+                await insertEmails(logger, emailsToInsert, conferenceId, subconferenceId, undefined);
             }
 
             await apolloClient.mutate({

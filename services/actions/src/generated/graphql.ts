@@ -75,6 +75,7 @@ export type Email = {
     retriesCount: Scalars["Int"];
     sentAt?: Maybe<Scalars["timestamptz"]>;
     status?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     subject: Scalars["String"];
     updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -164,6 +165,7 @@ export type Email_Bool_Exp = {
     retriesCount?: InputMaybe<Int_Comparison_Exp>;
     sentAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     status?: InputMaybe<String_Comparison_Exp>;
+    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     subject?: InputMaybe<String_Comparison_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     user?: InputMaybe<User_Bool_Exp>;
@@ -200,6 +202,7 @@ export type Email_Insert_Input = {
     retriesCount?: InputMaybe<Scalars["Int"]>;
     sentAt?: InputMaybe<Scalars["timestamptz"]>;
     status?: InputMaybe<Scalars["String"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     subject?: InputMaybe<Scalars["String"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     user?: InputMaybe<User_Obj_Rel_Insert_Input>;
@@ -223,6 +226,7 @@ export type Email_Max_Fields = {
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
     status?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     userId?: Maybe<Scalars["String"]>;
@@ -244,6 +248,7 @@ export type Email_Max_Order_By = {
     retriesCount?: InputMaybe<Order_By>;
     sentAt?: InputMaybe<Order_By>;
     status?: InputMaybe<Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
     subject?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     userId?: InputMaybe<Order_By>;
@@ -266,6 +271,7 @@ export type Email_Min_Fields = {
     retriesCount?: Maybe<Scalars["Int"]>;
     sentAt?: Maybe<Scalars["timestamptz"]>;
     status?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     subject?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     userId?: Maybe<Scalars["String"]>;
@@ -287,6 +293,7 @@ export type Email_Min_Order_By = {
     retriesCount?: InputMaybe<Order_By>;
     sentAt?: InputMaybe<Order_By>;
     status?: InputMaybe<Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
     subject?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     userId?: InputMaybe<Order_By>;
@@ -325,6 +332,7 @@ export type Email_Order_By = {
     retriesCount?: InputMaybe<Order_By>;
     sentAt?: InputMaybe<Order_By>;
     status?: InputMaybe<Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
     subject?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     user?: InputMaybe<User_Order_By>;
@@ -367,6 +375,8 @@ export enum Email_Select_Column {
     /** column name */
     Status = "status",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     Subject = "subject",
     /** column name */
     UpdatedAt = "updatedAt",
@@ -390,6 +400,7 @@ export type Email_Set_Input = {
     retriesCount?: InputMaybe<Scalars["Int"]>;
     sentAt?: InputMaybe<Scalars["timestamptz"]>;
     status?: InputMaybe<Scalars["String"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     subject?: InputMaybe<Scalars["String"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     userId?: InputMaybe<Scalars["String"]>;
@@ -469,6 +480,8 @@ export enum Email_Update_Column {
     SentAt = "sentAt",
     /** column name */
     Status = "status",
+    /** column name */
+    SubconferenceId = "subconferenceId",
     /** column name */
     Subject = "subject",
     /** column name */
@@ -6193,6 +6206,8 @@ export type Collection_ProgramPerson = {
     /** An object relationship */
     registrant?: Maybe<Registrant_Registrant>;
     registrantId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    subconference?: Maybe<Conference_Subconference>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     submissionRequestsSentCount: Scalars["Int"];
     visibilityLevel: Conference_VisibilityLevel_Enum;
@@ -6312,6 +6327,7 @@ export type Collection_ProgramPerson_Bool_Exp = {
     name?: InputMaybe<String_Comparison_Exp>;
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: InputMaybe<Uuid_Comparison_Exp>;
+    subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     submissionRequestsSentCount?: InputMaybe<Int_Comparison_Exp>;
     visibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum_Comparison_Exp>;
@@ -6347,6 +6363,7 @@ export type Collection_ProgramPerson_Insert_Input = {
     name?: InputMaybe<Scalars["String"]>;
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
+    subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     submissionRequestsSentCount?: InputMaybe<Scalars["Int"]>;
     visibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum>;
@@ -6442,6 +6459,7 @@ export type Collection_ProgramPerson_Order_By = {
     name?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     registrantId?: InputMaybe<Order_By>;
+    subconference?: InputMaybe<Conference_Subconference_Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     submissionRequestsSentCount?: InputMaybe<Order_By>;
     visibilityLevel?: InputMaybe<Order_By>;
@@ -9768,6 +9786,8 @@ export type Content_Element = {
     stats: Array<Analytics_ContentElementStats>;
     /** An aggregate relationship */
     stats_aggregate: Analytics_ContentElementStats_Aggregate;
+    /** An object relationship */
+    subconference?: Maybe<Conference_Subconference>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     totalViewsStat?: Maybe<Analytics_ElementTotalViews>;
@@ -10152,6 +10172,7 @@ export type Content_Element_Bool_Exp = {
     name?: InputMaybe<String_Comparison_Exp>;
     source?: InputMaybe<Jsonb_Comparison_Exp>;
     stats?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
+    subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     totalViewsStat?: InputMaybe<Analytics_ElementTotalViews_Bool_Exp>;
     type?: InputMaybe<Content_ElementType_Bool_Exp>;
@@ -10208,6 +10229,7 @@ export type Content_Element_Insert_Input = {
     name?: InputMaybe<Scalars["String"]>;
     source?: InputMaybe<Scalars["jsonb"]>;
     stats?: InputMaybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
+    subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     totalViewsStat?: InputMaybe<Analytics_ElementTotalViews_Obj_Rel_Insert_Input>;
     type?: InputMaybe<Content_ElementType_Obj_Rel_Insert_Input>;
@@ -10307,6 +10329,7 @@ export type Content_Element_Order_By = {
     name?: InputMaybe<Order_By>;
     source?: InputMaybe<Order_By>;
     stats_aggregate?: InputMaybe<Analytics_ContentElementStats_Aggregate_Order_By>;
+    subconference?: InputMaybe<Conference_Subconference_Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     totalViewsStat?: InputMaybe<Analytics_ElementTotalViews_Order_By>;
     type?: InputMaybe<Content_ElementType_Order_By>;
@@ -12731,6 +12754,7 @@ export type Job_Queues_CombineVideosJob = {
     outputName: Scalars["String"];
     /** An object relationship */
     registrant?: Maybe<Registrant_Registrant>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at: Scalars["timestamptz"];
 };
 
@@ -12782,6 +12806,7 @@ export type Job_Queues_CombineVideosJob_Bool_Exp = {
     message?: InputMaybe<String_Comparison_Exp>;
     outputName?: InputMaybe<String_Comparison_Exp>;
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -12820,6 +12845,7 @@ export type Job_Queues_CombineVideosJob_Insert_Input = {
     message?: InputMaybe<Scalars["String"]>;
     outputName?: InputMaybe<Scalars["String"]>;
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -12833,6 +12859,7 @@ export type Job_Queues_CombineVideosJob_Max_Fields = {
     mediaConvertJobId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
     outputName?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -12846,6 +12873,7 @@ export type Job_Queues_CombineVideosJob_Min_Fields = {
     mediaConvertJobId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
     outputName?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -12879,6 +12907,7 @@ export type Job_Queues_CombineVideosJob_Order_By = {
     message?: InputMaybe<Order_By>;
     outputName?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
 
@@ -12913,6 +12942,8 @@ export enum Job_Queues_CombineVideosJob_Select_Column {
     /** column name */
     OutputName = "outputName",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     UpdatedAt = "updated_at",
 }
 
@@ -12927,6 +12958,7 @@ export type Job_Queues_CombineVideosJob_Set_Input = {
     mediaConvertJobId?: InputMaybe<Scalars["String"]>;
     message?: InputMaybe<Scalars["String"]>;
     outputName?: InputMaybe<Scalars["String"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -12951,6 +12983,8 @@ export enum Job_Queues_CombineVideosJob_Update_Column {
     /** column name */
     OutputName = "outputName",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     UpdatedAt = "updated_at",
 }
 
@@ -12965,6 +12999,8 @@ export type Job_Queues_CustomEmailJob = {
     markdownBody: Scalars["String"];
     processed: Scalars["Boolean"];
     registrantIds: Scalars["jsonb"];
+    /** An object relationship */
+    subconference?: Maybe<Conference_Subconference>;
     subconferenceId?: Maybe<Scalars["uuid"]>;
     subject: Scalars["String"];
     updated_at: Scalars["timestamptz"];
@@ -13013,6 +13049,7 @@ export type Job_Queues_CustomEmailJob_Bool_Exp = {
     markdownBody?: InputMaybe<String_Comparison_Exp>;
     processed?: InputMaybe<Boolean_Comparison_Exp>;
     registrantIds?: InputMaybe<Jsonb_Comparison_Exp>;
+    subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     subject?: InputMaybe<String_Comparison_Exp>;
     updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -13048,6 +13085,7 @@ export type Job_Queues_CustomEmailJob_Insert_Input = {
     markdownBody?: InputMaybe<Scalars["String"]>;
     processed?: InputMaybe<Scalars["Boolean"]>;
     registrantIds?: InputMaybe<Scalars["jsonb"]>;
+    subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     subject?: InputMaybe<Scalars["String"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -13102,6 +13140,7 @@ export type Job_Queues_CustomEmailJob_Order_By = {
     markdownBody?: InputMaybe<Order_By>;
     processed?: InputMaybe<Order_By>;
     registrantIds?: InputMaybe<Order_By>;
+    subconference?: InputMaybe<Conference_Subconference_Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     subject?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
@@ -14136,6 +14175,7 @@ export type Job_Queues_MediaPackageHarvestJob = {
     jobStatusName: Job_Queues_JobStatus_Enum;
     mediaPackageHarvestJobId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at: Scalars["timestamptz"];
 };
 
@@ -14175,6 +14215,7 @@ export type Job_Queues_MediaPackageHarvestJob_Bool_Exp = {
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum_Comparison_Exp>;
     mediaPackageHarvestJobId?: InputMaybe<String_Comparison_Exp>;
     message?: InputMaybe<String_Comparison_Exp>;
+    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -14198,6 +14239,7 @@ export type Job_Queues_MediaPackageHarvestJob_Insert_Input = {
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     mediaPackageHarvestJobId?: InputMaybe<Scalars["String"]>;
     message?: InputMaybe<Scalars["String"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -14210,6 +14252,7 @@ export type Job_Queues_MediaPackageHarvestJob_Max_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     mediaPackageHarvestJobId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -14222,6 +14265,7 @@ export type Job_Queues_MediaPackageHarvestJob_Min_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     mediaPackageHarvestJobId?: Maybe<Scalars["String"]>;
     message?: Maybe<Scalars["String"]>;
+    subconferenceId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -14253,6 +14297,7 @@ export type Job_Queues_MediaPackageHarvestJob_Order_By = {
     jobStatusName?: InputMaybe<Order_By>;
     mediaPackageHarvestJobId?: InputMaybe<Order_By>;
     message?: InputMaybe<Order_By>;
+    subconferenceId?: InputMaybe<Order_By>;
     updated_at?: InputMaybe<Order_By>;
 };
 
@@ -14278,6 +14323,8 @@ export enum Job_Queues_MediaPackageHarvestJob_Select_Column {
     /** column name */
     Message = "message",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     UpdatedAt = "updated_at",
 }
 
@@ -14290,6 +14337,7 @@ export type Job_Queues_MediaPackageHarvestJob_Set_Input = {
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     mediaPackageHarvestJobId?: InputMaybe<Scalars["String"]>;
     message?: InputMaybe<Scalars["String"]>;
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -14309,6 +14357,8 @@ export enum Job_Queues_MediaPackageHarvestJob_Update_Column {
     MediaPackageHarvestJobId = "mediaPackageHarvestJobId",
     /** column name */
     Message = "message",
+    /** column name */
+    SubconferenceId = "subconferenceId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -16501,6 +16551,7 @@ export type Mutation_RootConference_UpdateEventUsageArgs = {
 export type Mutation_RootCreateItemRoomArgs = {
     conferenceId: Scalars["uuid"];
     itemId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** mutation root */
@@ -37781,7 +37832,6 @@ export type Video_VonageParticipantStream = {
     registrant: Registrant_Registrant;
     registrantId: Scalars["uuid"];
     stopped_at?: Maybe<Scalars["timestamptz"]>;
-    subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt: Scalars["timestamptz"];
     vonageConnectionId: Scalars["String"];
     vonageSessionId: Scalars["String"];
@@ -37838,7 +37888,6 @@ export type Video_VonageParticipantStream_Bool_Exp = {
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: InputMaybe<Uuid_Comparison_Exp>;
     stopped_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-    subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     vonageConnectionId?: InputMaybe<String_Comparison_Exp>;
     vonageSessionId?: InputMaybe<String_Comparison_Exp>;
@@ -37862,7 +37911,6 @@ export type Video_VonageParticipantStream_Insert_Input = {
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     stopped_at?: InputMaybe<Scalars["timestamptz"]>;
-    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     vonageConnectionId?: InputMaybe<Scalars["String"]>;
     vonageSessionId?: InputMaybe<Scalars["String"]>;
@@ -37878,7 +37926,6 @@ export type Video_VonageParticipantStream_Max_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     stopped_at?: Maybe<Scalars["timestamptz"]>;
-    subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     vonageConnectionId?: Maybe<Scalars["String"]>;
     vonageSessionId?: Maybe<Scalars["String"]>;
@@ -37893,7 +37940,6 @@ export type Video_VonageParticipantStream_Max_Order_By = {
     id?: InputMaybe<Order_By>;
     registrantId?: InputMaybe<Order_By>;
     stopped_at?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     vonageConnectionId?: InputMaybe<Order_By>;
     vonageSessionId?: InputMaybe<Order_By>;
@@ -37909,7 +37955,6 @@ export type Video_VonageParticipantStream_Min_Fields = {
     id?: Maybe<Scalars["uuid"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     stopped_at?: Maybe<Scalars["timestamptz"]>;
-    subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     vonageConnectionId?: Maybe<Scalars["String"]>;
     vonageSessionId?: Maybe<Scalars["String"]>;
@@ -37924,7 +37969,6 @@ export type Video_VonageParticipantStream_Min_Order_By = {
     id?: InputMaybe<Order_By>;
     registrantId?: InputMaybe<Order_By>;
     stopped_at?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     vonageConnectionId?: InputMaybe<Order_By>;
     vonageSessionId?: InputMaybe<Order_By>;
@@ -37959,7 +38003,6 @@ export type Video_VonageParticipantStream_Order_By = {
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     registrantId?: InputMaybe<Order_By>;
     stopped_at?: InputMaybe<Order_By>;
-    subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     vonageConnectionId?: InputMaybe<Order_By>;
     vonageSessionId?: InputMaybe<Order_By>;
@@ -37985,8 +38028,6 @@ export enum Video_VonageParticipantStream_Select_Column {
     /** column name */
     StoppedAt = "stopped_at",
     /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
     UpdatedAt = "updatedAt",
     /** column name */
     VonageConnectionId = "vonageConnectionId",
@@ -38005,7 +38046,6 @@ export type Video_VonageParticipantStream_Set_Input = {
     id?: InputMaybe<Scalars["uuid"]>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     stopped_at?: InputMaybe<Scalars["timestamptz"]>;
-    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     vonageConnectionId?: InputMaybe<Scalars["String"]>;
     vonageSessionId?: InputMaybe<Scalars["String"]>;
@@ -38025,8 +38065,6 @@ export enum Video_VonageParticipantStream_Update_Column {
     RegistrantId = "registrantId",
     /** column name */
     StoppedAt = "stopped_at",
-    /** column name */
-    SubconferenceId = "subconferenceId",
     /** column name */
     UpdatedAt = "updatedAt",
     /** column name */
@@ -39122,6 +39160,7 @@ export type FlagInserted_GetSupportAddressQuery = {
         __typename?: "chat_Message";
         chat: {
             __typename?: "chat_Chat";
+            subconferenceId?: any | null;
             conference: {
                 __typename?: "conference_Conference";
                 id: any;
@@ -39148,13 +39187,13 @@ export type CombineVideosJob_GetJobsQuery = {
         id: any;
         created_at: any;
         conferenceId: any;
+        subconferenceId?: any | null;
         data: any;
         jobStatusName: Job_Queues_JobStatus_Enum;
     }>;
 };
 
 export type CombineVideosJob_GetElementsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
     elementIds: Array<Scalars["uuid"]> | Scalars["uuid"];
 }>;
 
@@ -39222,7 +39261,7 @@ export type CombineVideosJob_CreateElementMutationVariables = Exact<{
     name: Scalars["String"];
     itemId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
-    subconferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     source: Scalars["jsonb"];
 }>;
 
@@ -39261,6 +39300,7 @@ export type ElementUpdateNotification_ElementDetailsFragment = {
     id: any;
     name: string;
     source?: any | null;
+    subconference?: { __typename?: "conference_Subconference"; id: any; name: string; shortName: string } | null;
     conference: {
         __typename?: "conference_Conference";
         id: any;
@@ -39300,6 +39340,7 @@ export type GetElementDetailsQuery = {
         id: any;
         name: string;
         source?: any | null;
+        subconference?: { __typename?: "conference_Subconference"; id: any; name: string; shortName: string } | null;
         conference: {
             __typename?: "conference_Conference";
             id: any;
@@ -39351,6 +39392,9 @@ export type GetUploadAgreementQuery = {
 
 export type CustomEmail_SelectRegistrantsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceId: Scalars["uuid"];
+    withSubconference: Scalars["Boolean"];
+    conferenceCond: Registrant_Registrant_Bool_Exp;
     registrantIds: Array<Scalars["uuid"]> | Scalars["uuid"];
 }>;
 
@@ -39363,6 +39407,7 @@ export type CustomEmail_SelectRegistrantsQuery = {
         invitation?: { __typename?: "registrant_Invitation"; invitedEmailAddress: string; id: any } | null;
         user?: { __typename?: "User"; id: string; email?: string | null } | null;
     }>;
+    conference_Subconference_by_pk?: { __typename?: "conference_Subconference"; shortName: string } | null;
     conference_Conference_by_pk?: {
         __typename?: "conference_Conference";
         shortName: string;
@@ -39380,6 +39425,7 @@ export type SelectUnprocessedCustomEmailJobsQuery = {
         id: any;
         registrantIds: any;
         conferenceId: any;
+        subconferenceId?: any | null;
         subject: string;
         markdownBody: string;
     }>;
@@ -39401,6 +39447,8 @@ export type CompleteCustomEmailJobsMutation = {
 export type ConferenceEmailConfigurationQueryVariables = Exact<{
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     includeConferenceFields: Scalars["Boolean"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
+    includeSubconferenceFields: Scalars["Boolean"];
 }>;
 
 export type ConferenceEmailConfigurationQuery = {
@@ -39421,6 +39469,7 @@ export type ConferenceEmailConfigurationQuery = {
         value: any;
     } | null;
     conference_Conference?: Array<{ __typename?: "conference_Conference"; shortName: string }>;
+    conference_Subconference?: Array<{ __typename?: "conference_Subconference"; shortName: string }>;
 };
 
 export type InsertEmailsMutationVariables = Exact<{
@@ -39559,6 +39608,7 @@ export type GetEventTimingsQuery = {
         scheduledStartTime?: any | null;
         scheduledEndTime?: any | null;
         conferenceId: any;
+        subconferenceId?: any | null;
         modeName?: Schedule_Mode_Enum | null;
         roomId: any;
         enableRecording: boolean;
@@ -39621,7 +39671,7 @@ export type CreateYouTubeUploadMutationVariables = Exact<{
     videoStatus: Scalars["String"];
     uploadYouTubeVideoJobId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
-    subconferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     videoPrivacyStatus: Scalars["String"];
 }>;
 
@@ -39964,7 +40014,7 @@ export type GetEventsWithoutVonageSessionQueryVariables = Exact<{
 
 export type GetEventsWithoutVonageSessionQuery = {
     __typename?: "query_root";
-    schedule_Event: Array<{ __typename?: "schedule_Event"; id: any }>;
+    schedule_Event: Array<{ __typename?: "schedule_Event"; id: any; subconferenceId?: any | null }>;
 };
 
 export type Recording_GetEventQueryVariables = Exact<{
@@ -40001,6 +40051,7 @@ export type StartMediaPackageHarvestJobMutation = {
 
 export type CreateMediaPackageHarvestJobMutationVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     eventId: Scalars["uuid"];
 }>;
 
@@ -40355,7 +40406,7 @@ export type InsertShuffleRoomMutation = {
 
 export type InsertManagedRoomMutationVariables = Exact<{
     conferenceId: Scalars["uuid"];
-    subconferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     capacity: Scalars["Int"];
     name: Scalars["String"];
 }>;
@@ -40461,6 +40512,7 @@ export type GetUploadersQuery = {
         __typename?: "content_Element";
         id: any;
         conferenceId: any;
+        subconferenceId?: any | null;
         typeName: Content_ElementType_Enum;
         conference: {
             __typename?: "conference_Conference";
@@ -40515,6 +40567,12 @@ export type SelectUnprocessedSubmissionRequestEmailJobsQuery = {
             name: string;
             email?: string | null;
             accessToken: string;
+            subconference?: {
+                __typename?: "conference_Subconference";
+                id: any;
+                name: string;
+                shortName: string;
+            } | null;
             conference: { __typename?: "conference_Conference"; id: any; name: string; shortName: string };
         };
     }>;
@@ -40728,6 +40786,7 @@ export type Vonage_GetEventDetailsQuery = {
     schedule_Event_by_pk?: {
         __typename?: "schedule_Event";
         conferenceId: any;
+        subconferenceId?: any | null;
         id: any;
         modeName?: Schedule_Mode_Enum | null;
         enableRecording: boolean;
@@ -40747,6 +40806,12 @@ export type Vonage_GetEventDetailsQuery = {
         displayName: string;
         conferenceId: any;
         conferenceRole: Registrant_RegistrantRole_Enum;
+        subconferenceMemberships: Array<{
+            __typename?: "registrant_SubconferenceMembership";
+            id: any;
+            subconferenceId: any;
+            role: Registrant_RegistrantRole_Enum;
+        }>;
     } | null;
 };
 
@@ -40761,6 +40826,7 @@ export type VonageJoinRoom_GetInfoQuery = {
         __typename?: "room_Room";
         id: any;
         capacity?: number | null;
+        subconferenceId?: any | null;
         item?: {
             __typename?: "content_Item";
             id: any;
@@ -40853,6 +40919,12 @@ export type GetRegistrantQuery = {
         displayName: string;
         conferenceId: any;
         conferenceRole: Registrant_RegistrantRole_Enum;
+        subconferenceMemberships: Array<{
+            __typename?: "registrant_SubconferenceMembership";
+            id: any;
+            subconferenceId: any;
+            role: Registrant_RegistrantRole_Enum;
+        }>;
     }>;
 };
 
@@ -40862,30 +40934,12 @@ export type GetRegistrant_RegistrantFragment = {
     displayName: string;
     conferenceId: any;
     conferenceRole: Registrant_RegistrantRole_Enum;
-};
-
-export type GetRegistrantWithPermissionsQueryVariables = Exact<{
-    userId: Scalars["String"];
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type GetRegistrantWithPermissionsQuery = {
-    __typename?: "query_root";
-    registrant_Registrant: Array<{
-        __typename?: "registrant_Registrant";
+    subconferenceMemberships: Array<{
+        __typename?: "registrant_SubconferenceMembership";
         id: any;
-        displayName: string;
-        conferenceId: any;
-        conferenceRole: Registrant_RegistrantRole_Enum;
+        subconferenceId: any;
+        role: Registrant_RegistrantRole_Enum;
     }>;
-};
-
-export type GetRegistrant_RegistrantWithPermissionsFragment = {
-    __typename?: "registrant_Registrant";
-    id: any;
-    displayName: string;
-    conferenceId: any;
-    conferenceRole: Registrant_RegistrantRole_Enum;
 };
 
 export type GetRegistrantByConferenceSlugQueryVariables = Exact<{
@@ -40901,6 +40955,12 @@ export type GetRegistrantByConferenceSlugQuery = {
         displayName: string;
         conferenceId: any;
         conferenceRole: Registrant_RegistrantRole_Enum;
+        subconferenceMemberships: Array<{
+            __typename?: "registrant_SubconferenceMembership";
+            id: any;
+            subconferenceId: any;
+            role: Registrant_RegistrantRole_Enum;
+        }>;
     }>;
 };
 
@@ -40917,6 +40977,12 @@ export type Authorisation_FindRegistrantQuery = {
         displayName: string;
         conferenceId: any;
         conferenceRole: Registrant_RegistrantRole_Enum;
+        subconferenceMemberships: Array<{
+            __typename?: "registrant_SubconferenceMembership";
+            id: any;
+            subconferenceId: any;
+            role: Registrant_RegistrantRole_Enum;
+        }>;
     }>;
 };
 
@@ -40932,6 +40998,12 @@ export type Authorisation_GetRegistrantQuery = {
         displayName: string;
         conferenceId: any;
         conferenceRole: Registrant_RegistrantRole_Enum;
+        subconferenceMemberships: Array<{
+            __typename?: "registrant_SubconferenceMembership";
+            id: any;
+            subconferenceId: any;
+            role: Registrant_RegistrantRole_Enum;
+        }>;
     } | null;
 };
 
@@ -41016,6 +41088,7 @@ export type GetEventVonageSessionQuery = {
 export type SetEventVonageSessionIdMutationVariables = Exact<{
     eventId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     sessionId: Scalars["String"];
 }>;
 
@@ -41067,6 +41140,8 @@ export type GetRoomThatRegistrantCanJoinQueryVariables = Exact<{
     roomId?: InputMaybe<Scalars["uuid"]>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
+    subconferenceCond: Uuid_Comparison_Exp;
+    registrantCond: Registrant_Registrant_Bool_Exp;
 }>;
 
 export type GetRoomThatRegistrantCanJoinQuery = {
@@ -41084,6 +41159,7 @@ export type GetRoomThatRegistrantCanJoinQuery = {
 
 export type CreateRoomChimeMeetingMutationVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     chimeMeetingData: Scalars["jsonb"];
     chimeMeetingId: Scalars["String"];
     roomId: Scalars["uuid"];
@@ -41118,7 +41194,7 @@ export type GetRoomBySessionIdQueryVariables = Exact<{
 
 export type GetRoomBySessionIdQuery = {
     __typename?: "query_root";
-    room_Room: Array<{ __typename?: "room_Room"; id: any; conferenceId: any }>;
+    room_Room: Array<{ __typename?: "room_Room"; id: any; conferenceId: any; subconferenceId?: any | null }>;
 };
 
 export type GetRoomByChimeMeetingIdQueryVariables = Exact<{
@@ -41127,7 +41203,7 @@ export type GetRoomByChimeMeetingIdQueryVariables = Exact<{
 
 export type GetRoomByChimeMeetingIdQuery = {
     __typename?: "query_root";
-    room_Room: Array<{ __typename?: "room_Room"; id: any; conferenceId: any }>;
+    room_Room: Array<{ __typename?: "room_Room"; id: any; conferenceId: any; subconferenceId?: any | null }>;
 };
 
 export type DeleteRoomChimeMeetingMutationVariables = Exact<{
@@ -41326,15 +41402,6 @@ export type DisableEventRecordingFlagMutationVariables = Exact<{
 export type DisableEventRecordingFlagMutation = {
     __typename?: "mutation_root";
     update_schedule_Event_by_pk?: { __typename?: "schedule_Event"; id: any } | null;
-};
-
-export type GetEventByVonageSessionIdQueryVariables = Exact<{
-    sessionId: Scalars["String"];
-}>;
-
-export type GetEventByVonageSessionIdQuery = {
-    __typename?: "query_root";
-    schedule_Event: Array<{ __typename?: "schedule_Event"; id: any; conferenceId: any }>;
 };
 
 export type CreateVonageParticipantStreamMutationVariables = Exact<{
@@ -41560,6 +41627,18 @@ export const ElementUpdateNotification_ElementDetailsFragmentDoc = {
                 selections: [
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "subconference" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "name" } },
+                                { kind: "Field", name: { kind: "Name", value: "shortName" } },
+                            ],
+                        },
+                    },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "conference" },
@@ -42205,30 +42284,23 @@ export const GetRegistrant_RegistrantFragmentDoc = {
                     { kind: "Field", name: { kind: "Name", value: "displayName" } },
                     { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
                     { kind: "Field", name: { kind: "Name", value: "conferenceRole" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "subconferenceMemberships" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "role" } },
+                            ],
+                        },
+                    },
                 ],
             },
         },
     ],
 } as unknown as DocumentNode<GetRegistrant_RegistrantFragment, unknown>;
-export const GetRegistrant_RegistrantWithPermissionsFragmentDoc = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "GetRegistrant_RegistrantWithPermissions" },
-            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "registrant_Registrant" } },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    { kind: "Field", name: { kind: "Name", value: "id" } },
-                    { kind: "Field", name: { kind: "Name", value: "displayName" } },
-                    { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                    { kind: "Field", name: { kind: "Name", value: "conferenceRole" } },
-                ],
-            },
-        },
-    ],
-} as unknown as DocumentNode<GetRegistrant_RegistrantWithPermissionsFragment, unknown>;
 export const FlagInserted_GetSupportAddressDocument = {
     kind: "Document",
     definitions: [
@@ -42286,6 +42358,7 @@ export const FlagInserted_GetSupportAddressDocument = {
                                     selectionSet: {
                                         kind: "SelectionSet",
                                         selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                             {
                                                 kind: "Field",
                                                 name: { kind: "Name", value: "conference" },
@@ -42432,6 +42505,7 @@ export const CombineVideosJob_GetJobsDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "created_at" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                 { kind: "Field", name: { kind: "Name", value: "data" } },
                                 { kind: "Field", name: { kind: "Name", value: "jobStatusName" } },
                             ],
@@ -42450,11 +42524,6 @@ export const CombineVideosJob_GetElementsDocument = {
             operation: "query",
             name: { kind: "Name", value: "CombineVideosJob_GetElements" },
             variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
-                },
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "elementIds" } },
@@ -42483,23 +42552,6 @@ export const CombineVideosJob_GetElementsDocument = {
                                 value: {
                                     kind: "ObjectValue",
                                     fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "conferenceId" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "conferenceId" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "id" },
@@ -42869,7 +42921,7 @@ export const CombineVideosJob_CreateElementDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
                 },
                 {
                     kind: "VariableDefinition",
@@ -43320,6 +43372,27 @@ export const CustomEmail_SelectRegistrantsDocument = {
                 },
                 {
                     kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "withSubconference" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceCond" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "registrant_Registrant_bool_exp" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "registrantIds" } },
                     type: {
                         kind: "NonNullType",
@@ -43348,34 +43421,38 @@ export const CustomEmail_SelectRegistrantsDocument = {
                                     fields: [
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "conferenceId" },
+                                            name: { kind: "Name", value: "_and" },
                                             value: {
-                                                kind: "ObjectValue",
-                                                fields: [
+                                                kind: "ListValue",
+                                                values: [
                                                     {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "conferenceId" },
-                                                        },
+                                                        kind: "Variable",
+                                                        name: { kind: "Name", value: "conferenceCond" },
                                                     },
-                                                ],
-                                            },
-                                        },
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "id" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
                                                     {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_in" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "registrantIds" },
-                                                        },
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "id" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_in" },
+                                                                            value: {
+                                                                                kind: "Variable",
+                                                                                name: {
+                                                                                    kind: "Name",
+                                                                                    value: "registrantIds",
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
                                                     },
                                                 ],
                                             },
@@ -43412,6 +43489,34 @@ export const CustomEmail_SelectRegistrantsDocument = {
                                     },
                                 },
                             ],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Subconference_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
+                            },
+                        ],
+                        directives: [
+                            {
+                                kind: "Directive",
+                                name: { kind: "Name", value: "include" },
+                                arguments: [
+                                    {
+                                        kind: "Argument",
+                                        name: { kind: "Name", value: "if" },
+                                        value: { kind: "Variable", name: { kind: "Name", value: "withSubconference" } },
+                                    },
+                                ],
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "shortName" } }],
                         },
                     },
                     {
@@ -43533,6 +43638,7 @@ export const SelectUnprocessedCustomEmailJobsDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "registrantIds" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                 { kind: "Field", name: { kind: "Name", value: "subject" } },
                                 { kind: "Field", name: { kind: "Name", value: "markdownBody" } },
                             ],
@@ -43650,6 +43756,19 @@ export const ConferenceEmailConfigurationDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "includeConferenceFields" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "includeSubconferenceFields" } },
                     type: {
                         kind: "NonNullType",
                         type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
@@ -43987,6 +44106,58 @@ export const ConferenceEmailConfigurationDocument = {
                                         value: {
                                             kind: "Variable",
                                             name: { kind: "Name", value: "includeConferenceFields" },
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "shortName" } }],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Subconference" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "id" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "subconferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        directives: [
+                            {
+                                kind: "Directive",
+                                name: { kind: "Name", value: "include" },
+                                arguments: [
+                                    {
+                                        kind: "Argument",
+                                        name: { kind: "Name", value: "if" },
+                                        value: {
+                                            kind: "Variable",
+                                            name: { kind: "Name", value: "includeSubconferenceFields" },
                                         },
                                     },
                                 ],
@@ -44890,6 +45061,7 @@ export const GetEventTimingsDocument = {
                                 { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
                                 { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                 { kind: "Field", name: { kind: "Name", value: "modeName" } },
                                 { kind: "Field", name: { kind: "Name", value: "roomId" } },
                                 { kind: "Field", name: { kind: "Name", value: "enableRecording" } },
@@ -45260,7 +45432,7 @@ export const CreateYouTubeUploadDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
                 },
                 {
                     kind: "VariableDefinition",
@@ -47246,7 +47418,10 @@ export const GetEventsWithoutVonageSessionDocument = {
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
+                            ],
                         },
                     },
                 ],
@@ -47404,6 +47579,11 @@ export const CreateMediaPackageHarvestJobDocument = {
                 },
                 {
                     kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
+                },
+                {
+                    kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "eventId" } },
                     type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
                 },
@@ -47425,6 +47605,14 @@ export const CreateMediaPackageHarvestJobDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "conferenceId" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "subconferenceId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "subconferenceId" },
+                                            },
                                         },
                                         {
                                             kind: "ObjectField",
@@ -49081,7 +49269,7 @@ export const InsertManagedRoomDocument = {
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
                 },
                 {
                     kind: "VariableDefinition",
@@ -50241,6 +50429,7 @@ export const GetUploadersDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "conference" },
@@ -50600,6 +50789,18 @@ export const SelectUnprocessedSubmissionRequestEmailJobsDocument = {
                                             { kind: "Field", name: { kind: "Name", value: "name" } },
                                             { kind: "Field", name: { kind: "Name", value: "email" } },
                                             { kind: "Field", name: { kind: "Name", value: "accessToken" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "subconference" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "name" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "shortName" } },
+                                                    ],
+                                                },
+                                            },
                                             {
                                                 kind: "Field",
                                                 name: { kind: "Name", value: "conference" },
@@ -52053,6 +52254,7 @@ export const Vonage_GetEventDetailsDocument = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "modeName" } },
                                 { kind: "Field", name: { kind: "Name", value: "enableRecording" } },
@@ -52195,6 +52397,7 @@ export const VonageJoinRoom_GetInfoDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "capacity" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "item" },
@@ -52907,92 +53110,6 @@ export const GetRegistrantDocument = {
         ...GetRegistrant_RegistrantFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode<GetRegistrantQuery, GetRegistrantQueryVariables>;
-export const GetRegistrantWithPermissionsDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "query",
-            name: { kind: "Name", value: "GetRegistrantWithPermissions" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "userId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
-                },
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "registrant_Registrant" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "where" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "userId" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "userId" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "conferenceId" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "conferenceId" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "GetRegistrant_RegistrantWithPermissions" },
-                                },
-                            ],
-                        },
-                    },
-                ],
-            },
-        },
-        ...GetRegistrant_RegistrantWithPermissionsFragmentDoc.definitions,
-    ],
-} as unknown as DocumentNode<GetRegistrantWithPermissionsQuery, GetRegistrantWithPermissionsQueryVariables>;
 export const GetRegistrantByConferenceSlugDocument = {
     kind: "Document",
     definitions: [
@@ -53544,6 +53661,11 @@ export const SetEventVonageSessionIdDocument = {
                 },
                 {
                     kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
+                },
+                {
+                    kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "sessionId" } },
                     type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
                 },
@@ -53570,6 +53692,14 @@ export const SetEventVonageSessionIdDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "conferenceId" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "subconferenceId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "subconferenceId" },
+                                            },
                                         },
                                         {
                                             kind: "ObjectField",
@@ -53825,6 +53955,22 @@ export const GetRoomThatRegistrantCanJoinDocument = {
                     variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
                     type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
                 },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceCond" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "uuid_comparison_exp" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "registrantCond" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "registrant_Registrant_bool_exp" } },
+                    },
+                },
             ],
             selectionSet: {
                 kind: "SelectionSet",
@@ -53864,35 +54010,6 @@ export const GetRoomThatRegistrantCanJoinDocument = {
                                                 fields: [
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "registrants" },
-                                                        value: {
-                                                            kind: "ObjectValue",
-                                                            fields: [
-                                                                {
-                                                                    kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "id" },
-                                                                    value: {
-                                                                        kind: "ObjectValue",
-                                                                        fields: [
-                                                                            {
-                                                                                kind: "ObjectField",
-                                                                                name: { kind: "Name", value: "_eq" },
-                                                                                value: {
-                                                                                    kind: "Variable",
-                                                                                    name: {
-                                                                                        kind: "Name",
-                                                                                        value: "registrantId",
-                                                                                    },
-                                                                                },
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                },
-                                                            ],
-                                                        },
-                                                    },
-                                                    {
-                                                        kind: "ObjectField",
                                                         name: { kind: "Name", value: "id" },
                                                         value: {
                                                             kind: "ObjectValue",
@@ -53908,7 +54025,23 @@ export const GetRoomThatRegistrantCanJoinDocument = {
                                                             ],
                                                         },
                                                     },
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "registrants" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "registrantCond" },
+                                                        },
+                                                    },
                                                 ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "subconferenceId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "subconferenceCond" },
                                             },
                                         },
                                         {
@@ -54073,6 +54206,11 @@ export const CreateRoomChimeMeetingDocument = {
                 },
                 {
                     kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
+                },
+                {
+                    kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "chimeMeetingData" } },
                     type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } } },
                 },
@@ -54104,6 +54242,14 @@ export const CreateRoomChimeMeetingDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "conferenceId" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "subconferenceId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "subconferenceId" },
+                                            },
                                         },
                                         {
                                             kind: "ObjectField",
@@ -54295,6 +54441,7 @@ export const GetRoomBySessionIdDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                             ],
                         },
                     },
@@ -54365,6 +54512,7 @@ export const GetRoomByChimeMeetingIdDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                             ],
                         },
                     },
@@ -55525,76 +55673,6 @@ export const DisableEventRecordingFlagDocument = {
         },
     ],
 } as unknown as DocumentNode<DisableEventRecordingFlagMutation, DisableEventRecordingFlagMutationVariables>;
-export const GetEventByVonageSessionIdDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "query",
-            name: { kind: "Name", value: "GetEventByVonageSessionId" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "sessionId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "schedule_Event" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "where" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "eventVonageSession" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "sessionId" },
-                                                        value: {
-                                                            kind: "ObjectValue",
-                                                            fields: [
-                                                                {
-                                                                    kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "_eq" },
-                                                                    value: {
-                                                                        kind: "Variable",
-                                                                        name: { kind: "Name", value: "sessionId" },
-                                                                    },
-                                                                },
-                                                            ],
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
-                            ],
-                        },
-                    },
-                ],
-            },
-        },
-    ],
-} as unknown as DocumentNode<GetEventByVonageSessionIdQuery, GetEventByVonageSessionIdQueryVariables>;
 export const CreateVonageParticipantStreamDocument = {
     kind: "Document",
     definitions: [

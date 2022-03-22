@@ -267,7 +267,7 @@ export async function handleCreateForItem(
     userId: string
 ): Promise<CreateContentGroupRoomOutput> {
     try {
-        // todo: verify user role here. It's not critically important though.
+        // TODO: verify user role here. It's not critically important though.
         getRegistrant(userId, params.conferenceId);
     } catch (e: any) {
         logger.error({ err: e }, "Could not find registrant at conference when creating breakout room");
@@ -277,7 +277,12 @@ export async function handleCreateForItem(
     }
 
     try {
-        const roomId = await createItemVideoChatRoom(logger, params.itemId, params.conferenceId);
+        const roomId = await createItemVideoChatRoom(
+            logger,
+            params.itemId,
+            params.conferenceId,
+            params.subconferenceId
+        );
         return {
             roomId,
         };

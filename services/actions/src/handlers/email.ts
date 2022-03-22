@@ -23,7 +23,12 @@ import { logger } from "../lib/logger";
 import { callWithRetry } from "../utils";
 
 gql`
-    query ConferenceEmailConfiguration($conferenceId: uuid, $includeConferenceFields: Boolean!) {
+    query ConferenceEmailConfiguration(
+        $conferenceId: uuid
+        $includeConferenceFields: Boolean!
+        $subconferenceId: uuid
+        $includeSubconferenceFields: Boolean!
+    ) {
         support: conference_Configuration(
             where: { conferenceId: { _eq: $conferenceId }, key: { _eq: SUPPORT_ADDRESS } }
         ) @include(if: $includeConferenceFields) {
@@ -63,6 +68,10 @@ gql`
         conference_Conference(where: { id: { _eq: $conferenceId } }) @include(if: $includeConferenceFields) {
             shortName
         }
+
+        conference_Subconference(where: { id: { _eq: $subconferenceId } }) @include(if: $includeSubconferenceFields) {
+            shortName
+        }
     }
 
     mutation InsertEmails($objects: [Email_insert_input!]!) {
@@ -78,13 +87,16 @@ export async function insertEmails(
     logger: P.Logger,
     emails: Email_Insert_Input[],
     conferenceId: string | undefined,
+    subconferenceId: string | null | undefined,
     jobId: string | undefined
 ): Promise<number | undefined> {
     const configResponse = await apolloClient.query({
         query: ConferenceEmailConfigurationDocument,
         variables: {
             conferenceId,
+            subconferenceId,
             includeConferenceFields: Boolean(conferenceId),
+            includeSubconferenceFields: Boolean(subconferenceId),
         },
     });
 
@@ -117,7 +129,9 @@ export async function insertEmails(
 
     const hostOrganisationName = configResponse.data.hostOrganisationName?.value;
     const stopEmailsAddress = configResponse.data.stopEmails?.value;
-    const conferenceName = configResponse.data.conference_Conference?.[0]?.shortName;
+    const conferenceName =
+        configResponse.data.conference_Subconference?.[0]?.shortName ??
+        configResponse.data.conference_Conference?.[0]?.shortName;
     assert(hostOrganisationName, "Host organisation name not configured - missing system configuration");
     assert(stopEmailsAddress, "Stop emails address not configured - missing system configuration");
 
@@ -159,6 +173,7 @@ export async function insertEmails(
                 plainTextContents: htmlToText(compiledEmail.body),
                 status: "processing",
                 conferenceId,
+                subconferenceId,
             };
         });
 

@@ -101,9 +101,14 @@ export async function handleMediaPackageHarvestJobUpdated(
 }
 
 gql`
-    mutation CreateMediaPackageHarvestJob($conferenceId: uuid!, $eventId: uuid!) {
+    mutation CreateMediaPackageHarvestJob($conferenceId: uuid!, $subconferenceId: uuid, $eventId: uuid!) {
         insert_job_queues_MediaPackageHarvestJob_one(
-            object: { conferenceId: $conferenceId, eventId: $eventId, jobStatusName: NEW }
+            object: {
+                conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
+                eventId: $eventId
+                jobStatusName: NEW
+            }
         ) {
             id
         }
@@ -113,7 +118,8 @@ gql`
 export async function createMediaPackageHarvestJob(
     logger: P.Logger,
     eventId: string,
-    conferenceId: string
+    conferenceId: string,
+    subconferenceId: string | null | undefined
 ): Promise<void> {
     logger.info({ eventId }, "Creating MediaPackage harvest job");
 
@@ -121,6 +127,7 @@ export async function createMediaPackageHarvestJob(
         mutation: CreateMediaPackageHarvestJobDocument,
         variables: {
             conferenceId,
+            subconferenceId,
             eventId,
         },
     });

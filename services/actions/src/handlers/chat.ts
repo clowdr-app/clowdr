@@ -11,6 +11,7 @@ gql`
     query FlagInserted_GetSupportAddress($messageSId: uuid!) {
         chat_Message(where: { sId: { _eq: $messageSId } }) {
             chat {
+                subconferenceId
                 conference {
                     id
                     name
@@ -59,6 +60,7 @@ to view and resolve the report.</p>
                     },
                 ],
                 conference.id,
+                response.data.chat_Message[0].chat.subconferenceId,
                 `flag-inserted-organiser:${data.id}`
             );
         } else {
@@ -78,6 +80,7 @@ to view and resolve the report.</p>
                     },
                 ],
                 conference.id,
+                response.data.chat_Message[0].chat.subconferenceId,
                 `flag-inserted-administrator:${data.id}`
             );
         }

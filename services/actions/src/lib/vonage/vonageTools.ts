@@ -522,6 +522,7 @@ export async function kickRegistrantFromRoom(
             logger,
             roomId,
             undefined,
+            undefined,
             registrantId,
             {
                 connectionId: identifier.vonageConnectionId,
@@ -540,7 +541,7 @@ export async function kickRegistrantFromRoom(
             throw new Error("Failed to force Vonage disconnection of registrant");
         }
     } else if ("chimeRegistrantId" in identifier) {
-        await removeRoomParticipant(logger, roomId, undefined, registrantId, undefined, isRemovingDuplicate);
+        await removeRoomParticipant(logger, roomId, undefined, undefined, registrantId, undefined, isRemovingDuplicate);
 
         logger.info({ roomId, identifier }, "Forcing Chime disconnection of registrant");
         try {
@@ -560,13 +561,6 @@ export async function kickRegistrantFromRoom(
 }
 
 gql`
-    query GetEventByVonageSessionId($sessionId: String!) {
-        schedule_Event(where: { eventVonageSession: { sessionId: { _eq: $sessionId } } }) {
-            id
-            conferenceId
-        }
-    }
-
     mutation CreateVonageParticipantStream(
         $registrantId: uuid!
         $conferenceId: uuid!

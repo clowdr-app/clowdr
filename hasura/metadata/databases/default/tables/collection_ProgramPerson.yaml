@@ -8,6 +8,9 @@ object_relationships:
 - name: registrant
   using:
     foreign_key_constraint_on: registrantId
+- name: subconference
+  using:
+    foreign_key_constraint_on: subconferenceId
 array_relationships:
 - name: eventPeople
   using:

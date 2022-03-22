@@ -77,6 +77,7 @@ type Email {
     retriesCount: Int!
     sentAt: timestamptz
     status: String
+    subconferenceId: uuid
     subject: String!
     updatedAt: timestamptz!
     """
@@ -175,6 +176,7 @@ input Email_bool_exp {
     retriesCount: Int_comparison_exp
     sentAt: timestamptz_comparison_exp
     status: String_comparison_exp
+    subconferenceId: uuid_comparison_exp
     subject: String_comparison_exp
     updatedAt: timestamptz_comparison_exp
     user: User_bool_exp
@@ -221,6 +223,7 @@ input Email_insert_input {
     retriesCount: Int
     sentAt: timestamptz
     status: String
+    subconferenceId: uuid
     subject: String
     updatedAt: timestamptz
     user: User_obj_rel_insert_input
@@ -245,6 +248,7 @@ type Email_max_fields {
     retriesCount: Int
     sentAt: timestamptz
     status: String
+    subconferenceId: uuid
     subject: String
     updatedAt: timestamptz
     userId: String
@@ -268,6 +272,7 @@ input Email_max_order_by {
     retriesCount: order_by
     sentAt: order_by
     status: order_by
+    subconferenceId: order_by
     subject: order_by
     updatedAt: order_by
     userId: order_by
@@ -291,6 +296,7 @@ type Email_min_fields {
     retriesCount: Int
     sentAt: timestamptz
     status: String
+    subconferenceId: uuid
     subject: String
     updatedAt: timestamptz
     userId: String
@@ -314,6 +320,7 @@ input Email_min_order_by {
     retriesCount: order_by
     sentAt: order_by
     status: order_by
+    subconferenceId: order_by
     subject: order_by
     updatedAt: order_by
     userId: order_by
@@ -361,6 +368,7 @@ input Email_order_by {
     retriesCount: order_by
     sentAt: order_by
     status: order_by
+    subconferenceId: order_by
     subject: order_by
     updatedAt: order_by
     user: User_order_by
@@ -437,6 +445,10 @@ enum Email_select_column {
     """
     column name
     """
+    subconferenceId
+    """
+    column name
+    """
     subject
     """
     column name
@@ -466,6 +478,7 @@ input Email_set_input {
     retriesCount: Int
     sentAt: timestamptz
     status: String
+    subconferenceId: uuid
     subject: String
     updatedAt: timestamptz
     userId: String
@@ -587,6 +600,10 @@ enum Email_update_column {
     column name
     """
     status
+    """
+    column name
+    """
+    subconferenceId
     """
     column name
     """
@@ -8362,6 +8379,10 @@ type collection_ProgramPerson {
     """
     registrant: registrant_Registrant
     registrantId: uuid
+    """
+    An object relationship
+    """
+    subconference: conference_Subconference
     subconferenceId: uuid
     submissionRequestsSentCount: Int!
     visibilityLevel: conference_VisibilityLevel_enum!
@@ -8452,6 +8473,7 @@ input collection_ProgramPerson_bool_exp {
     name: String_comparison_exp
     registrant: registrant_Registrant_bool_exp
     registrantId: uuid_comparison_exp
+    subconference: conference_Subconference_bool_exp
     subconferenceId: uuid_comparison_exp
     submissionRequestsSentCount: Int_comparison_exp
     visibilityLevel: conference_VisibilityLevel_enum_comparison_exp
@@ -8501,6 +8523,7 @@ input collection_ProgramPerson_insert_input {
     name: String
     registrant: registrant_Registrant_obj_rel_insert_input
     registrantId: uuid
+    subconference: conference_Subconference_obj_rel_insert_input
     subconferenceId: uuid
     submissionRequestsSentCount: Int
     visibilityLevel: conference_VisibilityLevel_enum
@@ -8615,6 +8638,7 @@ input collection_ProgramPerson_order_by {
     name: order_by
     registrant: registrant_Registrant_order_by
     registrantId: order_by
+    subconference: conference_Subconference_order_by
     subconferenceId: order_by
     submissionRequestsSentCount: order_by
     visibilityLevel: order_by
@@ -13315,6 +13339,10 @@ type content_Element {
         """
         where: analytics_ContentElementStats_bool_exp
     ): analytics_ContentElementStats_aggregate!
+    """
+    An object relationship
+    """
+    subconference: conference_Subconference
     subconferenceId: uuid
     """
     An object relationship
@@ -13774,6 +13802,7 @@ input content_Element_bool_exp {
     name: String_comparison_exp
     source: jsonb_comparison_exp
     stats: analytics_ContentElementStats_bool_exp
+    subconference: conference_Subconference_bool_exp
     subconferenceId: uuid_comparison_exp
     totalViewsStat: analytics_ElementTotalViews_bool_exp
     type: content_ElementType_bool_exp
@@ -13844,6 +13873,7 @@ input content_Element_insert_input {
     name: String
     source: jsonb
     stats: analytics_ContentElementStats_arr_rel_insert_input
+    subconference: conference_Subconference_obj_rel_insert_input
     subconferenceId: uuid
     totalViewsStat: analytics_ElementTotalViews_obj_rel_insert_input
     type: content_ElementType_obj_rel_insert_input
@@ -13962,6 +13992,7 @@ input content_Element_order_by {
     name: order_by
     source: order_by
     stats_aggregate: analytics_ContentElementStats_aggregate_order_by
+    subconference: conference_Subconference_order_by
     subconferenceId: order_by
     totalViewsStat: analytics_ElementTotalViews_order_by
     type: content_ElementType_order_by
@@ -17682,6 +17713,10 @@ type job_queues_CustomEmailJob {
         """
         path: String
     ): jsonb!
+    """
+    An object relationship
+    """
+    subconference: conference_Subconference
     subconferenceId: uuid
     subject: String!
     updated_at: timestamptz!
@@ -17725,6 +17760,7 @@ input job_queues_CustomEmailJob_bool_exp {
     markdownBody: String_comparison_exp
     processed: Boolean_comparison_exp
     registrantIds: jsonb_comparison_exp
+    subconference: conference_Subconference_bool_exp
     subconferenceId: uuid_comparison_exp
     subject: String_comparison_exp
     updated_at: timestamptz_comparison_exp
@@ -17772,6 +17808,7 @@ input job_queues_CustomEmailJob_insert_input {
     markdownBody: String
     processed: Boolean
     registrantIds: jsonb
+    subconference: conference_Subconference_obj_rel_insert_input
     subconferenceId: uuid
     subject: String
     updated_at: timestamptz
@@ -17837,6 +17874,7 @@ input job_queues_CustomEmailJob_order_by {
     markdownBody: order_by
     processed: order_by
     registrantIds: order_by
+    subconference: conference_Subconference_order_by
     subconferenceId: order_by
     subject: order_by
     updated_at: order_by
@@ -19240,6 +19278,7 @@ type job_queues_MediaPackageHarvestJob {
     jobStatusName: job_queues_JobStatus_enum!
     mediaPackageHarvestJobId: String
     message: String
+    subconferenceId: uuid
     updated_at: timestamptz!
 }
 
@@ -19277,6 +19316,7 @@ input job_queues_MediaPackageHarvestJob_bool_exp {
     jobStatusName: job_queues_JobStatus_enum_comparison_exp
     mediaPackageHarvestJobId: String_comparison_exp
     message: String_comparison_exp
+    subconferenceId: uuid_comparison_exp
     updated_at: timestamptz_comparison_exp
 }
 
@@ -19308,6 +19348,7 @@ input job_queues_MediaPackageHarvestJob_insert_input {
     jobStatusName: job_queues_JobStatus_enum
     mediaPackageHarvestJobId: String
     message: String
+    subconferenceId: uuid
     updated_at: timestamptz
 }
 
@@ -19321,6 +19362,7 @@ type job_queues_MediaPackageHarvestJob_max_fields {
     id: uuid
     mediaPackageHarvestJobId: String
     message: String
+    subconferenceId: uuid
     updated_at: timestamptz
 }
 
@@ -19334,6 +19376,7 @@ type job_queues_MediaPackageHarvestJob_min_fields {
     id: uuid
     mediaPackageHarvestJobId: String
     message: String
+    subconferenceId: uuid
     updated_at: timestamptz
 }
 
@@ -19374,6 +19417,7 @@ input job_queues_MediaPackageHarvestJob_order_by {
     jobStatusName: order_by
     mediaPackageHarvestJobId: order_by
     message: order_by
+    subconferenceId: order_by
     updated_at: order_by
 }
 
@@ -19419,6 +19463,10 @@ enum job_queues_MediaPackageHarvestJob_select_column {
     """
     column name
     """
+    subconferenceId
+    """
+    column name
+    """
     updated_at
 }
 
@@ -19433,6 +19481,7 @@ input job_queues_MediaPackageHarvestJob_set_input {
     jobStatusName: job_queues_JobStatus_enum
     mediaPackageHarvestJobId: String
     message: String
+    subconferenceId: uuid
     updated_at: timestamptz
 }
 
@@ -19468,6 +19517,10 @@ enum job_queues_MediaPackageHarvestJob_update_column {
     column name
     """
     message
+    """
+    column name
+    """
+    subconferenceId
     """
     column name
     """
@@ -56306,7 +56359,6 @@ type video_VonageParticipantStream {
     registrant: registrant_Registrant!
     registrantId: uuid!
     stopped_at: timestamptz
-    subconferenceId: uuid
     updatedAt: timestamptz!
     vonageConnectionId: String!
     vonageSessionId: String!
@@ -56367,7 +56419,6 @@ input video_VonageParticipantStream_bool_exp {
     registrant: registrant_Registrant_bool_exp
     registrantId: uuid_comparison_exp
     stopped_at: timestamptz_comparison_exp
-    subconferenceId: uuid_comparison_exp
     updatedAt: timestamptz_comparison_exp
     vonageConnectionId: String_comparison_exp
     vonageSessionId: String_comparison_exp
@@ -56397,7 +56448,6 @@ input video_VonageParticipantStream_insert_input {
     registrant: registrant_Registrant_obj_rel_insert_input
     registrantId: uuid
     stopped_at: timestamptz
-    subconferenceId: uuid
     updatedAt: timestamptz
     vonageConnectionId: String
     vonageSessionId: String
@@ -56414,7 +56464,6 @@ type video_VonageParticipantStream_max_fields {
     id: uuid
     registrantId: uuid
     stopped_at: timestamptz
-    subconferenceId: uuid
     updatedAt: timestamptz
     vonageConnectionId: String
     vonageSessionId: String
@@ -56431,7 +56480,6 @@ input video_VonageParticipantStream_max_order_by {
     id: order_by
     registrantId: order_by
     stopped_at: order_by
-    subconferenceId: order_by
     updatedAt: order_by
     vonageConnectionId: order_by
     vonageSessionId: order_by
@@ -56448,7 +56496,6 @@ type video_VonageParticipantStream_min_fields {
     id: uuid
     registrantId: uuid
     stopped_at: timestamptz
-    subconferenceId: uuid
     updatedAt: timestamptz
     vonageConnectionId: String
     vonageSessionId: String
@@ -56465,7 +56512,6 @@ input video_VonageParticipantStream_min_order_by {
     id: order_by
     registrantId: order_by
     stopped_at: order_by
-    subconferenceId: order_by
     updatedAt: order_by
     vonageConnectionId: order_by
     vonageSessionId: order_by
@@ -56509,7 +56555,6 @@ input video_VonageParticipantStream_order_by {
     registrant: registrant_Registrant_order_by
     registrantId: order_by
     stopped_at: order_by
-    subconferenceId: order_by
     updatedAt: order_by
     vonageConnectionId: order_by
     vonageSessionId: order_by
@@ -56551,10 +56596,6 @@ enum video_VonageParticipantStream_select_column {
     """
     column name
     """
-    subconferenceId
-    """
-    column name
-    """
     updatedAt
     """
     column name
@@ -56583,7 +56624,6 @@ input video_VonageParticipantStream_set_input {
     id: uuid
     registrantId: uuid
     stopped_at: timestamptz
-    subconferenceId: uuid
     updatedAt: timestamptz
     vonageConnectionId: String
     vonageSessionId: String
@@ -56615,10 +56655,6 @@ enum video_VonageParticipantStream_update_column {
     column name
     """
     stopped_at
-    """
-    column name
-    """
-    subconferenceId
     """
     column name
     """

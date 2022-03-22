@@ -199,7 +199,7 @@ gql`
         $videoStatus: String!
         $uploadYouTubeVideoJobId: uuid!
         $conferenceId: uuid!
-        $subconferenceId: uuid!
+        $subconferenceId: uuid
         $videoPrivacyStatus: String!
     ) {
         insert_video_YouTubeUpload_one(

@@ -131,7 +131,7 @@ export class VonageGlobalState extends EventEmitter<Events> {
     }): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            // todo: disconnect from previous session etc if initialised.
+            // TODO: disconnect from previous session etc if initialised.
             if (this.state.type === StateType.Connected) {
                 throw new Error("Invalid state transition: must not be connected when initialising");
             }

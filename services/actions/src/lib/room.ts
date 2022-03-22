@@ -19,7 +19,12 @@ import { callWithRetry } from "../utils";
 import { createChimeMeeting, doesChimeMeetingExist } from "./aws/chime";
 import { deleteRoomChimeMeeting } from "./roomChimeMeeting";
 
-export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, conferenceId: string): Promise<string> {
+export async function createItemVideoChatRoom(
+    logger: P.Logger,
+    itemId: string,
+    conferenceId: string,
+    subconferenceId: string | null | undefined
+): Promise<string> {
     gql`
         query CreateItemRoom_GetItem($id: uuid!) {
             content_Item_by_pk(id: $id) {
@@ -43,7 +48,11 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
     });
 
     if (itemResult.data.content_Item_by_pk?.conferenceId !== conferenceId) {
-        throw new Error("Could not find specified content group in the conference");
+        throw new Error("Could not find specified content item in the conference");
+    }
+
+    if (itemResult.data.content_Item_by_pk?.subconferenceId !== subconferenceId) {
+        throw new Error("Could not find specified content item in the subconference");
     }
 
     if (itemResult.data.content_Item_by_pk.room) {
@@ -74,12 +83,13 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
         }
     `;
 
-    logger.info({ itemId, conferenceId }, "Creating new breakout room for content group");
+    logger.info({ itemId, conferenceId, subconferenceId }, "Creating new breakout room for content item");
 
     const createResult = await apolloClient.mutate({
         mutation: Item_CreateRoomDocument,
         variables: {
-            conferenceId: conferenceId,
+            conferenceId,
+            subconferenceId,
             name: `${itemResult.data.content_Item_by_pk.title}`,
             itemId,
             chatId: itemResult.data.content_Item_by_pk.chatId,
@@ -118,13 +128,25 @@ export async function getRoomConferenceId(
     };
 }
 
-export async function canUserJoinRoom(registrantId: string, roomId: string, conferenceId: string): Promise<boolean> {
+export async function canUserJoinRoom(
+    registrantId: string,
+    roomId: string,
+    conferenceId: string,
+    subconferenceId: string | null | undefined
+): Promise<boolean> {
     gql`
-        query GetRoomThatRegistrantCanJoin($roomId: uuid, $registrantId: uuid, $conferenceId: uuid) {
+        query GetRoomThatRegistrantCanJoin(
+            $roomId: uuid
+            $registrantId: uuid
+            $conferenceId: uuid
+            $subconferenceCond: uuid_comparison_exp!
+            $registrantCond: registrant_Registrant_bool_exp!
+        ) {
             room_Room(
                 where: {
                     id: { _eq: $roomId }
-                    conference: { registrants: { id: { _eq: $registrantId } }, id: { _eq: $conferenceId } }
+                    conference: { id: { _eq: $conferenceId }, registrants: $registrantCond }
+                    subconferenceId: $subconferenceCond
                     _or: [
                         { roomMemberships: { registrant: { id: { _eq: $registrantId } } } }
                         { managementModeName: { _eq: PUBLIC } }
@@ -148,18 +170,43 @@ export async function canUserJoinRoom(registrantId: string, roomId: string, conf
                 roomId,
                 registrantId,
                 conferenceId,
+                registrantCond: subconferenceId
+                    ? {
+                          id: { _eq: registrantId },
+                          subconferenceMemberships: {
+                              subconferenceId: {
+                                  _eq: subconferenceId,
+                              },
+                          },
+                      }
+                    : {
+                          id: { _eq: registrantId },
+                      },
+                subconferenceCond: subconferenceId
+                    ? {
+                          _eq: subconferenceId,
+                      }
+                    : {
+                          _is_null: true,
+                      },
             },
         })
     );
     return result.data.room_Room.length > 0;
 }
 
-export async function createRoomChimeMeeting(logger: P.Logger, roomId: string, conferenceId: string): Promise<Meeting> {
+export async function createRoomChimeMeeting(
+    logger: P.Logger,
+    roomId: string,
+    conferenceId: string,
+    subconferenceId: string | null | undefined
+): Promise<Meeting> {
     const chimeMeetingData = await createChimeMeeting(roomId);
 
     gql`
         mutation CreateRoomChimeMeeting(
             $conferenceId: uuid!
+            $subconferenceId: uuid
             $chimeMeetingData: jsonb!
             $chimeMeetingId: String!
             $roomId: uuid!
@@ -167,6 +214,7 @@ export async function createRoomChimeMeeting(logger: P.Logger, roomId: string, c
             insert_room_ChimeMeeting_one(
                 object: {
                     conferenceId: $conferenceId
+                    subconferenceId: $subconferenceId
                     chimeMeetingData: $chimeMeetingData
                     chimeMeetingId: $chimeMeetingId
                     roomId: $roomId
@@ -183,13 +231,14 @@ export async function createRoomChimeMeeting(logger: P.Logger, roomId: string, c
             mutation: CreateRoomChimeMeetingDocument,
             variables: {
                 conferenceId,
+                subconferenceId,
                 roomId,
                 chimeMeetingData,
                 chimeMeetingId: chimeMeetingData.MeetingId,
             },
         });
     } catch (e: any) {
-        logger.error({ err: e, roomId, conferenceId }, "Failed to create a room Chime meeting");
+        logger.error({ err: e, roomId, conferenceId, subconferenceId }, "Failed to create a room Chime meeting");
         throw e;
     }
 
@@ -296,8 +345,8 @@ export async function getRoomChimeMeeting(
     }
 
     try {
-        const { conferenceId } = await getRoomConferenceId(roomId);
-        const chimeMeetingData = await createRoomChimeMeeting(logger, roomId, conferenceId);
+        const { conferenceId, subconferenceId } = await getRoomConferenceId(roomId);
+        const chimeMeetingData = await createRoomChimeMeeting(logger, roomId, conferenceId, subconferenceId);
         return { ...chimeMeetingData, conferenceId };
     } catch (e: any) {
         const existingChimeMeetingData = await getExistingRoomChimeMeeting(logger, roomId);
@@ -317,19 +366,20 @@ export async function getRoomVonageMeeting(roomId: string): Promise<string | nul
         return existingVonageMeetingId;
     }
 
-    // todo: create session if appropriate
+    // TODO: create session if appropriate
 
     return null;
 }
 
 export async function getRoomByVonageSessionId(
     sessionId: string
-): Promise<{ roomId: string; conferenceId: string } | null> {
+): Promise<{ roomId: string; conferenceId: string; subconferenceId: string | null | undefined } | null> {
     gql`
         query GetRoomBySessionId($sessionId: String!) {
             room_Room(where: { publicVonageSessionId: { _eq: $sessionId } }) {
                 id
                 conferenceId
+                subconferenceId
             }
         }
     `;
@@ -342,18 +392,23 @@ export async function getRoomByVonageSessionId(
     });
 
     return roomResult.data.room_Room.length === 1
-        ? { roomId: roomResult.data.room_Room[0].id, conferenceId: roomResult.data.room_Room[0].conferenceId }
+        ? {
+              roomId: roomResult.data.room_Room[0].id,
+              conferenceId: roomResult.data.room_Room[0].conferenceId,
+              subconferenceId: roomResult.data.room_Room[0].subconferenceId,
+          }
         : null;
 }
 
 export async function getRoomByChimeMeetingId(
     meetingId: string
-): Promise<{ roomId: string; conferenceId: string } | null> {
+): Promise<{ roomId: string; conferenceId: string; subconferenceId: string | null | undefined } | null> {
     gql`
         query GetRoomByChimeMeetingId($meetingId: String!) {
             room_Room(where: { chimeMeeting: { chimeMeetingId: { _eq: $meetingId } } }) {
                 id
                 conferenceId
+                subconferenceId
             }
         }
     `;
@@ -366,6 +421,10 @@ export async function getRoomByChimeMeetingId(
     });
 
     return roomResult.data.room_Room.length === 1
-        ? { roomId: roomResult.data.room_Room[0].id, conferenceId: roomResult.data.room_Room[0].conferenceId }
+        ? {
+              roomId: roomResult.data.room_Room[0].id,
+              conferenceId: roomResult.data.room_Room[0].conferenceId,
+              subconferenceId: roomResult.data.room_Room[0].subconferenceId,
+          }
         : null;
 }

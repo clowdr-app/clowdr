@@ -35,6 +35,7 @@ export interface ElementData extends BaseData {
     typeName: Content_ElementType_Enum;
     name: string;
     conferenceId: string;
+    subconferenceId?: string | null | undefined;
     itemId: string;
 }
 
@@ -79,6 +80,7 @@ export interface CombineVideosJobData extends BaseData {
     createdByRegistrantId: string | null;
     jobStatusName: Job_Queues_JobStatus_Enum;
     conferenceId: string;
+    subconferenceId?: string | null | undefined;
     message: string | null;
 }
 
@@ -88,6 +90,7 @@ export interface EventData extends BaseData {
     scheduledEndTime: string | null;
     scheduledStartTime: string | null;
     conferenceId: string;
+    subconferenceId?: string | null | undefined;
     itemId: string | null;
     roomId: string;
     timings_updated_at: string;
@@ -95,6 +98,7 @@ export interface EventData extends BaseData {
 
 export interface RoomData extends BaseData {
     conferenceId: string;
+    subconferenceId?: string | null | undefined;
     name: string;
     capacity: number | null;
     publicVonageSessionId: string | null;
@@ -105,6 +109,7 @@ export interface RoomData extends BaseData {
 export interface VonageSessionLayoutData_Record extends BaseData {
     vonageSessionId: string;
     conferenceId: string;
+    subconferenceId?: string | null | undefined;
     layoutData: VonageSessionLayoutData | null;
 }
 

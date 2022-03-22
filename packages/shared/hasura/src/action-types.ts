@@ -218,6 +218,7 @@ export type protectedEchoArgs = {
 export type createContentGroupRoomArgs = {
     itemId: uuid;
     conferenceId: uuid;
+    subconferenceId?: uuid | null | undefined;
 };
 
 export type createRoomDmArgs = {

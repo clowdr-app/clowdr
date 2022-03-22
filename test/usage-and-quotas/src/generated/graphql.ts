@@ -77,6 +77,7 @@ export type Email = {
     readonly retriesCount: Scalars["Int"];
     readonly sentAt?: Maybe<Scalars["timestamptz"]>;
     readonly status?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly subject: Scalars["String"];
     readonly updatedAt: Scalars["timestamptz"];
     /** An object relationship */
@@ -166,6 +167,7 @@ export type Email_Bool_Exp = {
     readonly retriesCount?: InputMaybe<Int_Comparison_Exp>;
     readonly sentAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly status?: InputMaybe<String_Comparison_Exp>;
+    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly subject?: InputMaybe<String_Comparison_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly user?: InputMaybe<User_Bool_Exp>;
@@ -202,6 +204,7 @@ export type Email_Insert_Input = {
     readonly retriesCount?: InputMaybe<Scalars["Int"]>;
     readonly sentAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly status?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly subject?: InputMaybe<Scalars["String"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly user?: InputMaybe<User_Obj_Rel_Insert_Input>;
@@ -225,6 +228,7 @@ export type Email_Max_Fields = {
     readonly retriesCount?: Maybe<Scalars["Int"]>;
     readonly sentAt?: Maybe<Scalars["timestamptz"]>;
     readonly status?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly subject?: Maybe<Scalars["String"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly userId?: Maybe<Scalars["String"]>;
@@ -246,6 +250,7 @@ export type Email_Max_Order_By = {
     readonly retriesCount?: InputMaybe<Order_By>;
     readonly sentAt?: InputMaybe<Order_By>;
     readonly status?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly subject?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly userId?: InputMaybe<Order_By>;
@@ -268,6 +273,7 @@ export type Email_Min_Fields = {
     readonly retriesCount?: Maybe<Scalars["Int"]>;
     readonly sentAt?: Maybe<Scalars["timestamptz"]>;
     readonly status?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly subject?: Maybe<Scalars["String"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly userId?: Maybe<Scalars["String"]>;
@@ -289,6 +295,7 @@ export type Email_Min_Order_By = {
     readonly retriesCount?: InputMaybe<Order_By>;
     readonly sentAt?: InputMaybe<Order_By>;
     readonly status?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly subject?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly userId?: InputMaybe<Order_By>;
@@ -327,6 +334,7 @@ export type Email_Order_By = {
     readonly retriesCount?: InputMaybe<Order_By>;
     readonly sentAt?: InputMaybe<Order_By>;
     readonly status?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly subject?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly user?: InputMaybe<User_Order_By>;
@@ -369,6 +377,8 @@ export enum Email_Select_Column {
     /** column name */
     Status = "status",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     Subject = "subject",
     /** column name */
     UpdatedAt = "updatedAt",
@@ -392,6 +402,7 @@ export type Email_Set_Input = {
     readonly retriesCount?: InputMaybe<Scalars["Int"]>;
     readonly sentAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly status?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly subject?: InputMaybe<Scalars["String"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly userId?: InputMaybe<Scalars["String"]>;
@@ -471,6 +482,8 @@ export enum Email_Update_Column {
     SentAt = "sentAt",
     /** column name */
     Status = "status",
+    /** column name */
+    SubconferenceId = "subconferenceId",
     /** column name */
     Subject = "subject",
     /** column name */
@@ -6195,6 +6208,8 @@ export type Collection_ProgramPerson = {
     /** An object relationship */
     readonly registrant?: Maybe<Registrant_Registrant>;
     readonly registrantId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    readonly subconference?: Maybe<Conference_Subconference>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly submissionRequestsSentCount: Scalars["Int"];
     readonly visibilityLevel: Conference_VisibilityLevel_Enum;
@@ -6314,6 +6329,7 @@ export type Collection_ProgramPerson_Bool_Exp = {
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     readonly registrantId?: InputMaybe<Uuid_Comparison_Exp>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly submissionRequestsSentCount?: InputMaybe<Int_Comparison_Exp>;
     readonly visibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum_Comparison_Exp>;
@@ -6349,6 +6365,7 @@ export type Collection_ProgramPerson_Insert_Input = {
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     readonly registrantId?: InputMaybe<Scalars["uuid"]>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly submissionRequestsSentCount?: InputMaybe<Scalars["Int"]>;
     readonly visibilityLevel?: InputMaybe<Conference_VisibilityLevel_Enum>;
@@ -6444,6 +6461,7 @@ export type Collection_ProgramPerson_Order_By = {
     readonly name?: InputMaybe<Order_By>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     readonly registrantId?: InputMaybe<Order_By>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly submissionRequestsSentCount?: InputMaybe<Order_By>;
     readonly visibilityLevel?: InputMaybe<Order_By>;
@@ -9770,6 +9788,8 @@ export type Content_Element = {
     readonly stats: ReadonlyArray<Analytics_ContentElementStats>;
     /** An aggregate relationship */
     readonly stats_aggregate: Analytics_ContentElementStats_Aggregate;
+    /** An object relationship */
+    readonly subconference?: Maybe<Conference_Subconference>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     readonly totalViewsStat?: Maybe<Analytics_ElementTotalViews>;
@@ -10154,6 +10174,7 @@ export type Content_Element_Bool_Exp = {
     readonly name?: InputMaybe<String_Comparison_Exp>;
     readonly source?: InputMaybe<Jsonb_Comparison_Exp>;
     readonly stats?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly totalViewsStat?: InputMaybe<Analytics_ElementTotalViews_Bool_Exp>;
     readonly type?: InputMaybe<Content_ElementType_Bool_Exp>;
@@ -10210,6 +10231,7 @@ export type Content_Element_Insert_Input = {
     readonly name?: InputMaybe<Scalars["String"]>;
     readonly source?: InputMaybe<Scalars["jsonb"]>;
     readonly stats?: InputMaybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly totalViewsStat?: InputMaybe<Analytics_ElementTotalViews_Obj_Rel_Insert_Input>;
     readonly type?: InputMaybe<Content_ElementType_Obj_Rel_Insert_Input>;
@@ -10309,6 +10331,7 @@ export type Content_Element_Order_By = {
     readonly name?: InputMaybe<Order_By>;
     readonly source?: InputMaybe<Order_By>;
     readonly stats_aggregate?: InputMaybe<Analytics_ContentElementStats_Aggregate_Order_By>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly totalViewsStat?: InputMaybe<Analytics_ElementTotalViews_Order_By>;
     readonly type?: InputMaybe<Content_ElementType_Order_By>;
@@ -12733,6 +12756,7 @@ export type Job_Queues_CombineVideosJob = {
     readonly outputName: Scalars["String"];
     /** An object relationship */
     readonly registrant?: Maybe<Registrant_Registrant>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at: Scalars["timestamptz"];
 };
 
@@ -12784,6 +12808,7 @@ export type Job_Queues_CombineVideosJob_Bool_Exp = {
     readonly message?: InputMaybe<String_Comparison_Exp>;
     readonly outputName?: InputMaybe<String_Comparison_Exp>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
+    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -12822,6 +12847,7 @@ export type Job_Queues_CombineVideosJob_Insert_Input = {
     readonly message?: InputMaybe<Scalars["String"]>;
     readonly outputName?: InputMaybe<Scalars["String"]>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -12835,6 +12861,7 @@ export type Job_Queues_CombineVideosJob_Max_Fields = {
     readonly mediaConvertJobId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
     readonly outputName?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -12848,6 +12875,7 @@ export type Job_Queues_CombineVideosJob_Min_Fields = {
     readonly mediaConvertJobId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
     readonly outputName?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -12881,6 +12909,7 @@ export type Job_Queues_CombineVideosJob_Order_By = {
     readonly message?: InputMaybe<Order_By>;
     readonly outputName?: InputMaybe<Order_By>;
     readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
 
@@ -12915,6 +12944,8 @@ export enum Job_Queues_CombineVideosJob_Select_Column {
     /** column name */
     OutputName = "outputName",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     UpdatedAt = "updated_at",
 }
 
@@ -12929,6 +12960,7 @@ export type Job_Queues_CombineVideosJob_Set_Input = {
     readonly mediaConvertJobId?: InputMaybe<Scalars["String"]>;
     readonly message?: InputMaybe<Scalars["String"]>;
     readonly outputName?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -12953,6 +12985,8 @@ export enum Job_Queues_CombineVideosJob_Update_Column {
     /** column name */
     OutputName = "outputName",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     UpdatedAt = "updated_at",
 }
 
@@ -12967,6 +13001,8 @@ export type Job_Queues_CustomEmailJob = {
     readonly markdownBody: Scalars["String"];
     readonly processed: Scalars["Boolean"];
     readonly registrantIds: Scalars["jsonb"];
+    /** An object relationship */
+    readonly subconference?: Maybe<Conference_Subconference>;
     readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly subject: Scalars["String"];
     readonly updated_at: Scalars["timestamptz"];
@@ -13015,6 +13051,7 @@ export type Job_Queues_CustomEmailJob_Bool_Exp = {
     readonly markdownBody?: InputMaybe<String_Comparison_Exp>;
     readonly processed?: InputMaybe<Boolean_Comparison_Exp>;
     readonly registrantIds?: InputMaybe<Jsonb_Comparison_Exp>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Bool_Exp>;
     readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly subject?: InputMaybe<String_Comparison_Exp>;
     readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -13050,6 +13087,7 @@ export type Job_Queues_CustomEmailJob_Insert_Input = {
     readonly markdownBody?: InputMaybe<Scalars["String"]>;
     readonly processed?: InputMaybe<Scalars["Boolean"]>;
     readonly registrantIds?: InputMaybe<Scalars["jsonb"]>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Obj_Rel_Insert_Input>;
     readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly subject?: InputMaybe<Scalars["String"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
@@ -13104,6 +13142,7 @@ export type Job_Queues_CustomEmailJob_Order_By = {
     readonly markdownBody?: InputMaybe<Order_By>;
     readonly processed?: InputMaybe<Order_By>;
     readonly registrantIds?: InputMaybe<Order_By>;
+    readonly subconference?: InputMaybe<Conference_Subconference_Order_By>;
     readonly subconferenceId?: InputMaybe<Order_By>;
     readonly subject?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
@@ -14138,6 +14177,7 @@ export type Job_Queues_MediaPackageHarvestJob = {
     readonly jobStatusName: Job_Queues_JobStatus_Enum;
     readonly mediaPackageHarvestJobId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at: Scalars["timestamptz"];
 };
 
@@ -14177,6 +14217,7 @@ export type Job_Queues_MediaPackageHarvestJob_Bool_Exp = {
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum_Comparison_Exp>;
     readonly mediaPackageHarvestJobId?: InputMaybe<String_Comparison_Exp>;
     readonly message?: InputMaybe<String_Comparison_Exp>;
+    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -14200,6 +14241,7 @@ export type Job_Queues_MediaPackageHarvestJob_Insert_Input = {
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     readonly mediaPackageHarvestJobId?: InputMaybe<Scalars["String"]>;
     readonly message?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -14212,6 +14254,7 @@ export type Job_Queues_MediaPackageHarvestJob_Max_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly mediaPackageHarvestJobId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -14224,6 +14267,7 @@ export type Job_Queues_MediaPackageHarvestJob_Min_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly mediaPackageHarvestJobId?: Maybe<Scalars["String"]>;
     readonly message?: Maybe<Scalars["String"]>;
+    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -14255,6 +14299,7 @@ export type Job_Queues_MediaPackageHarvestJob_Order_By = {
     readonly jobStatusName?: InputMaybe<Order_By>;
     readonly mediaPackageHarvestJobId?: InputMaybe<Order_By>;
     readonly message?: InputMaybe<Order_By>;
+    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updated_at?: InputMaybe<Order_By>;
 };
 
@@ -14280,6 +14325,8 @@ export enum Job_Queues_MediaPackageHarvestJob_Select_Column {
     /** column name */
     Message = "message",
     /** column name */
+    SubconferenceId = "subconferenceId",
+    /** column name */
     UpdatedAt = "updated_at",
 }
 
@@ -14292,6 +14339,7 @@ export type Job_Queues_MediaPackageHarvestJob_Set_Input = {
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     readonly mediaPackageHarvestJobId?: InputMaybe<Scalars["String"]>;
     readonly message?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updated_at?: InputMaybe<Scalars["timestamptz"]>;
 };
 
@@ -14311,6 +14359,8 @@ export enum Job_Queues_MediaPackageHarvestJob_Update_Column {
     MediaPackageHarvestJobId = "mediaPackageHarvestJobId",
     /** column name */
     Message = "message",
+    /** column name */
+    SubconferenceId = "subconferenceId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -16503,6 +16553,7 @@ export type Mutation_RootConference_UpdateEventUsageArgs = {
 export type Mutation_RootCreateItemRoomArgs = {
     conferenceId: Scalars["uuid"];
     itemId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** mutation root */
@@ -37783,7 +37834,6 @@ export type Video_VonageParticipantStream = {
     readonly registrant: Registrant_Registrant;
     readonly registrantId: Scalars["uuid"];
     readonly stopped_at?: Maybe<Scalars["timestamptz"]>;
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updatedAt: Scalars["timestamptz"];
     readonly vonageConnectionId: Scalars["String"];
     readonly vonageSessionId: Scalars["String"];
@@ -37840,7 +37890,6 @@ export type Video_VonageParticipantStream_Bool_Exp = {
     readonly registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     readonly registrantId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly stopped_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-    readonly subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly vonageConnectionId?: InputMaybe<String_Comparison_Exp>;
     readonly vonageSessionId?: InputMaybe<String_Comparison_Exp>;
@@ -37864,7 +37913,6 @@ export type Video_VonageParticipantStream_Insert_Input = {
     readonly registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     readonly registrantId?: InputMaybe<Scalars["uuid"]>;
     readonly stopped_at?: InputMaybe<Scalars["timestamptz"]>;
-    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly vonageConnectionId?: InputMaybe<Scalars["String"]>;
     readonly vonageSessionId?: InputMaybe<Scalars["String"]>;
@@ -37880,7 +37928,6 @@ export type Video_VonageParticipantStream_Max_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly registrantId?: Maybe<Scalars["uuid"]>;
     readonly stopped_at?: Maybe<Scalars["timestamptz"]>;
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly vonageConnectionId?: Maybe<Scalars["String"]>;
     readonly vonageSessionId?: Maybe<Scalars["String"]>;
@@ -37895,7 +37942,6 @@ export type Video_VonageParticipantStream_Max_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly registrantId?: InputMaybe<Order_By>;
     readonly stopped_at?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly vonageConnectionId?: InputMaybe<Order_By>;
     readonly vonageSessionId?: InputMaybe<Order_By>;
@@ -37911,7 +37957,6 @@ export type Video_VonageParticipantStream_Min_Fields = {
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly registrantId?: Maybe<Scalars["uuid"]>;
     readonly stopped_at?: Maybe<Scalars["timestamptz"]>;
-    readonly subconferenceId?: Maybe<Scalars["uuid"]>;
     readonly updatedAt?: Maybe<Scalars["timestamptz"]>;
     readonly vonageConnectionId?: Maybe<Scalars["String"]>;
     readonly vonageSessionId?: Maybe<Scalars["String"]>;
@@ -37926,7 +37971,6 @@ export type Video_VonageParticipantStream_Min_Order_By = {
     readonly id?: InputMaybe<Order_By>;
     readonly registrantId?: InputMaybe<Order_By>;
     readonly stopped_at?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly vonageConnectionId?: InputMaybe<Order_By>;
     readonly vonageSessionId?: InputMaybe<Order_By>;
@@ -37961,7 +38005,6 @@ export type Video_VonageParticipantStream_Order_By = {
     readonly registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     readonly registrantId?: InputMaybe<Order_By>;
     readonly stopped_at?: InputMaybe<Order_By>;
-    readonly subconferenceId?: InputMaybe<Order_By>;
     readonly updatedAt?: InputMaybe<Order_By>;
     readonly vonageConnectionId?: InputMaybe<Order_By>;
     readonly vonageSessionId?: InputMaybe<Order_By>;
@@ -37987,8 +38030,6 @@ export enum Video_VonageParticipantStream_Select_Column {
     /** column name */
     StoppedAt = "stopped_at",
     /** column name */
-    SubconferenceId = "subconferenceId",
-    /** column name */
     UpdatedAt = "updatedAt",
     /** column name */
     VonageConnectionId = "vonageConnectionId",
@@ -38007,7 +38048,6 @@ export type Video_VonageParticipantStream_Set_Input = {
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly registrantId?: InputMaybe<Scalars["uuid"]>;
     readonly stopped_at?: InputMaybe<Scalars["timestamptz"]>;
-    readonly subconferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     readonly vonageConnectionId?: InputMaybe<Scalars["String"]>;
     readonly vonageSessionId?: InputMaybe<Scalars["String"]>;
@@ -38027,8 +38067,6 @@ export enum Video_VonageParticipantStream_Update_Column {
     RegistrantId = "registrantId",
     /** column name */
     StoppedAt = "stopped_at",
-    /** column name */
-    SubconferenceId = "subconferenceId",
     /** column name */
     UpdatedAt = "updatedAt",
     /** column name */

@@ -80,8 +80,13 @@ export async function eventHasVonageSession(eventId: string): Promise<boolean> {
     return !!result.data.video_EventVonageSession.length;
 }
 
-export async function createEventVonageSession(logger: P.Logger, eventId: string, conferenceId: string): Promise<void> {
-    logger.info({ eventId, conferenceId }, "Creating EventVonageSession for event");
+export async function createEventVonageSession(
+    logger: P.Logger,
+    eventId: string,
+    conferenceId: string,
+    subconferenceId: string | null | undefined
+): Promise<void> {
+    logger.info({ eventId, conferenceId, subconferenceId }, "Creating EventVonageSession for event");
     const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
 
     if (!sessionResult) {
@@ -89,9 +94,19 @@ export async function createEventVonageSession(logger: P.Logger, eventId: string
     }
 
     gql`
-        mutation SetEventVonageSessionId($eventId: uuid!, $conferenceId: uuid!, $sessionId: String!) {
+        mutation SetEventVonageSessionId(
+            $eventId: uuid!
+            $conferenceId: uuid!
+            $subconferenceId: uuid
+            $sessionId: String!
+        ) {
             insert_video_EventVonageSession_one(
-                object: { eventId: $eventId, conferenceId: $conferenceId, sessionId: $sessionId }
+                object: {
+                    eventId: $eventId
+                    conferenceId: $conferenceId
+                    subconferenceId: $subconferenceId
+                    sessionId: $sessionId
+                }
                 on_conflict: { constraint: EventVonageSession_eventId_key, update_columns: sessionId }
             ) {
                 id
@@ -104,6 +119,7 @@ export async function createEventVonageSession(logger: P.Logger, eventId: string
         variables: {
             eventId,
             conferenceId,
+            subconferenceId,
             sessionId: sessionResult.sessionId,
         },
     });

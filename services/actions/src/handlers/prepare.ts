@@ -250,6 +250,7 @@ async function createEventVonageSessionsBroadcastItems(logger: P.Logger, confere
                 }
             ) {
                 id
+                subconferenceId
             }
         }
     `;
@@ -264,7 +265,7 @@ async function createEventVonageSessionsBroadcastItems(logger: P.Logger, confere
     for (const event of eventsWithoutSessionResult.data.schedule_Event) {
         logger.info({ eventId: event.id }, "Creating Vonage session for event");
         try {
-            await createEventVonageSession(logger, event.id, conferenceId);
+            await createEventVonageSession(logger, event.id, conferenceId, event.subconferenceId);
         } catch (e: any) {
             logger.error({ eventId: event.id, err: e }, "Failed to create Vonage session");
             throw new Error(`Failed to create Vonage session: ${e.message}`);

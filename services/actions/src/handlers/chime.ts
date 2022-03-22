@@ -67,7 +67,7 @@ export async function handleChimeRegistrantJoinedNotification(
     logger: P.Logger,
     payload: ChimeRegistrantJoinedDetail
 ): Promise<void> {
-    // todo: record the timestamp from the notification and only delete records if a new notification has a later timestamp
+    // TODO: record the timestamp from the notification and only delete records if a new notification has a later timestamp
     const room = await callWithRetry(() => getRoomByChimeMeetingId(payload.meetingId));
 
     if (!room) {
@@ -85,7 +85,6 @@ export async function handleChimeRegistrantJoinedNotification(
         addRoomParticipant(
             logger,
             room.roomId,
-            room.conferenceId,
             { chimeRegistrantId: payload.registrantId, chimeMeetingId: payload.meetingId },
             payload.externalUserId
         )
@@ -110,7 +109,15 @@ export async function handleChimeRegistrantLeftNotification(
     }
 
     await callWithRetry(async () =>
-        removeRoomParticipant(logger, room.roomId, room.conferenceId, payload.externalUserId, undefined, false)
+        removeRoomParticipant(
+            logger,
+            room.roomId,
+            room.conferenceId,
+            room.subconferenceId,
+            payload.externalUserId,
+            undefined,
+            false
+        )
     );
 }
 

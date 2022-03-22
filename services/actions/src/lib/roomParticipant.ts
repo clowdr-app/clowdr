@@ -29,7 +29,6 @@ export async function getIsRoomParticipant(roomId: string, registrantId: string)
 export async function addRoomParticipant(
     logger: P.Logger,
     roomId: string,
-    conferenceId: string,
     identifier:
         | { vonageConnectionId: string; vonageSessionId: string }
         | { chimeRegistrantId: string; chimeMeetingId: string },
@@ -53,7 +52,6 @@ export async function addRoomParticipant(
                 {
                     roomId,
                     registrantId,
-                    conferenceId,
                 },
                 "Registrant is already connected to the room, kicking from previous session"
             );
@@ -97,6 +95,7 @@ export async function removeRoomParticipant(
     logger: P.Logger,
     roomId: string,
     conferenceId: string | undefined,
+    subconferenceId: string | undefined | null,
     registrantId: string,
     vonage: { sessionId: string; connectionId: string } | undefined,
     removeOnlyConnection: boolean
@@ -125,30 +124,32 @@ export async function removeRoomParticipant(
             }
 
             if (vonage && conferenceId) {
-                if (conferenceId) {
-                    const count = await redisClientP.zcard(redisClient)(redisKey);
-                    if (count === 0) {
-                        await apolloClient.mutate({
-                            mutation: InsertVonageSessionLayoutDocument,
-                            variables: {
-                                object: {
-                                    conferenceId,
-                                    vonageSessionId: vonage.sessionId,
-                                    layoutData: {
-                                        type: VonageSessionLayoutType.BestFit,
-                                        screenShareType: "verticalPresentation",
-                                    } as VonageSessionLayoutData,
-                                },
+                const count = await redisClientP.zcard(redisClient)(redisKey);
+                if (count === 0) {
+                    await apolloClient.mutate({
+                        mutation: InsertVonageSessionLayoutDocument,
+                        variables: {
+                            object: {
+                                conferenceId,
+                                subconferenceId,
+                                vonageSessionId: vonage.sessionId,
+                                layoutData: {
+                                    type: VonageSessionLayoutType.BestFit,
+                                    screenShareType: "verticalPresentation",
+                                } as VonageSessionLayoutData,
                             },
-                        });
-                    }
+                        },
+                    });
                 }
             }
         } finally {
             await redisClientPool.release("lib/roomParticipant", redisClient);
         }
     } catch (err) {
-        logger.error({ roomId, conferenceId, registrantId, err }, "Failed to remove RoomParticipant record");
+        logger.error(
+            { roomId, conferenceId, subconferenceId, registrantId, err },
+            "Failed to remove RoomParticipant record"
+        );
         throw new Error("Failed to remove RoomParticipant record");
     }
 }

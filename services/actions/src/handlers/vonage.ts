@@ -397,6 +397,7 @@ gql`
     query Vonage_GetEventDetails($eventId: uuid!, $registrantId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             conferenceId
+            subconferenceId
             id
             modeName
             enableRecording
@@ -475,6 +476,18 @@ export async function handleJoinEvent(
         });
     }
 
+    if (
+        result.data.schedule_Event_by_pk?.subconferenceId &&
+        !result.data.registrant_Registrant_by_pk?.subconferenceMemberships.some(
+            (x) => x.subconferenceId === result.data.schedule_Event_by_pk?.subconferenceId
+        )
+    ) {
+        throw new BadRequestError("Invalid request", {
+            privateMessage: "Registrant is not a member of the subconference for the event",
+            privateErrorData: { eventId: payload.eventId, registrantId: payload.registrantId },
+        });
+    }
+
     const registrant = result.data.registrant_Registrant_by_pk;
 
     if (!registrant) {
@@ -509,7 +522,14 @@ export async function handleJoinEvent(
                 eventPerson.roleName === Schedule_EventProgramPersonRole_Enum.Chair
         ) ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
-        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator ||
+        (!!result.data.schedule_Event_by_pk.subconferenceId &&
+            registrant.subconferenceMemberships.some(
+                (x) =>
+                    x.subconferenceId === result.data.schedule_Event_by_pk?.subconferenceId &&
+                    (x.role === Registrant_RegistrantRole_Enum.Organizer ||
+                        x.role === Registrant_RegistrantRole_Enum.Moderator)
+            ));
     const connectionData: CustomConnectionData = {
         registrantId: registrant.id,
         userId,
@@ -547,6 +567,7 @@ gql`
         room_Room_by_pk(id: $roomId) {
             id
             capacity
+            subconferenceId
             item {
                 id
                 itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
@@ -637,6 +658,20 @@ export async function handleJoinRoom(
         throw new Error("Failed to fetch room information");
     }
 
+    if (
+        roomInfo.data.room_Room_by_pk.subconferenceId &&
+        !registrant.subconferenceMemberships.some(
+            (x) => x.subconferenceId === roomInfo.data.room_Room_by_pk?.subconferenceId
+        )
+    ) {
+        throw new BadRequestError("Invalid request", {
+            privateMessage: "Registrant is not a member of the subconference for the room",
+            privateErrorData: {
+                registrantId: payload.registrantId,
+            },
+        });
+    }
+
     const existingParticipantsCount = await getRoomParticipantsCount(payload.roomId);
     if (roomInfo.data.room_Room_by_pk.capacity && existingParticipantsCount >= roomInfo.data.room_Room_by_pk.capacity) {
         throw new Error("The number of participants has reached the room's maximum capacity");
@@ -657,7 +692,14 @@ export async function handleJoinRoom(
                 person.roleName.toUpperCase() === "ORGANIZER"
         ) ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
-        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator ||
+        (!!roomInfo.data.room_Room_by_pk.subconferenceId &&
+            registrant.subconferenceMemberships.some(
+                (x) =>
+                    x.subconferenceId === roomInfo.data.room_Room_by_pk?.subconferenceId &&
+                    (x.role === Registrant_RegistrantRole_Enum.Organizer ||
+                        x.role === Registrant_RegistrantRole_Enum.Moderator)
+            ));
     const accessToken = Vonage.vonage.generateToken(sessionId, {
         data: JSON.stringify(connectionData),
         role: isPresenterOrChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",

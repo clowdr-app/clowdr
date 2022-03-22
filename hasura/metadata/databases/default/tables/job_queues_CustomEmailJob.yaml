@@ -5,6 +5,9 @@ object_relationships:
 - name: conference
   using:
     foreign_key_constraint_on: conferenceId
+- name: subconference
+  using:
+    foreign_key_constraint_on: subconferenceId
 insert_permissions:
 - permission:
     backend_only: false

@@ -90,7 +90,7 @@ export function useVonageBroadcastLayout(
         [initialLayoutData, layoutData]
     );
 
-    // todo: make permissions work for event layouts
+    // TODO: make permissions work for event layouts
     const [, insertLayout] = useInsertVonageSessionLayoutMutation();
     const toast = useToast();
     const { id: conferenceId } = useConference();

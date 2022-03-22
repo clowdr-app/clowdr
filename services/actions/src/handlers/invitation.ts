@@ -201,6 +201,7 @@ your account and access the conference.</p>
                 logger,
                 Array.from(emailsToSend.values()),
                 registrants.data.registrant_Registrant[0].conference.id,
+                undefined,
                 `invitation:${jobId}`
             );
         }

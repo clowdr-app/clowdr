@@ -180,6 +180,11 @@ gql`
     fragment ElementUpdateNotification_ElementDetails on content_Element {
         id
         name
+        subconference {
+            id
+            name
+            shortName
+        }
         conference {
             id
             name
@@ -267,8 +272,8 @@ async function trySendTranscriptionEmail(logger: P.Logger, elementData: ElementD
                         name: elementData.name,
                     },
                     conference: {
-                        name: elementDetails.conference.name,
-                        shortName: elementDetails.conference.shortName,
+                        name: elementDetails.subconference?.name ?? elementDetails.conference.name,
+                        shortName: elementDetails.subconference?.shortName ?? elementDetails.conference.shortName,
                     },
                     item: {
                         title: elementDetails.item.title,
@@ -288,7 +293,7 @@ async function trySendTranscriptionEmail(logger: P.Logger, elementData: ElementD
                 };
             });
 
-        await insertEmails(logger, emails, elementData.conferenceId, undefined);
+        await insertEmails(logger, emails, elementData.conferenceId, elementData.subconferenceId, undefined);
     } catch (err) {
         logger.error({ elementData, err }, "Error while sending transcription emails");
         return;
@@ -312,7 +317,9 @@ async function trySendTranscriptionFailedEmail(logger: P.Logger, elementData: El
             const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${elementDetails.item.id}/element/${elementData.id}`;
 
             const htmlContents = `<p>Dear ${person.name},</p>
-<p>Your item ${elementData.name} (${elementDetails.item.title}) at ${elementDetails.conference.name} <b>has successfully entered our systems</b>. Your ${elementType} will be included in the conference pre-publications and/or live streams (as appropriate).</p>
+<p>Your item ${elementData.name} (${elementDetails.item.title}) at ${
+                elementDetails.subconference?.name ?? elementDetails.conference.name
+            } <b>has successfully entered our systems</b>. Your ${elementType} will be included in the conference pre-publications and/or live streams (as appropriate).</p>
 <p>However, we are sorry that unfortunately an error occurred and we were unable to auto-generate subtitles. We appreciate this is a significant inconvenience but we kindly ask that you to manually enter subtitles for your ${elementType}.</p>
 <p><a href="${magicItemLink}">Please manually add subtitles on this page.</a></p>
 <p>We have also sent ourselves a notification of this failure via email and we will assist you at our earliest opportunity. If we can get automated subtitles working for your ${elementType}, we will let you know as soon as possible!</p>`;
@@ -321,7 +328,9 @@ async function trySendTranscriptionFailedEmail(logger: P.Logger, elementData: El
                 recipientName: person.name,
                 emailAddress: person.email,
                 reason: EmailReason.ItemTranscriptionFailed,
-                subject: `Submission ERROR: Failed to generate subtitles for ${elementData.name} at ${elementDetails.conference.name}`,
+                subject: `Submission ERROR: Failed to generate subtitles for ${elementData.name} at ${
+                    elementDetails.subconference?.name ?? elementDetails.conference.name
+                }`,
                 htmlContents,
             };
         });
@@ -329,26 +338,29 @@ async function trySendTranscriptionFailedEmail(logger: P.Logger, elementData: El
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
         <pre>
-failure         Failed to generate subtitles
-message         ${message}
-itemId          ${elementDetails.item.id}
-itemTitle       ${elementDetails.item.title}
-elementId       ${elementData.id}
-elementName     ${elementData.name}
-conferenceName  ${elementDetails.conference.name}
-path            /item/${elementDetails.item.id}/element/${elementData.id}
+failure           Failed to generate subtitles
+message           ${message}
+itemId            ${elementDetails.item.id}
+itemTitle         ${elementDetails.item.title}
+elementId         ${elementData.id}
+elementName       ${elementData.name}
+conferenceName    ${elementDetails.conference.name}
+subconferenceName ${elementDetails.subconference?.name ?? "N/A"}
+path              /item/${elementDetails.item.id}/element/${elementData.id}
         </pre>
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: EmailReason.FailureNotification,
-            subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementData.name} at ${elementDetails.conference.name}`,
+            subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementData.name} at ${
+                elementDetails.subconference?.name ?? elementDetails.conference.name
+            }`,
             htmlContents,
         });
     }
 
-    await insertEmails(logger, emails, elementDetails.conference.id, undefined);
+    await insertEmails(logger, emails, elementData.conferenceId, elementData.subconferenceId, undefined);
 }
 
 async function trySendTranscodeFailedEmail(logger: P.Logger, elementData: ElementData, message: string) {
@@ -368,7 +380,9 @@ async function trySendTranscodeFailedEmail(logger: P.Logger, elementData: Elemen
             const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${elementDetails.item.id}/element/${elementData.id}`;
 
             const htmlContents = `<p>Dear ${person.name},</p>
-<p>There was a problem processing <b>${elementData.name}</b> (${elementDetails.item.title}) for ${elementDetails.conference.name}. Your ${elementType} is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>
+<p>There was a problem processing <b>${elementData.name}</b> (${elementDetails.item.title}) for ${
+                elementDetails.subconference?.name ?? elementDetails.conference.name
+            }. Your ${elementType} is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>
 <p>Error details: ${message}</p>
 <p><a href="${magicItemLink}">You may try uploading a new version</a> but we recommend you forward this email to your conference's organisers and ask for technical assistance.</p>
 <p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Midspace work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>`;
@@ -377,7 +391,9 @@ async function trySendTranscodeFailedEmail(logger: P.Logger, elementData: Elemen
                 recipientName: person.name,
                 emailAddress: person.email,
                 reason: "item_transcode_failed",
-                subject: `Submission ERROR: Failed to process ${elementData.name} at ${elementDetails.conference.name}`,
+                subject: `Submission ERROR: Failed to process ${elementData.name} at ${
+                    elementDetails.subconference?.name ?? elementDetails.conference.name
+                }`,
                 htmlContents,
             };
         });
@@ -385,26 +401,29 @@ async function trySendTranscodeFailedEmail(logger: P.Logger, elementData: Elemen
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
         <pre>
-failure         Failed to transcode video
-message         ${message}
-itemId          ${elementDetails.item.id}
-itemTitle       ${elementDetails.item.title}
-elementId       ${elementData.id}
-elementName     ${elementData.name}
-conferenceName  ${elementDetails.conference.name}
-path            /item/${elementDetails.item.id}/element/${elementData.id}
+failure           Failed to transcode video
+message           ${message}
+itemId            ${elementDetails.item.id}
+itemTitle         ${elementDetails.item.title}
+elementId         ${elementData.id}
+elementName       ${elementData.name}
+conferenceName    ${elementDetails.conference.name}
+subconferenceName ${elementDetails.subconference?.name ?? "N/A"}
+path              /item/${elementDetails.item.id}/element/${elementData.id}
         </pre>
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: EmailReason.ItemTranscodeFailed,
-            subject: `URGENT: SYSTEM ERROR: Failed to process ${elementData.name} at ${elementDetails.conference.name}`,
+            subject: `URGENT: SYSTEM ERROR: Failed to process ${elementData.name} at ${
+                elementDetails.subconference?.name ?? elementDetails.conference.name
+            }`,
             htmlContents,
         });
     }
 
-    await insertEmails(logger, emails, elementData.conferenceId, undefined);
+    await insertEmails(logger, emails, elementData.conferenceId, elementData.subconferenceId, undefined);
 }
 
 gql`

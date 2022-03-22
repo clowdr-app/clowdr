@@ -13,6 +13,9 @@ object_relationships:
 - name: item
   using:
     foreign_key_constraint_on: itemId
+- name: subconference
+  using:
+    foreign_key_constraint_on: subconferenceId
 - name: totalViewsStat
   using:
     manual_configuration:

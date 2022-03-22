@@ -418,7 +418,7 @@ export class ChannelStack extends cdk.Stack {
                 inputLossBehavior: {
                     blackFrameMsec: 10000,
                     inputLossImageColor: "333333",
-                    // todo: inputloss image slate
+                    // TODO: inputloss image slate
                     repeatFrameMsec: 1000,
                 },
             },

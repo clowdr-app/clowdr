@@ -17,8 +17,14 @@ import { callWithRetry } from "../utils";
 import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
-    query CustomEmail_SelectRegistrants($conferenceId: uuid!, $registrantIds: [uuid!]!) {
-        registrant_Registrant(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $registrantIds } }) {
+    query CustomEmail_SelectRegistrants(
+        $conferenceId: uuid!
+        $subconferenceId: uuid!
+        $withSubconference: Boolean!
+        $conferenceCond: registrant_Registrant_bool_exp!
+        $registrantIds: [uuid!]!
+    ) {
+        registrant_Registrant(where: { _and: [$conferenceCond, { id: { _in: $registrantIds } }] }) {
             displayName
             invitation {
                 invitedEmailAddress
@@ -29,6 +35,9 @@ gql`
                 id
                 email
             }
+        }
+        conference_Subconference_by_pk(id: $subconferenceId) @include(if: $withSubconference) {
+            shortName
         }
         conference_Conference_by_pk(id: $conferenceId) {
             shortName
@@ -51,6 +60,7 @@ async function sendCustomEmails(
     logger: P.Logger,
     registrantIds: string[],
     conferenceId: string,
+    subconferenceId: string | null | undefined,
     userMarkdownBody: string,
     subject: string,
     jobId: string
@@ -60,6 +70,18 @@ async function sendCustomEmails(
         variables: {
             registrantIds: R.uniq(registrantIds),
             conferenceId,
+            subconferenceId,
+            withSubconference: Boolean(subconferenceId),
+            conferenceCond: subconferenceId
+                ? {
+                      conferenceId: { _eq: conferenceId },
+                      subconferenceMemberships: {
+                          id: { _eq: subconferenceId },
+                      },
+                  }
+                : {
+                      conferenceId: { _eq: conferenceId },
+                  },
         },
     });
 
@@ -74,7 +96,10 @@ async function sendCustomEmails(
     });
 
     const userHtmlBody = markdownIt.render(userMarkdownBody);
-    const conferenceName = result.data.conference_Conference_by_pk?.shortName ?? "your conference";
+    const conferenceName =
+        result.data.conference_Subconference_by_pk?.shortName ??
+        result.data.conference_Conference_by_pk?.shortName ??
+        "your conference";
     const htmlContents = `<p><strong>A message from the organisers of ${conferenceName}:</strong></p>${userHtmlBody}`;
 
     const emailsToSend: Array<Email_Insert_Input> = result.data.registrant_Registrant
@@ -112,7 +137,7 @@ async function sendCustomEmails(
         });
     }
 
-    await insertEmails(logger, emailsToSend, conferenceId, `custom-email:${jobId}`);
+    await insertEmails(logger, emailsToSend, conferenceId, subconferenceId, `custom-email:${jobId}`);
 }
 
 gql`
@@ -121,6 +146,7 @@ gql`
             id
             registrantIds
             conferenceId
+            subconferenceId
             subject
             markdownBody
         }
@@ -146,7 +172,15 @@ export async function processCustomEmailsJobQueue(logger: P.Logger): Promise<voi
     const completedJobIds: string[] = [];
     for (const job of jobs.data.job_queues_CustomEmailJob) {
         try {
-            await sendCustomEmails(logger, job.registrantIds, job.conferenceId, job.markdownBody, job.subject, job.id);
+            await sendCustomEmails(
+                logger,
+                job.registrantIds,
+                job.conferenceId,
+                job.subconferenceId,
+                job.markdownBody,
+                job.subject,
+                job.id
+            );
             completedJobIds.push(job.id);
         } catch (error: any) {
             logger.error({ jobId: job.id, error }, "Failed to process send custom email job");

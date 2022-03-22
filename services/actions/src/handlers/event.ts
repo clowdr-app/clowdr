@@ -68,7 +68,7 @@ export async function handleEventUpdated(logger: P.Logger, payload: EventPayload
     try {
         const hasVonageSession = await eventHasVonageSession(newRow.id);
         if (!hasVonageSession && isLive(newRow.modeName)) {
-            await createEventVonageSession(logger, newRow.id, newRow.conferenceId);
+            await createEventVonageSession(logger, newRow.id, newRow.conferenceId, newRow.subconferenceId);
         }
     } catch (err) {
         logger.error({ eventId: newRow.id, err }, "Could not create Vonage session for event");
@@ -184,6 +184,7 @@ gql`
             scheduledStartTime
             scheduledEndTime
             conferenceId
+            subconferenceId
             modeName
             roomId
             enableRecording
@@ -289,7 +290,8 @@ export async function handleEventStartNotification(
                                 await createItemVideoChatRoom(
                                     logger,
                                     to.id,
-                                    result.data.schedule_Event_by_pk.conferenceId
+                                    result.data.schedule_Event_by_pk.conferenceId,
+                                    result.data.schedule_Event_by_pk.subconferenceId
                                 );
                                 itemsCreatedRoomsFor.push(to.id);
                             } catch (e: any) {
@@ -305,7 +307,8 @@ export async function handleEventStartNotification(
                                 await createItemVideoChatRoom(
                                     logger,
                                     result.data.schedule_Event_by_pk.item.id,
-                                    result.data.schedule_Event_by_pk.conferenceId
+                                    result.data.schedule_Event_by_pk.conferenceId,
+                                    result.data.schedule_Event_by_pk.subconferenceId
                                 );
                                 itemsCreatedRoomsFor.push(result.data.schedule_Event_by_pk.item.id);
                             } catch (e: any) {
@@ -333,7 +336,8 @@ export async function handleEventStartNotification(
                 await createItemVideoChatRoom(
                     logger,
                     result.data.schedule_Event_by_pk.item.id,
-                    result.data.schedule_Event_by_pk.conferenceId
+                    result.data.schedule_Event_by_pk.conferenceId,
+                    result.data.schedule_Event_by_pk.subconferenceId
                 );
             } catch (e: any) {
                 logger.error({ eventId, err: e }, "Failed to create automatic discussion room (fallback)");
@@ -385,6 +389,7 @@ export async function handleEventEndNotification(
         const roomId = result.data.schedule_Event_by_pk.roomId;
         const enableRecording = result.data.schedule_Event_by_pk.enableRecording;
         const conferenceId = result.data.schedule_Event_by_pk.conferenceId;
+        const subconferenceId = result.data.schedule_Event_by_pk.subconferenceId;
         const modeName = result.data.schedule_Event_by_pk.modeName;
 
         setTimeout(() => {
@@ -413,7 +418,7 @@ export async function handleEventEndNotification(
             const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
             setTimeout(() => {
                 if (modeName === Schedule_Mode_Enum.Livestream) {
-                    createMediaPackageHarvestJob(logger, eventId, conferenceId).catch((e) => {
+                    createMediaPackageHarvestJob(logger, eventId, conferenceId, subconferenceId).catch((e) => {
                         logger.error({ eventId, e }, "Failed to create MediaPackage harvest job");
                     });
                 }

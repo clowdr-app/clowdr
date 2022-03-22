@@ -1,24 +1,12 @@
 import { gql } from "@apollo/client/core";
-import type {
-    GetRegistrant_RegistrantFragment,
-    GetRegistrant_RegistrantWithPermissionsFragment,
-} from "../generated/graphql";
+import type { GetRegistrant_RegistrantFragment } from "../generated/graphql";
 import {
     Authorisation_FindRegistrantDocument,
     Authorisation_GetRegistrantDocument,
     GetRegistrantByConferenceSlugDocument,
     GetRegistrantDocument,
-    GetRegistrantWithPermissionsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-
-// export class Authorisation {
-//     constructor(private sessionVariables: { [key: string]?: string }) {}
-
-//     get userId(): string {
-//         return this.sessionVariables["x-hasura-user-id"];
-//     }
-// }
 
 export async function getRegistrant(userId: string, conferenceId: string): Promise<GetRegistrant_RegistrantFragment> {
     gql`
@@ -33,48 +21,18 @@ export async function getRegistrant(userId: string, conferenceId: string): Promi
             displayName
             conferenceId
             conferenceRole
+
+            subconferenceMemberships {
+                id
+                subconferenceId
+                role
+            }
         }
     `;
 
     // Check that the requesting user actually attends the conference
     const myRegistrantResult = await apolloClient.query({
         query: GetRegistrantDocument,
-        variables: {
-            userId,
-            conferenceId,
-        },
-    });
-
-    if (myRegistrantResult.data.registrant_Registrant.length !== 1) {
-        throw new Error("Could not find an registrant for the user at the specified conference");
-    }
-
-    return myRegistrantResult.data.registrant_Registrant[0];
-}
-
-/** @deprecated */
-export async function getRegistrantWithPermissions(
-    userId: string,
-    conferenceId: string
-): Promise<GetRegistrant_RegistrantWithPermissionsFragment> {
-    gql`
-        query GetRegistrantWithPermissions($userId: String!, $conferenceId: uuid!) {
-            registrant_Registrant(where: { userId: { _eq: $userId }, conferenceId: { _eq: $conferenceId } }) {
-                ...GetRegistrant_RegistrantWithPermissions
-            }
-        }
-
-        fragment GetRegistrant_RegistrantWithPermissions on registrant_Registrant {
-            id
-            displayName
-            conferenceId
-            conferenceRole
-        }
-    `;
-
-    // Check that the requesting user actually attends the conference
-    const myRegistrantResult = await apolloClient.query({
-        query: GetRegistrantWithPermissionsDocument,
         variables: {
             userId,
             conferenceId,

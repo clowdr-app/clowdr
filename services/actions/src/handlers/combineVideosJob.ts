@@ -44,13 +44,14 @@ gql`
             id
             created_at
             conferenceId
+            subconferenceId
             data
             jobStatusName
         }
     }
 
-    query CombineVideosJob_GetElements($conferenceId: uuid!, $elementIds: [uuid!]!) {
-        content_Element(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $elementIds } }) {
+    query CombineVideosJob_GetElements($elementIds: [uuid!]!) {
+        content_Element(where: { id: { _in: $elementIds } }) {
             id
             data
             itemId
@@ -80,7 +81,6 @@ export async function processCombineVideosJobQueue(logger: P.Logger): Promise<vo
             const result = await apolloClient.query({
                 query: CombineVideosJob_GetElementsDocument,
                 variables: {
-                    conferenceId: row.conferenceId,
                     elementIds: data.inputElements.map((item) => item.elementId),
                 },
             });
@@ -90,9 +90,9 @@ export async function processCombineVideosJobQueue(logger: P.Logger): Promise<vo
             if (itemIds.length > 1 || itemIds.length === 0) {
                 logger.error(
                     { jobId: row.id, itemIds },
-                    "Can only combine content items from exactly one content group"
+                    "Can only combine content items from exactly one content item"
                 );
-                throw new Error("Can only combine content items from exactly one content group");
+                throw new Error("Can only combine content items from exactly one content item");
             }
 
             const inputs = R.sortBy(
@@ -292,7 +292,7 @@ gql`
         $name: String!
         $itemId: uuid!
         $conferenceId: uuid!
-        $subconferenceId: uuid!
+        $subconferenceId: uuid
         $source: jsonb!
     ) {
         insert_content_Element_one(

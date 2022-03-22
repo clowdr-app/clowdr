@@ -1,7 +1,7 @@
-DROP VIEW "schedule"."OverlappingEvents";
-DROP VIEW "schedule"."CurrentEvents";
-DROP VIEW room."LivestreamDurations";
-DROP VIEW conference."RemainingQuota";
+DROP VIEW IF EXISTS "schedule"."OverlappingEvents";
+DROP VIEW IF EXISTS "schedule"."CurrentEvents";
+DROP VIEW IF EXISTS room."LivestreamDurations";
+DROP VIEW IF EXISTS conference."RemainingQuota";
 
 CREATE OR REPLACE FUNCTION "schedule"."checkInsertEvent"()
   RETURNS trigger AS
@@ -10,6 +10,8 @@ BEGIN
     RETURN NEW;
 END
 $func$ LANGUAGE plpgsql;
+
+ALTER TABLE "schedule"."Event" DISABLE TRIGGER ALL;
 
 CREATE OR REPLACE FUNCTION schedule."checkUpdateEvent"()
  RETURNS trigger
@@ -35,7 +37,7 @@ $function$;
 
 
 ALTER TABLE schedule."Event"
-    DROP COLUMN "endTime";
+    DROP COLUMN IF EXISTS "endTime";
 
 ALTER TABLE schedule."Event"
     ADD COLUMN "scheduledEndTime" timestamptz NOT NULL DEFAULT now();
@@ -479,6 +481,8 @@ AS $function$
         AND event."modeName" = 'LIVESTREAM'
     )
 $function$;
+
+ALTER TABLE "schedule"."Event" ENABLE TRIGGER ALL;
 
 CREATE
 OR REPLACE VIEW "room"."LivestreamDurations" AS

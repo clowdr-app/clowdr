@@ -246,10 +246,14 @@ export async function computeAuthHeaders(
                                     conference.subconferenceIds.map(async (subconferenceId) => {
                                         const subconference = await scCache.getEntity(subconferenceId, false);
                                         if (
-                                            subconference?.conferenceVisibilityLevel ===
+                                            subconference &&
+                                            (subconference?.conferenceVisibilityLevel ===
                                                 Conference_VisibilityLevel_Enum.Public ||
-                                            subconference?.conferenceVisibilityLevel ===
-                                                Conference_VisibilityLevel_Enum.External
+                                                subconference?.conferenceVisibilityLevel ===
+                                                    Conference_VisibilityLevel_Enum.External ||
+                                                registrant.subconferenceMemberships.some(
+                                                    (x) => x.subconferenceId === subconference?.id
+                                                ))
                                         ) {
                                             availableSubconferenceIds.push(subconference.id);
                                         }
@@ -268,10 +272,14 @@ export async function computeAuthHeaders(
                                     conference.subconferenceIds.map(async (subconferenceId) => {
                                         const subconference = await scCache.getEntity(subconferenceId, false);
                                         if (
-                                            subconference?.conferenceVisibilityLevel ===
+                                            subconference &&
+                                            (subconference?.conferenceVisibilityLevel ===
                                                 Conference_VisibilityLevel_Enum.Public ||
-                                            subconference?.conferenceVisibilityLevel ===
-                                                Conference_VisibilityLevel_Enum.External
+                                                subconference?.conferenceVisibilityLevel ===
+                                                    Conference_VisibilityLevel_Enum.External ||
+                                                registrant.subconferenceMemberships.some(
+                                                    (x) => x.subconferenceId === subconference?.id
+                                                ))
                                         ) {
                                             availableSubconferenceIds.push(subconference.id);
                                         }
@@ -285,7 +293,13 @@ export async function computeAuthHeaders(
                             if (unverifiedParams.roomId) {
                                 const room = await new RoomCache(logger).getEntity(unverifiedParams.roomId);
                                 if (room) {
-                                    if (room.conferenceId === conference.id && !room.subconferenceId) {
+                                    if (
+                                        room.conferenceId === conference.id &&
+                                        (!room.subconferenceId ||
+                                            registrant.subconferenceMemberships.some(
+                                                (x) => x.subconferenceId === room.subconferenceId
+                                            ))
+                                    ) {
                                         if (
                                             allowedRoles.includes(HasuraRoleName.Moderator) ||
                                             allowedRoles.includes(HasuraRoleName.SubconferenceOrganizer) ||
@@ -293,6 +307,9 @@ export async function computeAuthHeaders(
                                         ) {
                                             result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
                                             allowedRoles.push(HasuraRoleName.RoomAdmin);
+                                            allowedRoles.push(HasuraRoleName.RoomMember);
+                                        } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
+                                            result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
                                             allowedRoles.push(HasuraRoleName.RoomMember);
                                         } else {
                                             const role = await roomMembershipsCache(logger).getField(
@@ -308,11 +325,6 @@ export async function computeAuthHeaders(
                                                 if (role === Room_PersonRole_Enum.Admin) {
                                                     allowedRoles.push(HasuraRoleName.RoomAdmin);
                                                 }
-                                            } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
-                                                result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
-                                                    room.id
-                                                );
-                                                allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else {
                                                 return false;
                                             }
@@ -356,10 +368,7 @@ export async function computeAuthHeaders(
                                         })
                                     );
 
-                                    if (
-                                        requestedRole === HasuraRoleName.ConferenceOrganizer ||
-                                        requestedRole === HasuraRoleName.SubconferenceOrganizer
-                                    ) {
+                                    if (requestedRole === HasuraRoleName.ConferenceOrganizer) {
                                         if (allowedRoles.includes(requestedRole)) {
                                             const availableRoomIds: string[] = [];
                                             for (const roomId in allRooms) {

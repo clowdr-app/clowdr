@@ -22,7 +22,9 @@ export type Profile = {
     readonly hasBeenEdited: boolean;
 };
 
-export type Registrant = AuthdConferenceInfoFragment["registrants"][0];
+export type Registrant = Omit<AuthdConferenceInfoFragment["registrants"][0], "profile"> & {
+    profile: Profile;
+};
 
 export type RegistrantContextT = Registrant;
 

@@ -130,7 +130,7 @@ export async function handleRoomCacheUpdate(logger: P.Logger, payload: Payload<C
                     );
                 } else {
                     await subconferenceRoomsCache(logger).setField(
-                        newEntity.conferenceId,
+                        newEntity.subconferenceId,
                         newEntity.id,
                         newEntity.managementModeName
                     );

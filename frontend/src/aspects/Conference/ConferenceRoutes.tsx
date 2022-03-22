@@ -235,7 +235,7 @@ const PageNotImplemented = React.lazy(() => import("../Errors/PageNotImplemented
 function ManageConferenceRoutes(): JSX.Element {
     const { path } = useRouteMatch();
 
-    const { isOnManagementPage } = useAuthParameters();
+    const { isOnManagementPage, subconferenceId } = useAuthParameters();
     return isOnManagementPage ? (
         <Suspense fallback={<CenteredSpinner caller="ConferenceRoutes:238" />}>
             <Switch>
@@ -245,9 +245,11 @@ function ManageConferenceRoutes(): JSX.Element {
                 <Route path={`${path}/groups`}>
                     <ManageGroups />
                 </Route>
-                <Route path={`${path}/registrants`}>
-                    <ManageRegistrants />
-                </Route>
+                {!subconferenceId ? (
+                    <Route path={`${path}/registrants`}>
+                        <ManageRegistrants />
+                    </Route>
+                ) : undefined}
                 <Route path={`${path}/people`}>
                     <ManageProgramPeople />
                 </Route>
@@ -260,9 +262,11 @@ function ManageConferenceRoutes(): JSX.Element {
                 <Route path={`${path}/rooms`}>
                     <ManageRooms />
                 </Route>
-                <Route path={`${path}/shuffle`}>
-                    <ManageShuffle />
-                </Route>
+                {!subconferenceId ? (
+                    <Route path={`${path}/shuffle`}>
+                        <ManageShuffle />
+                    </Route>
+                ) : undefined}
                 <Route path={`${path}/broadcasts`}>
                     <ManageBroadcast />
                 </Route>
@@ -272,27 +276,39 @@ function ManageConferenceRoutes(): JSX.Element {
                 <Route path={`${path}/schedule`}>
                     <ManageSchedule />
                 </Route>
-                <Route path={`${path}/chats/moderation`}>
-                    <ManageModeration />
-                </Route>
-                <Route path={`${path}/email`}>
-                    <ManageEmail />
-                </Route>
+                {!subconferenceId ? (
+                    <Route path={`${path}/chats/moderation`}>
+                        <ManageModeration />
+                    </Route>
+                ) : undefined}
+                {!subconferenceId ? (
+                    <Route path={`${path}/email`}>
+                        <ManageEmail />
+                    </Route>
+                ) : undefined}
                 <Route path={`${path}/checklist`}>
                     <ChecklistPage />
                 </Route>
-                <Route path={`${path}/analytics`}>
-                    <AnalyticsDashboard />
-                </Route>
-                <Route path={`${path}/support`}>
-                    <PageNotImplemented />
-                </Route>
-                <Route path={`${path}/theme`}>
-                    <ManageTheme />
-                </Route>
-                <Route path={`${path}/settings`}>
-                    <ManageConfig />
-                </Route>
+                {!subconferenceId ? (
+                    <Route path={`${path}/analytics`}>
+                        <AnalyticsDashboard />
+                    </Route>
+                ) : undefined}
+                {!subconferenceId ? (
+                    <Route path={`${path}/support`}>
+                        <PageNotImplemented />
+                    </Route>
+                ) : undefined}
+                {!subconferenceId ? (
+                    <Route path={`${path}/theme`}>
+                        <ManageTheme />
+                    </Route>
+                ) : undefined}
+                {!subconferenceId ? (
+                    <Route path={`${path}/settings`}>
+                        <ManageConfig />
+                    </Route>
+                ) : undefined}
 
                 <Route path="/">
                     <PageNotFound />

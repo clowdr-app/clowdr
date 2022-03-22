@@ -105,15 +105,17 @@ export default function ManagerLandingPage(): JSX.Element {
                         description="Manage people listed in your program (authors, speakers, etc) and their links to registrants."
                         organizerRole
                     />
-                    <RestrictedDashboardButton
-                        to="content"
-                        name={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
-                        icon="star"
-                        description={`Manage your ${
-                            conference.sponsorsLabel?.[0]?.value ?? "sponsors"
-                        }, their booths and representatives.`}
-                        organizerRole
-                    />
+                    {!subconferenceId ? (
+                        <RestrictedDashboardButton
+                            to="content"
+                            name={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
+                            icon="star"
+                            description={`Manage your ${
+                                conference.sponsorsLabel?.[0]?.value ?? "sponsors"
+                            }, their booths and representatives.`}
+                            organizerRole
+                        />
+                    ) : undefined}
                 </Flex>
                 <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
                     Data
@@ -140,13 +142,15 @@ export default function ManagerLandingPage(): JSX.Element {
                         description="Export your conference data (events, public chats, analytics, etc)."
                         organizerRole
                     />
-                    <RestrictedDashboardButton
-                        to="analytics"
-                        name="Analytics"
-                        icon="chart-line"
-                        description="View activity at your conference."
-                        organizerRole
-                    />
+                    {!subconferenceId ? (
+                        <RestrictedDashboardButton
+                            to="analytics"
+                            name="Analytics"
+                            icon="chart-line"
+                            description="View activity at your conference."
+                            organizerRole
+                        />
+                    ) : undefined}
                 </Flex>
                 <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
                     Social
@@ -166,20 +170,24 @@ export default function ManagerLandingPage(): JSX.Element {
                         description="Manage and prioritise rooms."
                         organizerRole
                     />
-                    <RestrictedDashboardButton
-                        to="shuffle"
-                        name="Networking"
-                        icon="random"
-                        description="Manage randomised, time-limited networking, aka. shuffle periods."
-                        organizerRole
-                    />
-                    <RestrictedDashboardButton
-                        to="chats/moderation"
-                        name="Chat Moderation"
-                        icon="comments"
-                        description="Moderate conversations."
-                        moderatorRole
-                    />
+                    {!subconferenceId ? (
+                        <RestrictedDashboardButton
+                            to="shuffle"
+                            name="Networking"
+                            icon="random"
+                            description="Manage randomised, time-limited networking, aka. shuffle periods."
+                            organizerRole
+                        />
+                    ) : undefined}
+                    {!subconferenceId ? (
+                        <RestrictedDashboardButton
+                            to="chats/moderation"
+                            name="Chat Moderation"
+                            icon="comments"
+                            description="Moderate conversations."
+                            moderatorRole
+                        />
+                    ) : undefined}
                 </Flex>
                 <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
                     Registration
@@ -199,47 +207,53 @@ export default function ManagerLandingPage(): JSX.Element {
                         description="Manage groups of registrants."
                         organizerRole
                     />
-                    <RestrictedDashboardButton
-                        to="registrants"
-                        name="Registrants"
-                        icon="users"
-                        description="Manage who can log in and access your conference, e.g. registrants, presenters and speakers."
-                        organizerRole
-                    />
+                    {!subconferenceId ? (
+                        <RestrictedDashboardButton
+                            to="registrants"
+                            name="Registrants"
+                            icon="users"
+                            description="Manage who can log in and access your conference, e.g. registrants, presenters and speakers."
+                            organizerRole
+                        />
+                    ) : undefined}
                 </Flex>
-                <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
-                    Customize
-                </Heading>
-                <Flex
-                    flexWrap="wrap"
-                    alignItems="stretch"
-                    justifyContent="flex-start"
-                    w="100%"
-                    gridRowGap="1em"
-                    gridColumnGap="1em"
-                >
-                    <RestrictedDashboardButton
-                        to="theme"
-                        name="Theme"
-                        icon="palette"
-                        description="Customise the theme for attendees."
-                        organizerRole
-                    />
-                    <RestrictedDashboardButton
-                        to="email"
-                        name="Email"
-                        icon="envelope-open-text"
-                        description="Manage templates for submission requests, invitations, etc."
-                        organizerRole
-                    />
-                    <RestrictedDashboardButton
-                        to="settings"
-                        name="Settings"
-                        icon="cog"
-                        description="Manage global configuration of your conference."
-                        organizerRole
-                    />
-                </Flex>
+                {!subconferenceId ? (
+                    <>
+                        <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
+                            Customize
+                        </Heading>
+                        <Flex
+                            flexWrap="wrap"
+                            alignItems="stretch"
+                            justifyContent="flex-start"
+                            w="100%"
+                            gridRowGap="1em"
+                            gridColumnGap="1em"
+                        >
+                            <RestrictedDashboardButton
+                                to="theme"
+                                name="Theme"
+                                icon="palette"
+                                description="Customise the theme for attendees."
+                                organizerRole
+                            />
+                            <RestrictedDashboardButton
+                                to="email"
+                                name="Email"
+                                icon="envelope-open-text"
+                                description="Manage templates for submission requests, invitations, etc."
+                                organizerRole
+                            />
+                            <RestrictedDashboardButton
+                                to="settings"
+                                name="Settings"
+                                icon="cog"
+                                description="Manage global configuration of your conference."
+                                organizerRole
+                            />
+                        </Flex>
+                    </>
+                ) : undefined}
                 {/* <RestrictedDashboardButton
                     to="broadcasts"
                     name="Broadcasts"

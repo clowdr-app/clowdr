@@ -295,7 +295,7 @@ export default function LeftMenu({
                         />
                     ) : undefined}
                     <Box flex="1 1 auto" />
-                    <RequireRole organizerRole moderatorRole>
+                    <RequireRole organizerRole moderatorRole permitIfAnySubconference>
                         <MenuButton
                             label="Manage"
                             iconStyle="s"

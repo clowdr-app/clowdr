@@ -68,7 +68,7 @@ export default function ManagerLandingPage(): JSX.Element {
                         Program
                     </Heading>
                     <Spacer w="auto" />
-                    <RequireRole organizerRole={true}>
+                    <RequireRole organizerRole>
                         <Link as={ReactLink} to={`${conferencePath}/manage/checklist`} fontSize="lg">
                             Checklist
                         </Link>

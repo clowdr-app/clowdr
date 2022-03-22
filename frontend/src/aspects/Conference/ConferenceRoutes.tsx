@@ -76,7 +76,12 @@ export default function ConferenceRoutes(): JSX.Element {
                 {mRegistrant && <Route exact path={`${path}/profile/backstages`} component={MyBackstages} />}
 
                 <Route path={`${path}/manage`}>
-                    <RequireRole organizerRole moderatorRole componentIfDenied={<PageNotFound />}>
+                    <RequireRole
+                        organizerRole
+                        moderatorRole
+                        permitIfAnySubconference
+                        componentIfDenied={<PageNotFound />}
+                    >
                         <ManageConferenceRoutes />
                     </RequireRole>
                 </Route>

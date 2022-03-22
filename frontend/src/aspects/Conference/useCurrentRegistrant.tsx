@@ -1,6 +1,6 @@
 import { assert } from "@midspace/assert";
 import React, { useContext, useEffect, useState } from "react";
-import type { Maybe, Registrant_RegistrantRole_Enum } from "../../generated/graphql";
+import type { AuthdConferenceInfoFragment, Maybe } from "../../generated/graphql";
 import type { BadgeData } from "../Badges/ProfileBadge";
 import { useConference } from "./useConference";
 
@@ -22,13 +22,7 @@ export type Profile = {
     readonly hasBeenEdited: boolean;
 };
 
-export type Registrant = {
-    readonly id: any;
-    readonly userId?: Maybe<string>;
-    readonly displayName: string;
-    readonly profile: Profile;
-    readonly conferenceRole: Registrant_RegistrantRole_Enum;
-};
+export type Registrant = AuthdConferenceInfoFragment["registrants"][0];
 
 export type RegistrantContextT = Registrant;
 

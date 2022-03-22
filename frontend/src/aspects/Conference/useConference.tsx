@@ -239,7 +239,7 @@ function ConferenceProvider_WithoutUser({
     );
 }
 
-function ConferenceProvider_WithUser({
+export function ConferenceProvider_WithUser({
     children,
     userId,
     conferenceId,

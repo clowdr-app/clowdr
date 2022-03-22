@@ -9,6 +9,7 @@ import { makeContext } from "../../GQL/make-context";
 import { useTitle } from "../../Hooks/useTitle";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
+import { DashboardPage } from "./DashboardPage";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
 gql`
@@ -46,7 +47,7 @@ export default function ManagerLandingPage(): JSX.Element {
         "support@midspace.app";
 
     return (
-        <>
+        <DashboardPage title={`Manage ${conference.shortName}`}>
             {title}
             <VStack
                 w="100%"
@@ -56,9 +57,6 @@ export default function ManagerLandingPage(): JSX.Element {
                 spacing={8}
                 maxW="calc(902px + (2 * var(--chakra-space-8)))"
             >
-                <Heading as="h1" id="page-heading" mt={4} textAlign="left" w="100%" fontSize="4xl">
-                    Manage {conference.shortName}
-                </Heading>
                 <Text>
                     <chakra.span fontWeight="bold">Need help?</chakra.span> Contact our support team at:&nbsp;
                     <Link wordBreak="keep-all" whiteSpace="nowrap" href={`mailto:${techSupportAddress}`}>
@@ -270,6 +268,6 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="question-circle"
                     description="Learn about how to use Midspace's management tools and best practices."
                 /> */}
-        </>
+        </DashboardPage>
     );
 }

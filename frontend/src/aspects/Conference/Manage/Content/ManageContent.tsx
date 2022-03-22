@@ -3,7 +3,6 @@ import {
     Box,
     Button,
     FormLabel,
-    Heading,
     HStack,
     Input,
     Menu,
@@ -53,15 +52,14 @@ import type {
     RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
-import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useTitle } from "../../../Hooks/useTitle";
 import { maybeCompare } from "../../../Utils/maybeCompare";
-import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
+import { DashboardPage } from "../DashboardPage";
 import { BulkOperationMenu } from "./v2/BulkOperations/BulkOperationMenu";
 import ManageExhibitionsModal from "./v2/Exhibition/ManageExhibitionsModal";
 import { SecondaryEditor } from "./v2/Item/SecondaryEditor";
@@ -1299,14 +1297,8 @@ export default function ManageContentV2(): JSX.Element {
     );
 
     return (
-        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Content">
             {title}
-            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading as="h2" id="page-heading" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Content &amp; {conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
-            </Heading>
             {(loadingAllTags && !allTags) ||
             (loadingAllExhibitions && !allExhibitions) ||
             (loadingAllItems && !allItems?.content_Item) ? (
@@ -1316,7 +1308,7 @@ export default function ManageContentV2(): JSX.Element {
             ) : (
                 <></>
             )}
-            <HStack spacing={2}>
+            <HStack spacing={2} mx="auto">
                 <ManageTagsModal
                     onClose={async () => {
                         await Promise.all([refetchAllItems(), refetchAllTags()]);
@@ -1368,6 +1360,6 @@ export default function ManageContentV2(): JSX.Element {
                 onClose={submissionsReview_OnClose}
                 itemIds={submissionsReview_ItemIds}
             />
-        </RequireRole>
+        </DashboardPage>
     );
 }

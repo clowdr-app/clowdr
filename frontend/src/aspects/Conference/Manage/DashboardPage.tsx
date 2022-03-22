@@ -1,7 +1,8 @@
-import { Box, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Spacer, useColorModeValue } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import React from "react";
 import { Breadcrumbs } from "./Breadcrumbs";
+import { SubconferenceSelector } from "./Subconferences/SubconferenceSelector";
 
 export function DashboardPage({
     title,
@@ -24,9 +25,13 @@ export function DashboardPage({
                 borderBottomColor={grayBorder}
             >
                 <Breadcrumbs />
-                <Heading id="page-heading" as="h1" size="xl" textAlign="left" mt={4} mb={4}>
-                    {title}
-                </Heading>
+                <HStack>
+                    <Heading id="page-heading" as="h1" size="xl" textAlign="left" mt={4} mb={4}>
+                        {title}
+                    </Heading>
+                    <Spacer />
+                    <SubconferenceSelector />
+                </HStack>
             </Box>
             <Flex flexDir="column" mt={4} w="100%" overflow={autoOverflow ? "auto" : undefined}>
                 {children}

@@ -5,6 +5,7 @@ import {
     FormErrorMessage,
     FormHelperText,
     FormLabel,
+    HStack,
     Input,
     InputGroup,
     InputRightElement,
@@ -15,14 +16,17 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Radio,
+    RadioGroup,
     useToast,
 } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useMemo } from "react";
 import type { SubmitHandler } from "react-hook-form";
-import { useForm } from "react-hook-form";
+import { useController, useForm } from "react-hook-form";
 import {
+    Conference_VisibilityLevel_Enum,
     Registrant_RegistrantRole_Enum,
     useSubconferenceCreateDialog_CreateSubconferenceMutation,
 } from "../../../../generated/graphql";
@@ -39,7 +43,12 @@ gql`
     }
 `;
 
-type FormValues = { name: string | null; shortName: string | null };
+type FormValues = {
+    name: string | null;
+    shortName: string | null;
+    conferenceVisibilityLevel: string | undefined;
+    programVisibilityLevel: string | undefined;
+};
 
 function generateSlug(value: string) {
     return value.replace(/\s/g, "").toLowerCase();
@@ -58,12 +67,27 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
         watch,
         reset,
         formState: { errors, touchedFields, isSubmitting, isValid },
+        control,
     } = useForm<FormValues>({
         defaultValues: {
             name: null,
             shortName: null,
         },
         mode: "all",
+    });
+
+    const conferenceVisibilityLevel = useController({
+        name: "conferenceVisibilityLevel",
+        control,
+        defaultValue: Conference_VisibilityLevel_Enum.Internal,
+        rules: { required: true },
+    });
+
+    const programVisibilityLevel = useController({
+        name: "programVisibilityLevel",
+        control,
+        defaultValue: Conference_VisibilityLevel_Enum.Internal,
+        rules: { required: true },
     });
 
     const onSubmit: SubmitHandler<FormValues> = useCallback(
@@ -87,6 +111,10 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
                             shortName: data.shortName,
                             conferenceId: conference.id,
                             slug: generateSlug(data.name),
+                            conferenceVisibilityLevel:
+                                data.conferenceVisibilityLevel as Conference_VisibilityLevel_Enum,
+                            defaultProgramVisibilityLevel:
+                                data.programVisibilityLevel as Conference_VisibilityLevel_Enum,
                             memberships: {
                                 data: [
                                     {
@@ -120,7 +148,7 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
                 });
             }
         },
-        [conference.id, createSubconference, registrant.id, toast]
+        [conference.id, createSubconference, onClose, registrant.id, reset, toast]
     );
 
     const name = watch("name");
@@ -176,6 +204,32 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
                                     <FormErrorIcon />
                                 </InputRightElement>
                             </InputGroup>
+                        </FormControl>
+
+                        <FormControl>
+                            <FormLabel mt={2}>Visibility</FormLabel>
+                            <FormHelperText>How visible should this subconference be?</FormHelperText>
+                            <RadioGroup {...conferenceVisibilityLevel.field} mt={2}>
+                                <HStack direction="row" justifyContent="space-between">
+                                    <Radio value={Conference_VisibilityLevel_Enum.Public}>Public</Radio>
+                                    <Radio value={Conference_VisibilityLevel_Enum.External}>External</Radio>
+                                    <Radio value={Conference_VisibilityLevel_Enum.Internal}>Internal</Radio>
+                                    <Radio value={Conference_VisibilityLevel_Enum.Private}>Private</Radio>
+                                </HStack>
+                            </RadioGroup>
+                        </FormControl>
+
+                        <FormControl>
+                            <FormLabel mt={2}>Default Program Visibility</FormLabel>
+                            <FormHelperText>How visible should the schedule of this subconference be?</FormHelperText>
+                            <RadioGroup {...programVisibilityLevel.field} mt={2}>
+                                <HStack direction="row" justifyContent="space-between">
+                                    <Radio value={Conference_VisibilityLevel_Enum.Public}>Public</Radio>
+                                    <Radio value={Conference_VisibilityLevel_Enum.External}>External</Radio>
+                                    <Radio value={Conference_VisibilityLevel_Enum.Internal}>Internal</Radio>
+                                    <Radio value={Conference_VisibilityLevel_Enum.Private}>Private</Radio>
+                                </HStack>
+                            </RadioGroup>
                         </FormControl>
                     </ModalBody>
 

@@ -97,7 +97,7 @@ export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
                     <MenuButton as={Button} leftIcon={<ChevronDownIcon />} transition="all 0.2s" variant="outline">
                         {selectedSubconference}
                     </MenuButton>
-                    <MenuList>
+                    <MenuList maxH="min(50vh, 25em)" overflowY="scroll">
                         <MenuItem
                             isDisabled={
                                 registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
@@ -124,11 +124,11 @@ export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
                         ) : undefined}
                     </MenuList>
                 </Menu>
-            ) : (
-                <Button leftIcon={<AddIcon />} isDisabled={true} onClick={() => createDialog.onOpen()}>
+            ) : mCurrentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ? (
+                <Button leftIcon={<AddIcon />} onClick={() => createDialog.onOpen()}>
                     Add subconference
                 </Button>
-            )}
+            ) : undefined}
         </>
     );
 }

@@ -1,14 +1,17 @@
 import { AddIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import { Button, Menu, MenuButton, MenuGroup, MenuItem, MenuList } from "@chakra-ui/react";
+import { Button, Menu, MenuButton, MenuDivider, MenuGroup, MenuItem, MenuList, useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useMemo } from "react";
 import { Registrant_RegistrantRole_Enum } from "../../../../generated/graphql";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useConference } from "../../useConference";
-import useCurrentRegistrant from "../../useCurrentRegistrant";
+import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import { SubconferenceCreateDialog } from "./SubconferenceCreateDialog";
 
 export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
+    const mCurrentRegistrant = useMaybeCurrentRegistrant();
+    const createDialog = useDisclosure();
     const { subconferenceId, setSubconferenceId } = useAuthParameters();
 
     const subconferences = useMemo(() => {
@@ -86,35 +89,46 @@ export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
         }
     }, [registrant.conferenceRole, setSubconferenceId, subconferenceId, subconferences]);
 
-    return conference.subconferences.length ? (
-        <Menu>
-            <MenuButton as={Button} leftIcon={<ChevronDownIcon />} transition="all 0.2s" variant="outline">
-                {selectedSubconference}
-            </MenuButton>
-            <MenuList>
-                <MenuItem
-                    isDisabled={
-                        registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
-                        registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Moderator
-                    }
-                    title={
-                        registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
-                        registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Moderator
-                            ? "You are not an organizer or moderator of the main conference."
-                            : undefined
-                    }
-                    fontWeight={!subconferenceId ? "bold" : "undefined"}
-                    onClick={() => setSubconferenceId(null)}
-                >
-                    Main conference
-                </MenuItem>
-                {organizerEl}
-                {nonOrganizerEl}
-            </MenuList>
-        </Menu>
-    ) : (
-        <Button leftIcon={<AddIcon />} isDisabled={true}>
-            Add subconference
-        </Button>
+    return (
+        <>
+            <SubconferenceCreateDialog isOpen={createDialog.isOpen} onClose={createDialog.onClose} />
+            {conference.subconferences.length ? (
+                <Menu>
+                    <MenuButton as={Button} leftIcon={<ChevronDownIcon />} transition="all 0.2s" variant="outline">
+                        {selectedSubconference}
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem
+                            isDisabled={
+                                registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
+                                registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Moderator
+                            }
+                            title={
+                                registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
+                                registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Moderator
+                                    ? "You are not an organizer or moderator of the main conference."
+                                    : undefined
+                            }
+                            fontWeight={!subconferenceId ? "bold" : "undefined"}
+                            onClick={() => setSubconferenceId(null)}
+                        >
+                            Main conference
+                        </MenuItem>
+                        {organizerEl}
+                        {nonOrganizerEl}
+                        <MenuDivider />
+                        {mCurrentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ? (
+                            <MenuItem icon={<AddIcon />} onClick={() => createDialog.onOpen()}>
+                                Add subconference
+                            </MenuItem>
+                        ) : undefined}
+                    </MenuList>
+                </Menu>
+            ) : (
+                <Button leftIcon={<AddIcon />} isDisabled={true} onClick={() => createDialog.onOpen()}>
+                    Add subconference
+                </Button>
+            )}
+        </>
     );
 }

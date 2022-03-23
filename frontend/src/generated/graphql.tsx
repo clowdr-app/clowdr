@@ -47100,6 +47100,18 @@ export type DeleteShufflePeriodMutation = {
     readonly delete_room_ShufflePeriod_by_pk?: { readonly __typename?: "room_ShufflePeriod"; readonly id: any } | null;
 };
 
+export type SubconferenceCreateDialog_CreateSubconferenceMutationVariables = Exact<{
+    subconference: Conference_Subconference_Insert_Input;
+}>;
+
+export type SubconferenceCreateDialog_CreateSubconferenceMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_conference_Subconference_one?: {
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+    } | null;
+};
+
 export type UpsertConferenceThemeMutationVariables = Exact<{
     conferenceId: Scalars["uuid"];
     value: Scalars["jsonb"];
@@ -55297,6 +55309,20 @@ export function useDeleteShufflePeriodMutation() {
     return Urql.useMutation<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>(
         DeleteShufflePeriodDocument
     );
+}
+export const SubconferenceCreateDialog_CreateSubconferenceDocument = gql`
+    mutation SubconferenceCreateDialog_CreateSubconference($subconference: conference_Subconference_insert_input!) {
+        insert_conference_Subconference_one(object: $subconference) {
+            id
+        }
+    }
+`;
+
+export function useSubconferenceCreateDialog_CreateSubconferenceMutation() {
+    return Urql.useMutation<
+        SubconferenceCreateDialog_CreateSubconferenceMutation,
+        SubconferenceCreateDialog_CreateSubconferenceMutationVariables
+    >(SubconferenceCreateDialog_CreateSubconferenceDocument);
 }
 export const UpsertConferenceThemeDocument = gql`
     mutation UpsertConferenceTheme($conferenceId: uuid!, $value: jsonb!) {

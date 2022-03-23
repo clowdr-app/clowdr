@@ -110,7 +110,13 @@ function UrqlProviderInner({
                             }
                             if (fetchOptions?.headers) {
                                 for (const key in fetchOptions.headers) {
-                                    headers[key.toLowerCase()] = fetchOptions.headers[key];
+                                    const value = fetchOptions.headers[key];
+
+                                    if (value) {
+                                        headers[key.toLowerCase()] = fetchOptions.headers[key];
+                                    } else {
+                                        delete headers[key.toLowerCase()];
+                                    }
                                 }
                             }
                             headers.authorization = "Bearer " + authState.token;

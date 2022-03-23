@@ -5,7 +5,6 @@ import {
     Code,
     Flex,
     FormLabel,
-    Heading,
     Input,
     Menu,
     MenuButton,
@@ -47,14 +46,13 @@ import type {
     Update,
 } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
-import PageNotFound from "../../Errors/PageNotFound";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Hooks/useTitle";
 import { maybeCompare } from "../../Utils/maybeCompare";
-import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
+import { DashboardPage } from "./DashboardPage";
 
 // TODO: Handle duplicate email addresses (edit/create)
 // TODO: Handle duplicate name+affiliation (edit/create)
@@ -848,14 +846,8 @@ export default function ManageProgramPeople(): JSX.Element {
     const pageSizes = useMemo(() => [10, 20, 35, 50], []);
 
     return (
-        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Program People">
             {title}
-            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Program People
-            </Heading>
             {loadingAllProgramPersons && !allProgramPersons?.collection_ProgramPerson ? (
                 <></>
             ) : errorAllProgramPersons ? (
@@ -875,6 +867,6 @@ export default function ManageProgramPeople(): JSX.Element {
                 buttons={buttons}
                 forceReload={forceReloadRef}
             />
-        </RequireRole>
+        </DashboardPage>
     );
 }

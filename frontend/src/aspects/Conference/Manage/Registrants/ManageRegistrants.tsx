@@ -5,7 +5,6 @@ import {
     Center,
     Flex,
     FormLabel,
-    Heading,
     Input,
     Menu,
     MenuButton,
@@ -68,15 +67,14 @@ import type {
     Update,
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
-import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useTitle } from "../../../Hooks/useTitle";
 import { maybeCompare } from "../../../Utils/maybeCompare";
-import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
+import { DashboardPage } from "../DashboardPage";
 import { SendEmailModal } from "./SendEmailModal";
 
 gql`
@@ -1796,81 +1794,78 @@ export default function ManageRegistrants(): JSX.Element {
     );
 
     return (
-        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Registrants">
             {title}
-            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Registrants
-            </Heading>
-            {(loadingAllGroups && !allGroups) || (loadingAllRegistrants && !allRegistrants?.registrant_Registrant) ? (
-                <></>
-            ) : errorAllRegistrants || errorAllGroups ? (
-                <>An error occurred loading in data - please see further information in notifications.</>
-            ) : (
-                <></>
-            )}
-            <CRUDTable<RegistrantDescriptor>
-                columns={columns}
-                row={row}
-                data={
-                    !loadingAllGroups &&
-                    !loadingAllRegistrants &&
-                    (allGroups?.registrant_Group && allRegistrants?.registrant_Registrant ? data : null)
-                }
-                tableUniqueName="ManageConferenceRegistrants"
-                alert={
-                    insertRegistrantResponse.error ||
-                    insertRegistrantWithoutInviteResponse.error ||
-                    updateRegistrantResponse.error ||
-                    deleteRegistrantsResponse.error
-                        ? {
-                              status: "error",
-                              title: "Error saving changes",
-                              description:
-                                  extractActualError(
-                                      insertRegistrantResponse.error ??
-                                          insertRegistrantWithoutInviteResponse.error ??
-                                          updateRegistrantResponse.error ??
-                                          deleteRegistrantsResponse.error
-                                  ) ?? "Unknown error",
-                          }
-                        : undefined
-                }
-                insert={insert}
-                update={update}
-                delete={deleteP}
-                buttons={buttons}
-            />
-            <SendEmailModal
-                isOpen={sendCustomEmailModal.isOpen}
-                onClose={sendCustomEmailModal.onClose}
-                registrants={sendCustomEmailRegistrants}
-                send={async (registrantIds: string[], markdownBody: string, subject: string) => {
-                    const result = await insertCustomEmailJobMutation(
-                        {
-                            registrantIds,
-                            conferenceId: conference.id,
-                            markdownBody,
-                            subject,
-                        },
-                        {
-                            fetchOptions: {
-                                headers: {
-                                    [AuthHeader.Role]: subconferenceId
-                                        ? HasuraRoleName.SubconferenceOrganizer
-                                        : HasuraRoleName.ConferenceOrganizer,
-                                },
-                            },
-                        }
-                    );
-                    if (result?.error) {
-                        console.error("Failed to insert CustomEmailJob", result.error);
-                        throw new Error("Error submitting query");
+            <Box>
+                {(loadingAllGroups && !allGroups) ||
+                (loadingAllRegistrants && !allRegistrants?.registrant_Registrant) ? (
+                    <></>
+                ) : errorAllRegistrants || errorAllGroups ? (
+                    <>An error occurred loading in data - please see further information in notifications.</>
+                ) : (
+                    <></>
+                )}
+                <CRUDTable<RegistrantDescriptor>
+                    columns={columns}
+                    row={row}
+                    data={
+                        !loadingAllGroups &&
+                        !loadingAllRegistrants &&
+                        (allGroups?.registrant_Group && allRegistrants?.registrant_Registrant ? data : null)
                     }
-                }}
-            />
-        </RequireRole>
+                    tableUniqueName="ManageConferenceRegistrants"
+                    alert={
+                        insertRegistrantResponse.error ||
+                        insertRegistrantWithoutInviteResponse.error ||
+                        updateRegistrantResponse.error ||
+                        deleteRegistrantsResponse.error
+                            ? {
+                                  status: "error",
+                                  title: "Error saving changes",
+                                  description:
+                                      extractActualError(
+                                          insertRegistrantResponse.error ??
+                                              insertRegistrantWithoutInviteResponse.error ??
+                                              updateRegistrantResponse.error ??
+                                              deleteRegistrantsResponse.error
+                                      ) ?? "Unknown error",
+                              }
+                            : undefined
+                    }
+                    insert={insert}
+                    update={update}
+                    delete={deleteP}
+                    buttons={buttons}
+                />
+                <SendEmailModal
+                    isOpen={sendCustomEmailModal.isOpen}
+                    onClose={sendCustomEmailModal.onClose}
+                    registrants={sendCustomEmailRegistrants}
+                    send={async (registrantIds: string[], markdownBody: string, subject: string) => {
+                        const result = await insertCustomEmailJobMutation(
+                            {
+                                registrantIds,
+                                conferenceId: conference.id,
+                                markdownBody,
+                                subject,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
+                                    },
+                                },
+                            }
+                        );
+                        if (result?.error) {
+                            console.error("Failed to insert CustomEmailJob", result.error);
+                            throw new Error("Error submitting query");
+                        }
+                    }}
+                />
+            </Box>
+        </DashboardPage>
     );
 }

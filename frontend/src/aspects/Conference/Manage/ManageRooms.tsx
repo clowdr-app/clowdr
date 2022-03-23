@@ -20,7 +20,6 @@ import {
     DrawerOverlay,
     Flex,
     FormLabel,
-    Heading,
     Input,
     ListItem,
     Menu,
@@ -83,7 +82,6 @@ import type {
     RowSpecification,
 } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
-import PageNotFound from "../../Errors/PageNotFound";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import extractActualError from "../../GQL/ExtractActualError";
 import { makeContext } from "../../GQL/make-context";
@@ -91,8 +89,8 @@ import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Hooks/useTitle";
 import useRoomParticipants from "../../Room/useRoomParticipants";
 import { useRegistrants } from "../RegistrantsContext";
-import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
+import { DashboardPage } from "./DashboardPage";
 import ExternalRtmpBroadcastEditor from "./Room/ExternalRtmpBroadcastEditor";
 import ExternalRtmpInputEditor from "./Room/ExternalRtmpInputEditor";
 
@@ -1603,15 +1601,9 @@ export default function ManageRooms(): JSX.Element {
     const title = useTitle(`Manage rooms at ${conference.shortName}`);
 
     return (
-        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Rooms">
             {title}
-            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Rooms
-            </Heading>
             <EditableRoomsCRUDTable />
-        </RequireRole>
+        </DashboardPage>
     );
 }

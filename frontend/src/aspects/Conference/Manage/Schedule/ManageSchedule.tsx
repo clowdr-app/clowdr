@@ -21,7 +21,6 @@ import {
     DrawerHeader,
     DrawerOverlay,
     FormLabel,
-    Heading,
     HStack,
     Input,
     Menu,
@@ -82,14 +81,13 @@ import type {
     RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
-import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { useTitle } from "../../../Hooks/useTitle";
-import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
+import { DashboardPage } from "../DashboardPage";
 import BatchAddEventPeople from "./BatchAddEventPeople";
 import ContinuationsEditor from "./ContinuationsEditor";
 import EditStreamTextIntegration from "./EditStreamTextIntegration";
@@ -1731,16 +1729,10 @@ export default function ManageSchedule(): JSX.Element {
     const title = useTitle(`Manage schedule of ${conference.shortName}`);
 
     return (
-        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Schedule">
             {title}
-            <Heading mt={4} as="h1" fontSize="4xl">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="2xl" fontStyle="italic">
-                Events
-            </Heading>
             <EditableScheduleTable />
-        </RequireRole>
+        </DashboardPage>
     );
 }
 

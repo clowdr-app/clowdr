@@ -2,7 +2,6 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
-    Heading,
     HStack,
     ListItem,
     Menu,
@@ -31,12 +30,11 @@ import Papa from "papaparse";
 import React, { useCallback, useMemo } from "react";
 import { gql } from "urql";
 import { useConferenceStatsQuery } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
 import { makeContext } from "../../../GQL/make-context";
 import { useTitle } from "../../../Hooks/useTitle";
 import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
-import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
+import { DashboardPage } from "../DashboardPage";
 
 gql`
     query ConferenceStats($id: uuid!) {
@@ -557,252 +555,248 @@ export default function AnalyticsDashboard(): JSX.Element {
     );
 
     return (
-        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Analytics">
             {title}
-            <Heading mt={4} as="h1" fontSize="4xl">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="2xl" fontStyle="italic">
-                Analytics
-            </Heading>
-            <Text fontStyle="italic">Data updates every 24 hours.</Text>
-            <StatGroup w="100%" maxW="4xl" pt={8}>
-                <Stat>
-                    <StatLabel fontSize="xl">Item views</StatLabel>
-                    <StatNumber fontSize="4xl">
-                        {statsResponse.data?.conference_Conference_by_pk ? totalItemViews : <Spinner />}
-                    </StatNumber>
-                    <StatHelpText>(3 seconds or more looking at an item.)</StatHelpText>
-                </Stat>
-                <Stat mx={8}>
-                    <StatLabel fontSize="xl">Video playbacks</StatLabel>
-                    <StatNumber fontSize="4xl">
-                        {statsResponse.data?.conference_Conference_by_pk ? totalVideoPlaybacks : <Spinner />}
-                    </StatNumber>
-                    <StatHelpText>
-                        (15 seconds or more watching a video;
-                        <br /> excludes live-streams, includes recordings.)
-                    </StatHelpText>
-                </Stat>
-                <Stat>
-                    <StatLabel fontSize="xl">Live-stream playbacks</StatLabel>
-                    <StatNumber fontSize="4xl">
-                        {statsResponse.data?.conference_Conference_by_pk ? totalStreamPlaybacks : <Spinner />}
-                    </StatNumber>
-                    <StatHelpText>(15 seconds or more watching a live-stream.)</StatHelpText>
-                </Stat>
-            </StatGroup>
-            <Box>&lt; More information will be coming soon &gt;</Box>
-            {popularVideosByPlaybacks?.length ? (
-                <VStack alignItems="flex-start">
-                    <Text fontWeight="bold">The top 5 most popular videos are:</Text>
-                    <Table cellSpacing="20px" overflowX="auto">
-                        <Thead>
-                            <Tr>
-                                <Th>Item</Th>
-                                <Th>Element</Th>
-                                <Th>Playbacks</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {popularVideosByPlaybacks?.map((stat) => (
-                                <Tr key={stat.itemTitle + ": " + stat.elementName}>
-                                    <Td>{stat.itemTitle}</Td>
-                                    <Td>{stat.elementName}</Td>
-                                    <Td>{stat.count}</Td>
+            <VStack alignItems="left">
+                <Text fontStyle="italic">Data updates every 24 hours.</Text>
+                <StatGroup w="100%" maxW="4xl" pt={8}>
+                    <Stat>
+                        <StatLabel fontSize="xl">Item views</StatLabel>
+                        <StatNumber fontSize="4xl">
+                            {statsResponse.data?.conference_Conference_by_pk ? totalItemViews : <Spinner />}
+                        </StatNumber>
+                        <StatHelpText>(3 seconds or more looking at an item.)</StatHelpText>
+                    </Stat>
+                    <Stat mx={8}>
+                        <StatLabel fontSize="xl">Video playbacks</StatLabel>
+                        <StatNumber fontSize="4xl">
+                            {statsResponse.data?.conference_Conference_by_pk ? totalVideoPlaybacks : <Spinner />}
+                        </StatNumber>
+                        <StatHelpText>
+                            (15 seconds or more watching a video;
+                            <br /> excludes live-streams, includes recordings.)
+                        </StatHelpText>
+                    </Stat>
+                    <Stat>
+                        <StatLabel fontSize="xl">Live-stream playbacks</StatLabel>
+                        <StatNumber fontSize="4xl">
+                            {statsResponse.data?.conference_Conference_by_pk ? totalStreamPlaybacks : <Spinner />}
+                        </StatNumber>
+                        <StatHelpText>(15 seconds or more watching a live-stream.)</StatHelpText>
+                    </Stat>
+                </StatGroup>
+                <Box>&lt; More information will be coming soon &gt;</Box>
+                {popularVideosByPlaybacks?.length ? (
+                    <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">The top 5 most popular videos are:</Text>
+                        <Table cellSpacing="20px" overflowX="auto">
+                            <Thead>
+                                <Tr>
+                                    <Th>Item</Th>
+                                    <Th>Element</Th>
+                                    <Th>Playbacks</Th>
                                 </Tr>
-                            ))}
-                        </Tbody>
-                    </Table>
+                            </Thead>
+                            <Tbody>
+                                {popularVideosByPlaybacks?.map((stat) => (
+                                    <Tr key={stat.itemTitle + ": " + stat.elementName}>
+                                        <Td>{stat.itemTitle}</Td>
+                                        <Td>{stat.elementName}</Td>
+                                        <Td>{stat.count}</Td>
+                                    </Tr>
+                                ))}
+                            </Tbody>
+                        </Table>
+                    </VStack>
+                ) : undefined}
+                <VStack alignItems="flex-start">
+                    <Text fontWeight="bold">Please note:</Text>
+                    <UnorderedList>
+                        <ListItem>
+                            In CSV format, times are provided as Excel-compatible date/time numbers. When opening the
+                            CSV in Excel, select the time column and set the cell format to &ldquo;Custom&rdquo; with
+                            type &ldquo;dd/mm/yyyy hh:mm&rdquo;
+                        </ListItem>
+                        <ListItem>
+                            Aggregating the available raw data via the buttons below can take a lot of time and slow
+                            your browser down while the calculation is performed. Please be patient, particularly if you
+                            had a long, large or busy conference.
+                        </ListItem>
+                    </UnorderedList>
                 </VStack>
-            ) : undefined}
-            <VStack alignItems="flex-start">
-                <Text fontWeight="bold">Please note:</Text>
-                <UnorderedList>
-                    <ListItem>
-                        In CSV format, times are provided as Excel-compatible date/time numbers. When opening the CSV in
-                        Excel, select the time column and set the cell format to &ldquo;Custom&rdquo; with type
-                        &ldquo;dd/mm/yyyy hh:mm&rdquo;
-                    </ListItem>
-                    <ListItem>
-                        Aggregating the available raw data via the buttons below can take a lot of time and slow your
-                        browser down while the calculation is performed. Please be patient, particularly if you had a
-                        long, large or busy conference.
-                    </ListItem>
-                </UnorderedList>
-            </VStack>
-            <HStack flexWrap="wrap">
-                <Menu>
-                    <MenuButton as={Button} colorScheme="purple">
-                        Download room statistics <ChevronDownIcon />
-                    </MenuButton>
-                    <MenuList>
-                        <MenuGroup title="CSV: Presence maximums">
+                <HStack flexWrap="wrap">
+                    <Menu>
+                        <MenuButton as={Button} colorScheme="purple">
+                            Download room statistics <ChevronDownIcon />
+                        </MenuButton>
+                        <MenuList>
+                            <MenuGroup title="CSV: Presence maximums">
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "presenceMax",
+                                            granularity: 5 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    5 min granularity
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "presenceMax",
+                                            granularity: 60 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    1 hour granularity
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "presenceMax",
+                                            granularity: 24 * 60 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    1 day granularity
+                                </MenuItem>
+                            </MenuGroup>
+                            <MenuGroup title="CSV: Presence averages">
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "presenceAverage",
+                                            granularity: 5 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    5 min granularity
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "presenceAverage",
+                                            granularity: 60 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    1 hour granularity
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "presenceAverage",
+                                            granularity: 24 * 60 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    1 day granularity
+                                </MenuItem>
+                            </MenuGroup>
+                            <MenuGroup title="CSV: Stream playbacks">
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "streamViews",
+                                            granularity: 5 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    5 min granularity
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "streamViews",
+                                            granularity: 60 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    1 hour granularity
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        presence_DownloadData({
+                                            kind: "csv",
+                                            field: "streamViews",
+                                            granularity: 24 * 60 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    1 day granularity
+                                </MenuItem>
+                            </MenuGroup>
                             <MenuItem
                                 onClick={() =>
                                     presence_DownloadData({
-                                        kind: "csv",
-                                        field: "presenceMax",
-                                        granularity: 5 * 60 * 1000,
+                                        kind: "json",
                                     })
                                 }
                             >
-                                5 min granularity
+                                JSON: All structured data
                             </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    presence_DownloadData({
-                                        kind: "csv",
-                                        field: "presenceMax",
-                                        granularity: 60 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                1 hour granularity
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    presence_DownloadData({
-                                        kind: "csv",
-                                        field: "presenceMax",
-                                        granularity: 24 * 60 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                1 day granularity
-                            </MenuItem>
-                        </MenuGroup>
-                        <MenuGroup title="CSV: Presence averages">
-                            <MenuItem
-                                onClick={() =>
-                                    presence_DownloadData({
-                                        kind: "csv",
-                                        field: "presenceAverage",
-                                        granularity: 5 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                5 min granularity
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    presence_DownloadData({
-                                        kind: "csv",
-                                        field: "presenceAverage",
-                                        granularity: 60 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                1 hour granularity
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    presence_DownloadData({
-                                        kind: "csv",
-                                        field: "presenceAverage",
-                                        granularity: 24 * 60 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                1 day granularity
-                            </MenuItem>
-                        </MenuGroup>
-                        <MenuGroup title="CSV: Stream playbacks">
-                            <MenuItem
-                                onClick={() =>
-                                    presence_DownloadData({
-                                        kind: "csv",
-                                        field: "streamViews",
-                                        granularity: 5 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                5 min granularity
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    presence_DownloadData({
-                                        kind: "csv",
-                                        field: "streamViews",
-                                        granularity: 60 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                1 hour granularity
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    presence_DownloadData({
-                                        kind: "csv",
-                                        field: "streamViews",
-                                        granularity: 24 * 60 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                1 day granularity
-                            </MenuItem>
-                        </MenuGroup>
-                        <MenuItem
-                            onClick={() =>
-                                presence_DownloadData({
-                                    kind: "json",
-                                })
-                            }
-                        >
-                            JSON: All structured data
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
+                        </MenuList>
+                    </Menu>
 
-                <Menu>
-                    <MenuButton as={Button} colorScheme="purple">
-                        Download video statistics <ChevronDownIcon />
-                    </MenuButton>
-                    <MenuList>
-                        <MenuGroup title="CSV: Video playbacks">
+                    <Menu>
+                        <MenuButton as={Button} colorScheme="purple">
+                            Download video statistics <ChevronDownIcon />
+                        </MenuButton>
+                        <MenuList>
+                            <MenuGroup title="CSV: Video playbacks">
+                                <MenuItem
+                                    onClick={() =>
+                                        videos_DownloadData({
+                                            kind: "csv",
+                                            granularity: 5 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    5 min granularity
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        videos_DownloadData({
+                                            kind: "csv",
+                                            granularity: 60 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    1 hour granularity
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() =>
+                                        videos_DownloadData({
+                                            kind: "csv",
+                                            granularity: 24 * 60 * 60 * 1000,
+                                        })
+                                    }
+                                >
+                                    1 day granularity
+                                </MenuItem>
+                            </MenuGroup>
                             <MenuItem
                                 onClick={() =>
                                     videos_DownloadData({
-                                        kind: "csv",
-                                        granularity: 5 * 60 * 1000,
+                                        kind: "json",
                                     })
                                 }
                             >
-                                5 min granularity
+                                JSON: All structured data
                             </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    videos_DownloadData({
-                                        kind: "csv",
-                                        granularity: 60 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                1 hour granularity
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    videos_DownloadData({
-                                        kind: "csv",
-                                        granularity: 24 * 60 * 60 * 1000,
-                                    })
-                                }
-                            >
-                                1 day granularity
-                            </MenuItem>
-                        </MenuGroup>
-                        <MenuItem
-                            onClick={() =>
-                                videos_DownloadData({
-                                    kind: "json",
-                                })
-                            }
-                        >
-                            JSON: All structured data
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
-            </HStack>
-        </RequireRole>
+                        </MenuList>
+                    </Menu>
+                </HStack>
+            </VStack>
+        </DashboardPage>
     );
 }

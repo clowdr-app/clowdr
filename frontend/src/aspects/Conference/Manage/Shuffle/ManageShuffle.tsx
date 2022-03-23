@@ -3,6 +3,7 @@ import {
     AlertDescription,
     AlertIcon,
     AlertTitle,
+    Box,
     Divider,
     Flex,
     Heading,
@@ -13,14 +14,13 @@ import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
 import usePolling from "../../../Hooks/usePolling";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { useTitle } from "../../../Hooks/useTitle";
-import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
+import { DashboardPage } from "../DashboardPage";
 import CreateQueueModal from "./CreateQueueModal";
 import ShuffleQueueTile from "./ShuffleQueueTile";
 
@@ -108,70 +108,66 @@ export default function ManageShuffle(): JSX.Element {
     );
 
     return (
-        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Networking">
             {title}
-            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Shuffle Queues
-            </Heading>
-            <Text>Data is updated every 60s.</Text>
-            {shufflePeriodsQ.error ? (
-                <Alert status="error">
-                    <AlertIcon />
-                    <AlertTitle>Error loading shuffle queues</AlertTitle>
-                    <AlertDescription>{shufflePeriodsQ.error.message}</AlertDescription>
-                </Alert>
-            ) : undefined}
-            {!shufflePeriodsQ.error ? (
-                shufflePeriodsQ.fetching && !shufflePeriodsQ.data ? (
-                    <Spinner label="Loading shuffle queues" />
-                ) : (
-                    <>
-                        <CreateQueueModal />
-                        {ongoingQueues?.length ? (
-                            <>
-                                <Divider />
-                                <Heading as="h3" fontSize="lg">
-                                    Ongoing Queues
-                                </Heading>
-                                <Flex flexWrap="wrap" justifyContent="center">
-                                    {ongoingQueues.map((queue) => (
-                                        <ShuffleQueueTile key={queue.id} queue={queue} endLabel="Ends" />
-                                    ))}
-                                </Flex>
-                            </>
-                        ) : undefined}
-                        {upcomingQueues?.length ? (
-                            <>
-                                <Divider />
-                                <Heading as="h3" fontSize="lg">
-                                    Upcoming Queues
-                                </Heading>
-                                <Flex flexWrap="wrap" justifyContent="center">
-                                    {upcomingQueues.map((queue) => (
-                                        <ShuffleQueueTile key={queue.id} queue={queue} startLabel="Starts" />
-                                    ))}
-                                </Flex>
-                            </>
-                        ) : undefined}
-                        {pastQueues?.length ? (
-                            <>
-                                <Divider />
-                                <Heading as="h3" fontSize="lg">
-                                    Past Queues
-                                </Heading>
-                                <Flex flexWrap="wrap" justifyContent="center">
-                                    {pastQueues.map((queue) => (
-                                        <ShuffleQueueTile key={queue.id} queue={queue} endLabel="Ended" />
-                                    ))}
-                                </Flex>
-                            </>
-                        ) : undefined}
-                    </>
-                )
-            ) : undefined}
-        </RequireRole>
+            <Box>
+                <Text mb={2}>Data is updated every 60s.</Text>
+                {shufflePeriodsQ.error ? (
+                    <Alert status="error">
+                        <AlertIcon />
+                        <AlertTitle>Error loading shuffle queues</AlertTitle>
+                        <AlertDescription>{shufflePeriodsQ.error.message}</AlertDescription>
+                    </Alert>
+                ) : undefined}
+                {!shufflePeriodsQ.error ? (
+                    shufflePeriodsQ.fetching && !shufflePeriodsQ.data ? (
+                        <Spinner label="Loading shuffle queues" />
+                    ) : (
+                        <>
+                            <CreateQueueModal />
+                            {ongoingQueues?.length ? (
+                                <>
+                                    <Divider />
+                                    <Heading as="h3" fontSize="lg">
+                                        Ongoing Queues
+                                    </Heading>
+                                    <Flex flexWrap="wrap" justifyContent="center">
+                                        {ongoingQueues.map((queue) => (
+                                            <ShuffleQueueTile key={queue.id} queue={queue} endLabel="Ends" />
+                                        ))}
+                                    </Flex>
+                                </>
+                            ) : undefined}
+                            {upcomingQueues?.length ? (
+                                <>
+                                    <Divider />
+                                    <Heading as="h3" fontSize="lg">
+                                        Upcoming Queues
+                                    </Heading>
+                                    <Flex flexWrap="wrap" justifyContent="center">
+                                        {upcomingQueues.map((queue) => (
+                                            <ShuffleQueueTile key={queue.id} queue={queue} startLabel="Starts" />
+                                        ))}
+                                    </Flex>
+                                </>
+                            ) : undefined}
+                            {pastQueues?.length ? (
+                                <>
+                                    <Divider />
+                                    <Heading as="h3" fontSize="lg">
+                                        Past Queues
+                                    </Heading>
+                                    <Flex flexWrap="wrap" justifyContent="center">
+                                        {pastQueues.map((queue) => (
+                                            <ShuffleQueueTile key={queue.id} queue={queue} endLabel="Ended" />
+                                        ))}
+                                    </Flex>
+                                </>
+                            ) : undefined}
+                        </>
+                    )
+                ) : undefined}
+            </Box>
+        </DashboardPage>
     );
 }

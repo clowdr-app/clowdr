@@ -7,7 +7,6 @@ import {
     FormControl,
     FormHelperText,
     FormLabel,
-    Heading,
     HStack,
     Input,
     List,
@@ -35,14 +34,13 @@ import EmojiPickerProvider from "../../../../Chat/EmojiPickerProvider";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import MessageBox from "../../../../Chat/Messages/MessageBox";
-import PageNotFound from "../../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { useRestorableState } from "../../../../Hooks/useRestorableState";
 import { useTitle } from "../../../../Hooks/useTitle";
-import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
+import { DashboardPage } from "../../DashboardPage";
 
 gql`
     fragment ManageModeration_ChatFlag on chat_Flag {
@@ -72,18 +70,12 @@ export default function ManageModeration(): JSX.Element {
     const title = useTitle(`Moderate chats for ${conference.shortName}`);
 
     return (
-        <RequireRole moderatorRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Chat Moderation">
             <Box w="100%">
                 {title}
-                <Heading mt={4} as="h1" size="xl">
-                    Manage {conference.shortName}
-                </Heading>
-                <Heading id="page-heading" as="h2" size="lg" fontStyle="italic" mt={2}>
-                    Chat Moderation
-                </Heading>
                 <ModerationList />
             </Box>
-        </RequireRole>
+        </DashboardPage>
     );
 }
 

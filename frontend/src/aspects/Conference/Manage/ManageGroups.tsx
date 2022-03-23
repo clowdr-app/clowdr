@@ -1,4 +1,4 @@
-import { Heading, Spinner } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
@@ -11,13 +11,12 @@ import {
 } from "../../../generated/graphql";
 import type { CRUDTableProps, PrimaryField, UpdateResult } from "../../CRUDTable/CRUDTable";
 import CRUDTable, { defaultStringFilter, FieldType } from "../../CRUDTable/CRUDTable";
-import PageNotFound from "../../Errors/PageNotFound";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Hooks/useTitle";
-import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
+import { DashboardPage } from "./DashboardPage";
 
 gql`
     fragment ManageGroups_Group on registrant_Group {
@@ -153,14 +152,8 @@ export default function ManageGroups(): JSX.Element {
     }, []);
 
     return (
-        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
+        <DashboardPage title="Groups">
             {title}
-            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Groups
-            </Heading>
             {loadingAllGroups && !allGroupsMap ? (
                 <Spinner />
             ) : errorAllGroups ? (
@@ -388,6 +381,6 @@ export default function ManageGroups(): JSX.Element {
                     otherFields: fields,
                 }}
             />
-        </RequireRole>
+        </DashboardPage>
     );
 }

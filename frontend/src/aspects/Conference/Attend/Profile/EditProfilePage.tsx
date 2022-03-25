@@ -283,7 +283,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             />
                             <FormHelperText>
                                 Use{" "}
-                                <Link isExternal href="https://www.markdownguide.org/getting-started/">
+                                <Link isExternal href="https://itsfoss.com/markdown-guide/">
                                     Markdown syntax
                                     <sup>
                                         <ExternalLinkIcon />

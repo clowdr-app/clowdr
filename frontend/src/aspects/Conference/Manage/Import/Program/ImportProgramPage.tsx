@@ -7,7 +7,6 @@ import PageNotFound from "../../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import usePolling from "../../../../Hooks/usePolling";
-import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
@@ -46,7 +45,6 @@ export default function ImportProgramPage(): JSX.Element {
     const conference = useConference();
     const { subconferenceId } = useAuthParameters();
     const registrant = useCurrentRegistrant();
-    const title = useTitle(`Import program to ${conference.shortName}`);
 
     const context = useMemo(
         () =>
@@ -78,7 +76,6 @@ export default function ImportProgramPage(): JSX.Element {
     const client = useClient();
     return (
         <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
-            {title}
             <DashboardPage title="Import Program" stickyHeader={false} autoOverflow={false}>
                 <ImportProgramTabs
                     job={justStarted ? undefined : response.data?.job_queues_ImportJob[0]}

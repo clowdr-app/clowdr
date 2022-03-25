@@ -6,7 +6,6 @@ import { gql } from "urql";
 import { useConferenceTechSupportAddressQuery } from "../../../generated/graphql";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import { makeContext } from "../../GQL/make-context";
-import { useTitle } from "../../Hooks/useTitle";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import { DashboardPage } from "./DashboardPage";
@@ -25,7 +24,6 @@ gql`
 export default function ManagerLandingPage(): JSX.Element {
     const conference = useConference();
     const { conferencePath, subconferenceId } = useAuthParameters();
-    const title = useTitle(`Manage ${conference.shortName}`);
     const context = useMemo(
         () =>
             makeContext({
@@ -48,7 +46,6 @@ export default function ManagerLandingPage(): JSX.Element {
 
     return (
         <DashboardPage title={`Manage ${conference.shortName}`}>
-            {title}
             <VStack
                 w="100%"
                 alignItems="flex-start"

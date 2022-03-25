@@ -3,9 +3,7 @@ import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import { useTitle } from "../../../Hooks/useTitle";
 import RequireRole from "../../RequireRole";
-import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 import RestrictedDashboardButton from "../RestrictedDashboardButton";
 import ImportProgramPage from "./Program/ImportProgramPage";
@@ -32,13 +30,10 @@ export default function ManageImport(): JSX.Element {
 }
 
 function InnerManageImport(): JSX.Element {
-    const conference = useConference();
-    const title = useTitle(`Import to ${conference.shortName}`);
     const { subconferenceId } = useAuthParameters();
 
     return (
         <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
-            {title}
             <DashboardPage title="Import">
                 <Flex
                     flexDirection="row"

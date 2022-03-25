@@ -17,7 +17,6 @@ import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import usePolling from "../../../../Hooks/usePolling";
-import { useTitle } from "../../../../Hooks/useTitle";
 import { useConference } from "../../../useConference";
 import { DashboardPage } from "../../DashboardPage";
 
@@ -66,7 +65,6 @@ gql`
 export function UploadedPage(): JSX.Element {
     const conference = useConference();
     const { subconferenceId } = useAuthParameters();
-    const title = useTitle(`YouTube Uploads from ${conference.shortName}`);
     const context = useMemo(
         () =>
             makeContext({
@@ -109,7 +107,6 @@ export function UploadedPage(): JSX.Element {
 
     return (
         <DashboardPage title="Uploads">
-            {title}
             <VStack alignItems="stretch" w="100%">
                 <QueryWrapper
                     queryResult={existingJobsResult}

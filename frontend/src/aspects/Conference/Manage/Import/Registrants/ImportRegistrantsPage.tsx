@@ -4,9 +4,7 @@ import { JSONataToIntermediaryRegistrant } from "@midspace/shared-types/import/r
 import React, { useMemo, useState } from "react";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
-import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
-import { useConference } from "../../../useConference";
 import { DashboardPage } from "../../DashboardPage";
 import ConfigPanel from "../Shared/ConfigPanel";
 import DataPanel from "../Shared/DataPanel";
@@ -48,9 +46,6 @@ const presetJSONata_CSV = `
 `;
 
 export default function ImportRegistrantsPage(): JSX.Element {
-    const conference = useConference();
-    const title = useTitle(`Import registrants to ${conference.shortName}`);
-
     const [data, setData] = useState<ParsedData<any[]>[]>();
     const [intermediaryData, setIntermediaryData] = useState<Record<string, IntermediaryRegistrantData[]>>({});
 
@@ -78,7 +73,6 @@ export default function ImportRegistrantsPage(): JSX.Element {
 
     return (
         <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
-            {title}
             <DashboardPage title="Import Registrants" stickyHeader={false} autoOverflow={false}>
                 <Box mb="auto" w="100%" minH="100vh">
                     <Tabs defaultIndex={0} w="100%" mt={4}>

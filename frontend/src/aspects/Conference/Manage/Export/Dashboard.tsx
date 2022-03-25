@@ -1,16 +1,11 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
-import { useTitle } from "../../../Hooks/useTitle";
-import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 import RestrictedDashboardButton from "../RestrictedDashboardButton";
 
 export function Dashboard(): JSX.Element {
-    const conference = useConference();
-    const title = useTitle(`Export data from ${conference.shortName}`);
     return (
         <DashboardPage title="Export">
-            {title}
             <Flex
                 flexDirection="row"
                 flexWrap="wrap"

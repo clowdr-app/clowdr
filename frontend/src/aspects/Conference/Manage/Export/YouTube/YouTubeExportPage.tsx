@@ -4,9 +4,7 @@ import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
-import { useTitle } from "../../../../Hooks/useTitle";
 import RequireRole from "../../../RequireRole";
-import { useConference } from "../../../useConference";
 import { DashboardPage } from "../../DashboardPage";
 import { ConnectYouTubeAccount } from "./ConnectYouTubeAccount";
 import { Finished } from "./Finished";
@@ -15,11 +13,8 @@ import { UploadYouTubeVideos } from "./UploadYouTubeVideos";
 import { YouTubeExportProvider } from "./YouTubeExportContext";
 
 export function YouTubeExportPage(): JSX.Element {
-    const conference = useConference();
     const { conferencePath } = useAuthParameters();
     const { path } = useRouteMatch();
-    const title = useTitle(`Export to YouTube from ${conference.shortName}`);
-
     return (
         <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             <Switch>
@@ -28,7 +23,6 @@ export function YouTubeExportPage(): JSX.Element {
                 </Route>
                 <Route path={`${path}/`}>
                     <DashboardPage title="Export to YouTube">
-                        {title}
                         <Text>
                             By using Midspace to export videos to YouTube, you agree to{" "}
                             <Link isExternal href="https://www.youtube.com/t/terms">

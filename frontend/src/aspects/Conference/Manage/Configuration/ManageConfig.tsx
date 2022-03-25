@@ -32,7 +32,6 @@ import {
 } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
 import { makeContext } from "../../../GQL/make-context";
-import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { roleOptions } from "../Content/v2/Submissions/SubmissionRequestsModal";
 import { DashboardPage } from "../DashboardPage";
@@ -91,7 +90,6 @@ export function validateSlug(inValue: string | null | undefined): string | undef
 
 export default function ManageConfig(): JSX.Element {
     const conference = useConference();
-    const title = useTitle(`Settings of ${conference.shortName}`);
     const [_updateConferenceMutationResponse, updateConferenceMutation] = useUpdateConferenceMutation();
 
     const toast = useToast();
@@ -203,7 +201,6 @@ export default function ManageConfig(): JSX.Element {
     );
     return (
         <DashboardPage title="Settings">
-            {title}
             <VStack alignItems="flex-start" spacing={12}>
                 <Section title="Basic" description="Basic information about your conference.">
                     <Setting title="Name" description="The full name of your conference. Minimum length 5.">

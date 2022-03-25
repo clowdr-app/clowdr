@@ -56,7 +56,6 @@ import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { useTitle } from "../../../Hooks/useTitle";
 import { maybeCompare } from "../../../Utils/maybeCompare";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
@@ -304,7 +303,6 @@ function formatEnumValueForLabel(value: string): string {
 export default function ManageContentV2(): JSX.Element {
     const conference = useConference();
     const { conferencePath, subconferenceId } = useAuthParameters();
-    const title = useTitle(`Manage content at ${conference.shortName}`);
 
     const context = useMemo(
         () =>
@@ -1298,7 +1296,6 @@ export default function ManageContentV2(): JSX.Element {
 
     return (
         <DashboardPage title="Content">
-            {title}
             {(loadingAllTags && !allTags) ||
             (loadingAllExhibitions && !allExhibitions) ||
             (loadingAllItems && !allItems?.content_Item) ? (

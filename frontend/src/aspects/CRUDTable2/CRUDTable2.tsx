@@ -876,12 +876,12 @@ function RenderedCRUDTable<T>({
 
     return (
         <>
-            <HStack flexWrap="wrap" justifyContent="center" w="100%">
+            <HStack flexWrap="wrap" justifyContent="flex-start" w="100%" my={4}>
                 {buttonEls}
             </HStack>
-            <Center flexDir="column">
+            <Box flexDir="column" mb={4}>
                 Filtered to {filteredDataLength} out of {fullDataLength} ({selectedKeys.size} selected)
-            </Center>
+            </Box>
             <chakra.div maxWidth="100%" minHeight="10em" width="auto" overflow="auto" pr={8}>
                 <Table bgColor={bgColour} size="sm" variant="striped" pt={1} colorScheme="gray" width="max-content">
                     <Thead borderBottom="2px solid" borderBottomColor={headerBottomColour}>
@@ -1447,16 +1447,14 @@ export default function CRUDTable<T>({
     return (
         <>
             {alertEl}
-            <Center w="100%" minH="1.5rem" flexWrap="wrap">
-                {insertProps?.ongoing || updateProps?.ongoing || deleteProps?.ongoing ? (
-                    <HStack>
-                        <div>
-                            <Spinner size="xs" label="Saving changes…" />
-                        </div>
-                        <Text fontSize="sm">Saving changes{"…"}</Text>
-                    </HStack>
-                ) : undefined}
-            </Center>
+            {insertProps?.ongoing || updateProps?.ongoing || deleteProps?.ongoing ? (
+                <HStack w="100%" alignItems="flex-start">
+                    <div>
+                        <Spinner size="xs" label="Saving changes…" />
+                    </div>
+                    <Text fontSize="sm">Saving changes{"…"}</Text>
+                </HStack>
+            ) : undefined}
             {renderedTable}
             <AlertDialog
                 isOpen={isDeleteConfirmOpen}
@@ -1508,7 +1506,7 @@ export default function CRUDTable<T>({
                 dependentData={dependentData}
             />
             <Flex
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
                 gridGap={2}
                 w="100%"

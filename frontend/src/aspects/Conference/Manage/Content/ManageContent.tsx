@@ -1305,7 +1305,7 @@ export default function ManageContentV2(): JSX.Element {
             ) : (
                 <></>
             )}
-            <HStack spacing={2} mx="auto">
+            <HStack w="100%" spacing={2} mx="auto" justifyContent="flex-start">
                 <ManageTagsModal
                     onClose={async () => {
                         await Promise.all([refetchAllItems(), refetchAllTags()]);

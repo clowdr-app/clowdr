@@ -232,6 +232,7 @@ const ManagerLanding = React.lazy(() => import("./Manage/ManagerLanding"));
 const ManageRooms = React.lazy(() => import("./Manage/ManageRooms"));
 const ManageRegistrants = React.lazy(() => import("./Manage/Registrants/ManageRegistrants"));
 const ManageSchedule = React.lazy(() => import("./Manage/Schedule/ManageSchedule"));
+const ManageScheduleV2 = React.lazy(() => import("./Manage/Schedule/ManageScheduleV2"));
 const ManageShuffle = React.lazy(() => import("./Manage/Shuffle/ManageShuffle"));
 const ManageTheme = React.lazy(() => import("./Manage/Theme/ManageTheme"));
 const ManageConfig = React.lazy(() => import("./Manage/Configuration/ManageConfig"));
@@ -277,6 +278,9 @@ function ManageConferenceRoutes(): JSX.Element {
                 </Route>
                 <Route path={`${path}/export`}>
                     <ManageExport />
+                </Route>
+                <Route path={`${path}/schedule/v2`}>
+                    <ManageScheduleV2 />
                 </Route>
                 <Route path={`${path}/schedule`}>
                     <ManageSchedule />

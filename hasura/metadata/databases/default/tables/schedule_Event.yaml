@@ -35,6 +35,9 @@ object_relationships:
 - name: room
   using:
     foreign_key_constraint_on: roomId
+- name: session
+  using:
+    foreign_key_constraint_on: sessionEventId
 - name: shufflePeriod
   using:
     foreign_key_constraint_on: shufflePeriodId
@@ -55,6 +58,13 @@ array_relationships:
       column: eventId
       table:
         name: EventProgramPerson
+        schema: schedule
+- name: presentations
+  using:
+    foreign_key_constraint_on:
+      column: sessionEventId
+      table:
+        name: Event
         schema: schedule
 computed_fields:
 - definition:
@@ -164,6 +174,7 @@ select_permissions:
                 - EXTERNAL
   role: attendee
 - permission:
+    allow_aggregations: true
     columns:
     - autoPlayElementId
     - automaticParticipationSurvey
@@ -195,6 +206,7 @@ select_permissions:
             _is_null: true
   role: conference-organizer
 - permission:
+    allow_aggregations: true
     columns:
     - autoPlayElementId
     - automaticParticipationSurvey

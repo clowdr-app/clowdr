@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import type { BoxProps } from "@chakra-ui/react";
 import { Flex, Heading, HStack, IconButton, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
@@ -5,42 +6,39 @@ import FAIcon from "../Chakra/FAIcon";
 import SelectButton from "./SelectButton";
 import useSelectorColors from "./useSelectorColors";
 
-const Card = React.forwardRef<
-    HTMLDivElement,
-    React.PropsWithChildren<
-        {
-            isSelectable?: boolean;
-            isSelected?: boolean;
-            isDisabled?: boolean;
-            onSelectToggle?: () => void;
+export interface CardProps extends BoxProps {
+    isSelectable?: boolean;
+    isSelected?: boolean;
+    isDisabled?: boolean;
+    onSelectToggle?: () => void;
 
-            onClick?: React.MouseEventHandler;
+    onClick?: React.MouseEventHandler;
 
-            subHeading?: string;
-            heading?: string;
-            editControls?: React.ReactChild | React.ReactChildren | JSX.Element[];
+    subHeading?: string;
+    heading?: string;
+    editControls?: React.ReactChild | React.ReactChildren | JSX.Element[];
 
-            rightButton?: {
-                label: string;
-                colorScheme: string;
-                iconStyle: "s" | "r";
-                icon: string;
-                onClick: () => void;
-                variant: string;
-            };
-            bottomButton?: {
-                label: string;
-                colorScheme: string;
-                iconStyle: "s" | "r";
-                icon: string;
-                onClick: () => void;
-                variant: string;
-            };
+    rightButton?: {
+        label: string;
+        colorScheme: string;
+        iconStyle: "s" | "r";
+        icon: string;
+        onClick: () => void;
+        variant: string;
+    };
+    bottomButton?: {
+        label: string;
+        colorScheme: string;
+        iconStyle: "s" | "r";
+        icon: string;
+        onClick: () => void;
+        variant: string;
+    };
 
-            variant?: "solid" | "ghost" | "outline";
-        } & BoxProps
-    >
->(function Card(
+    variant?: "solid" | "ghost" | "outline";
+}
+
+const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>>(function Card(
     {
         isSelectable,
         isSelected,
@@ -59,7 +57,7 @@ const Card = React.forwardRef<
         variant = "solid",
 
         ...props
-    },
+    }: CardProps,
     ref
 ): JSX.Element {
     const borderColor = useColorModeValue("gray.100", "gray.700");

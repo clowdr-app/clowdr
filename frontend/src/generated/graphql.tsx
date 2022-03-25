@@ -46954,6 +46954,65 @@ export type DeleteEventInfosMutation = {
     } | null;
 };
 
+export type ManageSchedule_SessionContentFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly title: string;
+    readonly typeName: Content_ItemType_Enum;
+};
+
+export type ManageSchedule_SessionFragment = {
+    readonly __typename?: "schedule_Event";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
+    readonly name: string;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
+    readonly modeName?: Schedule_Mode_Enum | null;
+    readonly roomId: any;
+    readonly itemId?: any | null;
+    readonly item?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+        readonly typeName: Content_ItemType_Enum;
+    } | null;
+};
+
+export type ManageSchedule_GetSessionsPageQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+    limit: Scalars["Int"];
+    offset: Scalars["Int"];
+}>;
+
+export type ManageSchedule_GetSessionsPageQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event_aggregate: {
+        readonly __typename?: "schedule_Event_aggregate";
+        readonly aggregate?: { readonly __typename?: "schedule_Event_aggregate_fields"; readonly count: number } | null;
+    };
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly name: string;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly modeName?: Schedule_Mode_Enum | null;
+        readonly roomId: any;
+        readonly itemId?: any | null;
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
+        } | null;
+    }>;
+};
+
 export type UpdateShufflePeriodMutationVariables = Exact<{
     id: Scalars["uuid"];
     object: Room_ShufflePeriod_Set_Input;
@@ -50433,6 +50492,30 @@ export const ShufflePeriodInfoFragmentDoc = gql`
         conferenceId
         endAt
     }
+`;
+export const ManageSchedule_SessionContentFragmentDoc = gql`
+    fragment ManageSchedule_SessionContent on content_Item {
+        id
+        title
+        typeName
+    }
+`;
+export const ManageSchedule_SessionFragmentDoc = gql`
+    fragment ManageSchedule_Session on schedule_Event {
+        id
+        conferenceId
+        subconferenceId
+        name
+        scheduledStartTime
+        scheduledEndTime
+        modeName
+        roomId
+        itemId
+        item {
+            ...ManageSchedule_SessionContent
+        }
+    }
+    ${ManageSchedule_SessionContentFragmentDoc}
 `;
 export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
@@ -55227,6 +55310,47 @@ export const DeleteEventInfosDocument = gql`
 
 export function useDeleteEventInfosMutation() {
     return Urql.useMutation<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>(DeleteEventInfosDocument);
+}
+export const ManageSchedule_GetSessionsPageDocument = gql`
+    query ManageSchedule_GetSessionsPage(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+        $limit: Int!
+        $offset: Int!
+    ) {
+        schedule_Event_aggregate(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                sessionEventId: { _is_null: true }
+            }
+        ) {
+            aggregate {
+                count
+            }
+        }
+        schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                sessionEventId: { _is_null: true }
+            }
+            limit: $limit
+            offset: $offset
+        ) {
+            ...ManageSchedule_Session
+        }
+    }
+    ${ManageSchedule_SessionFragmentDoc}
+`;
+
+export function useManageSchedule_GetSessionsPageQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetSessionsPageQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetSessionsPageQuery>({
+        query: ManageSchedule_GetSessionsPageDocument,
+        ...options,
+    });
 }
 export const UpdateShufflePeriodDocument = gql`
     mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {

@@ -11,13 +11,41 @@ import {
     Link,
     Select,
     Textarea,
+    useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import type { ManageSchedule_SessionFragment } from "../../../../../generated/graphql";
+import { useManageSchedule_GetTagsQuery } from "../../../../../generated/graphql";
+import { CreatableMultiSelect } from "../../../../Chakra/MultiSelect";
 import type { PanelProps, ValidationState } from "../../../../CRUDCards/Types";
 import { DateTimePicker } from "../../../../CRUDTable/DateTimePicker";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import { makeContext } from "../../../../GQL/make-context";
 import { roundUpToNearest } from "../../../../Utils/MathUtils";
+import { useConference } from "../../../useConference";
+import CreateTagModal from "./CreateTagModal";
+
+gql`
+    fragment ManageSchedule_Tag on collection_Tag {
+        id
+        name
+        priority
+        colour
+    }
+
+    query ManageSchedule_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Tag(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+            order_by: [{ name: asc }]
+        ) {
+            ...ManageSchedule_Tag
+        }
+    }
+`;
 
 export default function DetailsPanel({
     isCreate,
@@ -160,6 +188,67 @@ export default function DetailsPanel({
 
     useEffect(updateValidity, [updateValidity]);
 
+    const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
+            }),
+        [subconferenceId]
+    );
+    const [tagsResponse, refetchTags] = useManageSchedule_GetTagsQuery({
+        variables: {
+            conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
+        },
+        context,
+    });
+    const tagOptions = useMemo(() => {
+        const result =
+            tagsResponse.data?.collection_Tag.map((x) => ({
+                label: x.name,
+                value: x.id,
+            })) ?? [];
+        result.push({
+            label: "Create a tag",
+            value: "¬create¬",
+        });
+        return result;
+    }, [tagsResponse.data?.collection_Tag]);
+    const tagValues = useMemo(
+        () =>
+            record.item?.itemTags?.map((x) => ({
+                label: tagsResponse.data?.collection_Tag.find((y) => y.id === x.tagId)?.name ?? "<Loading...>",
+                value: x.tagId,
+            })) ?? [],
+        [record.item?.itemTags, tagsResponse.data?.collection_Tag]
+    );
+
+    const [createTagName, setCreateTagName] = useState<string>("");
+    const createTagDisclosure = useDisclosure();
+    const onCreateTag = useCallback(
+        (newTagId: string) => {
+            refetchTags();
+            onAnyChange();
+            updateRecord((old) => ({
+                ...old,
+                item: {
+                    ...old.item,
+                    itemTags: [
+                        ...(old.item?.itemTags ?? []),
+                        {
+                            tagId: newTagId,
+                        },
+                    ],
+                },
+            }));
+        },
+        [onAnyChange, refetchTags, updateRecord]
+    );
+
     return (
         <VStack spacing={4} p={0}>
             <FormControl
@@ -175,13 +264,13 @@ export default function DetailsPanel({
                     onChange={(value) => {
                         setStartTimeHasChanged(true);
 
-                        updateRecord({
-                            ...record,
+                        updateRecord((old) => ({
+                            ...old,
                             scheduledStartTime: value?.toISOString(),
                             scheduledEndTime: value
                                 ? new Date(value.getTime() + durationMinutes * 60 * 1000).toISOString()
                                 : new Date(startTime.getTime() + durationMinutes * 60 * 1000).toISOString(),
-                        });
+                        }));
                     }}
                 />
                 <FormHelperText>Enter times in your local timezone.</FormHelperText>
@@ -203,11 +292,11 @@ export default function DetailsPanel({
                                 const newHours = parseInt(ev.target.value, 10);
                                 const value = newHours * 60 + existingMinutes;
                                 const endTime = new Date(startTime.getTime() + value * 60 * 1000);
-                                updateRecord({
-                                    ...record,
+                                updateRecord((old) => ({
+                                    ...old,
                                     scheduledStartTime: startTime,
                                     scheduledEndTime: endTime.toISOString(),
-                                });
+                                }));
                             }}
                         >
                             {hoursOptions}
@@ -225,10 +314,10 @@ export default function DetailsPanel({
                                 const newMinutes = parseInt(ev.target.value, 10);
                                 const value = existingHours * 60 + newMinutes;
                                 const endTime = new Date(startTime.getTime() + value * 60 * 1000);
-                                updateRecord({
-                                    ...record,
+                                updateRecord((old) => ({
+                                    ...old,
                                     scheduledEndTime: endTime.toISOString(),
-                                });
+                                }));
                             }}
                         >
                             {minutesOptions}
@@ -249,10 +338,10 @@ export default function DetailsPanel({
                         setNameHasChanged(true);
 
                         const value = ev.target.value;
-                        updateRecord({
-                            ...record,
-                            item: record.item ? { ...record.item, title: value } : { title: value },
-                        });
+                        updateRecord((old) => ({
+                            ...old,
+                            item: old.item ? { ...old.item, title: value } : { title: value },
+                        }));
                     }}
                 />
                 <FormErrorMessage>{nameValidation !== "no error" ? nameValidation.error : "No error"}</FormErrorMessage>
@@ -271,7 +360,36 @@ export default function DetailsPanel({
                     to format your text.
                 </FormHelperText>
             </FormControl>
-            {/* TODO: Tags */}
+            <FormControl>
+                <FormLabel>Tags</FormLabel>
+                <CreatableMultiSelect
+                    options={tagOptions}
+                    value={tagValues}
+                    onCreateOption={(value) => {
+                        setCreateTagName(value);
+                        createTagDisclosure.onOpen();
+                    }}
+                    onChange={(options, action) => {
+                        if (
+                            action.action === "create-option" ||
+                            (action.action === "select-option" && action.option?.value === "¬create¬")
+                        ) {
+                            setCreateTagName(action.action === "create-option" ? action.name ?? "" : "");
+                            createTagDisclosure.onOpen();
+                        } else {
+                            const tagIds = R.uniq(options.filter((x) => x.value !== "¬create¬").map((x) => x.value));
+                            onAnyChange();
+                            updateRecord((old) => ({
+                                ...old,
+                                item: {
+                                    ...old.item,
+                                    itemTags: tagIds.map((tagId) => ({ tagId })),
+                                },
+                            }));
+                        }
+                    }}
+                />
+            </FormControl>
             {/* TODO: For "presentations": 
                     <FormControl id="editor-session-type" isDisabled={isDisabled}>
                         <FormLabel>Session type</FormLabel>
@@ -280,6 +398,12 @@ export default function DetailsPanel({
                             This is a descriptive label only, to help your attendees understand what kind of session this is.
                         </FormHelperText>
             </FormControl>*/}
+            <CreateTagModal
+                initialName={createTagName}
+                isOpen={createTagDisclosure.isOpen}
+                onClose={createTagDisclosure.onClose}
+                onCreate={onCreateTag}
+            />
         </VStack>
     );
 }

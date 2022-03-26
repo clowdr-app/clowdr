@@ -34,6 +34,8 @@ import {
 import React from "react";
 import type { MenuProps, Props as SelectProps, Theme } from "react-select";
 import Select, { components as selectComponents } from "react-select";
+import type { Props as CreatableProps } from "react-select/creatable";
+import Creatable from "react-select/creatable";
 
 const chakraStyles = {
     input: (provided: any) => ({
@@ -303,6 +305,75 @@ export default function MultiSelect({
             : theme;
     return (
         <Select
+            isMulti
+            closeMenuOnSelect={false}
+            menuShouldScrollIntoView={false}
+            menuPortalTarget={document.body}
+            menuPosition="absolute"
+            isClearable
+            isSearchable
+            name={name}
+            components={{
+                ...chakraComponents,
+                ...components,
+            }}
+            styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                ...chakraStyles,
+                ...styles,
+            }}
+            theme={(baseTheme) => ({
+                ...baseTheme,
+                borderRadius: chakraTheme.radii.md,
+                colors: {
+                    ...baseTheme.colors,
+                    neutral50: placeholderColor, // placeholder text color
+                    neutral40: placeholderColor, // noOptionsMessage color
+                    ...th.colors,
+                },
+                spacing: {
+                    ...baseTheme.spacing,
+                    ...th.spacing,
+                },
+            })}
+            {...props}
+        />
+    );
+}
+
+export function CreatableMultiSelect({
+    name = "",
+    styles = {},
+    components = {},
+    theme = {
+        borderRadius: 0,
+        colors: {},
+        spacing: {
+            baseUnit: 1,
+            controlHeight: 1,
+            menuGutter: 0,
+        },
+    },
+    ...props
+}: CreatableProps<{ label: string; value: string }, true>): JSX.Element {
+    const chakraTheme = useTheme();
+    const placeholderColorChakra = useColorModeValue("Input.textColor-light", "Input.textColor-dark");
+    const placeholderColor = useToken("colors", placeholderColorChakra);
+
+    const th =
+        typeof theme === "function"
+            ? theme({
+                  borderRadius: 0,
+                  colors: {},
+                  spacing: {
+                      baseUnit: 1,
+                      controlHeight: 1,
+                      menuGutter: 0,
+                  },
+              } as Theme)
+            : theme;
+    return (
+        <Creatable
             isMulti
             closeMenuOnSelect={false}
             menuShouldScrollIntoView={false}

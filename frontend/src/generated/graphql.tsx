@@ -46275,6 +46275,39 @@ export type AddEventPeople_InsertEventPeopleMutation = {
     } | null;
 };
 
+export type CreateTagModal_CreateTagMutationVariables = Exact<{
+    object: Collection_Tag_Insert_Input;
+}>;
+
+export type CreateTagModal_CreateTagMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_collection_Tag_one?: { readonly __typename?: "collection_Tag"; readonly id: any } | null;
+};
+
+export type ManageSchedule_TagFragment = {
+    readonly __typename?: "collection_Tag";
+    readonly id: any;
+    readonly name: string;
+    readonly priority: number;
+    readonly colour: string;
+};
+
+export type ManageSchedule_GetTagsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+}>;
+
+export type ManageSchedule_GetTagsQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_Tag: ReadonlyArray<{
+        readonly __typename?: "collection_Tag";
+        readonly id: any;
+        readonly name: string;
+        readonly priority: number;
+        readonly colour: string;
+    }>;
+};
+
 export type ContinuationsEditor_ContinuationFragment = {
     readonly __typename?: "schedule_Continuation";
     readonly id: any;
@@ -46954,11 +46987,22 @@ export type DeleteEventInfosMutation = {
     } | null;
 };
 
+export type ManageSchedule_ItemTagFragment = {
+    readonly __typename?: "content_ItemTag";
+    readonly id: any;
+    readonly tagId: any;
+};
+
 export type ManageSchedule_SessionContentFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly title: string;
     readonly typeName: Content_ItemType_Enum;
+    readonly itemTags: ReadonlyArray<{
+        readonly __typename?: "content_ItemTag";
+        readonly id: any;
+        readonly tagId: any;
+    }>;
 };
 
 export type ManageSchedule_SessionFragment = {
@@ -46977,6 +47021,11 @@ export type ManageSchedule_SessionFragment = {
         readonly id: any;
         readonly title: string;
         readonly typeName: Content_ItemType_Enum;
+        readonly itemTags: ReadonlyArray<{
+            readonly __typename?: "content_ItemTag";
+            readonly id: any;
+            readonly tagId: any;
+        }>;
     } | null;
 };
 
@@ -47009,6 +47058,11 @@ export type ManageSchedule_GetSessionsPageQuery = {
             readonly id: any;
             readonly title: string;
             readonly typeName: Content_ItemType_Enum;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly tagId: any;
+            }>;
         } | null;
     }>;
 };
@@ -50327,6 +50381,14 @@ export const AddEventPeople_GroupFragmentDoc = gql`
         name
     }
 `;
+export const ManageSchedule_TagFragmentDoc = gql`
+    fragment ManageSchedule_Tag on collection_Tag {
+        id
+        name
+        priority
+        colour
+    }
+`;
 export const ContinuationsEditor_ContinuationFragmentDoc = gql`
     fragment ContinuationsEditor_Continuation on schedule_Continuation {
         id
@@ -50493,12 +50555,22 @@ export const ShufflePeriodInfoFragmentDoc = gql`
         endAt
     }
 `;
+export const ManageSchedule_ItemTagFragmentDoc = gql`
+    fragment ManageSchedule_ItemTag on content_ItemTag {
+        id
+        tagId
+    }
+`;
 export const ManageSchedule_SessionContentFragmentDoc = gql`
     fragment ManageSchedule_SessionContent on content_Item {
         id
         title
         typeName
+        itemTags {
+            ...ManageSchedule_ItemTag
+        }
     }
+    ${ManageSchedule_ItemTagFragmentDoc}
 `;
 export const ManageSchedule_SessionFragmentDoc = gql`
     fragment ManageSchedule_Session on schedule_Event {
@@ -54908,6 +54980,36 @@ export function useAddEventPeople_InsertEventPeopleMutation() {
         AddEventPeople_InsertEventPeopleMutation,
         AddEventPeople_InsertEventPeopleMutationVariables
     >(AddEventPeople_InsertEventPeopleDocument);
+}
+export const CreateTagModal_CreateTagDocument = gql`
+    mutation CreateTagModal_CreateTag($object: collection_Tag_insert_input!) {
+        insert_collection_Tag_one(object: $object) {
+            id
+        }
+    }
+`;
+
+export function useCreateTagModal_CreateTagMutation() {
+    return Urql.useMutation<CreateTagModal_CreateTagMutation, CreateTagModal_CreateTagMutationVariables>(
+        CreateTagModal_CreateTagDocument
+    );
+}
+export const ManageSchedule_GetTagsDocument = gql`
+    query ManageSchedule_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Tag(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+            order_by: [{ name: asc }]
+        ) {
+            ...ManageSchedule_Tag
+        }
+    }
+    ${ManageSchedule_TagFragmentDoc}
+`;
+
+export function useManageSchedule_GetTagsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetTagsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetTagsQuery>({ query: ManageSchedule_GetTagsDocument, ...options });
 }
 export const ContinuationsEditor_SelectContinuationsDocument = gql`
     query ContinuationsEditor_SelectContinuations($fromId: uuid!) {

@@ -28,10 +28,18 @@ import DetailsPanel from "./Components/DetailsPanel";
 import HeaderControls from "./Components/HeaderControls";
 
 gql`
+    fragment ManageSchedule_ItemTag on content_ItemTag {
+        id
+        tagId
+    }
+
     fragment ManageSchedule_SessionContent on content_Item {
         id
         title
         typeName
+        itemTags {
+            ...ManageSchedule_ItemTag
+        }
     }
 
     fragment ManageSchedule_Session on schedule_Event {

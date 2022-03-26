@@ -69,6 +69,18 @@ export type CRUDableRecord<K extends keyof any, T extends CRUDableFields<K>> = {
                     : never);
 };
 
+export type Primitive = null | undefined | string | number | Date;
+
+export type DeepPartial<T> = {
+    [K in keyof T]+?: T[K] extends Primitive
+        ? T[K]
+        : T[K] extends Array<infer S>
+        ? Primitive extends S
+            ? Array<S>
+            : Array<DeepPartial<S>>
+        : DeepPartial<T[K]>;
+};
+
 export interface ValidationError {
     error: string;
 }
@@ -80,8 +92,8 @@ export interface PanelProps<T> {
     firstInputRef: React.MutableRefObject<HTMLInputElement | HTMLSelectElement | HTMLButtonElement | null>;
     clearState: React.MutableRefObject<(() => void) | null>;
 
-    record: Partial<T>;
-    updateRecord: (record: Partial<T>) => void;
+    record: DeepPartial<T>;
+    updateRecord: (record: DeepPartial<T>) => void;
 
     onValid: () => void;
     onInvalid: (error: ValidationError) => void;

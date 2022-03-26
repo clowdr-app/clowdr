@@ -35,7 +35,7 @@ import {
     useTabs,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import type { Step, ValidationState } from "./Types";
+import type { DeepPartial, Step, ValidationState } from "./Types";
 
 export default function Editor<T>({
     isOpen,
@@ -56,12 +56,12 @@ export default function Editor<T>({
     steps: Step<T>[];
 
     initialStepIdx: number;
-    initialRecord: Partial<T>;
+    initialRecord: DeepPartial<T>;
 
     isSaving: boolean;
-    onSave: (record: Partial<T>) => Promise<ValidationState>;
+    onSave: (record: DeepPartial<T>) => Promise<ValidationState>;
 }): JSX.Element {
-    const [record, setRecord] = useState<Partial<T>>(initialRecord);
+    const [record, setRecord] = useState<DeepPartial<T>>(initialRecord);
     const [stepIdx, setStepIdx] = useState<number>(initialStepIdx);
     const maxSteps = steps.length;
     const step = steps[stepIdx];

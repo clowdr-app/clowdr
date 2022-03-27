@@ -57,7 +57,7 @@ export default function DetailsPanel({
     onValid,
     onInvalid,
     onAnyChange,
-}: PanelProps<Partial<ManageSchedule_SessionFragment>>): JSX.Element {
+}: PanelProps<ManageSchedule_SessionFragment>): JSX.Element {
     const hoursOptions = useMemo(() => {
         const result: JSX.Element[] = [];
         for (let i = 0; i <= 4; i++) {

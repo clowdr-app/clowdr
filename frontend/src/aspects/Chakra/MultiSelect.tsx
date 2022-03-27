@@ -272,6 +272,74 @@ const chakraComponents = {
     },
 };
 
+export function SingleSelect({
+    name = "",
+    styles = {},
+    components = {},
+    theme = {
+        borderRadius: 0,
+        colors: {},
+        spacing: {
+            baseUnit: 1,
+            controlHeight: 1,
+            menuGutter: 0,
+        },
+    },
+    ...props
+}: SelectProps<{ label: string; value: string }, false>): JSX.Element {
+    const chakraTheme = useTheme();
+    const placeholderColorChakra = useColorModeValue("Input.textColor-light", "Input.textColor-dark");
+    const placeholderColor = useToken("colors", placeholderColorChakra);
+
+    const th =
+        typeof theme === "function"
+            ? theme({
+                  borderRadius: 0,
+                  colors: {},
+                  spacing: {
+                      baseUnit: 1,
+                      controlHeight: 1,
+                      menuGutter: 0,
+                  },
+              } as Theme)
+            : theme;
+    return (
+        <Select
+            closeMenuOnSelect={false}
+            menuShouldScrollIntoView={false}
+            menuPortalTarget={document.body}
+            menuPosition="absolute"
+            isClearable
+            isSearchable
+            name={name}
+            components={{
+                ...chakraComponents,
+                ...components,
+            }}
+            styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                ...chakraStyles,
+                ...styles,
+            }}
+            theme={(baseTheme) => ({
+                ...baseTheme,
+                borderRadius: chakraTheme.radii.md,
+                colors: {
+                    ...baseTheme.colors,
+                    neutral50: placeholderColor, // placeholder text color
+                    neutral40: placeholderColor, // noOptionsMessage color
+                    ...th.colors,
+                },
+                spacing: {
+                    ...baseTheme.spacing,
+                    ...th.spacing,
+                },
+            })}
+            {...props}
+        />
+    );
+}
+
 export default function MultiSelect({
     name = "",
     styles = {},
@@ -306,6 +374,74 @@ export default function MultiSelect({
     return (
         <Select
             isMulti
+            closeMenuOnSelect={false}
+            menuShouldScrollIntoView={false}
+            menuPortalTarget={document.body}
+            menuPosition="absolute"
+            isClearable
+            isSearchable
+            name={name}
+            components={{
+                ...chakraComponents,
+                ...components,
+            }}
+            styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                ...chakraStyles,
+                ...styles,
+            }}
+            theme={(baseTheme) => ({
+                ...baseTheme,
+                borderRadius: chakraTheme.radii.md,
+                colors: {
+                    ...baseTheme.colors,
+                    neutral50: placeholderColor, // placeholder text color
+                    neutral40: placeholderColor, // noOptionsMessage color
+                    ...th.colors,
+                },
+                spacing: {
+                    ...baseTheme.spacing,
+                    ...th.spacing,
+                },
+            })}
+            {...props}
+        />
+    );
+}
+
+export function CreatableSingleSelect({
+    name = "",
+    styles = {},
+    components = {},
+    theme = {
+        borderRadius: 0,
+        colors: {},
+        spacing: {
+            baseUnit: 1,
+            controlHeight: 1,
+            menuGutter: 0,
+        },
+    },
+    ...props
+}: CreatableProps<{ label: string; value: string }, false>): JSX.Element {
+    const chakraTheme = useTheme();
+    const placeholderColorChakra = useColorModeValue("Input.textColor-light", "Input.textColor-dark");
+    const placeholderColor = useToken("colors", placeholderColorChakra);
+
+    const th =
+        typeof theme === "function"
+            ? theme({
+                  borderRadius: 0,
+                  colors: {},
+                  spacing: {
+                      baseUnit: 1,
+                      controlHeight: 1,
+                      menuGutter: 0,
+                  },
+              } as Theme)
+            : theme;
+    return (
+        <Creatable
             closeMenuOnSelect={false}
             menuShouldScrollIntoView={false}
             menuPortalTarget={document.body}

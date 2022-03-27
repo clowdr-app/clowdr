@@ -46308,6 +46308,67 @@ export type ManageSchedule_GetTagsQuery = {
     }>;
 };
 
+export type ManageSchedule_PersonFragment = {
+    readonly __typename?: "collection_ProgramPerson";
+    readonly id: any;
+    readonly name: string;
+    readonly affiliation?: string | null;
+    readonly email?: string | null;
+    readonly registrantId?: any | null;
+};
+
+export type ManageSchedule_RegistrantFragment = {
+    readonly __typename?: "registrant_Registrant";
+    readonly id: any;
+    readonly displayName: string;
+    readonly invitation?: {
+        readonly __typename?: "registrant_Invitation";
+        readonly invitedEmailAddress: string;
+    } | null;
+};
+
+export type ManageSchedule_SearchPeopleQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    search: Scalars["String"];
+}>;
+
+export type ManageSchedule_SearchPeopleQuery = {
+    readonly __typename?: "query_root";
+    readonly registrant_searchRegistrants: ReadonlyArray<{
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly displayName: string;
+        readonly invitation?: {
+            readonly __typename?: "registrant_Invitation";
+            readonly invitedEmailAddress: string;
+        } | null;
+    }>;
+    readonly collection_searchProgramPerson: ReadonlyArray<{
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly name: string;
+        readonly affiliation?: string | null;
+        readonly email?: string | null;
+        readonly registrantId?: any | null;
+    }>;
+};
+
+export type ManageSchedule_GetPeopleQueryVariables = Exact<{
+    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetPeopleQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_ProgramPerson: ReadonlyArray<{
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly name: string;
+        readonly affiliation?: string | null;
+        readonly email?: string | null;
+        readonly registrantId?: any | null;
+    }>;
+};
+
 export type ContinuationsEditor_ContinuationFragment = {
     readonly __typename?: "schedule_Continuation";
     readonly id: any;
@@ -46993,6 +47054,21 @@ export type ManageSchedule_ItemTagFragment = {
     readonly tagId: any;
 };
 
+export type ManageSchedule_ItemPersonFragment = {
+    readonly __typename?: "content_ItemProgramPerson";
+    readonly id: any;
+    readonly personId: any;
+    readonly roleName: string;
+    readonly priority?: number | null;
+};
+
+export type ManageSchedule_EventPersonFragment = {
+    readonly __typename?: "schedule_EventProgramPerson";
+    readonly id: any;
+    readonly personId: any;
+    readonly roleName: Schedule_EventProgramPersonRole_Enum;
+};
+
 export type ManageSchedule_SessionContentFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
@@ -47002,6 +47078,13 @@ export type ManageSchedule_SessionContentFragment = {
         readonly __typename?: "content_ItemTag";
         readonly id: any;
         readonly tagId: any;
+    }>;
+    readonly itemPeople: ReadonlyArray<{
+        readonly __typename?: "content_ItemProgramPerson";
+        readonly id: any;
+        readonly personId: any;
+        readonly roleName: string;
+        readonly priority?: number | null;
     }>;
 };
 
@@ -47026,7 +47109,20 @@ export type ManageSchedule_SessionFragment = {
             readonly id: any;
             readonly tagId: any;
         }>;
+        readonly itemPeople: ReadonlyArray<{
+            readonly __typename?: "content_ItemProgramPerson";
+            readonly id: any;
+            readonly personId: any;
+            readonly roleName: string;
+            readonly priority?: number | null;
+        }>;
     } | null;
+    readonly eventPeople: ReadonlyArray<{
+        readonly __typename?: "schedule_EventProgramPerson";
+        readonly id: any;
+        readonly personId: any;
+        readonly roleName: Schedule_EventProgramPersonRole_Enum;
+    }>;
 };
 
 export type ManageSchedule_GetSessionsPageQueryVariables = Exact<{
@@ -47063,8 +47159,40 @@ export type ManageSchedule_GetSessionsPageQuery = {
                 readonly id: any;
                 readonly tagId: any;
             }>;
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly personId: any;
+                readonly roleName: string;
+                readonly priority?: number | null;
+            }>;
         } | null;
+        readonly eventPeople: ReadonlyArray<{
+            readonly __typename?: "schedule_EventProgramPerson";
+            readonly id: any;
+            readonly personId: any;
+            readonly roleName: Schedule_EventProgramPersonRole_Enum;
+        }>;
     }>;
+};
+
+export type ManageSchedule_GetAllSessionIdsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+}>;
+
+export type ManageSchedule_GetAllSessionIdsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
+};
+
+export type ManageSchedule_InsertEventMutationVariables = Exact<{
+    object: Schedule_Event_Insert_Input;
+}>;
+
+export type ManageSchedule_InsertEventMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_schedule_Event_one?: { readonly __typename?: "schedule_Event"; readonly id: any } | null;
 };
 
 export type UpdateShufflePeriodMutationVariables = Exact<{
@@ -50389,6 +50517,24 @@ export const ManageSchedule_TagFragmentDoc = gql`
         colour
     }
 `;
+export const ManageSchedule_PersonFragmentDoc = gql`
+    fragment ManageSchedule_Person on collection_ProgramPerson {
+        id
+        name
+        affiliation
+        email
+        registrantId
+    }
+`;
+export const ManageSchedule_RegistrantFragmentDoc = gql`
+    fragment ManageSchedule_Registrant on registrant_Registrant {
+        id
+        displayName
+        invitation {
+            invitedEmailAddress
+        }
+    }
+`;
 export const ContinuationsEditor_ContinuationFragmentDoc = gql`
     fragment ContinuationsEditor_Continuation on schedule_Continuation {
         id
@@ -50561,6 +50707,14 @@ export const ManageSchedule_ItemTagFragmentDoc = gql`
         tagId
     }
 `;
+export const ManageSchedule_ItemPersonFragmentDoc = gql`
+    fragment ManageSchedule_ItemPerson on content_ItemProgramPerson {
+        id
+        personId
+        roleName
+        priority
+    }
+`;
 export const ManageSchedule_SessionContentFragmentDoc = gql`
     fragment ManageSchedule_SessionContent on content_Item {
         id
@@ -50569,8 +50723,19 @@ export const ManageSchedule_SessionContentFragmentDoc = gql`
         itemTags {
             ...ManageSchedule_ItemTag
         }
+        itemPeople {
+            ...ManageSchedule_ItemPerson
+        }
     }
     ${ManageSchedule_ItemTagFragmentDoc}
+    ${ManageSchedule_ItemPersonFragmentDoc}
+`;
+export const ManageSchedule_EventPersonFragmentDoc = gql`
+    fragment ManageSchedule_EventPerson on schedule_EventProgramPerson {
+        id
+        personId
+        roleName
+    }
 `;
 export const ManageSchedule_SessionFragmentDoc = gql`
     fragment ManageSchedule_Session on schedule_Event {
@@ -50586,8 +50751,12 @@ export const ManageSchedule_SessionFragmentDoc = gql`
         item {
             ...ManageSchedule_SessionContent
         }
+        eventPeople {
+            ...ManageSchedule_EventPerson
+        }
     }
     ${ManageSchedule_SessionContentFragmentDoc}
+    ${ManageSchedule_EventPersonFragmentDoc}
 `;
 export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
@@ -55011,6 +55180,38 @@ export function useManageSchedule_GetTagsQuery(
 ) {
     return Urql.useQuery<ManageSchedule_GetTagsQuery>({ query: ManageSchedule_GetTagsDocument, ...options });
 }
+export const ManageSchedule_SearchPeopleDocument = gql`
+    query ManageSchedule_SearchPeople($conferenceId: uuid!, $search: String!) {
+        registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
+            ...ManageSchedule_Registrant
+        }
+        collection_searchProgramPerson(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
+            ...ManageSchedule_Person
+        }
+    }
+    ${ManageSchedule_RegistrantFragmentDoc}
+    ${ManageSchedule_PersonFragmentDoc}
+`;
+
+export function useManageSchedule_SearchPeopleQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_SearchPeopleQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_SearchPeopleQuery>({ query: ManageSchedule_SearchPeopleDocument, ...options });
+}
+export const ManageSchedule_GetPeopleDocument = gql`
+    query ManageSchedule_GetPeople($ids: [uuid!]!) {
+        collection_ProgramPerson(where: { id: { _in: $ids } }) {
+            ...ManageSchedule_Person
+        }
+    }
+    ${ManageSchedule_PersonFragmentDoc}
+`;
+
+export function useManageSchedule_GetPeopleQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetPeopleQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetPeopleQuery>({ query: ManageSchedule_GetPeopleDocument, ...options });
+}
 export const ContinuationsEditor_SelectContinuationsDocument = gql`
     query ContinuationsEditor_SelectContinuations($fromId: uuid!) {
         schedule_Continuation(
@@ -55439,6 +55640,7 @@ export const ManageSchedule_GetSessionsPageDocument = gql`
             }
             limit: $limit
             offset: $offset
+            order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }, { room: { name: asc } }]
         ) {
             ...ManageSchedule_Session
         }
@@ -55453,6 +55655,42 @@ export function useManageSchedule_GetSessionsPageQuery(
         query: ManageSchedule_GetSessionsPageDocument,
         ...options,
     });
+}
+export const ManageSchedule_GetAllSessionIdsDocument = gql`
+    query ManageSchedule_GetAllSessionIds($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                sessionEventId: { _is_null: true }
+            }
+            order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }, { room: { name: asc } }]
+        ) {
+            id
+        }
+    }
+`;
+
+export function useManageSchedule_GetAllSessionIdsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetAllSessionIdsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetAllSessionIdsQuery>({
+        query: ManageSchedule_GetAllSessionIdsDocument,
+        ...options,
+    });
+}
+export const ManageSchedule_InsertEventDocument = gql`
+    mutation ManageSchedule_InsertEvent($object: schedule_Event_insert_input!) {
+        insert_schedule_Event_one(object: $object) {
+            id
+        }
+    }
+`;
+
+export function useManageSchedule_InsertEventMutation() {
+    return Urql.useMutation<ManageSchedule_InsertEventMutation, ManageSchedule_InsertEventMutationVariables>(
+        ManageSchedule_InsertEventDocument
+    );
 }
 export const UpdateShufflePeriodDocument = gql`
     mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {

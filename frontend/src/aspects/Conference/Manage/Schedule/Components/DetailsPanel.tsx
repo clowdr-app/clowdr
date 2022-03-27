@@ -17,7 +17,6 @@ import {
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { gql } from "urql";
 import type { ManageSchedule_SessionFragment } from "../../../../../generated/graphql";
 import { useManageSchedule_GetTagsQuery } from "../../../../../generated/graphql";
 import { CreatableMultiSelect } from "../../../../Chakra/MultiSelect";
@@ -28,24 +27,6 @@ import { makeContext } from "../../../../GQL/make-context";
 import { roundUpToNearest } from "../../../../Utils/MathUtils";
 import { useConference } from "../../../useConference";
 import CreateTagModal from "./CreateTagModal";
-
-gql`
-    fragment ManageSchedule_Tag on collection_Tag {
-        id
-        name
-        priority
-        colour
-    }
-
-    query ManageSchedule_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
-        collection_Tag(
-            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
-            order_by: [{ name: asc }]
-        ) {
-            ...ManageSchedule_Tag
-        }
-    }
-`;
 
 export default function DetailsPanel({
     isCreate,

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import type { BoxProps } from "@chakra-ui/react";
-import { Flex, Heading, HStack, IconButton, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Button, chakra, Flex, Heading, HStack, IconButton, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../Chakra/FAIcon";
 import SelectButton from "./SelectButton";
@@ -33,6 +33,7 @@ export interface CardProps extends BoxProps {
         icon: string;
         onClick: () => void;
         variant: string;
+        showLabel?: boolean;
     };
 
     variant?: "solid" | "ghost" | "outline";
@@ -125,7 +126,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                             left="-1px"
                         />
                     ) : undefined}
-                    <VStack alignItems="flex-start" m={2} flex="0 1 100%" overflow="hidden">
+                    <VStack alignItems="flex-start" m={2} mb={1} flex="0 1 100%" overflow="hidden">
                         <HStack alignItems="flex-start" w="100%">
                             <VStack alignItems="flex-start" mr="auto">
                                 {subHeading ? <Text fontSize="md">{subHeading}</Text> : undefined}
@@ -141,22 +142,43 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                     </VStack>
                 </Flex>
                 {bottomButton ? (
-                    <IconButton
-                        mt={2}
-                        aria-label={bottomButton.label}
-                        icon={<FAIcon iconStyle={bottomButton.iconStyle} icon={bottomButton.icon} />}
-                        h="auto"
-                        colorScheme={bottomButton.colorScheme}
-                        alignSelf="stretch"
-                        onClick={(ev) => {
-                            ev.stopPropagation();
-                            bottomButton?.onClick();
-                        }}
-                        borderTopRadius={0}
-                        borderBottomLeftRadius="2xl"
-                        borderBottomRightRadius={rightButton ? 0 : "2xl"}
-                        variant={bottomButton.variant}
-                    />
+                    bottomButton.showLabel ? (
+                        <Button
+                            mt={2}
+                            h="auto"
+                            colorScheme={bottomButton.colorScheme}
+                            alignSelf="stretch"
+                            onClick={(ev) => {
+                                ev.stopPropagation();
+                                bottomButton?.onClick();
+                            }}
+                            borderTopRadius={0}
+                            borderBottomLeftRadius="2xl"
+                            borderBottomRightRadius={rightButton ? 0 : "2xl"}
+                            variant={bottomButton.variant}
+                            p={1}
+                        >
+                            <FAIcon iconStyle={bottomButton.iconStyle} icon={bottomButton.icon} mr={2} fontSize="sm" />
+                            <chakra.span>{bottomButton.label}</chakra.span>
+                        </Button>
+                    ) : (
+                        <IconButton
+                            mt={2}
+                            aria-label={bottomButton.label}
+                            icon={<FAIcon iconStyle={bottomButton.iconStyle} icon={bottomButton.icon} />}
+                            h="auto"
+                            colorScheme={bottomButton.colorScheme}
+                            alignSelf="stretch"
+                            onClick={(ev) => {
+                                ev.stopPropagation();
+                                bottomButton?.onClick();
+                            }}
+                            borderTopRadius={0}
+                            borderBottomLeftRadius="2xl"
+                            borderBottomRightRadius={rightButton ? 0 : "2xl"}
+                            variant={bottomButton.variant}
+                        />
+                    )
                 ) : undefined}
             </Flex>
             {rightButton ? (

@@ -7890,11 +7890,15 @@ enum collection_Exhibition_constraint {
     """
     unique or primary key constraint
     """
-    Exhibition_name_conferenceId_fkey
+    Exhibition_pkey
     """
     unique or primary key constraint
     """
-    Exhibition_pkey
+    collection_Exhibition_name_conferenceId
+    """
+    unique or primary key constraint
+    """
+    collection_Exhibition_name_subconferenceId
 }
 
 """
@@ -8486,19 +8490,27 @@ enum collection_ProgramPerson_constraint {
     """
     unique or primary key constraint
     """
-    ProgramPerson_conferenceId_name_affiliation_key
-    """
-    unique or primary key constraint
-    """
-    ProgramPerson_conferenceId_name_key
-    """
-    unique or primary key constraint
-    """
     ProgramPerson_pkey
     """
     unique or primary key constraint
     """
     collection_ProgramPerson_accessToken
+    """
+    unique or primary key constraint
+    """
+    collection_ProgramPerson_conferenceId_name
+    """
+    unique or primary key constraint
+    """
+    collection_ProgramPerson_conferenceId_name_affiliation
+    """
+    unique or primary key constraint
+    """
+    collection_ProgramPerson_subconferenceId_name
+    """
+    unique or primary key constraint
+    """
+    collection_ProgramPerson_subconferenceId_name_affiliation
 }
 
 """
@@ -34962,11 +34974,15 @@ enum registrant_Group_constraint {
     """
     unique or primary key constraint
     """
-    Group_conferenceId_name_key
+    Group_pkey
     """
     unique or primary key constraint
     """
-    Group_pkey
+    registrant_Group_conferenceId_name
+    """
+    unique or primary key constraint
+    """
+    registrant_Group_subconferenceId_name
 }
 
 """
@@ -42988,6 +43004,56 @@ type schedule_Event {
     modeName: schedule_Mode_enum
     name: String!
     """
+    An array relationship
+    """
+    presentations(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Event_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Event_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Event_bool_exp
+    ): [schedule_Event!]!
+    """
+    An aggregate relationship
+    """
+    presentations_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Event_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Event_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Event_bool_exp
+    ): schedule_Event_aggregate!
+    """
     An object relationship
     """
     room: room_Room!
@@ -42998,6 +43064,10 @@ type schedule_Event {
     roomName: String
     scheduledEndTime: timestamptz
     scheduledStartTime: timestamptz
+    """
+    An object relationship
+    """
+    session: schedule_Event
     sessionEventId: uuid
     """
     An object relationship
@@ -43580,11 +43650,13 @@ input schedule_Event_bool_exp {
     mode: schedule_Mode_bool_exp
     modeName: schedule_Mode_enum_comparison_exp
     name: String_comparison_exp
+    presentations: schedule_Event_bool_exp
     room: room_Room_bool_exp
     roomId: uuid_comparison_exp
     roomName: String_comparison_exp
     scheduledEndTime: timestamptz_comparison_exp
     scheduledStartTime: timestamptz_comparison_exp
+    session: schedule_Event_bool_exp
     sessionEventId: uuid_comparison_exp
     shufflePeriod: room_ShufflePeriod_bool_exp
     shufflePeriodId: uuid_comparison_exp
@@ -43628,10 +43700,12 @@ input schedule_Event_insert_input {
     mode: schedule_Mode_obj_rel_insert_input
     modeName: schedule_Mode_enum
     name: String
+    presentations: schedule_Event_arr_rel_insert_input
     room: room_Room_obj_rel_insert_input
     roomId: uuid
     scheduledEndTime: timestamptz
     scheduledStartTime: timestamptz
+    session: schedule_Event_obj_rel_insert_input
     sessionEventId: uuid
     shufflePeriod: room_ShufflePeriod_obj_rel_insert_input
     shufflePeriodId: uuid
@@ -43787,11 +43861,13 @@ input schedule_Event_order_by {
     mode: schedule_Mode_order_by
     modeName: order_by
     name: order_by
+    presentations_aggregate: schedule_Event_aggregate_order_by
     room: room_Room_order_by
     roomId: order_by
     roomName: order_by
     scheduledEndTime: order_by
     scheduledStartTime: order_by
+    session: schedule_Event_order_by
     sessionEventId: order_by
     shufflePeriod: room_ShufflePeriod_order_by
     shufflePeriodId: order_by

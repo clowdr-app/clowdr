@@ -6,11 +6,13 @@ import useSelectorColors from "./useSelectorColors";
 
 export default function SelectButton({
     isSelected,
+    isIndeterminate = false,
     isDisabled = false,
     onToggle,
     ...props
 }: {
     isSelected: boolean;
+    isIndeterminate?: boolean;
     isDisabled?: boolean;
     onToggle?: () => void;
 } & Omit<IconButtonProps, "aria-label">): JSX.Element {
@@ -19,18 +21,18 @@ export default function SelectButton({
     return (
         <IconButton
             aria-label={isSelected ? "Deselect" : "Select"}
-            icon={<FAIcon iconStyle="s" icon="check" />}
+            icon={isIndeterminate ? <FAIcon iconStyle="s" icon="minus" /> : <FAIcon iconStyle="s" icon="check" />}
             colorScheme="blue"
             isDisabled={isDisabled}
-            variant={isSelected ? "solid" : "outline"}
+            variant={isSelected || isIndeterminate ? "solid" : "outline"}
             onClick={(ev) => {
                 ev.stopPropagation();
                 onToggle?.();
             }}
             size="xs"
-            color={isSelected ? "white" : "transparent"}
+            color={isSelected || isIndeterminate ? "white" : "transparent"}
             border="2px solid"
-            borderColor={isSelected ? strongColor : greyColor}
+            borderColor={isSelected || isIndeterminate ? strongColor : greyColor}
             _groupHover={{
                 borderColor: outlineColor,
                 color: outlineColor,

@@ -5921,9 +5921,11 @@ export type Collection_Exhibition_Bool_Exp = {
 /** unique or primary key constraints on table "collection.Exhibition" */
 export enum Collection_Exhibition_Constraint {
     /** unique or primary key constraint */
-    ExhibitionNameConferenceIdFkey = "Exhibition_name_conferenceId_fkey",
-    /** unique or primary key constraint */
     ExhibitionPkey = "Exhibition_pkey",
+    /** unique or primary key constraint */
+    CollectionExhibitionNameConferenceId = "collection_Exhibition_name_conferenceId",
+    /** unique or primary key constraint */
+    CollectionExhibitionNameSubconferenceId = "collection_Exhibition_name_subconferenceId",
 }
 
 /** input type for incrementing numeric columns in table "collection.Exhibition" */
@@ -6345,13 +6347,17 @@ export type Collection_ProgramPerson_Bool_Exp = {
 /** unique or primary key constraints on table "collection.ProgramPerson" */
 export enum Collection_ProgramPerson_Constraint {
     /** unique or primary key constraint */
-    ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
-    /** unique or primary key constraint */
-    ProgramPersonConferenceIdNameKey = "ProgramPerson_conferenceId_name_key",
-    /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
     /** unique or primary key constraint */
     CollectionProgramPersonAccessToken = "collection_ProgramPerson_accessToken",
+    /** unique or primary key constraint */
+    CollectionProgramPersonConferenceIdName = "collection_ProgramPerson_conferenceId_name",
+    /** unique or primary key constraint */
+    CollectionProgramPersonConferenceIdNameAffiliation = "collection_ProgramPerson_conferenceId_name_affiliation",
+    /** unique or primary key constraint */
+    CollectionProgramPersonSubconferenceIdName = "collection_ProgramPerson_subconferenceId_name",
+    /** unique or primary key constraint */
+    CollectionProgramPersonSubconferenceIdNameAffiliation = "collection_ProgramPerson_subconferenceId_name_affiliation",
 }
 
 /** input type for incrementing numeric columns in table "collection.ProgramPerson" */
@@ -23757,9 +23763,11 @@ export type Registrant_Group_Bool_Exp = {
 /** unique or primary key constraints on table "registrant.Group" */
 export enum Registrant_Group_Constraint {
     /** unique or primary key constraint */
-    GroupConferenceIdNameKey = "Group_conferenceId_name_key",
-    /** unique or primary key constraint */
     GroupPkey = "Group_pkey",
+    /** unique or primary key constraint */
+    RegistrantGroupConferenceIdName = "registrant_Group_conferenceId_name",
+    /** unique or primary key constraint */
+    RegistrantGroupSubconferenceIdName = "registrant_Group_subconferenceId_name",
 }
 
 /** input type for inserting data into table "registrant.Group" */
@@ -29561,6 +29569,10 @@ export type Schedule_Event = {
     readonly mode?: Maybe<Schedule_Mode>;
     readonly modeName?: Maybe<Schedule_Mode_Enum>;
     readonly name: Scalars["String"];
+    /** An array relationship */
+    readonly presentations: ReadonlyArray<Schedule_Event>;
+    /** An aggregate relationship */
+    readonly presentations_aggregate: Schedule_Event_Aggregate;
     /** An object relationship */
     readonly room: Room_Room;
     readonly roomId: Scalars["uuid"];
@@ -29568,6 +29580,8 @@ export type Schedule_Event = {
     readonly roomName?: Maybe<Scalars["String"]>;
     readonly scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
     readonly scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    /** An object relationship */
+    readonly session?: Maybe<Schedule_Event>;
     readonly sessionEventId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     readonly shufflePeriod?: Maybe<Room_ShufflePeriod>;
@@ -29615,6 +29629,24 @@ export type Schedule_EventEventPeople_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<ReadonlyArray<Schedule_EventProgramPerson_Order_By>>;
     where?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventPresentationsArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventPresentations_AggregateArgs = {
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** columns and relationships of "schedule.EventProgramPerson" */
@@ -30040,11 +30072,13 @@ export type Schedule_Event_Bool_Exp = {
     readonly mode?: InputMaybe<Schedule_Mode_Bool_Exp>;
     readonly modeName?: InputMaybe<Schedule_Mode_Enum_Comparison_Exp>;
     readonly name?: InputMaybe<String_Comparison_Exp>;
+    readonly presentations?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly room?: InputMaybe<Room_Room_Bool_Exp>;
     readonly roomId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly roomName?: InputMaybe<String_Comparison_Exp>;
     readonly scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    readonly session?: InputMaybe<Schedule_Event_Bool_Exp>;
     readonly sessionEventId?: InputMaybe<Uuid_Comparison_Exp>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     readonly shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -30082,10 +30116,12 @@ export type Schedule_Event_Insert_Input = {
     readonly mode?: InputMaybe<Schedule_Mode_Obj_Rel_Insert_Input>;
     readonly modeName?: InputMaybe<Schedule_Mode_Enum>;
     readonly name?: InputMaybe<Scalars["String"]>;
+    readonly presentations?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     readonly room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     readonly roomId?: InputMaybe<Scalars["uuid"]>;
     readonly scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
     readonly scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    readonly session?: InputMaybe<Schedule_Event_Obj_Rel_Insert_Input>;
     readonly sessionEventId?: InputMaybe<Scalars["uuid"]>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
     readonly shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
@@ -30222,11 +30258,13 @@ export type Schedule_Event_Order_By = {
     readonly mode?: InputMaybe<Schedule_Mode_Order_By>;
     readonly modeName?: InputMaybe<Order_By>;
     readonly name?: InputMaybe<Order_By>;
+    readonly presentations_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     readonly room?: InputMaybe<Room_Room_Order_By>;
     readonly roomId?: InputMaybe<Order_By>;
     readonly roomName?: InputMaybe<Order_By>;
     readonly scheduledEndTime?: InputMaybe<Order_By>;
     readonly scheduledStartTime?: InputMaybe<Order_By>;
+    readonly session?: InputMaybe<Schedule_Event_Order_By>;
     readonly sessionEventId?: InputMaybe<Order_By>;
     readonly shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     readonly shufflePeriodId?: InputMaybe<Order_By>;
@@ -46284,30 +46322,6 @@ export type CreateTagModal_CreateTagMutation = {
     readonly insert_collection_Tag_one?: { readonly __typename?: "collection_Tag"; readonly id: any } | null;
 };
 
-export type ManageSchedule_TagFragment = {
-    readonly __typename?: "collection_Tag";
-    readonly id: any;
-    readonly name: string;
-    readonly priority: number;
-    readonly colour: string;
-};
-
-export type ManageSchedule_GetTagsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    subconferenceCond: Uuid_Comparison_Exp;
-}>;
-
-export type ManageSchedule_GetTagsQuery = {
-    readonly __typename?: "query_root";
-    readonly collection_Tag: ReadonlyArray<{
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly colour: string;
-    }>;
-};
-
 export type ManageSchedule_PersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
@@ -47086,6 +47100,14 @@ export type ManageSchedule_SessionContentFragment = {
         readonly roleName: string;
         readonly priority?: number | null;
     }>;
+    readonly abstract: ReadonlyArray<{ readonly __typename?: "content_Element"; readonly id: any; readonly data: any }>;
+    readonly elements_aggregate: {
+        readonly __typename?: "content_Element_aggregate";
+        readonly aggregate?: {
+            readonly __typename?: "content_Element_aggregate_fields";
+            readonly count: number;
+        } | null;
+    };
 };
 
 export type ManageSchedule_SessionFragment = {
@@ -47099,6 +47121,10 @@ export type ManageSchedule_SessionFragment = {
     readonly modeName?: Schedule_Mode_Enum | null;
     readonly roomId: any;
     readonly itemId?: any | null;
+    readonly presentations_aggregate: {
+        readonly __typename?: "schedule_Event_aggregate";
+        readonly aggregate?: { readonly __typename?: "schedule_Event_aggregate_fields"; readonly count: number } | null;
+    };
     readonly item?: {
         readonly __typename?: "content_Item";
         readonly id: any;
@@ -47116,6 +47142,18 @@ export type ManageSchedule_SessionFragment = {
             readonly roleName: string;
             readonly priority?: number | null;
         }>;
+        readonly abstract: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly data: any;
+        }>;
+        readonly elements_aggregate: {
+            readonly __typename?: "content_Element_aggregate";
+            readonly aggregate?: {
+                readonly __typename?: "content_Element_aggregate_fields";
+                readonly count: number;
+            } | null;
+        };
     } | null;
     readonly eventPeople: ReadonlyArray<{
         readonly __typename?: "schedule_EventProgramPerson";
@@ -47125,11 +47163,36 @@ export type ManageSchedule_SessionFragment = {
     }>;
 };
 
+export type ManageSchedule_TagFragment = {
+    readonly __typename?: "collection_Tag";
+    readonly id: any;
+    readonly name: string;
+    readonly priority: number;
+    readonly colour: string;
+};
+
+export type ManageSchedule_GetTagsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+}>;
+
+export type ManageSchedule_GetTagsQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_Tag: ReadonlyArray<{
+        readonly __typename?: "collection_Tag";
+        readonly id: any;
+        readonly name: string;
+        readonly priority: number;
+        readonly colour: string;
+    }>;
+};
+
 export type ManageSchedule_GetSessionsPageQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
     subconferenceCond: Uuid_Comparison_Exp;
     limit: Scalars["Int"];
     offset: Scalars["Int"];
+    filter: Schedule_Event_Bool_Exp;
 }>;
 
 export type ManageSchedule_GetSessionsPageQuery = {
@@ -47149,6 +47212,13 @@ export type ManageSchedule_GetSessionsPageQuery = {
         readonly modeName?: Schedule_Mode_Enum | null;
         readonly roomId: any;
         readonly itemId?: any | null;
+        readonly presentations_aggregate: {
+            readonly __typename?: "schedule_Event_aggregate";
+            readonly aggregate?: {
+                readonly __typename?: "schedule_Event_aggregate_fields";
+                readonly count: number;
+            } | null;
+        };
         readonly item?: {
             readonly __typename?: "content_Item";
             readonly id: any;
@@ -47166,6 +47236,18 @@ export type ManageSchedule_GetSessionsPageQuery = {
                 readonly roleName: string;
                 readonly priority?: number | null;
             }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+            }>;
+            readonly elements_aggregate: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
         } | null;
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
@@ -47179,6 +47261,7 @@ export type ManageSchedule_GetSessionsPageQuery = {
 export type ManageSchedule_GetAllSessionIdsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
     subconferenceCond: Uuid_Comparison_Exp;
+    filter: Schedule_Event_Bool_Exp;
 }>;
 
 export type ManageSchedule_GetAllSessionIdsQuery = {
@@ -50509,14 +50592,6 @@ export const AddEventPeople_GroupFragmentDoc = gql`
         name
     }
 `;
-export const ManageSchedule_TagFragmentDoc = gql`
-    fragment ManageSchedule_Tag on collection_Tag {
-        id
-        name
-        priority
-        colour
-    }
-`;
 export const ManageSchedule_PersonFragmentDoc = gql`
     fragment ManageSchedule_Person on collection_ProgramPerson {
         id
@@ -50726,6 +50801,15 @@ export const ManageSchedule_SessionContentFragmentDoc = gql`
         itemPeople {
             ...ManageSchedule_ItemPerson
         }
+        abstract: elements(where: { typeName: { _eq: ABSTRACT } }) {
+            id
+            data
+        }
+        elements_aggregate {
+            aggregate {
+                count
+            }
+        }
     }
     ${ManageSchedule_ItemTagFragmentDoc}
     ${ManageSchedule_ItemPersonFragmentDoc}
@@ -50748,6 +50832,11 @@ export const ManageSchedule_SessionFragmentDoc = gql`
         modeName
         roomId
         itemId
+        presentations_aggregate {
+            aggregate {
+                count
+            }
+        }
         item {
             ...ManageSchedule_SessionContent
         }
@@ -50757,6 +50846,14 @@ export const ManageSchedule_SessionFragmentDoc = gql`
     }
     ${ManageSchedule_SessionContentFragmentDoc}
     ${ManageSchedule_EventPersonFragmentDoc}
+`;
+export const ManageSchedule_TagFragmentDoc = gql`
+    fragment ManageSchedule_Tag on collection_Tag {
+        id
+        name
+        priority
+        colour
+    }
 `;
 export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
@@ -55163,23 +55260,6 @@ export function useCreateTagModal_CreateTagMutation() {
         CreateTagModal_CreateTagDocument
     );
 }
-export const ManageSchedule_GetTagsDocument = gql`
-    query ManageSchedule_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
-        collection_Tag(
-            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
-            order_by: [{ name: asc }]
-        ) {
-            ...ManageSchedule_Tag
-        }
-    }
-    ${ManageSchedule_TagFragmentDoc}
-`;
-
-export function useManageSchedule_GetTagsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetTagsQueryVariables>, "query">
-) {
-    return Urql.useQuery<ManageSchedule_GetTagsQuery>({ query: ManageSchedule_GetTagsDocument, ...options });
-}
 export const ManageSchedule_SearchPeopleDocument = gql`
     query ManageSchedule_SearchPeople($conferenceId: uuid!, $search: String!) {
         registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
@@ -55614,18 +55694,39 @@ export const DeleteEventInfosDocument = gql`
 export function useDeleteEventInfosMutation() {
     return Urql.useMutation<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>(DeleteEventInfosDocument);
 }
+export const ManageSchedule_GetTagsDocument = gql`
+    query ManageSchedule_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Tag(
+            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+            order_by: [{ priority: asc }, { name: asc }]
+        ) {
+            ...ManageSchedule_Tag
+        }
+    }
+    ${ManageSchedule_TagFragmentDoc}
+`;
+
+export function useManageSchedule_GetTagsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetTagsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetTagsQuery>({ query: ManageSchedule_GetTagsDocument, ...options });
+}
 export const ManageSchedule_GetSessionsPageDocument = gql`
     query ManageSchedule_GetSessionsPage(
         $conferenceId: uuid!
         $subconferenceCond: uuid_comparison_exp!
         $limit: Int!
         $offset: Int!
+        $filter: schedule_Event_bool_exp!
     ) {
         schedule_Event_aggregate(
             where: {
-                conferenceId: { _eq: $conferenceId }
-                subconferenceId: $subconferenceCond
-                sessionEventId: { _is_null: true }
+                _and: [
+                    { conferenceId: { _eq: $conferenceId } }
+                    { subconferenceId: $subconferenceCond }
+                    { sessionEventId: { _is_null: true } }
+                    $filter
+                ]
             }
         ) {
             aggregate {
@@ -55634,9 +55735,12 @@ export const ManageSchedule_GetSessionsPageDocument = gql`
         }
         schedule_Event(
             where: {
-                conferenceId: { _eq: $conferenceId }
-                subconferenceId: $subconferenceCond
-                sessionEventId: { _is_null: true }
+                _and: [
+                    { conferenceId: { _eq: $conferenceId } }
+                    { subconferenceId: $subconferenceCond }
+                    { sessionEventId: { _is_null: true } }
+                    $filter
+                ]
             }
             limit: $limit
             offset: $offset
@@ -55657,12 +55761,19 @@ export function useManageSchedule_GetSessionsPageQuery(
     });
 }
 export const ManageSchedule_GetAllSessionIdsDocument = gql`
-    query ManageSchedule_GetAllSessionIds($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+    query ManageSchedule_GetAllSessionIds(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+        $filter: schedule_Event_bool_exp!
+    ) {
         schedule_Event(
             where: {
-                conferenceId: { _eq: $conferenceId }
-                subconferenceId: $subconferenceCond
-                sessionEventId: { _is_null: true }
+                _and: [
+                    { conferenceId: { _eq: $conferenceId } }
+                    { subconferenceId: $subconferenceCond }
+                    { sessionEventId: { _is_null: true } }
+                    $filter
+                ]
             }
             order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }, { room: { name: asc } }]
         ) {
@@ -76821,6 +76932,16 @@ export type GraphCacheResolvers = {
         >;
         modeName?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Schedule_Mode_Enum | string>;
         name?: GraphCacheResolver<WithTypename<Schedule_Event>, Record<string, never>, Scalars["String"] | string>;
+        presentations?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Schedule_EventPresentationsArgs,
+            Array<WithTypename<Schedule_Event> | string>
+        >;
+        presentations_aggregate?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Schedule_EventPresentations_AggregateArgs,
+            WithTypename<Schedule_Event_Aggregate> | string
+        >;
         room?: GraphCacheResolver<
             WithTypename<Schedule_Event>,
             Record<string, never>,
@@ -76837,6 +76958,11 @@ export type GraphCacheResolvers = {
             WithTypename<Schedule_Event>,
             Record<string, never>,
             Scalars["timestamptz"] | string
+        >;
+        session?: GraphCacheResolver<
+            WithTypename<Schedule_Event>,
+            Record<string, never>,
+            WithTypename<Schedule_Event> | string
         >;
         sessionEventId?: GraphCacheResolver<
             WithTypename<Schedule_Event>,

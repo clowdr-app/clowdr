@@ -193,6 +193,7 @@ select_permissions:
                 - EXTERNAL
   role: attendee
 - permission:
+    allow_aggregations: true
     columns:
     - isHidden
     - uploadsRemaining
@@ -218,6 +219,7 @@ select_permissions:
           _is_null: true
   role: conference-organizer
 - permission:
+    allow_aggregations: true
     columns:
     - isHidden
     - uploadsRemaining

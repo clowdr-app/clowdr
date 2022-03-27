@@ -1382,6 +1382,7 @@ function EditableScheduleTable(): JSX.Element {
                 delete set.id;
                 delete set.eventPeople;
                 delete set.conferenceId;
+                delete set.subconferenceId;
                 delete set.__typename;
                 updateEvent(
                     {

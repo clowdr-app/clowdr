@@ -13,6 +13,7 @@ export const DateTimePicker = React.forwardRef(function DateTimePicker<D extends
         allowUndefined = false,
         size,
         isDisabled = false,
+        bgColor,
     }: {
         value?: Date;
         onBlur?: (ev: React.FocusEvent) => void;
@@ -21,6 +22,7 @@ export const DateTimePicker = React.forwardRef(function DateTimePicker<D extends
         allowUndefined?: boolean;
         size?: string;
         isDisabled?: boolean;
+        bgColor?: string;
     },
     ref: LegacyRef<HTMLInputElement>
 ): JSX.Element {
@@ -160,6 +162,7 @@ export const DateTimePicker = React.forwardRef(function DateTimePicker<D extends
                 mr={2}
                 isDisabled={isDisabled}
                 ref={ref}
+                bgColor={bgColor}
             />
             <Input
                 onBlur={onBlur}
@@ -180,6 +183,7 @@ export const DateTimePicker = React.forwardRef(function DateTimePicker<D extends
                 }
                 step="1"
                 isDisabled={isDisabled}
+                bgColor={bgColor}
             />
         </Box>
     );

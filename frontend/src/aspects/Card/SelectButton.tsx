@@ -47,6 +47,7 @@ export default function SelectButton({
             }}
             transition="none"
             {...props}
+            bgColor={isSelected || isIndeterminate ? strongColor : props.bgColor}
         />
     );
 }

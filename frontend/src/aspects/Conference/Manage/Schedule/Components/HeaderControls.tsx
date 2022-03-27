@@ -29,7 +29,20 @@ export default function HeaderControls(onCreateSession: () => void): React.React
                     icon={<ChevronDownIcon fontSize="130%" fontWeight="900" />}
                 />
                 <MenuList minWidth="auto">
-                    {/* <MenuItem>Add an event</MenuItem> */}
+                    <MenuItem
+                        onClick={() => {
+                            // TODO:
+                        }}
+                    >
+                        Add for an exhibition
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            // TODO:
+                        }}
+                    >
+                        Add for a sponsor
+                    </MenuItem>
                     <MenuItem
                         onClick={() => {
                             history.push(`${conferencePath}/manage/import/program`);

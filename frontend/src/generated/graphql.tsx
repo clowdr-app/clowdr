@@ -47278,6 +47278,573 @@ export type ManageSchedule_InsertEventMutation = {
     readonly insert_schedule_Event_one?: { readonly __typename?: "schedule_Event"; readonly id: any } | null;
 };
 
+export type ManageSchedule_DeleteEventsMutationVariables = Exact<{
+    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_DeleteEventsMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_schedule_Event?: {
+        readonly __typename?: "schedule_Event_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type ManageSchedule_ItemForExportFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly title: string;
+    readonly abstract: ReadonlyArray<{
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly data: any;
+        readonly uploadsRemaining?: number | null;
+    }>;
+    readonly videos: {
+        readonly __typename?: "content_Element_aggregate";
+        readonly aggregate?: {
+            readonly __typename?: "content_Element_aggregate_fields";
+            readonly count: number;
+        } | null;
+    };
+    readonly images: {
+        readonly __typename?: "content_Element_aggregate";
+        readonly aggregate?: {
+            readonly __typename?: "content_Element_aggregate_fields";
+            readonly count: number;
+        } | null;
+    };
+    readonly slides: {
+        readonly __typename?: "content_Element_aggregate";
+        readonly aggregate?: {
+            readonly __typename?: "content_Element_aggregate_fields";
+            readonly count: number;
+        } | null;
+    };
+    readonly links: {
+        readonly __typename?: "content_Element_aggregate";
+        readonly aggregate?: {
+            readonly __typename?: "content_Element_aggregate_fields";
+            readonly count: number;
+        } | null;
+    };
+    readonly itemPeople: ReadonlyArray<{
+        readonly __typename?: "content_ItemProgramPerson";
+        readonly id: any;
+        readonly roleName: string;
+        readonly person: {
+            readonly __typename?: "collection_ProgramPerson";
+            readonly id: any;
+            readonly name: string;
+            readonly affiliation?: string | null;
+            readonly email?: string | null;
+        };
+    }>;
+};
+
+export type ManageSchedule_SessionForExportFragment = {
+    readonly __typename?: "schedule_Event";
+    readonly id: any;
+    readonly name: string;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
+    readonly modeName?: Schedule_Mode_Enum | null;
+    readonly roomId: any;
+    readonly itemId?: any | null;
+    readonly item?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+        readonly itemTags: ReadonlyArray<{
+            readonly __typename?: "content_ItemTag";
+            readonly id: any;
+            readonly tagId: any;
+        }>;
+        readonly abstract: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly data: any;
+            readonly uploadsRemaining?: number | null;
+        }>;
+        readonly videos: {
+            readonly __typename?: "content_Element_aggregate";
+            readonly aggregate?: {
+                readonly __typename?: "content_Element_aggregate_fields";
+                readonly count: number;
+            } | null;
+        };
+        readonly images: {
+            readonly __typename?: "content_Element_aggregate";
+            readonly aggregate?: {
+                readonly __typename?: "content_Element_aggregate_fields";
+                readonly count: number;
+            } | null;
+        };
+        readonly slides: {
+            readonly __typename?: "content_Element_aggregate";
+            readonly aggregate?: {
+                readonly __typename?: "content_Element_aggregate_fields";
+                readonly count: number;
+            } | null;
+        };
+        readonly links: {
+            readonly __typename?: "content_Element_aggregate";
+            readonly aggregate?: {
+                readonly __typename?: "content_Element_aggregate_fields";
+                readonly count: number;
+            } | null;
+        };
+        readonly itemPeople: ReadonlyArray<{
+            readonly __typename?: "content_ItemProgramPerson";
+            readonly id: any;
+            readonly roleName: string;
+            readonly person: {
+                readonly __typename?: "collection_ProgramPerson";
+                readonly id: any;
+                readonly name: string;
+                readonly affiliation?: string | null;
+                readonly email?: string | null;
+            };
+        }>;
+    } | null;
+    readonly presentations: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly name: string;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly title: string;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+                readonly uploadsRemaining?: number | null;
+            }>;
+            readonly videos: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly images: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly slides: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly links: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly roleName: string;
+                readonly person: {
+                    readonly __typename?: "collection_ProgramPerson";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly affiliation?: string | null;
+                    readonly email?: string | null;
+                };
+            }>;
+        } | null;
+    }>;
+    readonly exhibition?: {
+        readonly __typename?: "collection_Exhibition";
+        readonly name: string;
+        readonly descriptiveItem?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly title: string;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+                readonly uploadsRemaining?: number | null;
+            }>;
+            readonly videos: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly images: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly slides: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly links: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly roleName: string;
+                readonly person: {
+                    readonly __typename?: "collection_ProgramPerson";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly affiliation?: string | null;
+                    readonly email?: string | null;
+                };
+            }>;
+        } | null;
+        readonly items: ReadonlyArray<{
+            readonly __typename?: "content_ItemExhibition";
+            readonly id: any;
+            readonly priority?: number | null;
+            readonly item: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly title: string;
+                readonly abstract: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly data: any;
+                    readonly uploadsRemaining?: number | null;
+                }>;
+                readonly videos: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly images: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly slides: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly links: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly itemPeople: ReadonlyArray<{
+                    readonly __typename?: "content_ItemProgramPerson";
+                    readonly id: any;
+                    readonly roleName: string;
+                    readonly person: {
+                        readonly __typename?: "collection_ProgramPerson";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly affiliation?: string | null;
+                        readonly email?: string | null;
+                    };
+                }>;
+            };
+        }>;
+    } | null;
+    readonly eventPeople: ReadonlyArray<{
+        readonly __typename?: "schedule_EventProgramPerson";
+        readonly id: any;
+        readonly roleName: Schedule_EventProgramPersonRole_Enum;
+        readonly person: {
+            readonly __typename?: "collection_ProgramPerson";
+            readonly id: any;
+            readonly name: string;
+            readonly affiliation?: string | null;
+            readonly email?: string | null;
+        };
+    }>;
+};
+
+export type ManageSchedule_GetEventsForExportQueryVariables = Exact<{
+    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetEventsForExportQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly name: string;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly modeName?: Schedule_Mode_Enum | null;
+        readonly roomId: any;
+        readonly itemId?: any | null;
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly title: string;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly tagId: any;
+            }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+                readonly uploadsRemaining?: number | null;
+            }>;
+            readonly videos: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly images: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly slides: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly links: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly roleName: string;
+                readonly person: {
+                    readonly __typename?: "collection_ProgramPerson";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly affiliation?: string | null;
+                    readonly email?: string | null;
+                };
+            }>;
+        } | null;
+        readonly presentations: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly name: string;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly title: string;
+                readonly abstract: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly data: any;
+                    readonly uploadsRemaining?: number | null;
+                }>;
+                readonly videos: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly images: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly slides: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly links: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly itemPeople: ReadonlyArray<{
+                    readonly __typename?: "content_ItemProgramPerson";
+                    readonly id: any;
+                    readonly roleName: string;
+                    readonly person: {
+                        readonly __typename?: "collection_ProgramPerson";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly affiliation?: string | null;
+                        readonly email?: string | null;
+                    };
+                }>;
+            } | null;
+        }>;
+        readonly exhibition?: {
+            readonly __typename?: "collection_Exhibition";
+            readonly name: string;
+            readonly descriptiveItem?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly title: string;
+                readonly abstract: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly data: any;
+                    readonly uploadsRemaining?: number | null;
+                }>;
+                readonly videos: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly images: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly slides: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly links: {
+                    readonly __typename?: "content_Element_aggregate";
+                    readonly aggregate?: {
+                        readonly __typename?: "content_Element_aggregate_fields";
+                        readonly count: number;
+                    } | null;
+                };
+                readonly itemPeople: ReadonlyArray<{
+                    readonly __typename?: "content_ItemProgramPerson";
+                    readonly id: any;
+                    readonly roleName: string;
+                    readonly person: {
+                        readonly __typename?: "collection_ProgramPerson";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly affiliation?: string | null;
+                        readonly email?: string | null;
+                    };
+                }>;
+            } | null;
+            readonly items: ReadonlyArray<{
+                readonly __typename?: "content_ItemExhibition";
+                readonly id: any;
+                readonly priority?: number | null;
+                readonly item: {
+                    readonly __typename?: "content_Item";
+                    readonly id: any;
+                    readonly title: string;
+                    readonly abstract: ReadonlyArray<{
+                        readonly __typename?: "content_Element";
+                        readonly id: any;
+                        readonly data: any;
+                        readonly uploadsRemaining?: number | null;
+                    }>;
+                    readonly videos: {
+                        readonly __typename?: "content_Element_aggregate";
+                        readonly aggregate?: {
+                            readonly __typename?: "content_Element_aggregate_fields";
+                            readonly count: number;
+                        } | null;
+                    };
+                    readonly images: {
+                        readonly __typename?: "content_Element_aggregate";
+                        readonly aggregate?: {
+                            readonly __typename?: "content_Element_aggregate_fields";
+                            readonly count: number;
+                        } | null;
+                    };
+                    readonly slides: {
+                        readonly __typename?: "content_Element_aggregate";
+                        readonly aggregate?: {
+                            readonly __typename?: "content_Element_aggregate_fields";
+                            readonly count: number;
+                        } | null;
+                    };
+                    readonly links: {
+                        readonly __typename?: "content_Element_aggregate";
+                        readonly aggregate?: {
+                            readonly __typename?: "content_Element_aggregate_fields";
+                            readonly count: number;
+                        } | null;
+                    };
+                    readonly itemPeople: ReadonlyArray<{
+                        readonly __typename?: "content_ItemProgramPerson";
+                        readonly id: any;
+                        readonly roleName: string;
+                        readonly person: {
+                            readonly __typename?: "collection_ProgramPerson";
+                            readonly id: any;
+                            readonly name: string;
+                            readonly affiliation?: string | null;
+                            readonly email?: string | null;
+                        };
+                    }>;
+                };
+            }>;
+        } | null;
+        readonly eventPeople: ReadonlyArray<{
+            readonly __typename?: "schedule_EventProgramPerson";
+            readonly id: any;
+            readonly roleName: Schedule_EventProgramPersonRole_Enum;
+            readonly person: {
+                readonly __typename?: "collection_ProgramPerson";
+                readonly id: any;
+                readonly name: string;
+                readonly affiliation?: string | null;
+                readonly email?: string | null;
+            };
+        }>;
+    }>;
+};
+
 export type UpdateShufflePeriodMutationVariables = Exact<{
     id: Scalars["uuid"];
     object: Room_ShufflePeriod_Set_Input;
@@ -50854,6 +51421,104 @@ export const ManageSchedule_TagFragmentDoc = gql`
         priority
         colour
     }
+`;
+export const ManageSchedule_ItemForExportFragmentDoc = gql`
+    fragment ManageSchedule_ItemForExport on content_Item {
+        id
+        title
+        abstract: elements(where: { typeName: { _eq: ABSTRACT } }) {
+            id
+            data
+            uploadsRemaining
+        }
+        videos: elements_aggregate(
+            where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] }, uploadsRemaining: { _gt: 0 } }
+        ) {
+            aggregate {
+                count
+            }
+        }
+        images: elements_aggregate(
+            where: { typeName: { _in: [IMAGE_FILE, POSTER_FILE] }, uploadsRemaining: { _gt: 0 } }
+        ) {
+            aggregate {
+                count
+            }
+        }
+        slides: elements_aggregate(where: { typeName: { _in: [PAPER_FILE] }, uploadsRemaining: { _gt: 0 } }) {
+            aggregate {
+                count
+            }
+        }
+        links: elements_aggregate(
+            where: { typeName: { _in: [PAPER_URL, LINK, LINK_BUTTON] }, uploadsRemaining: { _gt: 0 } }
+        ) {
+            aggregate {
+                count
+            }
+        }
+        itemPeople(where: { roleName: { _in: ["CHAIR", "SESSION ORGANIZER", "AUTHOR", "PRESENTER", "DISCUSSANT"] } }) {
+            id
+            roleName
+            person {
+                id
+                name
+                affiliation
+                email
+            }
+        }
+    }
+`;
+export const ManageSchedule_SessionForExportFragmentDoc = gql`
+    fragment ManageSchedule_SessionForExport on schedule_Event {
+        id
+        name
+        scheduledStartTime
+        scheduledEndTime
+        modeName
+        roomId
+        itemId
+        item {
+            ...ManageSchedule_ItemForExport
+            itemTags {
+                id
+                tagId
+            }
+        }
+        presentations {
+            id
+            name
+            scheduledStartTime
+            scheduledEndTime
+            item {
+                ...ManageSchedule_ItemForExport
+            }
+        }
+        exhibition {
+            name
+            descriptiveItem {
+                ...ManageSchedule_ItemForExport
+            }
+            items {
+                id
+                priority
+                item {
+                    ...ManageSchedule_ItemForExport
+                }
+            }
+        }
+        eventPeople(where: { roleName: { _in: [CHAIR, PRESENTER] } }) {
+            id
+            roleName
+            person {
+                id
+                name
+                affiliation
+                email
+            }
+        }
+    }
+    ${ManageSchedule_ItemForExportFragmentDoc}
 `;
 export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
@@ -55802,6 +56467,36 @@ export function useManageSchedule_InsertEventMutation() {
     return Urql.useMutation<ManageSchedule_InsertEventMutation, ManageSchedule_InsertEventMutationVariables>(
         ManageSchedule_InsertEventDocument
     );
+}
+export const ManageSchedule_DeleteEventsDocument = gql`
+    mutation ManageSchedule_DeleteEvents($ids: [uuid!]!) {
+        delete_schedule_Event(where: { id: { _in: $ids } }) {
+            affected_rows
+        }
+    }
+`;
+
+export function useManageSchedule_DeleteEventsMutation() {
+    return Urql.useMutation<ManageSchedule_DeleteEventsMutation, ManageSchedule_DeleteEventsMutationVariables>(
+        ManageSchedule_DeleteEventsDocument
+    );
+}
+export const ManageSchedule_GetEventsForExportDocument = gql`
+    query ManageSchedule_GetEventsForExport($ids: [uuid!]!) {
+        schedule_Event(where: { id: { _in: $ids } }) {
+            ...ManageSchedule_SessionForExport
+        }
+    }
+    ${ManageSchedule_SessionForExportFragmentDoc}
+`;
+
+export function useManageSchedule_GetEventsForExportQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetEventsForExportQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetEventsForExportQuery>({
+        query: ManageSchedule_GetEventsForExportDocument,
+        ...options,
+    });
 }
 export const UpdateShufflePeriodDocument = gql`
     mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {

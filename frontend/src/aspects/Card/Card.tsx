@@ -112,6 +112,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                       }
                     : undefined)
             }
+            userSelect="none"
             {...props}
         >
             <Flex flexDir="column" w="100%">
@@ -127,7 +128,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                         />
                     ) : undefined}
                     <VStack alignItems="flex-start" m={2} mb={1} flex="0 1 100%" overflow="hidden">
-                        <HStack alignItems="flex-start" w="100%">
+                        <HStack alignItems="flex-start" w="100%" p="3px">
                             <VStack alignItems="flex-start" mr="auto">
                                 {subHeading ? <Text fontSize="md">{subHeading}</Text> : undefined}
                                 {heading ? (

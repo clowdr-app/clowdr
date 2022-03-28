@@ -17,6 +17,8 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type {
@@ -387,7 +389,7 @@ export default function DetailsPanel({
                 </FormErrorMessage>
             </FormControl>
             <FormControl id="editor-session-name" isInvalid={nameValidation !== "no error"} isDisabled={isDisabled}>
-                <FormLabel>Name of session</FormLabel>
+                <FormLabel>Name of {isSession ? "session" : "presentation"}</FormLabel>
                 <Input
                     type="text"
                     value={record.item?.title ?? record.name ?? ""}
@@ -404,8 +406,82 @@ export default function DetailsPanel({
                 <FormErrorMessage>{nameValidation !== "no error" ? nameValidation.error : "No error"}</FormErrorMessage>
             </FormControl>
             <FormControl id="editor-session-description" isDisabled={isDisabled}>
-                <FormLabel>Session description (abstract)</FormLabel>
-                <Textarea />
+                <FormLabel>{isSession ? "Session" : "Presentation"} description (abstract)</FormLabel>
+                <Textarea
+                    value={record.item?.abstract?.[0]?.data?.[record.item.abstract[0].data.length - 1]?.data.text ?? ""}
+                    onChange={(ev) => {
+                        onAnyChange();
+
+                        const value = ev.target.value;
+                        updateRecord((old) => ({
+                            ...old,
+                            item: old.item
+                                ? {
+                                      ...old.item,
+                                      abstract: old.item.abstract?.length
+                                          ? [
+                                                {
+                                                    ...old.item.abstract[0],
+                                                    data: old.item.abstract[0].data?.length
+                                                        ? ([
+                                                              {
+                                                                  ...old.item.abstract[0].data[0],
+                                                                  data: {
+                                                                      baseType: ElementBaseType.Text,
+                                                                      type: Content_ElementType_Enum.Abstract,
+                                                                      text: value,
+                                                                  },
+                                                              },
+                                                          ] as ElementDataBlob)
+                                                        : ([
+                                                              {
+                                                                  createdAt: Date.now(),
+                                                                  createdBy: "user",
+                                                                  data: {
+                                                                      baseType: ElementBaseType.Text,
+                                                                      type: Content_ElementType_Enum.Abstract,
+                                                                      text: value,
+                                                                  },
+                                                              },
+                                                          ] as ElementDataBlob),
+                                                },
+                                            ]
+                                          : [
+                                                {
+                                                    data: [
+                                                        {
+                                                            createdAt: Date.now(),
+                                                            createdBy: "user",
+                                                            data: {
+                                                                baseType: ElementBaseType.Text,
+                                                                type: Content_ElementType_Enum.Abstract,
+                                                                text: value,
+                                                            },
+                                                        },
+                                                    ] as ElementDataBlob,
+                                                },
+                                            ],
+                                  }
+                                : {
+                                      abstract: [
+                                          {
+                                              data: [
+                                                  {
+                                                      createdAt: Date.now(),
+                                                      createdBy: "user",
+                                                      data: {
+                                                          baseType: ElementBaseType.Text,
+                                                          type: Content_ElementType_Enum.Abstract,
+                                                          text: value,
+                                                      },
+                                                  },
+                                              ] as ElementDataBlob,
+                                          },
+                                      ],
+                                  },
+                        }));
+                    }}
+                />
                 <FormHelperText>
                     Use{" "}
                     <Link isExternal href="https://itsfoss.com/markdown-guide/">
@@ -523,7 +599,8 @@ export default function DetailsPanel({
                     )}
                 </Select>
                 <FormHelperText>
-                    This is a descriptive label only, to help your attendees understand what kind of session this is.
+                    This is a descriptive label only, to help your attendees understand what kind of{" "}
+                    {isSession ? "session" : "presentation"} this is.
                 </FormHelperText>
             </FormControl>
             <CreateTagModal

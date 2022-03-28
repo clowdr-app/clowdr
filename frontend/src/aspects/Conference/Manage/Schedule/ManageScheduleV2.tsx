@@ -765,96 +765,113 @@ export default function ManageScheduleV2(): JSX.Element {
                 initialRecord={currentRecord}
                 isSaving={isSaving}
                 onSave={async (record) => {
-                    // TODO: Handle edit versus create
                     // TODO: After edit, refetch
                     setIsSaving(true);
                     try {
-                        const result = await client
-                            .mutation<ManageSchedule_InsertEventMutation, ManageSchedule_InsertEventMutationVariables>(
-                                ManageSchedule_InsertEventDocument,
-                                {
-                                    object: {
-                                        // TODO: Other fields
-                                        ...record,
-                                        conferenceId: conference.id,
-                                        subconferenceId,
-                                        eventPeople: record.eventPeople
-                                            ? {
-                                                  data: record.eventPeople,
-                                              }
-                                            : undefined,
-                                        item: record.item
-                                            ? {
-                                                  data: {
-                                                      ...record.item,
-                                                      conferenceId: conference.id,
-                                                      subconferenceId,
-                                                      typeName:
-                                                          record.item.typeName ??
-                                                          ("sessionEventId" in record && record.sessionEventId
-                                                              ? Content_ItemType_Enum.Presentation
-                                                              : Content_ItemType_Enum.Session),
-                                                      itemTags: record.item.itemTags
-                                                          ? {
-                                                                data: record.item.itemTags,
-                                                            }
-                                                          : undefined,
-                                                      itemPeople: record.item.itemPeople
-                                                          ? {
-                                                                data: record.item.itemPeople,
-                                                            }
-                                                          : undefined,
-                                                  },
-                                              }
-                                            : undefined,
+                        if (record.id) {
+                            // TODO: Edit
+                            return { error: "Not implemented" };
+                        } else {
+                            const result = await client
+                                .mutation<
+                                    ManageSchedule_InsertEventMutation,
+                                    ManageSchedule_InsertEventMutationVariables
+                                >(
+                                    ManageSchedule_InsertEventDocument,
+                                    {
+                                        object: {
+                                            // TODO: Other fields
+                                            ...record,
+                                            conferenceId: conference.id,
+                                            subconferenceId,
+                                            eventPeople: record.eventPeople
+                                                ? {
+                                                      data: record.eventPeople,
+                                                  }
+                                                : undefined,
+                                            item: record.item
+                                                ? {
+                                                      data: {
+                                                          // TODO: Remap "abstract" field to "elements"
+                                                          ...record.item,
+                                                          conferenceId: conference.id,
+                                                          subconferenceId,
+                                                          typeName:
+                                                              record.item.typeName ??
+                                                              ("sessionEventId" in record && record.sessionEventId
+                                                                  ? Content_ItemType_Enum.Presentation
+                                                                  : Content_ItemType_Enum.Session),
+                                                          itemTags: record.item.itemTags
+                                                              ? {
+                                                                    data: record.item.itemTags,
+                                                                }
+                                                              : undefined,
+                                                          itemPeople: record.item.itemPeople
+                                                              ? {
+                                                                    data: record.item.itemPeople,
+                                                                }
+                                                              : undefined,
+                                                      },
+                                                  }
+                                                : undefined,
+                                        },
                                     },
-                                },
-                                makeContext({
-                                    [AuthHeader.Role]: subconferenceId
-                                        ? HasuraRoleName.SubconferenceOrganizer
-                                        : HasuraRoleName.ConferenceOrganizer,
-                                })
-                            )
-                            .toPromise();
-                        if (result.error) {
-                            return {
-                                error: extractActualError(result.error) ?? "Unknown error while inserting the session.",
-                            };
-                        }
-                        if (!result.data?.insert_schedule_Event_one) {
-                            return { error: "Session not inserted for unknown reason." };
-                        }
+                                    makeContext({
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
+                                    })
+                                )
+                                .toPromise();
+                            if (result.error) {
+                                return {
+                                    error:
+                                        extractActualError(result.error) ??
+                                        "Unknown error while inserting the session.",
+                                };
+                            }
+                            if (!result.data?.insert_schedule_Event_one) {
+                                return { error: "Session not inserted for unknown reason." };
+                            }
 
-                        const ordering = await client
-                            .query<ManageSchedule_GetAllSessionIdsQuery, ManageSchedule_GetAllSessionIdsQueryVariables>(
-                                ManageSchedule_GetAllSessionIdsDocument,
-                                {
-                                    conferenceId: conference.id,
-                                    subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
-                                    filter,
-                                },
-                                makeContext({
-                                    [AuthHeader.Role]: subconferenceId
-                                        ? HasuraRoleName.SubconferenceOrganizer
-                                        : HasuraRoleName.ConferenceOrganizer,
-                                })
-                            )
-                            .toPromise();
-                        if (ordering.error) {
-                            return {
-                                error:
-                                    extractActualError(ordering.error) ??
-                                    "Unknown error retrieving ordering of sessions.",
-                            };
-                        }
+                            const ordering = await client
+                                .query<
+                                    ManageSchedule_GetAllSessionIdsQuery,
+                                    ManageSchedule_GetAllSessionIdsQueryVariables
+                                >(
+                                    ManageSchedule_GetAllSessionIdsDocument,
+                                    {
+                                        conferenceId: conference.id,
+                                        subconferenceCond: subconferenceId
+                                            ? { _eq: subconferenceId }
+                                            : { _is_null: true },
+                                        filter,
+                                    },
+                                    makeContext({
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
+                                    })
+                                )
+                                .toPromise();
+                            if (ordering.error) {
+                                return {
+                                    error:
+                                        extractActualError(ordering.error) ??
+                                        "Unknown error retrieving ordering of sessions.",
+                                };
+                            }
 
-                        if (!ordering.data) {
-                            return { error: "Unable to retrieve ordering of sessions." };
-                        }
+                            if (!ordering.data) {
+                                return { error: "Unable to retrieve ordering of sessions." };
+                            }
 
-                        const newId = result.data.insert_schedule_Event_one.id;
-                        const index = ordering.data.schedule_Event.findIndex((x) => x.id === newId);
-                        setOffset(Math.max(0, Math.floor(index / limit)));
+                            const newId = result.data.insert_schedule_Event_one.id;
+                            const index = ordering.data.schedule_Event.findIndex((x) => x.id === newId);
+                            setOffset(Math.max(0, Math.floor(index / limit)));
+                        }
+                    } catch (e: any) {
+                        return { error: "Unhandled error: " + e.toString() };
                     } finally {
                         setIsSaving(false);
                     }

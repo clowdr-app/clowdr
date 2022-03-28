@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { gql, useClient } from "urql";
 import type {
     ManageSchedule_EventPersonFragment,
@@ -35,6 +35,7 @@ import { SingleSelect } from "../../../../Chakra/MultiSelect";
 import type { DeepPartial, PanelProps } from "../../../../CRUDCards/Types";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
+import { maybeCompare } from "../../../../Utils/maybeCompare";
 import { useConference } from "../../../useConference";
 
 gql`
@@ -156,17 +157,26 @@ export default function PeoplePanel(
                     Speakers have permission to present during the session and may be listed on the public schedule.
                     They have upload permissions for any content associated with this event.
                 </Text>
+                {!("sessionEventId" in props.record && props.record.sessionEventId) ? (
+                    <Text>
+                        Speakers of any presentations in this session are also given permissions and are listed on the
+                        public schedule. They only have upload permissions for the content of their respective
+                        presentations.
+                    </Text>
+                ) : undefined}
                 <PeopleEditor roleOptions={speakerRoleOptions} defaultRole="PRESENTER" {...props} />
             </VStack>
-            <VStack spacing={4} alignItems="flex-start">
-                <Heading as="h2" textAlign="left" fontSize="lg">
-                    Moderators / chairs
-                </Heading>
-                <Text>
-                    Moderators have permission to administer the session, and may be listed on the public schedule.
-                </Text>
-                <PeopleEditor roleOptions={moderatorRoleOptions} defaultRole="CHAIR" hideRole {...props} />
-            </VStack>
+            {"sessionEventId" in props.record && props.record.sessionEventId ? undefined : (
+                <VStack spacing={4} alignItems="flex-start">
+                    <Heading as="h2" textAlign="left" fontSize="lg">
+                        Moderators / chairs
+                    </Heading>
+                    <Text>
+                        Moderators have permission to administer the session, and may be listed on the public schedule.
+                    </Text>
+                    <PeopleEditor roleOptions={moderatorRoleOptions} defaultRole="CHAIR" hideRole {...props} />
+                </VStack>
+            )}
             <VStack spacing={4} alignItems="flex-start">
                 <Heading as="h2" textAlign="left" fontSize="lg">
                     Reviewers
@@ -180,6 +190,17 @@ export default function PeoplePanel(
         </VStack>
     );
 }
+
+type MergedPeople = Array<
+    | {
+          itemPerson: DeepPartial<ManageSchedule_ItemPersonFragment>;
+          eventPerson: undefined;
+      }
+    | {
+          itemPerson?: DeepPartial<ManageSchedule_ItemPersonFragment>;
+          eventPerson: DeepPartial<ManageSchedule_EventPersonFragment>;
+      }
+>;
 
 function PeopleEditor({
     record,
@@ -207,49 +228,6 @@ function PeopleEditor({
         () => record.item?.itemPeople?.filter((x) => x.roleName && itemPersonRoles.includes(x.roleName)) ?? [],
         [itemPersonRoles, record.item?.itemPeople]
     );
-    const mergedPeople = useMemo(() => {
-        const result: Array<
-            DeepPartial<
-                | {
-                      itemPerson: ManageSchedule_ItemPersonFragment;
-                      eventPerson: undefined;
-                  }
-                | {
-                      itemPerson?: ManageSchedule_ItemPersonFragment;
-                      eventPerson: ManageSchedule_EventPersonFragment;
-                  }
-            >
-        > = [];
-
-        const foundItemPersonIds = new Set<string>();
-        for (const eventPerson of eventPeople) {
-            const itemPerson = itemPeople.find(
-                (x) =>
-                    x.personId === eventPerson.personId &&
-                    eventPerson.roleName === mapItemPersonRoleToEventPersonRole(x.roleName)
-            );
-            if (itemPerson?.personId) {
-                foundItemPersonIds.add(itemPerson.personId);
-            }
-            result.push({
-                eventPerson,
-                itemPerson,
-            });
-        }
-
-        for (const itemPerson of itemPeople) {
-            if (itemPerson.personId) {
-                if (!foundItemPersonIds.has(itemPerson.personId)) {
-                    result.push({ itemPerson, eventPerson: undefined });
-                }
-            }
-        }
-
-        return result;
-    }, [eventPeople, itemPeople]);
-    // TODO: Sort mergedPeople into:
-    //      Not Hidden: priority then alphabetical order
-    //      Hidden: alphabetical order
 
     const uniquePersonIds = useMemo(
         () =>
@@ -277,6 +255,69 @@ function PeopleEditor({
         },
         context,
     });
+
+    const mergedPeople = useMemo(() => {
+        const result: MergedPeople = [];
+
+        const foundItemPersonIds = new Set<string>();
+        for (const eventPerson of eventPeople) {
+            const itemPerson = itemPeople.find(
+                (x) =>
+                    x.personId === eventPerson.personId &&
+                    eventPerson.roleName === mapItemPersonRoleToEventPersonRole(x.roleName)
+            );
+            if (itemPerson?.personId) {
+                foundItemPersonIds.add(itemPerson.personId);
+            }
+            result.push({
+                eventPerson,
+                itemPerson,
+            });
+        }
+
+        for (const itemPerson of itemPeople) {
+            if (itemPerson.personId) {
+                if (!foundItemPersonIds.has(itemPerson.personId)) {
+                    result.push({ itemPerson, eventPerson: undefined });
+                }
+            }
+        }
+
+        return R.sortWith(
+            [
+                (a, b) => maybeCompare(a.itemPerson?.priority, b.itemPerson?.priority, (x, y) => x - y),
+                (a, b) =>
+                    maybeCompare(
+                        a.itemPerson?.personId
+                            ? peopleResponse.data?.collection_ProgramPerson?.find(
+                                  (x) => x.id === a.itemPerson?.personId
+                              )?.name
+                            : undefined,
+                        b.itemPerson?.personId
+                            ? peopleResponse.data?.collection_ProgramPerson?.find(
+                                  (x) => x.id === b.itemPerson?.personId
+                              )?.name
+                            : undefined,
+                        (x, y) => x.localeCompare(y)
+                    ),
+                (a, b) =>
+                    maybeCompare(
+                        a.eventPerson?.personId
+                            ? peopleResponse.data?.collection_ProgramPerson?.find(
+                                  (x) => x.id === a.eventPerson?.personId
+                              )?.name
+                            : undefined,
+                        b.eventPerson?.personId
+                            ? peopleResponse.data?.collection_ProgramPerson?.find(
+                                  (x) => x.id === b.eventPerson?.personId
+                              )?.name
+                            : undefined,
+                        (x, y) => x.localeCompare(y)
+                    ),
+            ],
+            result
+        );
+    }, [eventPeople, itemPeople, peopleResponse.data?.collection_ProgramPerson]);
 
     const client = useClient();
 
@@ -349,6 +390,29 @@ function PeopleEditor({
         [searchResults.people, searchResults.registrants, searchTerm.length]
     );
 
+    const updateMergedPeople = useCallback((newPeople: MergedPeople) => {
+        onAnyChange();
+
+        updateRecord((old) => ({
+            ...old,
+            eventPeople: newPeople
+                .filter((x) => x.eventPerson)
+                .map((x) => x.eventPerson) as DeepPartial<ManageSchedule_EventPersonFragment>[],
+            item: old.item
+                ? {
+                      ...old.item,
+                      itemPeople: newPeople
+                          .filter((x) => x.itemPerson)
+                          .map((x) => x.itemPerson) as DeepPartial<ManageSchedule_ItemPersonFragment>[],
+                  }
+                : {
+                      itemPeople: newPeople
+                          .filter((x) => x.itemPerson)
+                          .map((x) => x.itemPerson) as DeepPartial<ManageSchedule_ItemPersonFragment>[],
+                  },
+        }));
+    }, []);
+
     return (
         <>
             <InputGroup w="100%">
@@ -372,33 +436,20 @@ function PeopleEditor({
                                     !itemPeople.some((x) => x.personId === id) &&
                                     !eventPeople.some((x) => x.personId === id)
                                 ) {
-                                    onAnyChange();
-
-                                    // TODO: Insert an item person
-                                    // TODO: Insert an event person
-                                    updateRecord((old) => ({
-                                        ...old,
-                                        eventPeople: [
-                                            ...(old.eventPeople ?? []),
-                                            {
+                                    updateMergedPeople([
+                                        ...mergedPeople,
+                                        {
+                                            eventPerson: {
                                                 personId: id,
                                                 roleName: mapItemPersonRoleToEventPersonRole(defaultRole),
                                             },
-                                        ],
-                                        item: old.item
-                                            ? {
-                                                  ...old.item,
-                                                  itemPeople: [
-                                                      ...(old.item.itemPeople ?? []),
-                                                      {
-                                                          personId: id,
-                                                          priority: old.item.itemPeople?.length ?? 1,
-                                                          roleName: defaultRole,
-                                                      },
-                                                  ],
-                                              }
-                                            : undefined,
-                                    }));
+                                            itemPerson: {
+                                                personId: id,
+                                                priority: R.findLastIndex((x) => !!x?.itemPerson, mergedPeople) + 1,
+                                                roleName: defaultRole,
+                                            },
+                                        },
+                                    ]);
                                 }
                             }
                         }
@@ -420,22 +471,98 @@ function PeopleEditor({
                         }
                     >
                         <Flex w="100%">
-                            {/* TODO: Only show these buttons if the person is not "hidden" (i.e. item person exists) */}
-                            <IconButton
-                                aria-label="Move person up"
-                                icon={<FAIcon iconStyle="s" icon="arrow-circle-up" />}
-                                variant="ghost"
-                                size="sm"
-                                // TODO: Re-assign priorities
-                            />
-                            <IconButton
-                                aria-label="Move person down"
-                                icon={<FAIcon iconStyle="s" icon="arrow-circle-down" />}
-                                variant="ghost"
-                                size="sm"
-                                // TODO: Re-assign priorities
-                            />
-                            {/* TODO: Correct aria label and icon based on hidden/not hidden */}
+                            {person.itemPerson ? (
+                                <>
+                                    <IconButton
+                                        aria-label="Move person up"
+                                        icon={<FAIcon iconStyle="s" icon="arrow-circle-up" />}
+                                        variant="ghost"
+                                        size="sm"
+                                        isDisabled={idx === 0}
+                                        onClick={() => {
+                                            const newPeople: MergedPeople = [];
+                                            for (let i = 0; i < mergedPeople.length; i++) {
+                                                const p = mergedPeople[i];
+                                                if (p.itemPerson) {
+                                                    if (i === idx) {
+                                                        newPeople.push({
+                                                            ...p,
+                                                            itemPerson: {
+                                                                ...p.itemPerson,
+                                                                priority: i - 1,
+                                                            },
+                                                        });
+                                                    } else if (i === idx - 1) {
+                                                        newPeople.push({
+                                                            ...p,
+                                                            itemPerson: {
+                                                                ...p.itemPerson,
+                                                                priority: i + 1,
+                                                            },
+                                                        });
+                                                    } else {
+                                                        newPeople.push({
+                                                            ...p,
+                                                            itemPerson: {
+                                                                ...p.itemPerson,
+                                                                priority: i,
+                                                            },
+                                                        });
+                                                    }
+                                                } else {
+                                                    newPeople.push(p);
+                                                }
+                                            }
+
+                                            updateMergedPeople(newPeople);
+                                        }}
+                                    />
+                                    <IconButton
+                                        aria-label="Move person down"
+                                        icon={<FAIcon iconStyle="s" icon="arrow-circle-down" />}
+                                        variant="ghost"
+                                        size="sm"
+                                        isDisabled={idx === R.findLastIndex((x) => !!x?.itemPerson, mergedPeople)}
+                                        onClick={() => {
+                                            const newPeople: MergedPeople = [];
+                                            for (let i = 0; i < mergedPeople.length; i++) {
+                                                const p = mergedPeople[i];
+                                                if (p.itemPerson) {
+                                                    if (i === idx) {
+                                                        newPeople.push({
+                                                            ...p,
+                                                            itemPerson: {
+                                                                ...p.itemPerson,
+                                                                priority: i + 1,
+                                                            },
+                                                        });
+                                                    } else if (i === idx + 1) {
+                                                        newPeople.push({
+                                                            ...p,
+                                                            itemPerson: {
+                                                                ...p.itemPerson,
+                                                                priority: i - 1,
+                                                            },
+                                                        });
+                                                    } else {
+                                                        newPeople.push({
+                                                            ...p,
+                                                            itemPerson: {
+                                                                ...p.itemPerson,
+                                                                priority: i,
+                                                            },
+                                                        });
+                                                    }
+                                                } else {
+                                                    newPeople.push(p);
+                                                }
+                                            }
+
+                                            updateMergedPeople(newPeople);
+                                        }}
+                                    />
+                                </>
+                            ) : undefined}
                             <IconButton
                                 aria-label={person.itemPerson ? "Hide person" : "Unhide person"}
                                 icon={
@@ -447,7 +574,44 @@ function PeopleEditor({
                                 }
                                 variant="ghost"
                                 size="sm"
-                                // TODO: Add/remove item person
+                                onClick={() => {
+                                    const newPeople: MergedPeople = [];
+                                    for (let i = 0; i < mergedPeople.length; i++) {
+                                        const p = mergedPeople[i];
+                                        if (idx === i) {
+                                            if (p.eventPerson) {
+                                                newPeople.push({
+                                                    itemPerson: p.itemPerson
+                                                        ? undefined
+                                                        : {
+                                                              personId: p.eventPerson.personId,
+                                                              priority: i,
+                                                              roleName:
+                                                                  p.eventPerson.roleName ===
+                                                                  Schedule_EventProgramPersonRole_Enum.Chair
+                                                                      ? "CHAIR"
+                                                                      : "PRESENTER",
+                                                          },
+                                                    eventPerson: p.eventPerson,
+                                                });
+                                            } else {
+                                                newPeople.push({
+                                                    itemPerson: undefined,
+                                                    eventPerson: {
+                                                        personId: p.itemPerson.personId,
+                                                        roleName: mapItemPersonRoleToEventPersonRole(
+                                                            p.itemPerson.roleName
+                                                        ),
+                                                    },
+                                                });
+                                            }
+                                        } else {
+                                            newPeople.push(p);
+                                        }
+                                    }
+
+                                    updateMergedPeople(newPeople);
+                                }}
                             />
 
                             <Flex w="100%" alignItems="center" pb="2px" px={2}>
@@ -473,6 +637,9 @@ function PeopleEditor({
                                 icon={<FAIcon iconStyle="s" icon="times" />}
                                 variant="ghost"
                                 size="sm"
+                                onClick={() => {
+                                    updateMergedPeople(mergedPeople.filter((_, i) => i !== idx));
+                                }}
                             />
                         </Flex>
                     </ListItem>

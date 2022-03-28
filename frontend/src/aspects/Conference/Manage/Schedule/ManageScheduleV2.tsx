@@ -109,6 +109,8 @@ gql`
         modeName
         roomId
         itemId
+        exhibitionId
+        shufflePeriodId
 
         presentations_aggregate {
             aggregate {

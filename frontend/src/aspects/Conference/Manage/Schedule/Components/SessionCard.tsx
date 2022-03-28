@@ -104,6 +104,8 @@ export default function SessionCard({
                 w="100%"
                 bottomButton={
                     session.modeName &&
+                    ((!session.exhibitionId && !session.shufflePeriodId) ||
+                        Boolean(session.presentations_aggregate.aggregate?.count)) &&
                     (session.modeName === Schedule_Mode_Enum.VideoChat ||
                         session.modeName === Schedule_Mode_Enum.Livestream ||
                         session.modeName === Schedule_Mode_Enum.External)

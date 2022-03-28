@@ -789,7 +789,11 @@ export default function ManageScheduleV2(): JSX.Element {
                                                       ...record.item,
                                                       conferenceId: conference.id,
                                                       subconferenceId,
-                                                      typeName: Content_ItemType_Enum.Session,
+                                                      typeName:
+                                                          record.item.typeName ??
+                                                          ("sessionEventId" in record && record.sessionEventId
+                                                              ? Content_ItemType_Enum.Presentation
+                                                              : Content_ItemType_Enum.Session),
                                                       itemTags: record.item.itemTags
                                                           ? {
                                                                 data: record.item.itemTags,

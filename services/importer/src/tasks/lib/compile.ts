@@ -2,7 +2,6 @@
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import type {
-    Chair,
     Content,
     Event,
     Exhibition,
@@ -256,8 +255,7 @@ export function generateSessionEntities(
                     sessionExhibitionOutputName ? { name: sessionExhibitionOutputName, priority: idx } : undefined,
                     options,
                     context,
-                    session.content.title,
-                    session.content.chairs
+                    session.content.title
                 ),
                 ...(sessionHasExhibition
                     ? generateRoomEntities(
@@ -275,8 +273,7 @@ export function generateSessionEntities(
                     sessionEventOutputName,
                     roomOutputName,
                     options,
-                    context,
-                    session.content.chairs
+                    context
                 ),
             ];
         })
@@ -291,8 +288,7 @@ export function generateContentEntities(
     exhibitionOutput: { name: string; priority: number } | undefined,
     options: ProgramImportOptions,
     context: Context,
-    sessionTitle?: string | null,
-    sessionChairs?: Chair[]
+    sessionTitle?: string | null
 ): Entity[] {
     const itemIdOutputName = composeOutputNames(rootOutputName, "id");
 
@@ -354,7 +350,7 @@ export function generateContentEntities(
                   },
               ] as Entity[])
             : []),
-        ...[...(sessionChairs ? sessionChairs : []), ...content.chairs].map<Entity>((chair, idx) => ({
+        ...content.chairs.map<Entity>((chair, idx) => ({
             __outputs: [
                 {
                     columnName: "id",
@@ -405,7 +401,7 @@ export function generateContentEntities(
             affiliation: author.affiliation,
             email: author.email,
         })),
-        ...[...(sessionChairs ? sessionChairs : []), ...content.chairs].map<Entity>((_, idx) => ({
+        ...content.chairs.map<Entity>((_, idx) => ({
             __outputs: [],
             __remapColumns: ["itemId", "personId"],
 
@@ -635,8 +631,7 @@ function generateEventEntities(
     sessionEventOutputName: string | undefined,
     roomOutputName: string,
     options: ProgramImportOptions,
-    context: Context,
-    sessionChairs?: Chair[]
+    context: Context
 ): Entity[] {
     const eventIdOutputName = composeOutputNames(rootOutputName, "id");
 
@@ -683,7 +678,7 @@ function generateEventEntities(
             enableRecording: true,
             automaticParticipationSurvey: true,
         },
-        ...[...(sessionChairs ? sessionChairs : []), ...event.chairs].map<Entity>((chair, idx) => ({
+        ...event.chairs.map<Entity>((chair, idx) => ({
             __outputs: [
                 {
                     columnName: "id",
@@ -717,7 +712,7 @@ function generateEventEntities(
             affiliation: speaker.affiliation,
             email: speaker.email,
         })),
-        ...[...(sessionChairs ? sessionChairs : []), ...event.chairs].map<Entity>((_, idx) => ({
+        ...event.chairs.map<Entity>((_, idx) => ({
             __outputs: [],
             __remapColumns: ["eventId", "personId"],
 

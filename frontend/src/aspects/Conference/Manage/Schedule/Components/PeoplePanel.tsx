@@ -19,6 +19,7 @@ import type {
     ManageSchedule_EventPersonFragment,
     ManageSchedule_ItemPersonFragment,
     ManageSchedule_PersonFragment,
+    ManageSchedule_PresentationFragment,
     ManageSchedule_RegistrantFragment,
     ManageSchedule_SearchPeopleQuery,
     ManageSchedule_SearchPeopleQueryVariables,
@@ -91,13 +92,15 @@ function mapItemPersonRoleToEventPersonRole(roleName?: string): Schedule_EventPr
         case "SESSION ORGANIZER":
             return Schedule_EventProgramPersonRole_Enum.Chair;
         case "REVIEWER":
-            return Schedule_EventProgramPersonRole_Enum.Chair;
+            return undefined;
     }
 
     return undefined;
 }
 
-export default function PeoplePanel(props: PanelProps<ManageSchedule_SessionFragment>): JSX.Element {
+export default function PeoplePanel(
+    props: PanelProps<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>
+): JSX.Element {
     const speakerRoleOptions = useMemo<ReadonlyArray<PersonRoleOption>>(
         () => [
             {
@@ -125,6 +128,11 @@ export default function PeoplePanel(props: PanelProps<ManageSchedule_SessionFrag
                 label: "Session Organizer",
                 value: "SESSION ORGANIZER",
             },
+        ],
+        []
+    );
+    const reviewerRoleOptions = useMemo<ReadonlyArray<PersonRoleOption>>(
+        () => [
             {
                 label: "Reviewer",
                 value: "REVIEWER",
@@ -155,9 +163,19 @@ export default function PeoplePanel(props: PanelProps<ManageSchedule_SessionFrag
                     Moderators / chairs
                 </Heading>
                 <Text>
-                    Moderators have permission to administer the event, and may be listed on the public schedule.
+                    Moderators have permission to administer the session, and may be listed on the public schedule.
                 </Text>
                 <PeopleEditor roleOptions={moderatorRoleOptions} defaultRole="CHAIR" hideRole {...props} />
+            </VStack>
+            <VStack spacing={4} alignItems="flex-start">
+                <Heading as="h2" textAlign="left" fontSize="lg">
+                    Reviewers
+                </Heading>
+                <Text>
+                    Reviwers have permission to review uploaded content for the session, and are not listed on the
+                    public schedule.
+                </Text>
+                <PeopleEditor roleOptions={reviewerRoleOptions} defaultRole="REVIEWER" hideRole {...props} />
             </VStack>
         </VStack>
     );

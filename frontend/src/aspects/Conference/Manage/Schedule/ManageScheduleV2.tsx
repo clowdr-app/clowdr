@@ -331,13 +331,16 @@ gql`
 `;
 
 export default function ManageScheduleV2(): JSX.Element {
-    const sessionEditorDisclosure = useDisclosure();
-    const [sessionEditorIsCreate, setSessionEditorIsCreate] = useState<boolean>(false);
-    const deleteSessionsDisclosure = useDisclosure();
-    const [deleteSessionIds, setDeleteSessionIds] = useState<string[]>([]);
+    const editorDisclosure = useDisclosure();
+    const [editorIsCreate, setEditorIsCreate] = useState<boolean>(false);
+    const deleteEventsDisclosure = useDisclosure();
+    const [deleteEventIds, setDeleteEventIds] = useState<string[]>([]);
+    const [deleteEventType, setDeleteEventType] = useState<"session" | "presentation">("session");
 
     const [initialStepIdx, setInitialStepIdx] = useState<number>(0);
-    const [currentRecord, setCurrentRecord] = useState<DeepPartial<ManageSchedule_SessionFragment>>({});
+    const [currentRecord, setCurrentRecord] = useState<
+        DeepPartial<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>
+    >({});
 
     const client = useClient();
 
@@ -347,60 +350,68 @@ export default function ManageScheduleV2(): JSX.Element {
             // modeName: Schedule_Mode_Enum.VideoChat,
         });
         setInitialStepIdx(0);
-        setSessionEditorIsCreate(true);
+        setEditorIsCreate(true);
         setTimeout(() => {
-            sessionEditorDisclosure.onOpen();
+            editorDisclosure.onOpen();
         }, 50);
-    }, [sessionEditorDisclosure]);
+    }, [editorDisclosure]);
     const onEditSession = useCallback(
         (session: DeepPartial<ManageSchedule_SessionFragment>, initialStepIdx = 0) => {
             setCurrentRecord(session);
             setInitialStepIdx(initialStepIdx);
-            setSessionEditorIsCreate(false);
+            setEditorIsCreate(false);
             setTimeout(() => {
-                sessionEditorDisclosure.onOpen();
+                editorDisclosure.onOpen();
             }, 50);
         },
-        [sessionEditorDisclosure]
+        [editorDisclosure]
     );
     const onDeleteSessions = useCallback(
         (ids: string[]) => {
-            setDeleteSessionIds(ids);
-            deleteSessionsDisclosure.onOpen();
+            setDeleteEventType("session");
+            setDeleteEventIds(ids);
+            deleteEventsDisclosure.onOpen();
         },
-        [deleteSessionsDisclosure]
+        [deleteEventsDisclosure]
     );
     const onExportSessions = useCallback((_ids: string[]) => {
         // TODO:
     }, []);
     const headerControls = HeaderControls(onCreateSession);
 
-    const onCreatePresentation = useCallback((sessionId: string) => {
-        // TODO:
-        // setCurrentRecord({});
-        // setInitialStepIdx(0);
-        // setPresentationEditorIsCreate(true);
-        // setTimeout(() => {
-        //     presentationEditorDisclosure.onOpen();
-        // }, 50);
-    }, []);
-    const onEditPresentation = useCallback(
-        (_presentation: DeepPartial<ManageSchedule_PresentationFragment>, _initialStepIdx = 0) => {
-            // TODO:
-            // setCurrentRecord(presentation);
-            // setInitialStepIdx(initialStepIdx);
-            // setPresentationEditorIsCreate(false);
-            // setTimeout(() => {
-            //     presentationEditorDisclosure.onOpen();
-            // }, 50);
+    const onCreatePresentation = useCallback(
+        (session: ManageSchedule_SessionFragment) => {
+            setCurrentRecord({
+                sessionEventId: session.id,
+                roomId: session.roomId,
+            });
+            setInitialStepIdx(0);
+            setEditorIsCreate(true);
+            setTimeout(() => {
+                editorDisclosure.onOpen();
+            }, 50);
         },
-        []
+        [editorDisclosure]
     );
-    const onDeletePresentations = useCallback((_ids: string[]) => {
-        // TODO:
-        // setDeletePresentationIds(ids);
-        // deletePresentationsDisclosure.onOpen();
-    }, []);
+    const onEditPresentation = useCallback(
+        (presentation: DeepPartial<ManageSchedule_PresentationFragment>, initialStepIdx = 0) => {
+            setCurrentRecord(presentation);
+            setInitialStepIdx(initialStepIdx);
+            setEditorIsCreate(false);
+            setTimeout(() => {
+                editorDisclosure.onOpen();
+            }, 50);
+        },
+        [editorDisclosure]
+    );
+    const onDeletePresentations = useCallback(
+        (ids: string[]) => {
+            setDeleteEventType("presentation");
+            setDeleteEventIds(ids);
+            deleteEventsDisclosure.onOpen();
+        },
+        [deleteEventsDisclosure]
+    );
 
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const conference = useConference();
@@ -662,7 +673,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                     onDelete={() => onDeleteSessions([session.id])}
                                     onExport={() => onExportSessions([session.id])}
                                     tags={tags}
-                                    onCreatePresentation={() => onCreatePresentation(session.id)}
+                                    onCreatePresentation={() => onCreatePresentation(session)}
                                     onEditPresentation={onEditPresentation}
                                     onDeletePresentation={(id) => onDeletePresentations([id])}
                                 />
@@ -728,9 +739,9 @@ export default function ManageScheduleV2(): JSX.Element {
                 />
             </HStack>
             <Editor
-                isOpen={sessionEditorDisclosure.isOpen}
-                onClose={sessionEditorDisclosure.onClose}
-                isCreate={sessionEditorIsCreate}
+                isOpen={editorDisclosure.isOpen}
+                onClose={editorDisclosure.onClose}
+                isCreate={editorIsCreate}
                 recordTypeName="Session"
                 steps={[
                     {
@@ -847,14 +858,17 @@ export default function ManageScheduleV2(): JSX.Element {
                 }}
             />
             <AlertDialog
-                isOpen={deleteSessionsDisclosure.isOpen}
-                onClose={deleteSessionsDisclosure.onClose}
+                isOpen={deleteEventsDisclosure.isOpen}
+                onClose={deleteEventsDisclosure.onClose}
                 leastDestructiveRef={deleteSessionsLeastDestructiveActionRef}
                 size="xl"
             >
                 <AlertDialogOverlay />
                 <AlertDialogContent>
-                    <AlertDialogHeader>Delete {deleteSessionIds.length} sessions?</AlertDialogHeader>
+                    <AlertDialogHeader>
+                        Delete {deleteEventIds.length} {deleteEventType}
+                        {deleteEventIds.length !== 1 ? "s" : ""}?
+                    </AlertDialogHeader>
                     <AlertDialogCloseButton />
                     <AlertDialogBody>This cannot be undone.</AlertDialogBody>
                     <AlertDialogFooter>
@@ -863,7 +877,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                 ref={deleteSessionsLeastDestructiveActionRef}
                                 colorScheme="blue"
                                 variant="outline"
-                                onClick={deleteSessionsDisclosure.onClose}
+                                onClick={deleteEventsDisclosure.onClose}
                             >
                                 Cancel
                             </Button>
@@ -874,7 +888,8 @@ export default function ManageScheduleV2(): JSX.Element {
                                     // TODO:
                                 }}
                             >
-                                Delete sessions and content
+                                Delete {deleteEventType}
+                                {deleteEventIds.length !== 1 ? "s" : ""} including content
                             </Button>
                             <Button
                                 colorScheme="DestructiveActionButton"

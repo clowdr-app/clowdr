@@ -1,5 +1,7 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
+    Button,
+    chakra,
     FormControl,
     FormErrorMessage,
     FormHelperText,
@@ -17,16 +19,26 @@ import {
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type { ManageSchedule_SessionFragment } from "../../../../../generated/graphql";
-import { useManageSchedule_GetTagsQuery } from "../../../../../generated/graphql";
+import type {
+    ManageSchedule_PresentationFragment,
+    ManageSchedule_SessionFragment,
+} from "../../../../../generated/graphql";
+import { Content_ItemType_Enum, useManageSchedule_GetTagsQuery } from "../../../../../generated/graphql";
 import { CreatableMultiSelect } from "../../../../Chakra/MultiSelect";
 import type { PanelProps, ValidationState } from "../../../../CRUDCards/Types";
 import { DateTimePicker } from "../../../../CRUDTable/DateTimePicker";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
+import { useRestorableState } from "../../../../Hooks/useRestorableState";
 import { roundUpToNearest } from "../../../../Utils/MathUtils";
 import { useConference } from "../../../useConference";
 import CreateTagModal from "./CreateTagModal";
+
+interface RecentlyUsedTag {
+    id: string;
+    lastUsedAt: number;
+    count: number;
+}
 
 export default function DetailsPanel({
     isCreate,
@@ -38,7 +50,7 @@ export default function DetailsPanel({
     onValid,
     onInvalid,
     onAnyChange,
-}: PanelProps<ManageSchedule_SessionFragment>): JSX.Element {
+}: PanelProps<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>): JSX.Element {
     const hoursOptions = useMemo(() => {
         const result: JSX.Element[] = [];
         for (let i = 0; i <= 4; i++) {
@@ -208,12 +220,73 @@ export default function DetailsPanel({
         [record.item?.itemTags, tagsResponse.data?.collection_Tag]
     );
 
+    const [recentlyUsedTags, _setRecentlyUsedTags] = useRestorableState<RecentlyUsedTag[]>(
+        "recently-used-tags:" + conference.id + ":" + (subconferenceId ?? "no-subconf"),
+        [],
+        (x) => JSON.stringify(x),
+        (x) => JSON.parse(x)
+    );
+    const updateRecentlyUsedTags = useCallback(
+        (value: RecentlyUsedTag[]) => {
+            // Tags might have been deleted
+            if (tagsResponse.data?.collection_Tag) {
+                value = value.filter((x) => tagsResponse.data?.collection_Tag.some((y) => y.id === x.id));
+            }
+
+            const now = Date.now();
+            const sortedTags = R.sortWith<RecentlyUsedTag>(
+                [
+                    (a, b) => Math.round(10 * Math.log(b.count)) / 10 - Math.round(10 * Math.log(a.count)) / 10,
+                    (a, b) => b.lastUsedAt - a.lastUsedAt,
+                ],
+                R.filter((x) => now - x.lastUsedAt < 2 * 24 * 60 * 60 * 1000, value)
+            );
+            _setRecentlyUsedTags(sortedTags);
+        },
+        [_setRecentlyUsedTags, tagsResponse.data?.collection_Tag]
+    );
+    const setRecentlyUsedTags = useCallback(
+        (value: RecentlyUsedTag[] | ((old: RecentlyUsedTag[]) => RecentlyUsedTag[])) => {
+            updateRecentlyUsedTags(typeof value === "function" ? value(recentlyUsedTags) : value);
+        },
+        [recentlyUsedTags, updateRecentlyUsedTags]
+    );
+    useEffect(() => {
+        updateRecentlyUsedTags(recentlyUsedTags);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tagsResponse.data?.collection_Tag]);
+    const upsertRecentlyUsedTag = useCallback(
+        (tagId: string) => {
+            setRecentlyUsedTags((old) => {
+                const newList = [...old];
+                const existing = newList.find((x) => x.id === tagId);
+                if (existing) {
+                    existing.count++;
+                    existing.lastUsedAt = Date.now();
+                } else {
+                    newList.push({
+                        id: tagId,
+                        count: 1,
+                        lastUsedAt: Date.now(),
+                    });
+                }
+                return newList;
+            });
+        },
+        [setRecentlyUsedTags]
+    );
+    const remainingRecentlyUsedTags = useMemo(
+        () => recentlyUsedTags.filter((x) => !record.item?.itemTags?.some((y) => y.tagId === x.id)).slice(0, 3),
+        [recentlyUsedTags, record.item?.itemTags]
+    );
+
     const [createTagName, setCreateTagName] = useState<string>("");
     const createTagDisclosure = useDisclosure();
     const onCreateTag = useCallback(
         (newTagId: string) => {
             refetchTags();
             onAnyChange();
+            upsertRecentlyUsedTag(newTagId);
             updateRecord((old) => ({
                 ...old,
                 item: {
@@ -227,8 +300,11 @@ export default function DetailsPanel({
                 },
             }));
         },
-        [onAnyChange, refetchTags, updateRecord]
+        [onAnyChange, refetchTags, updateRecord, upsertRecentlyUsedTag]
     );
+
+    const isSession = !("sessionEventId" in record && record.sessionEventId);
+    const defaultItemTypeName = isSession ? Content_ItemType_Enum.Session : Content_ItemType_Enum.Presentation;
 
     return (
         <VStack spacing={4} p={0}>
@@ -360,6 +436,9 @@ export default function DetailsPanel({
                         } else {
                             const tagIds = R.uniq(options.filter((x) => x.value !== "¬create¬").map((x) => x.value));
                             onAnyChange();
+                            if (action.action === "select-option" && action.option?.value) {
+                                upsertRecentlyUsedTag(action.option.value);
+                            }
                             updateRecord((old) => ({
                                 ...old,
                                 item: {
@@ -370,15 +449,83 @@ export default function DetailsPanel({
                         }
                     }}
                 />
+                {remainingRecentlyUsedTags.length > 0 ? (
+                    <HStack spacing={2} mt={1}>
+                        <chakra.span fontSize="sm">Recently used:</chakra.span>
+                        {remainingRecentlyUsedTags.map(({ id }) => (
+                            <Button
+                                key={id}
+                                size="xs"
+                                h="auto"
+                                minH={0}
+                                py={1}
+                                px={2}
+                                minW={0}
+                                borderRadius="full"
+                                colorScheme="gray"
+                                onClick={() => {
+                                    const tagIds = record.item?.itemTags?.map((x) => x.tagId) ?? [];
+                                    tagIds.push(id);
+                                    onAnyChange();
+                                    upsertRecentlyUsedTag(id);
+                                    updateRecord((old) => ({
+                                        ...old,
+                                        item: {
+                                            ...old.item,
+                                            itemTags: tagIds.map((tagId) => ({ tagId })),
+                                        },
+                                    }));
+                                }}
+                            >
+                                {tagOptions.find((x) => x.value === id)?.label ?? "<Loading...>"}
+                            </Button>
+                        ))}
+                    </HStack>
+                ) : undefined}
             </FormControl>
-            {/* TODO: For "presentations": 
-                    <FormControl id="editor-session-type" isDisabled={isDisabled}>
-                        <FormLabel>Session type</FormLabel>
-                        <Select></Select>
-                        <FormHelperText>
-                            This is a descriptive label only, to help your attendees understand what kind of session this is.
-                        </FormHelperText>
-            </FormControl>*/}
+            <FormControl id="editor-session-type" isDisabled={isDisabled}>
+                <FormLabel>Type</FormLabel>
+                <Select
+                    value={record.item?.typeName ?? defaultItemTypeName}
+                    onChange={(ev) => {
+                        onAnyChange();
+                        updateRecord((old) => ({
+                            ...old,
+                            item: old.item
+                                ? {
+                                      ...old.item,
+                                      typeName: ev.target.value as Content_ItemType_Enum,
+                                  }
+                                : {
+                                      typeName: ev.target.value as Content_ItemType_Enum,
+                                  },
+                        }));
+                    }}
+                >
+                    {!isSession ? (
+                        <>
+                            <option value={Content_ItemType_Enum.Demonstration}>Demonstration</option>
+                            <option value={Content_ItemType_Enum.Keynote}>Keynote</option>
+                            <option value={Content_ItemType_Enum.Other}>Other</option>
+                            <option value={Content_ItemType_Enum.Paper}>Paper</option>
+                            <option value={Content_ItemType_Enum.Poster}>Poster</option>
+                            <option value={Content_ItemType_Enum.Presentation}>Presentation</option>
+                            <option value={Content_ItemType_Enum.SessionQAndA}>Session Q&amp;A</option>
+                        </>
+                    ) : (
+                        <>
+                            <option value={Content_ItemType_Enum.Session}>Session</option>
+                            <option value={Content_ItemType_Enum.Social}>Social</option>
+                            <option value={Content_ItemType_Enum.Symposium}>Symposium</option>
+                            <option value={Content_ItemType_Enum.Tutorial}>Tutorial</option>
+                            <option value={Content_ItemType_Enum.Workshop}>Workshop</option>
+                        </>
+                    )}
+                </Select>
+                <FormHelperText>
+                    This is a descriptive label only, to help your attendees understand what kind of session this is.
+                </FormHelperText>
+            </FormControl>
             <CreateTagModal
                 initialName={createTagName}
                 isOpen={createTagDisclosure.isOpen}

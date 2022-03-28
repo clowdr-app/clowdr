@@ -46383,6 +46383,111 @@ export type ManageSchedule_GetPeopleQuery = {
     }>;
 };
 
+export type ManageSchedule_PresentationFragment = {
+    readonly __typename?: "schedule_Event";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
+    readonly sessionEventId?: any | null;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
+    readonly name: string;
+    readonly itemId?: any | null;
+    readonly roomId: any;
+    readonly item?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+        readonly typeName: Content_ItemType_Enum;
+        readonly itemTags: ReadonlyArray<{
+            readonly __typename?: "content_ItemTag";
+            readonly id: any;
+            readonly tagId: any;
+        }>;
+        readonly itemPeople: ReadonlyArray<{
+            readonly __typename?: "content_ItemProgramPerson";
+            readonly id: any;
+            readonly personId: any;
+            readonly roleName: string;
+            readonly priority?: number | null;
+        }>;
+        readonly abstract: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly data: any;
+        }>;
+        readonly elements_aggregate: {
+            readonly __typename?: "content_Element_aggregate";
+            readonly aggregate?: {
+                readonly __typename?: "content_Element_aggregate_fields";
+                readonly count: number;
+            } | null;
+        };
+    } | null;
+    readonly eventPeople: ReadonlyArray<{
+        readonly __typename?: "schedule_EventProgramPerson";
+        readonly id: any;
+        readonly personId: any;
+        readonly roleName: Schedule_EventProgramPersonRole_Enum;
+    }>;
+};
+
+export type ManageSchedule_GetPresentationsQueryVariables = Exact<{
+    sessionId: Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetPresentationsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly sessionEventId?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly name: string;
+        readonly itemId?: any | null;
+        readonly roomId: any;
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly tagId: any;
+            }>;
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly personId: any;
+                readonly roleName: string;
+                readonly priority?: number | null;
+            }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+            }>;
+            readonly elements_aggregate: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+        } | null;
+        readonly eventPeople: ReadonlyArray<{
+            readonly __typename?: "schedule_EventProgramPerson";
+            readonly id: any;
+            readonly personId: any;
+            readonly roleName: Schedule_EventProgramPersonRole_Enum;
+        }>;
+    }>;
+};
+
 export type ContinuationsEditor_ContinuationFragment = {
     readonly __typename?: "schedule_Continuation";
     readonly id: any;
@@ -47083,7 +47188,7 @@ export type ManageSchedule_EventPersonFragment = {
     readonly roleName: Schedule_EventProgramPersonRole_Enum;
 };
 
-export type ManageSchedule_SessionContentFragment = {
+export type ManageSchedule_EventContentFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
     readonly title: string;
@@ -51181,6 +51286,72 @@ export const ManageSchedule_RegistrantFragmentDoc = gql`
         }
     }
 `;
+export const ManageSchedule_ItemTagFragmentDoc = gql`
+    fragment ManageSchedule_ItemTag on content_ItemTag {
+        id
+        tagId
+    }
+`;
+export const ManageSchedule_ItemPersonFragmentDoc = gql`
+    fragment ManageSchedule_ItemPerson on content_ItemProgramPerson {
+        id
+        personId
+        roleName
+        priority
+    }
+`;
+export const ManageSchedule_EventContentFragmentDoc = gql`
+    fragment ManageSchedule_EventContent on content_Item {
+        id
+        title
+        typeName
+        itemTags {
+            ...ManageSchedule_ItemTag
+        }
+        itemPeople {
+            ...ManageSchedule_ItemPerson
+        }
+        abstract: elements(where: { typeName: { _eq: ABSTRACT } }) {
+            id
+            data
+        }
+        elements_aggregate {
+            aggregate {
+                count
+            }
+        }
+    }
+    ${ManageSchedule_ItemTagFragmentDoc}
+    ${ManageSchedule_ItemPersonFragmentDoc}
+`;
+export const ManageSchedule_EventPersonFragmentDoc = gql`
+    fragment ManageSchedule_EventPerson on schedule_EventProgramPerson {
+        id
+        personId
+        roleName
+    }
+`;
+export const ManageSchedule_PresentationFragmentDoc = gql`
+    fragment ManageSchedule_Presentation on schedule_Event {
+        id
+        conferenceId
+        subconferenceId
+        sessionEventId
+        scheduledStartTime
+        scheduledEndTime
+        name
+        itemId
+        roomId
+        item {
+            ...ManageSchedule_EventContent
+        }
+        eventPeople {
+            ...ManageSchedule_EventPerson
+        }
+    }
+    ${ManageSchedule_EventContentFragmentDoc}
+    ${ManageSchedule_EventPersonFragmentDoc}
+`;
 export const ContinuationsEditor_ContinuationFragmentDoc = gql`
     fragment ContinuationsEditor_Continuation on schedule_Continuation {
         id
@@ -51347,51 +51518,6 @@ export const ShufflePeriodInfoFragmentDoc = gql`
         endAt
     }
 `;
-export const ManageSchedule_ItemTagFragmentDoc = gql`
-    fragment ManageSchedule_ItemTag on content_ItemTag {
-        id
-        tagId
-    }
-`;
-export const ManageSchedule_ItemPersonFragmentDoc = gql`
-    fragment ManageSchedule_ItemPerson on content_ItemProgramPerson {
-        id
-        personId
-        roleName
-        priority
-    }
-`;
-export const ManageSchedule_SessionContentFragmentDoc = gql`
-    fragment ManageSchedule_SessionContent on content_Item {
-        id
-        title
-        typeName
-        itemTags {
-            ...ManageSchedule_ItemTag
-        }
-        itemPeople {
-            ...ManageSchedule_ItemPerson
-        }
-        abstract: elements(where: { typeName: { _eq: ABSTRACT } }) {
-            id
-            data
-        }
-        elements_aggregate {
-            aggregate {
-                count
-            }
-        }
-    }
-    ${ManageSchedule_ItemTagFragmentDoc}
-    ${ManageSchedule_ItemPersonFragmentDoc}
-`;
-export const ManageSchedule_EventPersonFragmentDoc = gql`
-    fragment ManageSchedule_EventPerson on schedule_EventProgramPerson {
-        id
-        personId
-        roleName
-    }
-`;
 export const ManageSchedule_SessionFragmentDoc = gql`
     fragment ManageSchedule_Session on schedule_Event {
         id
@@ -51411,13 +51537,13 @@ export const ManageSchedule_SessionFragmentDoc = gql`
             }
         }
         item {
-            ...ManageSchedule_SessionContent
+            ...ManageSchedule_EventContent
         }
         eventPeople {
             ...ManageSchedule_EventPerson
         }
     }
-    ${ManageSchedule_SessionContentFragmentDoc}
+    ${ManageSchedule_EventContentFragmentDoc}
     ${ManageSchedule_EventPersonFragmentDoc}
 `;
 export const ManageSchedule_TagFragmentDoc = gql`
@@ -55962,6 +56088,23 @@ export function useManageSchedule_GetPeopleQuery(
     options: Omit<Urql.UseQueryArgs<ManageSchedule_GetPeopleQueryVariables>, "query">
 ) {
     return Urql.useQuery<ManageSchedule_GetPeopleQuery>({ query: ManageSchedule_GetPeopleDocument, ...options });
+}
+export const ManageSchedule_GetPresentationsDocument = gql`
+    query ManageSchedule_GetPresentations($sessionId: uuid!) {
+        schedule_Event(where: { sessionEventId: { _eq: $sessionId } }) {
+            ...ManageSchedule_Presentation
+        }
+    }
+    ${ManageSchedule_PresentationFragmentDoc}
+`;
+
+export function useManageSchedule_GetPresentationsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetPresentationsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetPresentationsQuery>({
+        query: ManageSchedule_GetPresentationsDocument,
+        ...options,
+    });
 }
 export const ContinuationsEditor_SelectContinuationsDocument = gql`
     query ContinuationsEditor_SelectContinuations($fromId: uuid!) {

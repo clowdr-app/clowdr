@@ -9,6 +9,7 @@ import useSelectorColors from "./useSelectorColors";
 export interface CardProps extends BoxProps {
     isSelectable?: boolean;
     isSelected?: boolean;
+    hideSelectButton?: boolean;
     isDisabled?: boolean;
     onSelectToggle?: () => void;
 
@@ -43,6 +44,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
     {
         isSelectable,
         isSelected,
+        hideSelectButton,
         isDisabled = false,
         onSelectToggle,
         subHeading,
@@ -118,7 +120,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
         >
             <Flex flexDir="column" w="100%">
                 <Flex>
-                    {isSelectable ? (
+                    {isSelectable && !hideSelectButton ? (
                         <SelectButton
                             isDisabled={isDisabled}
                             isSelected={isSelected ?? false}

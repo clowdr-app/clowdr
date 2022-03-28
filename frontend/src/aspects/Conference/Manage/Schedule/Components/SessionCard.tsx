@@ -10,14 +10,11 @@ import {
     Text,
     useDisclosure,
     VStack,
-    Wrap,
-    WrapItem,
 } from "@chakra-ui/react";
 import type { ElementDataBlob, TextualElementBlob } from "@midspace/shared-types/content";
-import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
 import type {
-    ManageSchedule_ItemTagFragment,
+    ManageSchedule_PresentationFragment,
     ManageSchedule_SessionFragment,
     ManageSchedule_TagFragment,
 } from "../../../../../generated/graphql";
@@ -27,7 +24,8 @@ import FAIcon from "../../../../Chakra/FAIcon";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { useRealTime } from "../../../../Hooks/useRealTime";
-import { maybeCompare } from "../../../../Utils/maybeCompare";
+import PresentationsList from "./PresentationsList";
+import Tags from "./Tags";
 
 export default function SessionCard({
     session,
@@ -41,6 +39,10 @@ export default function SessionCard({
     onEdit,
     onDelete,
     onExport,
+
+    onCreatePresentation,
+    onEditPresentation,
+    onDeletePresentation,
 }: {
     session: ManageSchedule_SessionFragment;
     tags: ReadonlyArray<ManageSchedule_TagFragment>;
@@ -53,6 +55,10 @@ export default function SessionCard({
     onEdit: (initialStepIdx?: number) => void;
     onDelete: () => void;
     onExport: () => void;
+
+    onCreatePresentation: () => void;
+    onEditPresentation: (presentation: ManageSchedule_PresentationFragment, initialStepIdx?: number) => void;
+    onDeletePresentation: (presentationId: string) => void;
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -328,137 +334,15 @@ export default function SessionCard({
                     </Tag>
                 </HStack>
             </Card>
-            {/* {isSelected ? (
-                <VStack pl={8} alignItems="flex-start" w="100%" zIndex={1} spacing={4}>
-                    <Heading as="h4" fontSize="sm" pt={2}>
-                        Presentations
-                    </Heading>
-                    {session.presentations.length === 0 ? (
-                        <Text>No presentations</Text>
-                    ) : (
-                        session.presentations.map((presentation, idx) => (
-                            <PresentationCard
-                                key={"presentation-" + idx}
-                                presentation={presentation}
-                                isSelected={
-                                    selection !== "session" &&
-                                    selection.type === "presentation" &&
-                                    selection.index === idx
-                                }
-                                onSelectToggle={() => {
-                                    setSelection((old) =>
-                                        old !== "session" && old.type === "presentation" && old.index === idx
-                                            ? "session"
-                                            : { type: "presentation", index: idx }
-                                    );
-                                }}
-                            />
-                        ))
-                    )}
-                    {session.items.length > 0 ? (
-                        <Heading as="h4" fontSize="sm" pt={2}>
-                            Exhibited Items
-                        </Heading>
-                    ) : undefined}
-                    {session.items.map((item, idx) => (
-                        <ItemCard
-                            key={"item-" + idx}
-                            item={item}
-                            isSelected={selection !== "session" && selection.type === "item" && selection.index === idx}
-                            onSelectToggle={() => {
-                                setSelection((old) =>
-                                    old !== "session" && old.type === "item" && old.index === idx
-                                        ? "session"
-                                        : { type: "item", index: idx }
-                                );
-                            }}
-                        />
-                    ))}
-                    <Box h={4}>&nbsp;</Box>
-                </VStack>
-            ) : undefined} */}
+            {presentationsDisclosure.isOpen ? (
+                <PresentationsList
+                    sessionId={session.id}
+                    tags={tags}
+                    onCreate={onCreatePresentation}
+                    onEdit={onEditPresentation}
+                    onDelete={onDeletePresentation}
+                />
+            ) : undefined}
         </VStack>
-    );
-}
-
-function Tags({
-    tags,
-    itemTags,
-    onEdit,
-}: {
-    tags: ReadonlyArray<ManageSchedule_TagFragment>;
-    itemTags: ReadonlyArray<ManageSchedule_ItemTagFragment>;
-
-    onEdit: () => void;
-}): JSX.Element {
-    const matchedTags = useMemo(
-        () =>
-            R.sortWith(
-                [
-                    (a, b) => maybeCompare(a.tag?.priority, b.tag?.priority, (x, y) => x - y),
-                    (a, b) => maybeCompare(a.tag?.name, b.tag?.name, (x, y) => x.localeCompare(y)),
-                ],
-                itemTags.map((itemTag) => ({
-                    itemTag,
-                    tag: tags.find((x) => x.id === itemTag.tagId),
-                }))
-            ).slice(0, 3),
-        [itemTags, tags]
-    );
-
-    return (
-        <Wrap>
-            {matchedTags.map((tag, idx) => (
-                <WrapItem key={idx}>
-                    <Tag
-                        borderRadius="full"
-                        colorScheme="gray"
-                        onClick={(ev) => {
-                            onEdit();
-                            ev.stopPropagation();
-                        }}
-                        _hover={{
-                            bgColor: "gray.400",
-                        }}
-                    >
-                        {tag.tag?.name ?? "<unknown>"}
-                    </Tag>
-                </WrapItem>
-            ))}
-            {matchedTags.length < itemTags.length ? (
-                <WrapItem>
-                    <Tag
-                        borderRadius="full"
-                        colorScheme="gray"
-                        onClick={(ev) => {
-                            onEdit();
-                            ev.stopPropagation();
-                        }}
-                        _hover={{
-                            bgColor: "gray.400",
-                        }}
-                    >
-                        {itemTags.length - matchedTags.length} more…
-                    </Tag>
-                </WrapItem>
-            ) : undefined}
-            {itemTags.length === 0 ? (
-                <WrapItem>
-                    <Tag
-                        borderRadius="full"
-                        colorScheme="gray"
-                        onClick={(ev) => {
-                            onEdit();
-                            ev.stopPropagation();
-                        }}
-                        _hover={{
-                            bgColor: "gray.400",
-                        }}
-                    >
-                        + Add tag
-                    </Tag>
-                </WrapItem>
-            ) : undefined}
-        </Wrap>
     );
 }

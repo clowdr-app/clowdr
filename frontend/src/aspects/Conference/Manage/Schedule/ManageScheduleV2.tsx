@@ -35,6 +35,7 @@ import type {
     ManageSchedule_GetAllSessionIdsQueryVariables,
     ManageSchedule_InsertEventMutation,
     ManageSchedule_InsertEventMutationVariables,
+    ManageSchedule_PresentationFragment,
     ManageSchedule_SessionFragment,
     Schedule_Event_Bool_Exp,
 } from "../../../../generated/graphql";
@@ -78,7 +79,7 @@ gql`
         roleName
     }
 
-    fragment ManageSchedule_SessionContent on content_Item {
+    fragment ManageSchedule_EventContent on content_Item {
         id
         title
         typeName
@@ -120,7 +121,7 @@ gql`
         }
 
         item {
-            ...ManageSchedule_SessionContent
+            ...ManageSchedule_EventContent
         }
 
         eventPeople {
@@ -362,17 +363,44 @@ export default function ManageScheduleV2(): JSX.Element {
         },
         [sessionEditorDisclosure]
     );
-    const deleteSessions = useCallback(
+    const onDeleteSessions = useCallback(
         (ids: string[]) => {
             setDeleteSessionIds(ids);
             deleteSessionsDisclosure.onOpen();
         },
         [deleteSessionsDisclosure]
     );
-    const exportSessions = useCallback((_ids: string[]) => {
+    const onExportSessions = useCallback((_ids: string[]) => {
         // TODO:
     }, []);
     const headerControls = HeaderControls(onCreateSession);
+
+    const onCreatePresentation = useCallback((sessionId: string) => {
+        // TODO:
+        // setCurrentRecord({});
+        // setInitialStepIdx(0);
+        // setPresentationEditorIsCreate(true);
+        // setTimeout(() => {
+        //     presentationEditorDisclosure.onOpen();
+        // }, 50);
+    }, []);
+    const onEditPresentation = useCallback(
+        (_presentation: DeepPartial<ManageSchedule_PresentationFragment>, _initialStepIdx = 0) => {
+            // TODO:
+            // setCurrentRecord(presentation);
+            // setInitialStepIdx(initialStepIdx);
+            // setPresentationEditorIsCreate(false);
+            // setTimeout(() => {
+            //     presentationEditorDisclosure.onOpen();
+            // }, 50);
+        },
+        []
+    );
+    const onDeletePresentations = useCallback((_ids: string[]) => {
+        // TODO:
+        // setDeletePresentationIds(ids);
+        // deletePresentationsDisclosure.onOpen();
+    }, []);
 
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const conference = useConference();
@@ -561,7 +589,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                 colorScheme="blue"
                                 variant="outline"
                                 onClick={() => {
-                                    exportSessions([...selectedSessions]);
+                                    onExportSessions([...selectedSessions]);
                                 }}
                                 borderRadius="xl"
                                 bgColor={bulkButtonBgColour}
@@ -573,7 +601,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                 colorScheme="DestructiveActionButton"
                                 variant="outline"
                                 onClick={() => {
-                                    deleteSessions([...selectedSessions]);
+                                    onDeleteSessions([...selectedSessions]);
                                 }}
                                 borderRadius="xl"
                                 bgColor={bulkButtonBgColour}
@@ -631,9 +659,12 @@ export default function ManageScheduleV2(): JSX.Element {
                                         });
                                     }}
                                     onEdit={(idx) => onEditSession(session, idx)}
-                                    onDelete={() => deleteSessions([session.id])}
-                                    onExport={() => exportSessions([session.id])}
+                                    onDelete={() => onDeleteSessions([session.id])}
+                                    onExport={() => onExportSessions([session.id])}
                                     tags={tags}
+                                    onCreatePresentation={() => onCreatePresentation(session.id)}
+                                    onEditPresentation={onEditPresentation}
+                                    onDeletePresentation={(id) => onDeletePresentations([id])}
                                 />
                             );
                             return dateChanged ? (

@@ -81,8 +81,6 @@ export default function SessionCard({
                 }}
                 subHeading={
                     start.toLocaleString(undefined, {
-                        weekday: "short",
-                        day: "numeric",
                         hour: "numeric",
                         minute: "numeric",
                     }) +

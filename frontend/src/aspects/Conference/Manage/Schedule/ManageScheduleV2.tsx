@@ -17,6 +17,7 @@ import {
     chakra,
     FormControl,
     FormLabel,
+    Heading,
     HStack,
     IconButton,
     Input,
@@ -27,7 +28,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
 import type {
     ManageSchedule_GetAllSessionIdsQuery,
@@ -596,29 +597,64 @@ export default function ManageScheduleV2(): JSX.Element {
                     {sessionsResponse.fetching ? (
                         <Spinner size="lg" />
                     ) : (
-                        sessionsResponse.data?.schedule_Event.map((session) => (
-                            <SessionCard
-                                key={session.id}
-                                session={session}
-                                anySelected={selectedSessions.size > 0}
-                                isSelected={selectedSessions.has(session.id)}
-                                onSelectToggle={() => {
-                                    setSelectedSessions((old) => {
-                                        const newSet = new Set(old);
-                                        if (old.has(session.id)) {
-                                            newSet.delete(session.id);
-                                        } else {
-                                            newSet.add(session.id);
-                                        }
-                                        return newSet;
-                                    });
-                                }}
-                                onEdit={(idx) => onEditSession(session, idx)}
-                                onDelete={() => deleteSessions([session.id])}
-                                onExport={() => exportSessions([session.id])}
-                                tags={tags}
-                            />
-                        ))
+                        sessionsResponse.data?.schedule_Event.map((session, idx) => {
+                            const previous = sessionsResponse.data?.schedule_Event[idx - 1];
+                            const previousStart = previous?.scheduledStartTime
+                                ? new Date(previous.scheduledStartTime)
+                                : undefined;
+                            const thisStart = session.scheduledStartTime
+                                ? new Date(session.scheduledStartTime)
+                                : undefined;
+                            const dateChanged =
+                                idx === 0 ||
+                                (previousStart &&
+                                    thisStart &&
+                                    (previousStart.getDate() !== thisStart.getDate() ||
+                                        previousStart.getMonth() !== thisStart.getMonth() ||
+                                        previousStart.getFullYear() !== thisStart.getFullYear()));
+
+                            const card = (
+                                <SessionCard
+                                    key={session.id}
+                                    session={session}
+                                    anySelected={selectedSessions.size > 0}
+                                    isSelected={selectedSessions.has(session.id)}
+                                    onSelectToggle={() => {
+                                        setSelectedSessions((old) => {
+                                            const newSet = new Set(old);
+                                            if (old.has(session.id)) {
+                                                newSet.delete(session.id);
+                                            } else {
+                                                newSet.add(session.id);
+                                            }
+                                            return newSet;
+                                        });
+                                    }}
+                                    onEdit={(idx) => onEditSession(session, idx)}
+                                    onDelete={() => deleteSessions([session.id])}
+                                    onExport={() => exportSessions([session.id])}
+                                    tags={tags}
+                                />
+                            );
+                            return dateChanged ? (
+                                <Fragment key={session.id}>
+                                    <Heading as="h2" fontSize="md">
+                                        {thisStart?.toLocaleDateString(undefined, {
+                                            day: "numeric",
+                                            month: "short",
+                                        })}
+                                        {thisStart &&
+                                        ((previousStart && thisStart.getFullYear() !== previousStart.getFullYear()) ||
+                                            (idx === 0 && thisStart.getFullYear() !== new Date().getFullYear()))
+                                            ? " " + thisStart.getFullYear()
+                                            : undefined}
+                                    </Heading>
+                                    {card}
+                                </Fragment>
+                            ) : (
+                                card
+                            );
+                        })
                     )}
                 </VStack>
             </VStack>

@@ -82,6 +82,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                     ? {
                           shadow: "md",
                           borderRadius: "2xl",
+                          borderColor: selectorColors.outlineColor,
                       }
                     : undefined
             }

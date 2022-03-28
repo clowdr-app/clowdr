@@ -36,7 +36,10 @@ gql`
     }
 
     query ManageSchedule_GetPresentations($sessionId: uuid!) {
-        schedule_Event(where: { sessionEventId: { _eq: $sessionId } }) {
+        schedule_Event(
+            where: { sessionEventId: { _eq: $sessionId } }
+            order_by: [{ scheduledStartTime: asc_nulls_last }]
+        ) {
             ...ManageSchedule_Presentation
         }
     }

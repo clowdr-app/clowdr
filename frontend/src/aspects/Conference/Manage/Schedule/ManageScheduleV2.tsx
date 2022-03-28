@@ -642,8 +642,9 @@ export default function ManageScheduleV2(): JSX.Element {
                     onClick={() => {
                         setOffset((old) =>
                             sessionsResponse.data?.schedule_Event_aggregate.aggregate
-                                ? Math.max(
-                                      sessionsResponse.data.schedule_Event_aggregate.aggregate.count - limit,
+                                ? Math.min(
+                                      sessionsResponse.data.schedule_Event_aggregate.aggregate.count -
+                                          (sessionsResponse.data.schedule_Event_aggregate.aggregate.count % limit),
                                       old + limit
                                   )
                                 : 0

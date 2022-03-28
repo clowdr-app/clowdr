@@ -176,6 +176,7 @@ export default function Editor<T>({
             }}
             pr={isCreate ? 2 : undefined}
             isDisabled={
+                !anyChanges ||
                 isSaving ||
                 (isCreate ? stepValidStates[stepIdx] !== "no error" : !stepValidStates.every((x) => x === "no error"))
             }

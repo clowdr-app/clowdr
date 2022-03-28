@@ -47121,6 +47121,8 @@ export type ManageSchedule_SessionFragment = {
     readonly modeName?: Schedule_Mode_Enum | null;
     readonly roomId: any;
     readonly itemId?: any | null;
+    readonly exhibitionId?: any | null;
+    readonly shufflePeriodId?: any | null;
     readonly presentations_aggregate: {
         readonly __typename?: "schedule_Event_aggregate";
         readonly aggregate?: { readonly __typename?: "schedule_Event_aggregate_fields"; readonly count: number } | null;
@@ -47212,6 +47214,8 @@ export type ManageSchedule_GetSessionsPageQuery = {
         readonly modeName?: Schedule_Mode_Enum | null;
         readonly roomId: any;
         readonly itemId?: any | null;
+        readonly exhibitionId?: any | null;
+        readonly shufflePeriodId?: any | null;
         readonly presentations_aggregate: {
             readonly __typename?: "schedule_Event_aggregate";
             readonly aggregate?: {
@@ -51399,6 +51403,8 @@ export const ManageSchedule_SessionFragmentDoc = gql`
         modeName
         roomId
         itemId
+        exhibitionId
+        shufflePeriodId
         presentations_aggregate {
             aggregate {
                 count

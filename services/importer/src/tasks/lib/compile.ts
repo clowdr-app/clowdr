@@ -174,36 +174,25 @@ export function generateSessionEntities(
     const sessionContentOutputName = composeOutputNames(rootOutputName, "content");
     const sessionEventOutputName = composeOutputNames(rootOutputName, "event");
 
-    const anyPresentationIsBreakout =
-        options.eventImportMode === "presentation" ||
-        session.presentations.some(
-            (x) => (x.event.interactionMode ?? options.defaultEventMode) === "breakout video-chat"
-        );
-    const presentationsAsExhibitionItems =
-        // We're importing individual presentations as events or a presentation was marked as breakout video chat
-        anyPresentationIsBreakout ||
-        // Or we're importing whole sessions as events
-        options.eventImportMode === "session";
-    const sessionHasExhibition =
-        // If this session is actually an exhibition
-        session.items.length > 0 || presentationsAsExhibitionItems;
+    const sessionHasExhibition = session.presentations.some(
+        (x) => (x.event.interactionMode ?? options.defaultEventMode) === "breakout video-chat"
+    );
     const sessionExhibitionOutputName = sessionHasExhibition
         ? composeOutputNames(rootOutputName, "exhibition")
         : undefined;
 
     const result: Entity[] = [
         ...generateContentEntities(session.content, sessionContentOutputName, undefined, options, context),
-        ...(options.eventImportMode === "session"
-            ? generateEventEntities(
-                  session.event,
-                  sessionEventOutputName,
-                  sessionContentOutputName,
-                  sessionExhibitionOutputName,
-                  roomOutputName,
-                  options,
-                  context
-              )
-            : []),
+        ...generateEventEntities(
+            session.event,
+            sessionEventOutputName,
+            sessionContentOutputName,
+            sessionExhibitionOutputName,
+            undefined,
+            roomOutputName,
+            options,
+            context
+        ),
         ...generateRoomEntities(session.event.roomName!, undefined, roomOutputName, context),
     ];
 
@@ -213,80 +202,40 @@ export function generateSessionEntities(
     let presentationStartMs = sessionStart.getTime();
     let presentationsWithTimes: PresentationWithAllocatedTime[] = [];
     for (const presentation of session.presentations) {
-        presentationsWithTimes.push({
-            ...presentation,
-            event: {
-                ...presentation.event,
-                start: new Date(presentationStartMs),
-            },
-        });
-        presentationStartMs += presentation.event.duration * 60 * 1000;
+        if (presentation.event.duration > 0) {
+            presentationsWithTimes.push({
+                ...presentation,
+                event: {
+                    ...presentation.event,
+                    start: new Date(presentationStartMs),
+                },
+            });
+            presentationStartMs += presentation.event.duration * 60 * 1000;
+        } else {
+            presentationsWithTimes.push({
+                ...presentation,
+                event: {
+                    ...presentation.event,
+                    start: null,
+                },
+            });
+        }
     }
     // Drop presentations that were only for filling time (i.e. ones with no content type)
     presentationsWithTimes = presentationsWithTimes.filter((x) => x.content.type);
 
     if (sessionHasExhibition) {
-        // Generate item content and discussion room entities
-        for (let itemIdx = 0; itemIdx < session.items.length; itemIdx++) {
-            const item = session.items[itemIdx];
-            const itemRootOutputName = composeOutputNames(rootOutputName, `items[${itemIdx}]`);
-            result.push(
-                ...[
-                    ...generateContentEntities(
-                        item,
-                        composeOutputNames(itemRootOutputName, "content"),
-                        { name: sessionExhibitionOutputName!, priority: itemIdx },
-                        options,
-                        context,
-                        session.content.title,
-                        session.content.chairs
-                    ),
-                    ...generateRoomEntities(
-                        item.title ?? `No title @ ${itemRootOutputName}`,
-                        composeOutputNames(composeOutputNames(itemRootOutputName, "content"), "id"),
-                        composeOutputNames(itemRootOutputName, "room"),
-                        context
-                    ),
-                ]
-            );
-        }
-
-        if (anyPresentationIsBreakout) {
-            // Generate presentation discussion rooms
-            result.push(
-                ...presentationsWithTimes.flatMap<Entity>((presentation, idx) =>
-                    generateRoomEntities(
-                        presentation.content.title ?? "<No title>",
-                        composeOutputNames(
-                            composeOutputNames(composeOutputNames(rootOutputName, `presentations[${idx}]`), "content"),
-                            "id"
-                        ),
-                        composeOutputNames(composeOutputNames(rootOutputName, `presentations[${idx}]`), "room"),
-                        context
-                    )
-                )
-            );
-        }
-
         // Generate session exhibition
         result.push(
             ...generateExhibitionEntities(
                 session.content.title ?? "<No title>",
                 [
-                    ...session.items.map((_, itemIdx) =>
+                    ...presentationsWithTimes.map((_, presIdx) =>
                         composeOutputNames(
-                            composeOutputNames(rootOutputName, `items[${itemIdx}]`),
+                            composeOutputNames(rootOutputName, `presentations[${presIdx}]`),
                             composeOutputNames("content", "id")
                         )
                     ),
-                    ...(presentationsAsExhibitionItems
-                        ? presentationsWithTimes.map((_, presentationIdx) =>
-                              composeOutputNames(
-                                  composeOutputNames(rootOutputName, `presentations[${presentationIdx}]`),
-                                  composeOutputNames("content", "id")
-                              )
-                          )
-                        : []),
                 ],
                 composeOutputNames(sessionContentOutputName, "id"),
                 true,
@@ -294,59 +243,6 @@ export function generateSessionEntities(
                 context
             )
         );
-    }
-
-    if (options.eventImportMode === "session" && presentationsWithTimes.length > 0) {
-        // Append presentation timing as text element on session content
-        result.push({
-            __outputs: [],
-            __remapColumns: ["itemId"],
-
-            __typename: "content_Element",
-            conferenceId: context.conferenceId,
-            subconferenceId: context.subconferenceId,
-
-            data: [
-                {
-                    createdAt: Date.now(),
-                    createdBy: context.createdByLabel,
-                    data: {
-                        baseType: "text",
-                        type: Content_ElementType_Enum.Text,
-                        text:
-                            `### Presentation times
-
-` +
-                            presentationsWithTimes.reduce(
-                                (acc, x) => `${acc}
-At ${((x.event.start.getTime() - sessionStart.getTime()) / 1000 / 60).toFixed(0)} minutes: ${
-                                    x.content.title ?? "<No title>"
-                                } (${x.event.duration} minutes)`,
-                                ""
-                            ),
-                    },
-                },
-            ] as ElementDataBlob,
-            isHidden: false,
-            itemId: composeOutputNames(sessionContentOutputName, "id"),
-            layoutData: {
-                contentType: Content_ElementType_Enum.Text,
-                wide: true,
-                priority: 0,
-
-                position: {
-                    row: 0,
-                    column: 7,
-                },
-                size: {
-                    rows: 1,
-                    columns: 4,
-                },
-            } as LayoutDataBlob,
-            name: "Timings",
-            typeName: Content_ElementType_Enum.Text,
-            uploadsRemaining: 0,
-        });
     }
 
     result.push(
@@ -357,26 +253,31 @@ At ${((x.event.start.getTime() - sessionStart.getTime()) / 1000 / 60).toFixed(0)
                 ...generateContentEntities(
                     presentation.content,
                     presentationContentOutputName,
-                    sessionExhibitionOutputName
-                        ? { name: sessionExhibitionOutputName, priority: session.items.length + idx }
-                        : undefined,
+                    sessionExhibitionOutputName ? { name: sessionExhibitionOutputName, priority: idx } : undefined,
                     options,
                     context,
                     session.content.title,
                     session.content.chairs
                 ),
-                ...(options.eventImportMode === "presentation"
-                    ? generateEventEntities(
-                          presentation.event,
-                          composeOutputNames(presentationOutputName, "event"),
-                          presentationContentOutputName,
-                          sessionExhibitionOutputName,
-                          roomOutputName,
-                          options,
-                          context,
-                          session.content.chairs
+                ...(sessionHasExhibition
+                    ? generateRoomEntities(
+                          presentation.content.title ?? `No title @ ${presentationOutputName}`,
+                          composeOutputNames(composeOutputNames(presentationOutputName, "content"), "id"),
+                          composeOutputNames(presentationOutputName, "room"),
+                          context
                       )
                     : []),
+                ...generateEventEntities(
+                    presentation.event,
+                    composeOutputNames(presentationOutputName, "event"),
+                    presentationContentOutputName,
+                    sessionExhibitionOutputName,
+                    sessionEventOutputName,
+                    roomOutputName,
+                    options,
+                    context,
+                    session.content.chairs
+                ),
             ];
         })
     );
@@ -727,10 +628,11 @@ const modeMap: Record<NonNullable<Event<string>["interactionMode"]>, Schedule_Mo
 };
 
 function generateEventEntities(
-    event: Event<Date | string>,
+    event: Event<Date | string | null>,
     rootOutputName: string,
     contentOutputName: string | undefined,
     exhibitionOutputName: string | undefined,
+    sessionEventOutputName: string | undefined,
     roomOutputName: string,
     options: ProgramImportOptions,
     context: Context,
@@ -743,7 +645,11 @@ function generateEventEntities(
         eventMode === "networking" && context.createdBy
             ? composeOutputNames(composeOutputNames(rootOutputName, "shuffle"), "id")
             : undefined;
-    const scheduledStartTime = typeof event.start === "string" ? new Date(event.start) : event.start;
+    const scheduledStartTime = event.start
+        ? typeof event.start === "string"
+            ? new Date(event.start)
+            : event.start
+        : null;
     return [
         {
             __outputs: [
@@ -752,21 +658,30 @@ function generateEventEntities(
                     outputName: eventIdOutputName,
                 },
             ],
-            __remapColumns: ["exhibitionId", "itemId", "roomId", "shufflePeriodId"],
+            __remapColumns: ["exhibitionId", "itemId", "roomId", "shufflePeriodId", "sessionEventId"],
 
             __typename: "schedule_Event",
             conferenceId: context.conferenceId,
             subconferenceId: context.subconferenceId,
 
-            enableRecording: true,
-            exhibitionId: exhibitionOutputName ? composeOutputNames(exhibitionOutputName, "id") : undefined,
-            modeName: modeMap[eventMode],
-            itemId: contentOutputName && composeOutputNames(contentOutputName, "id"),
             name: event.name,
+            itemId: contentOutputName && composeOutputNames(contentOutputName, "id"),
             roomId: composeOutputNames(roomOutputName, "id"),
+
+            scheduledStartTime: event.duration > 0 && scheduledStartTime ? scheduledStartTime.toISOString() : null,
+            scheduledEndTime:
+                event.duration > 0 && scheduledStartTime
+                    ? new Date(scheduledStartTime.getTime() + event.duration * 60 * 1000).toISOString()
+                    : null,
+            modeName: !sessionEventOutputName ? modeMap[eventMode] : null,
+            sessionEventId: sessionEventOutputName ? composeOutputNames(sessionEventOutputName, "id") : undefined,
+
+            exhibitionId: exhibitionOutputName ? composeOutputNames(exhibitionOutputName, "id") : undefined,
+
             shufflePeriodId: shufflePeriodIdOutputName,
-            scheduledStartTime: scheduledStartTime.toISOString(),
-            scheduledEndTime: new Date(scheduledStartTime.getTime() + event.duration * 60 * 1000).toISOString(),
+
+            enableRecording: true,
+            automaticParticipationSurvey: true,
         },
         ...[...(sessionChairs ? sessionChairs : []), ...event.chairs].map<Entity>((chair, idx) => ({
             __outputs: [
@@ -820,7 +735,7 @@ function generateEventEntities(
             personId: composeOutputNames(composeOutputNames(rootOutputName, `speakers[${idx}]`), "id"),
             roleName: Schedule_EventProgramPersonRole_Enum.Presenter,
         })),
-        ...(shufflePeriodIdOutputName
+        ...(shufflePeriodIdOutputName && scheduledStartTime && event.duration > 0
             ? ([
                   {
                       __outputs: [
@@ -967,7 +882,18 @@ export function mergeEntities(entities: Entity[]) {
 }
 
 export function sortEntities(mergedEntities: Entity[]) {
-    return R.sortBy((x) => applyEntitiesOrdering[x.__typename!], mergedEntities);
+    return R.sort((x, y) => {
+        if (x.__typename === "schedule_Event" && y.__typename === "schedule_Event") {
+            if (!x.sessionEventId && y.sessionEventId) {
+                return -1;
+            } else if (x.sessionEventId && !y.sessionEventId) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+        return applyEntitiesOrdering[x.__typename!] - applyEntitiesOrdering[y.__typename!];
+    }, mergedEntities);
 }
 
 export async function applyEntities(sortedEntities: Entity[], job: ImportJob) {

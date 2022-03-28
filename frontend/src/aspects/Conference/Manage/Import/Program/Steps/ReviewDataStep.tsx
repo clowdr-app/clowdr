@@ -167,7 +167,7 @@ function SessionCard({
     isDisabled?: boolean;
     onSelectToggle: () => void;
 }): JSX.Element {
-    const [selection, setSelection] = useState<"session" | { index: number; type: "presentation" | "item" }>("session");
+    const [selection, setSelection] = useState<"session" | { index: number; type: "presentation" }>("session");
 
     const ref = useRef<HTMLDivElement | null>(null);
     const start = typeof session.event.start === "string" ? new Date(session.event.start) : session.event.start;
@@ -281,27 +281,6 @@ function SessionCard({
                                 />
                             ))
                         )}
-                        {session.items.length > 0 ? (
-                            <Heading as="h4" fontSize="sm" pt={2}>
-                                Exhibited Items
-                            </Heading>
-                        ) : undefined}
-                        {session.items.map((item, idx) => (
-                            <ItemCard
-                                key={"item-" + idx}
-                                item={item}
-                                isSelected={
-                                    selection !== "session" && selection.type === "item" && selection.index === idx
-                                }
-                                onSelectToggle={() => {
-                                    setSelection((old) =>
-                                        old !== "session" && old.type === "item" && old.index === idx
-                                            ? "session"
-                                            : { type: "item", index: idx }
-                                    );
-                                }}
-                            />
-                        ))}
                         <Box h={4}>&nbsp;</Box>
                     </VStack>
                 ) : undefined}
@@ -309,10 +288,8 @@ function SessionCard({
             {isSelected ? (
                 selection === "session" ? (
                     <SessionDetailsCard session={session} />
-                ) : selection.type === "presentation" ? (
-                    <PresentationDetailsCard presentation={session.presentations[selection.index]} />
                 ) : (
-                    <ItemDetailsCard item={session.items[selection.index]} />
+                    <PresentationDetailsCard presentation={session.presentations[selection.index]} />
                 )
             ) : undefined}
         </HStack>
@@ -353,7 +330,9 @@ function PresentationCard({
             minW="calc(400px - var(--chakra-space-4))"
             w="100%"
             subHeading={
-                presentation.event.duration !== undefined && presentation.event.duration !== null
+                presentation.event.duration !== undefined &&
+                presentation.event.duration !== null &&
+                presentation.event.duration > 0
                     ? presentation.event.duration >= 120
                         ? (presentation.event.duration % 60 === 0
                               ? (presentation.event.duration / 60).toFixed(0)
@@ -624,7 +603,9 @@ function PresentationDetailsCard({ presentation }: { presentation: Presentation 
     return (
         <Card
             subHeading={
-                presentation.event.duration !== undefined && presentation.event.duration !== null
+                presentation.event.duration !== undefined &&
+                presentation.event.duration !== null &&
+                presentation.event.duration > 0
                     ? presentation.event.duration >= 120
                         ? (presentation.event.duration % 60 === 0
                               ? (presentation.event.duration / 60).toFixed(0)

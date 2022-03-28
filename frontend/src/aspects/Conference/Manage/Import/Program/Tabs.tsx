@@ -1,8 +1,10 @@
-import { TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
+import { TabList, TabPanel, TabPanels, Tabs, Text, VStack } from "@chakra-ui/react";
 import type { DataWithValidation, RawRecord, ValidatedData } from "@midspace/shared-types/import/program";
 import type { ProgramImportOptions } from "@midspace/shared-types/import/programImportOptions";
 import React, { useEffect, useState } from "react";
 import type { ImportJobFragment } from "../../../../../generated/graphql";
+import Card from "../../../../Card";
+import { Markdown } from "../../../../Chakra/Markdown";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 import FixIssuesStep from "./Steps/FixIssuesStep";
 import ReviewDataStep from "./Steps/ReviewDataStep";
@@ -142,7 +144,7 @@ export default function ImportProgramTabs({
                                 Progress: {job?.progress ?? "Unknown"} / {job?.progressMaximum ?? "Unknown"}
                             </Text>
                             <Text>Errors: {!job?.errors?.length ? "None" : ""}</Text>
-                            <Text>{!job?.errors?.length ? "" : JSON.stringify(job?.errors, null, 2)}</Text>
+                            {!job?.errors?.length ? "" : <ErrorList errors={job.errors} />}
                         </>
                     )}
                 </TabPanel>
@@ -152,9 +154,29 @@ export default function ImportProgramTabs({
                         Recorded progress: {job?.progress ?? "Unknown"} / {job?.progressMaximum ?? "Unknown"}
                     </Text>
                     <Text>Errors: {!job?.errors?.length ? "None" : ""}</Text>
-                    <Text>{!job?.errors?.length ? "" : JSON.stringify(job?.errors, null, 2)}</Text>
+                    {!job?.errors?.length ? "" : <ErrorList errors={job.errors} />}
                 </TabPanel>
             </TabPanels>
         </Tabs>
+    );
+}
+
+function ErrorList({ errors }: { errors: any[] }): JSX.Element {
+    return (
+        <VStack spacing={4} alignItems="flex-start" mt={4}>
+            {errors.map((error, idx) => {
+                const message = JSON.parse(error.message);
+                return (
+                    <Card
+                        key={idx}
+                        heading={message.errorString ?? message.error?.toString() ?? "Unknown error"}
+                        subHeading={message.data?.outputs[0]?.outputName ?? "For unknown output"}
+                        userSelect="text"
+                    >
+                        <Markdown>{"```json\n" + JSON.stringify(message.data, null, 2) + "\n```"}</Markdown>
+                    </Card>
+                );
+            })}
+        </VStack>
     );
 }

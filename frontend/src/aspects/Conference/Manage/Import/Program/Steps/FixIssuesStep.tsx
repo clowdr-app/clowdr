@@ -130,11 +130,7 @@ function processData(datasets: ParsedData<RawRecord[]>[]): ParsedData<DataWithVa
                     if (session.value && typeof session.value !== "string") {
                         const maybePresentation = processPresentation(record);
                         if (maybePresentation) {
-                            if ("presentation" in maybePresentation) {
-                                session.value.presentations.push(maybePresentation.presentation);
-                            } else if ("item" in maybePresentation) {
-                                session.value.items.push(maybePresentation.item);
-                            }
+                            session.value.presentations.push(maybePresentation);
                         }
                     }
                 } else if (exhibition) {
@@ -188,7 +184,6 @@ function processSessionOrExhibitionData(
                 value: {
                     content,
                     event,
-                    items: [],
                     presentations: [],
                 },
             },
@@ -314,12 +309,7 @@ function processSessionChairs(record: RawRecord): ErrorAnnotation<WithErrors<Cha
     return chairs;
 }
 
-function processPresentation(
-    record: RawRecord
-):
-    | { presentation: ErrorAnnotation<WithErrors<Presentation>> }
-    | { item: ErrorAnnotation<WithErrors<Content>> }
-    | undefined {
+function processPresentation(record: RawRecord): ErrorAnnotation<WithErrors<Presentation>> | undefined {
     const content = processPresentationContent(record);
 
     if (!content) {
@@ -330,18 +320,14 @@ function processPresentation(
 
     if (event) {
         return {
-            presentation: {
-                value: {
-                    content,
-                    event,
-                },
+            value: {
+                content,
+                event,
             },
         };
-    } else {
-        return {
-            item: content,
-        };
     }
+
+    return undefined;
 }
 
 function processPresentationContent(record: RawRecord): ErrorAnnotation<WithErrors<Content>> | undefined {
@@ -384,30 +370,29 @@ function processPresentationContent(record: RawRecord): ErrorAnnotation<WithErro
 }
 
 function processPresentationEvent(record: RawRecord): ErrorAnnotation<WithErrors<Event<null>>> | undefined {
-    if (record.presentationDuration !== undefined && record.presentationDuration !== null) {
-        const speakers = processPresentationSpeakers(record);
+    const speakers = processPresentationSpeakers(record);
 
-        return {
-            value: {
-                name: record.presentationTitle?.length
-                    ? { value: record.presentationTitle }
-                    : { error: "No presentation title" },
-                start: { value: null },
-                duration:
-                    record.presentationDuration > 0
-                        ? { value: record.presentationDuration }
-                        : { error: "Presentation duration must be blank or greater than 0" },
-                chairs: [],
-                speakers,
-                interactionMode: (record.interactionMode?.length
-                    ? interactionModes.includes(record.interactionMode as Event<string>["interactionMode"])
-                        ? { value: record.interactionMode }
-                        : { error: "Invalid interaction mode", value: record.interactionMode }
-                    : { value: null }) as { value: Event<string>["interactionMode"] },
-            },
-        };
-    }
-    return undefined;
+    return {
+        value: {
+            name: record.presentationTitle?.length
+                ? { value: record.presentationTitle }
+                : { error: "No presentation title" },
+            start: { value: null },
+            duration:
+                record.presentationDuration === undefined || record.presentationDuration === null
+                    ? { value: -1 }
+                    : record.presentationDuration > 0
+                    ? { value: record.presentationDuration }
+                    : { error: "Presentation duration must be blank or greater than 0" },
+            chairs: [],
+            speakers,
+            interactionMode: (record.interactionMode?.length
+                ? interactionModes.includes(record.interactionMode as Event<string>["interactionMode"])
+                    ? { value: record.interactionMode }
+                    : { error: "Invalid interaction mode", value: record.interactionMode }
+                : { value: null }) as { value: Event<string>["interactionMode"] },
+        },
+    };
 }
 
 function processPresentationSpeakers(record: RawRecord): ErrorAnnotation<WithErrors<Speaker>>[] {

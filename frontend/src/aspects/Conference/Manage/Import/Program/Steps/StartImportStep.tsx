@@ -43,7 +43,6 @@ export default function StartImportStep({
         register,
     } = useForm<ProgramImportOptions>({
         defaultValues: {
-            eventImportMode: "session",
             defaultEventMode: "video-chat",
             speakerRoleName: "PRESENTER",
             tagPresentationsBySession: "yes",
@@ -97,24 +96,6 @@ export default function StartImportStep({
                         <FormErrorMessage>{errors.tagPresentationsBySession?.message}</FormErrorMessage>
                         <FormHelperText>
                             Choose whether to automatically tag each presentation by the title of its session.
-                        </FormHelperText>
-                    </FormControl>
-                    <FormControl
-                        isInvalid={Boolean(errors.eventImportMode) && Boolean(touchedFields.eventImportMode)}
-                        isRequired
-                        id="eventImportMode"
-                    >
-                        <FormLabel>Schedule format</FormLabel>
-                        <Select {...register("eventImportMode")}>
-                            <option value="session">Sessions as blocks</option>
-                            <option value="presentation">Presentations as blocks</option>
-                        </Select>
-                        <FormErrorMessage>{errors.eventImportMode?.message}</FormErrorMessage>
-                        <FormHelperText>
-                            Choose whether to import whole sessions as blocks in the schedule or individual
-                            presentations as separate blocks in the schedule.
-                            <br />
-                            This option will be made more flexible later in 2022.
                         </FormHelperText>
                     </FormControl>
                     <FormControl

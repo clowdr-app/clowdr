@@ -93,7 +93,6 @@ export interface Session {
     content: Content;
     event: Event<Date | string>;
 
-    items: Content[];
     presentations: Presentation[];
 }
 
@@ -181,5 +180,5 @@ export interface ValidatedData {
 
 export interface PresentationWithAllocatedTime {
     content: Content;
-    event: Event<Date>;
+    event: Event<Date | null>;
 }

@@ -6996,6 +6996,7 @@ export type Collection_Tag_Variance_Order_By = {
 export type Collection_SearchProgramPerson_Args = {
     conferenceid?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+    subconferenceid?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** columns and relationships of "conference.Conference" */

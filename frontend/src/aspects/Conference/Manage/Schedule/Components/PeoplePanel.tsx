@@ -9,6 +9,7 @@ import {
     ListItem,
     Spinner,
     Text,
+    useDisclosure,
     VStack,
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
@@ -37,6 +38,7 @@ import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { maybeCompare } from "../../../../Utils/maybeCompare";
 import { useConference } from "../../../useConference";
+import CreatePersonModal from "./CreatePersonModal";
 
 gql`
     fragment ManageSchedule_Person on collection_ProgramPerson {
@@ -55,11 +57,14 @@ gql`
         }
     }
 
-    query ManageSchedule_SearchPeople($conferenceId: uuid!, $search: String!) {
+    query ManageSchedule_SearchPeople($conferenceId: uuid!, $subconferenceId: uuid, $search: String!) {
         registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
             ...ManageSchedule_Registrant
         }
-        collection_searchProgramPerson(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
+        collection_searchProgramPerson(
+            args: { conferenceid: $conferenceId, subconferenceid: $subconferenceId, search: $search }
+            limit: 10
+        ) {
             ...ManageSchedule_Person
         }
     }
@@ -249,7 +254,7 @@ function PeopleEditor({
             }),
         [subconferenceId]
     );
-    const [peopleResponse] = useManageSchedule_GetPeopleQuery({
+    const [peopleResponse, refetchPeople] = useManageSchedule_GetPeopleQuery({
         variables: {
             ids: uniquePersonIds,
         },
@@ -337,6 +342,7 @@ function PeopleEditor({
                             ManageSchedule_SearchPeopleDocument,
                             {
                                 conferenceId: conference.id,
+                                subconferenceId,
                                 search: searchTerm,
                             },
                             context
@@ -370,6 +376,7 @@ function PeopleEditor({
                       })),
                       ...searchResults.registrants.map((x) => ({
                           label:
+                              "+ " +
                               x.displayName +
                               (x.invitation?.invitedEmailAddress.length
                                   ? ` (${x.invitation?.invitedEmailAddress})`
@@ -390,28 +397,56 @@ function PeopleEditor({
         [searchResults.people, searchResults.registrants, searchTerm.length]
     );
 
-    const updateMergedPeople = useCallback((newPeople: MergedPeople) => {
-        onAnyChange();
+    const updateMergedPeople = useCallback(
+        (newPeople: MergedPeople) => {
+            onAnyChange();
 
-        updateRecord((old) => ({
-            ...old,
-            eventPeople: newPeople
-                .filter((x) => x.eventPerson)
-                .map((x) => x.eventPerson) as DeepPartial<ManageSchedule_EventPersonFragment>[],
-            item: old.item
-                ? {
-                      ...old.item,
-                      itemPeople: newPeople
-                          .filter((x) => x.itemPerson)
-                          .map((x) => x.itemPerson) as DeepPartial<ManageSchedule_ItemPersonFragment>[],
-                  }
-                : {
-                      itemPeople: newPeople
-                          .filter((x) => x.itemPerson)
-                          .map((x) => x.itemPerson) as DeepPartial<ManageSchedule_ItemPersonFragment>[],
-                  },
-        }));
-    }, []);
+            updateRecord((old) => ({
+                ...old,
+                eventPeople: newPeople
+                    .filter((x) => x.eventPerson)
+                    .map((x) => x.eventPerson) as DeepPartial<ManageSchedule_EventPersonFragment>[],
+                item: old.item
+                    ? {
+                          ...old.item,
+                          itemPeople: newPeople
+                              .filter((x) => x.itemPerson)
+                              .map((x) => x.itemPerson) as DeepPartial<ManageSchedule_ItemPersonFragment>[],
+                      }
+                    : {
+                          itemPeople: newPeople
+                              .filter((x) => x.itemPerson)
+                              .map((x) => x.itemPerson) as DeepPartial<ManageSchedule_ItemPersonFragment>[],
+                      },
+            }));
+        },
+        [onAnyChange, updateRecord]
+    );
+
+    const [createPersonName, setCreatePersonName] = useState<string>("");
+    const [createPersonRegistrantId, setCreatePersonRegistrantId] = useState<string | null>(null);
+    const createPersonDisclosure = useDisclosure();
+    const onCreatePerson = useCallback(
+        (personId: string) => {
+            refetchPeople();
+            onAnyChange();
+            updateMergedPeople([
+                ...mergedPeople,
+                {
+                    eventPerson: {
+                        personId,
+                        roleName: mapItemPersonRoleToEventPersonRole(defaultRole),
+                    },
+                    itemPerson: {
+                        personId,
+                        priority: R.findLastIndex((x) => !!x?.itemPerson, mergedPeople) + 1,
+                        roleName: defaultRole,
+                    },
+                },
+            ]);
+        },
+        [defaultRole, mergedPeople, onAnyChange, refetchPeople, updateMergedPeople]
+    );
 
     return (
         <>
@@ -428,9 +463,13 @@ function PeopleEditor({
                             const optionType = value.value.split("¬")[0];
                             const id = value.value.split("¬")[1];
                             if (optionType === "create") {
-                                // TODO: Create a person modal from blank
+                                setCreatePersonName("");
+                                setCreatePersonRegistrantId(null);
+                                createPersonDisclosure.onOpen();
                             } else if (optionType === "registrant") {
-                                // TODO: Create a person modal from name and maybe email
+                                setCreatePersonName("");
+                                setCreatePersonRegistrantId(id);
+                                createPersonDisclosure.onOpen();
                             } else if (optionType === "person") {
                                 if (
                                     !itemPeople.some((x) => x.personId === id) &&
@@ -645,6 +684,13 @@ function PeopleEditor({
                     </ListItem>
                 ))}
             </List>
+            <CreatePersonModal
+                initialName={createPersonName}
+                initialExistingRegistrantId={createPersonRegistrantId}
+                isOpen={createPersonDisclosure.isOpen}
+                onClose={createPersonDisclosure.onClose}
+                onCreate={onCreatePerson}
+            />
         </>
     );
 }

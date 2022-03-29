@@ -6998,6 +6998,7 @@ export type Collection_Tag_Variance_Order_By = {
 export type Collection_SearchProgramPerson_Args = {
     readonly conferenceid?: InputMaybe<Scalars["uuid"]>;
     readonly search?: InputMaybe<Scalars["String"]>;
+    readonly subconferenceid?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -46313,6 +46314,81 @@ export type AddEventPeople_InsertEventPeopleMutation = {
     } | null;
 };
 
+export type CreatePersonModal_CreatePersonMutationVariables = Exact<{
+    person: Collection_ProgramPerson_Insert_Input;
+}>;
+
+export type CreatePersonModal_CreatePersonMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_collection_ProgramPerson_one?: {
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+    } | null;
+};
+
+export type CreatePersonModal_RegistrantFragment = {
+    readonly __typename?: "registrant_Registrant";
+    readonly id: any;
+    readonly displayName: string;
+    readonly profile?: {
+        readonly __typename?: "registrant_Profile";
+        readonly registrantId: any;
+        readonly affiliation?: string | null;
+    } | null;
+    readonly invitation?: {
+        readonly __typename?: "registrant_Invitation";
+        readonly id: any;
+        readonly invitedEmailAddress: string;
+    } | null;
+};
+
+export type CreatePersonModal_GetRegistrantQueryVariables = Exact<{
+    id: Scalars["uuid"];
+}>;
+
+export type CreatePersonModal_GetRegistrantQuery = {
+    readonly __typename?: "query_root";
+    readonly registrant_Registrant_by_pk?: {
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly displayName: string;
+        readonly profile?: {
+            readonly __typename?: "registrant_Profile";
+            readonly registrantId: any;
+            readonly affiliation?: string | null;
+        } | null;
+        readonly invitation?: {
+            readonly __typename?: "registrant_Invitation";
+            readonly id: any;
+            readonly invitedEmailAddress: string;
+        } | null;
+    } | null;
+};
+
+export type CreatePersonModal_SearchRegistrantsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    search: Scalars["String"];
+}>;
+
+export type CreatePersonModal_SearchRegistrantsQuery = {
+    readonly __typename?: "query_root";
+    readonly registrant_searchRegistrants: ReadonlyArray<{
+        readonly __typename?: "registrant_Registrant";
+        readonly id: any;
+        readonly displayName: string;
+        readonly profile?: {
+            readonly __typename?: "registrant_Profile";
+            readonly registrantId: any;
+            readonly affiliation?: string | null;
+        } | null;
+        readonly invitation?: {
+            readonly __typename?: "registrant_Invitation";
+            readonly id: any;
+            readonly invitedEmailAddress: string;
+        } | null;
+    }>;
+};
+
 export type CreateTagModal_CreateTagMutationVariables = Exact<{
     object: Collection_Tag_Insert_Input;
 }>;
@@ -46343,6 +46419,7 @@ export type ManageSchedule_RegistrantFragment = {
 
 export type ManageSchedule_SearchPeopleQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
     search: Scalars["String"];
 }>;
 
@@ -51268,6 +51345,20 @@ export const AddEventPeople_GroupFragmentDoc = gql`
         name
     }
 `;
+export const CreatePersonModal_RegistrantFragmentDoc = gql`
+    fragment CreatePersonModal_Registrant on registrant_Registrant {
+        id
+        displayName
+        profile {
+            registrantId
+            affiliation
+        }
+        invitation {
+            id
+            invitedEmailAddress
+        }
+    }
+`;
 export const ManageSchedule_PersonFragmentDoc = gql`
     fragment ManageSchedule_Person on collection_ProgramPerson {
         id
@@ -56044,6 +56135,53 @@ export function useAddEventPeople_InsertEventPeopleMutation() {
         AddEventPeople_InsertEventPeopleMutationVariables
     >(AddEventPeople_InsertEventPeopleDocument);
 }
+export const CreatePersonModal_CreatePersonDocument = gql`
+    mutation CreatePersonModal_CreatePerson($person: collection_ProgramPerson_insert_input!) {
+        insert_collection_ProgramPerson_one(object: $person) {
+            id
+        }
+    }
+`;
+
+export function useCreatePersonModal_CreatePersonMutation() {
+    return Urql.useMutation<CreatePersonModal_CreatePersonMutation, CreatePersonModal_CreatePersonMutationVariables>(
+        CreatePersonModal_CreatePersonDocument
+    );
+}
+export const CreatePersonModal_GetRegistrantDocument = gql`
+    query CreatePersonModal_GetRegistrant($id: uuid!) {
+        registrant_Registrant_by_pk(id: $id) {
+            ...CreatePersonModal_Registrant
+        }
+    }
+    ${CreatePersonModal_RegistrantFragmentDoc}
+`;
+
+export function useCreatePersonModal_GetRegistrantQuery(
+    options: Omit<Urql.UseQueryArgs<CreatePersonModal_GetRegistrantQueryVariables>, "query">
+) {
+    return Urql.useQuery<CreatePersonModal_GetRegistrantQuery>({
+        query: CreatePersonModal_GetRegistrantDocument,
+        ...options,
+    });
+}
+export const CreatePersonModal_SearchRegistrantsDocument = gql`
+    query CreatePersonModal_SearchRegistrants($conferenceId: uuid!, $search: String!) {
+        registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 5) {
+            ...CreatePersonModal_Registrant
+        }
+    }
+    ${CreatePersonModal_RegistrantFragmentDoc}
+`;
+
+export function useCreatePersonModal_SearchRegistrantsQuery(
+    options: Omit<Urql.UseQueryArgs<CreatePersonModal_SearchRegistrantsQueryVariables>, "query">
+) {
+    return Urql.useQuery<CreatePersonModal_SearchRegistrantsQuery>({
+        query: CreatePersonModal_SearchRegistrantsDocument,
+        ...options,
+    });
+}
 export const CreateTagModal_CreateTagDocument = gql`
     mutation CreateTagModal_CreateTag($object: collection_Tag_insert_input!) {
         insert_collection_Tag_one(object: $object) {
@@ -56058,11 +56196,14 @@ export function useCreateTagModal_CreateTagMutation() {
     );
 }
 export const ManageSchedule_SearchPeopleDocument = gql`
-    query ManageSchedule_SearchPeople($conferenceId: uuid!, $search: String!) {
+    query ManageSchedule_SearchPeople($conferenceId: uuid!, $subconferenceId: uuid, $search: String!) {
         registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
             ...ManageSchedule_Registrant
         }
-        collection_searchProgramPerson(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
+        collection_searchProgramPerson(
+            args: { conferenceid: $conferenceId, subconferenceid: $subconferenceId, search: $search }
+            limit: 10
+        ) {
             ...ManageSchedule_Person
         }
     }
@@ -57159,7 +57300,7 @@ export const SearchAllDocument = gql`
             ...SearchedEvent
         }
         collection_searchProgramPerson(
-            args: { conferenceid: $conferenceId, search: $search }
+            args: { conferenceid: $conferenceId, subconferenceid: null, search: $search }
             limit: $limit
             offset: $offset
             where: { registrantId: { _is_null: false } }

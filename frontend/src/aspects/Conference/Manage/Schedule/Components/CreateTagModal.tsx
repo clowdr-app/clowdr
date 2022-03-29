@@ -187,7 +187,7 @@ export default function CreateTagModal({
                         </FormControl>
                     </VStack>
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter flexDir="column" alignItems="flex-end">
                     {createError !== null ? (
                         <Alert status="error" mb={4}>
                             <AlertTitle>Error</AlertTitle>
@@ -214,7 +214,7 @@ export default function CreateTagModal({
                                             object: {
                                                 conferenceId: conference.id,
                                                 subconferenceId,
-                                                name,
+                                                name: name.trim(),
                                                 priority,
                                                 colour,
                                             },
@@ -238,7 +238,7 @@ export default function CreateTagModal({
                                     }
                                 }
                             }}
-                            isDisabled={name.length === 0}
+                            isDisabled={nameValidation !== "no error"}
                             isLoading={createTagResponse.fetching}
                         >
                             Create

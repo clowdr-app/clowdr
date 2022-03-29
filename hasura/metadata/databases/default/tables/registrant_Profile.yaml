@@ -5,6 +5,28 @@ object_relationships:
 - name: registrant
   using:
     foreign_key_constraint_on: registrantId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      registrant:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - github
+    - photoURL_350x350
+    - photoURL_50x50
+    - pronouns
+    - registrantId
+    - timezoneUTCOffset
+    - twitter
+    - website
+  role: conference-organizer
 select_permissions:
 - permission:
     columns:

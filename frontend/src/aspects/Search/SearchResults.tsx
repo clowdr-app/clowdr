@@ -83,7 +83,7 @@ gql`
             ...SearchedEvent
         }
         collection_searchProgramPerson(
-            args: { conferenceid: $conferenceId, search: $search }
+            args: { conferenceid: $conferenceId, subconferenceid: null, search: $search }
             limit: $limit
             offset: $offset
             where: { registrantId: { _is_null: false } }

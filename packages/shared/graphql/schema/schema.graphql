@@ -9373,6 +9373,7 @@ input collection_Tag_variance_order_by {
 input collection_searchProgramPerson_args {
     conferenceid: uuid
     search: String
+    subconferenceid: uuid
 }
 
 """

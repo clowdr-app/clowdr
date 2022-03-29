@@ -7,8 +7,10 @@ import {
     InputLeftAddon,
     List,
     ListItem,
+    Select,
     Spinner,
     Text,
+    Tooltip,
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
@@ -104,6 +106,19 @@ function mapItemPersonRoleToEventPersonRole(roleName?: string): Schedule_EventPr
     return undefined;
 }
 
+function eventPersonRoleToLabel(role: Schedule_EventProgramPersonRole_Enum | null | undefined): string {
+    switch (role) {
+        case Schedule_EventProgramPersonRole_Enum.Chair:
+            return "Chair";
+        case Schedule_EventProgramPersonRole_Enum.Presenter:
+            return "Presenter";
+        case Schedule_EventProgramPersonRole_Enum.Participant:
+            return "Participant";
+        default:
+            return "None";
+    }
+}
+
 export default function PeoplePanel(
     props: PanelProps<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>
 ): JSX.Element {
@@ -179,7 +194,7 @@ export default function PeoplePanel(
                     <Text>
                         Moderators have permission to administer the session, and may be listed on the public schedule.
                     </Text>
-                    <PeopleEditor roleOptions={moderatorRoleOptions} defaultRole="CHAIR" hideRole {...props} />
+                    <PeopleEditor roleOptions={moderatorRoleOptions} defaultRole="CHAIR" {...props} />
                 </VStack>
             )}
             <VStack spacing={4} alignItems="flex-start">
@@ -403,15 +418,23 @@ function PeopleEditor({
 
             updateRecord((old) => ({
                 ...old,
-                eventPeople: newPeople
-                    .filter((x) => x.eventPerson)
-                    .map((x) => x.eventPerson) as DeepPartial<ManageSchedule_EventPersonFragment>[],
+                eventPeople: [
+                    ...(old.eventPeople?.filter((x) => !x.roleName || !eventPersonRoles.includes(x.roleName)) ?? []),
+                    ...(newPeople
+                        .filter((x) => x.eventPerson)
+                        .map((x) => x.eventPerson) as DeepPartial<ManageSchedule_EventPersonFragment>[]),
+                ],
                 item: old.item
                     ? {
                           ...old.item,
-                          itemPeople: newPeople
-                              .filter((x) => x.itemPerson)
-                              .map((x) => x.itemPerson) as DeepPartial<ManageSchedule_ItemPersonFragment>[],
+                          itemPeople: [
+                              ...(old.item.itemPeople?.filter(
+                                  (x) => !x.roleName || !itemPersonRoles.includes(x.roleName)
+                              ) ?? []),
+                              ...(newPeople
+                                  .filter((x) => x.itemPerson)
+                                  .map((x) => x.itemPerson) as DeepPartial<ManageSchedule_ItemPersonFragment>[]),
+                          ],
                       }
                     : {
                           itemPeople: newPeople
@@ -420,7 +443,7 @@ function PeopleEditor({
                       },
             }));
         },
-        [onAnyChange, updateRecord]
+        [eventPersonRoles, itemPersonRoles, onAnyChange, updateRecord]
     );
 
     const [createPersonName, setCreatePersonName] = useState<string>("");
@@ -602,56 +625,68 @@ function PeopleEditor({
                                     />
                                 </>
                             ) : undefined}
-                            <IconButton
-                                aria-label={person.itemPerson ? "Hide person" : "Unhide person"}
-                                icon={
-                                    person.itemPerson ? (
-                                        <FAIcon iconStyle="s" icon="eye" />
-                                    ) : (
-                                        <FAIcon iconStyle="s" icon="eye-slash" />
-                                    )
+                            <Tooltip
+                                label={
+                                    person.itemPerson
+                                        ? "Click to hide person from public schedule"
+                                        : "Click to show person in public schedule"
                                 }
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                    const newPeople: MergedPeople = [];
-                                    for (let i = 0; i < mergedPeople.length; i++) {
-                                        const p = mergedPeople[i];
-                                        if (idx === i) {
-                                            if (p.eventPerson) {
-                                                newPeople.push({
-                                                    itemPerson: p.itemPerson
-                                                        ? undefined
-                                                        : {
-                                                              personId: p.eventPerson.personId,
-                                                              priority: i,
-                                                              roleName:
-                                                                  p.eventPerson.roleName ===
-                                                                  Schedule_EventProgramPersonRole_Enum.Chair
-                                                                      ? "CHAIR"
-                                                                      : "PRESENTER",
-                                                          },
-                                                    eventPerson: p.eventPerson,
-                                                });
-                                            } else {
-                                                newPeople.push({
-                                                    itemPerson: undefined,
-                                                    eventPerson: {
-                                                        personId: p.itemPerson.personId,
-                                                        roleName: mapItemPersonRoleToEventPersonRole(
-                                                            p.itemPerson.roleName
-                                                        ),
-                                                    },
-                                                });
-                                            }
-                                        } else {
-                                            newPeople.push(p);
-                                        }
+                            >
+                                <IconButton
+                                    aria-label={
+                                        person.itemPerson
+                                            ? "Click to hide person from public schedule"
+                                            : "Click to show person in public schedule"
                                     }
+                                    icon={
+                                        person.itemPerson ? (
+                                            <FAIcon iconStyle="s" icon="eye" />
+                                        ) : (
+                                            <FAIcon iconStyle="s" icon="eye-slash" />
+                                        )
+                                    }
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        const newPeople: MergedPeople = [];
+                                        for (let i = 0; i < mergedPeople.length; i++) {
+                                            const p = mergedPeople[i];
+                                            if (idx === i) {
+                                                if (p.eventPerson) {
+                                                    newPeople.push({
+                                                        itemPerson: p.itemPerson
+                                                            ? undefined
+                                                            : {
+                                                                  personId: p.eventPerson.personId,
+                                                                  priority: i,
+                                                                  roleName:
+                                                                      p.eventPerson.roleName ===
+                                                                      Schedule_EventProgramPersonRole_Enum.Chair
+                                                                          ? "CHAIR"
+                                                                          : "PRESENTER",
+                                                              },
+                                                        eventPerson: p.eventPerson,
+                                                    });
+                                                } else {
+                                                    newPeople.push({
+                                                        itemPerson: undefined,
+                                                        eventPerson: {
+                                                            personId: p.itemPerson.personId,
+                                                            roleName: mapItemPersonRoleToEventPersonRole(
+                                                                p.itemPerson.roleName
+                                                            ),
+                                                        },
+                                                    });
+                                                }
+                                            } else {
+                                                newPeople.push(p);
+                                            }
+                                        }
 
-                                    updateMergedPeople(newPeople);
-                                }}
-                            />
+                                        updateMergedPeople(newPeople);
+                                    }}
+                                />
+                            </Tooltip>
 
                             <Flex w="100%" alignItems="center" pb="2px" px={2}>
                                 <chakra.span mr={2}>
@@ -663,11 +698,87 @@ function PeopleEditor({
                                           )?.name ?? "<Unknown>"
                                         : "<Loading...>"}
                                 </chakra.span>
-                                {/* TODO: Role selector, if visible: item person role, else if hidden: event person role */}
                                 {!hideRole ? (
-                                    <chakra.span ml="auto">
-                                        {person.itemPerson?.roleName ?? person.eventPerson?.roleName}
-                                    </chakra.span>
+                                    <Tooltip
+                                        label={
+                                            person.itemPerson
+                                                ? "Role name shown to attendees to aid understanding. Does not affect permissions."
+                                                : ""
+                                        }
+                                    >
+                                        {person.itemPerson && roleOptions.length <= 1 ? (
+                                            <Text ml="auto" fontSize="sm">
+                                                {person.itemPerson.roleName ?? "<Role unknown>"}
+                                            </Text>
+                                        ) : !person.itemPerson && eventPersonRoles.length <= 1 ? (
+                                            <></>
+                                        ) : (
+                                            <Select
+                                                w="max-content"
+                                                minW={0}
+                                                size="sm"
+                                                ml="auto"
+                                                value={
+                                                    person.itemPerson?.roleName ?? person.eventPerson?.roleName ?? ""
+                                                }
+                                                onChange={(ev) => {
+                                                    updateMergedPeople(
+                                                        mergedPeople.map((x, i) =>
+                                                            i === idx
+                                                                ? x.eventPerson
+                                                                    ? {
+                                                                          itemPerson: x.itemPerson
+                                                                              ? {
+                                                                                    ...x.itemPerson,
+                                                                                    roleName: ev.target.value,
+                                                                                }
+                                                                              : undefined,
+                                                                          eventPerson: {
+                                                                              ...x.eventPerson,
+                                                                              roleName: !person.itemPerson
+                                                                                  ? (ev.target
+                                                                                        .value as Schedule_EventProgramPersonRole_Enum)
+                                                                                  : mapItemPersonRoleToEventPersonRole(
+                                                                                        ev.target.value
+                                                                                    ) ??
+                                                                                    mapItemPersonRoleToEventPersonRole(
+                                                                                        defaultRole
+                                                                                    ) ??
+                                                                                    Schedule_EventProgramPersonRole_Enum.Presenter,
+                                                                          },
+                                                                      }
+                                                                    : {
+                                                                          itemPerson: {
+                                                                              ...x.itemPerson,
+                                                                              roleName: ev.target.value,
+                                                                          },
+                                                                          eventPerson: undefined,
+                                                                      }
+                                                                : x
+                                                        )
+                                                    );
+                                                }}
+                                            >
+                                                {person.itemPerson ? (
+                                                    <>
+                                                        {roleOptions.map((opt) => (
+                                                            <option key={opt.value} value={opt.value}>
+                                                                {opt.label}
+                                                            </option>
+                                                        ))}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        {eventPersonRoles.map((opt) => (
+                                                            <option key={opt} value={opt}>
+                                                                {eventPersonRoleToLabel(opt)}
+                                                            </option>
+                                                        ))}
+                                                    </>
+                                                )}
+                                            </Select>
+                                        )}
+                                    </Tooltip>
                                 ) : undefined}
                             </Flex>
 

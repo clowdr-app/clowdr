@@ -309,7 +309,7 @@ export default function DetailsPanel({
     const defaultItemTypeName = isSession ? Content_ItemType_Enum.Session : Content_ItemType_Enum.Presentation;
 
     return (
-        <VStack spacing={4} p={0}>
+        <VStack spacing={6} p={0}>
             <FormControl
                 isInvalid={startTimeValidation !== "no error"}
                 isDisabled={isDisabled}

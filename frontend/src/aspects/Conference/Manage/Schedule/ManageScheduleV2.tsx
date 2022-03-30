@@ -59,6 +59,7 @@ import DetailsPanel from "./Components/DetailsPanel";
 import HeaderControls from "./Components/HeaderControls";
 import PeoplePanel from "./Components/PeoplePanel";
 import SessionCard from "./Components/SessionCard";
+import SettingsPanel from "./Components/SettingsPanel";
 
 gql`
     fragment ManageSchedule_ItemTag on content_ItemTag {
@@ -113,6 +114,11 @@ gql`
         itemId
         exhibitionId
         shufflePeriodId
+
+        enableRecording
+        autoPlayElementId
+        streamTextEventId
+        automaticParticipationSurvey
 
         presentations_aggregate {
             aggregate {
@@ -756,10 +762,14 @@ export default function ManageScheduleV2(): JSX.Element {
                         name: "Content",
                         panel: (_props) => <>TODO</>,
                     },
-                    {
-                        name: "Settings",
-                        panel: (_props) => <>TODO</>,
-                    },
+                    ...("sessionEventId" in currentRecord && currentRecord.sessionEventId
+                        ? []
+                        : [
+                              {
+                                  name: "Settings",
+                                  panel: SettingsPanel,
+                              },
+                          ]),
                 ]}
                 initialStepIdx={initialStepIdx}
                 initialRecord={currentRecord}

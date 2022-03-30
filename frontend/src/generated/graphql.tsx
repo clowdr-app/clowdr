@@ -47305,6 +47305,10 @@ export type ManageSchedule_SessionFragment = {
     readonly itemId?: any | null;
     readonly exhibitionId?: any | null;
     readonly shufflePeriodId?: any | null;
+    readonly enableRecording: boolean;
+    readonly autoPlayElementId?: any | null;
+    readonly streamTextEventId?: string | null;
+    readonly automaticParticipationSurvey: boolean;
     readonly presentations_aggregate: {
         readonly __typename?: "schedule_Event_aggregate";
         readonly aggregate?: { readonly __typename?: "schedule_Event_aggregate_fields"; readonly count: number } | null;
@@ -47398,6 +47402,10 @@ export type ManageSchedule_GetSessionsPageQuery = {
         readonly itemId?: any | null;
         readonly exhibitionId?: any | null;
         readonly shufflePeriodId?: any | null;
+        readonly enableRecording: boolean;
+        readonly autoPlayElementId?: any | null;
+        readonly streamTextEventId?: string | null;
+        readonly automaticParticipationSurvey: boolean;
         readonly presentations_aggregate: {
             readonly __typename?: "schedule_Event_aggregate";
             readonly aggregate?: {
@@ -51622,6 +51630,10 @@ export const ManageSchedule_SessionFragmentDoc = gql`
         itemId
         exhibitionId
         shufflePeriodId
+        enableRecording
+        autoPlayElementId
+        streamTextEventId
+        automaticParticipationSurvey
         presentations_aggregate {
             aggregate {
                 count

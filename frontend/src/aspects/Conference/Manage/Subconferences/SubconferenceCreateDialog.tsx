@@ -5,7 +5,6 @@ import {
     FormErrorMessage,
     FormHelperText,
     FormLabel,
-    HStack,
     Input,
     InputGroup,
     InputRightElement,
@@ -16,17 +15,14 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Radio,
-    RadioGroup,
     useToast,
 } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useMemo } from "react";
 import type { SubmitHandler } from "react-hook-form";
-import { useController, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
-    Conference_VisibilityLevel_Enum,
     Registrant_RegistrantRole_Enum,
     useSubconferenceCreateDialog_CreateSubconferenceMutation,
 } from "../../../../generated/graphql";
@@ -67,7 +63,7 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
         watch,
         reset,
         formState: { errors, touchedFields, isSubmitting, isValid },
-        control,
+        // control,
     } = useForm<FormValues>({
         defaultValues: {
             name: null,
@@ -76,19 +72,19 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
         mode: "all",
     });
 
-    const conferenceVisibilityLevel = useController({
-        name: "conferenceVisibilityLevel",
-        control,
-        defaultValue: Conference_VisibilityLevel_Enum.Internal,
-        rules: { required: true },
-    });
+    // const conferenceVisibilityLevel = useController({
+    //     name: "conferenceVisibilityLevel",
+    //     control,
+    //     defaultValue: Conference_VisibilityLevel_Enum.Internal,
+    //     rules: { required: true },
+    // });
 
-    const programVisibilityLevel = useController({
-        name: "programVisibilityLevel",
-        control,
-        defaultValue: Conference_VisibilityLevel_Enum.Internal,
-        rules: { required: true },
-    });
+    // const programVisibilityLevel = useController({
+    //     name: "programVisibilityLevel",
+    //     control,
+    //     defaultValue: Conference_VisibilityLevel_Enum.Internal,
+    //     rules: { required: true },
+    // });
 
     const onSubmit: SubmitHandler<FormValues> = useCallback(
         async (data) => {
@@ -111,10 +107,10 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
                             shortName: data.shortName,
                             conferenceId: conference.id,
                             slug: generateSlug(data.name),
-                            conferenceVisibilityLevel:
-                                data.conferenceVisibilityLevel as Conference_VisibilityLevel_Enum,
-                            defaultProgramVisibilityLevel:
-                                data.programVisibilityLevel as Conference_VisibilityLevel_Enum,
+                            // conferenceVisibilityLevel:
+                            //     data.conferenceVisibilityLevel as Conference_VisibilityLevel_Enum,
+                            // defaultProgramVisibilityLevel:
+                            //     data.programVisibilityLevel as Conference_VisibilityLevel_Enum,
                             memberships: {
                                 data: [
                                     {
@@ -206,7 +202,7 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
                             </InputGroup>
                         </FormControl>
 
-                        <FormControl>
+                        {/* <FormControl>
                             <FormLabel mt={2}>Visibility</FormLabel>
                             <FormHelperText>How visible should this subconference be?</FormHelperText>
                             <RadioGroup {...conferenceVisibilityLevel.field} mt={2}>
@@ -230,7 +226,7 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
                                     <Radio value={Conference_VisibilityLevel_Enum.Private}>Private</Radio>
                                 </HStack>
                             </RadioGroup>
-                        </FormControl>
+                        </FormControl> */}
                     </ModalBody>
 
                     <ModalFooter>

@@ -12,6 +12,7 @@ import React, { useEffect, useMemo } from "react";
 import type { ManageSchedule_SessionFragment } from "../../../../../generated/graphql";
 import { Schedule_Mode_Enum } from "../../../../../generated/graphql";
 import type { PanelProps } from "../../../../CRUDCards/Types";
+import type { ScheduleEditorRecord } from "./ScheduleEditorRecord";
 
 function modeToLabel(mode: Schedule_Mode_Enum): string {
     switch (mode) {
@@ -32,7 +33,14 @@ function modeToLabel(mode: Schedule_Mode_Enum): string {
     }
 }
 
-export default function SettingsPanel({
+export default function SettingsPanel({ record, ...props }: PanelProps<ScheduleEditorRecord>): JSX.Element {
+    if ("sessionEventId" in record && record.sessionEventId) {
+        return <>No settings to configure.</>;
+    }
+    return <SessionSettingsPanel record={record} {...props} />;
+}
+
+function SessionSettingsPanel({
     isCreate: _isCreate,
     isDisabled: _isDisabled,
     clearState: _clearState,

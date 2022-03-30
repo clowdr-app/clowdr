@@ -22,7 +22,6 @@ import type {
     ManageSchedule_EventPersonFragment,
     ManageSchedule_ItemPersonFragment,
     ManageSchedule_PersonFragment,
-    ManageSchedule_PresentationFragment,
     ManageSchedule_RegistrantFragment,
     ManageSchedule_SearchPeopleQuery,
     ManageSchedule_SearchPeopleQueryVariables,
@@ -41,6 +40,7 @@ import { makeContext } from "../../../../GQL/make-context";
 import { maybeCompare } from "../../../../Utils/maybeCompare";
 import { useConference } from "../../../useConference";
 import CreatePersonModal from "./CreatePersonModal";
+import type { ScheduleEditorRecord } from "./ScheduleEditorRecord";
 
 gql`
     fragment ManageSchedule_Person on collection_ProgramPerson {
@@ -119,9 +119,7 @@ function eventPersonRoleToLabel(role: Schedule_EventProgramPersonRole_Enum | nul
     }
 }
 
-export default function PeoplePanel(
-    props: PanelProps<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>
-): JSX.Element {
+export default function PeoplePanel(props: PanelProps<ScheduleEditorRecord>): JSX.Element {
     const speakerRoleOptions = useMemo<ReadonlyArray<PersonRoleOption>>(
         () => [
             {

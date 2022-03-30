@@ -58,6 +58,7 @@ import { DashboardPage } from "../DashboardPage";
 import DetailsPanel from "./Components/DetailsPanel";
 import HeaderControls from "./Components/HeaderControls";
 import PeoplePanel from "./Components/PeoplePanel";
+import type { ScheduleEditorRecord } from "./Components/ScheduleEditorRecord";
 import SessionCard from "./Components/SessionCard";
 import SettingsPanel from "./Components/SettingsPanel";
 
@@ -344,9 +345,7 @@ export default function ManageScheduleV2(): JSX.Element {
     const [deleteEventType, setDeleteEventType] = useState<"session" | "presentation">("session");
 
     const [initialStepIdx, setInitialStepIdx] = useState<number>(0);
-    const [currentRecord, setCurrentRecord] = useState<
-        DeepPartial<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>
-    >({});
+    const [currentRecord, setCurrentRecord] = useState<DeepPartial<ScheduleEditorRecord>>({});
 
     const client = useClient();
 
@@ -390,6 +389,7 @@ export default function ManageScheduleV2(): JSX.Element {
             setCurrentRecord({
                 sessionEventId: session.id,
                 roomId: session.roomId,
+                session,
             });
             setInitialStepIdx(0);
             setEditorIsCreate(true);
@@ -400,8 +400,12 @@ export default function ManageScheduleV2(): JSX.Element {
         [editorDisclosure]
     );
     const onEditPresentation = useCallback(
-        (presentation: DeepPartial<ManageSchedule_PresentationFragment>, initialStepIdx = 0) => {
-            setCurrentRecord(presentation);
+        (
+            session: ManageSchedule_SessionFragment,
+            presentation: DeepPartial<ManageSchedule_PresentationFragment>,
+            initialStepIdx = 0
+        ) => {
+            setCurrentRecord({ ...presentation, session });
             setInitialStepIdx(initialStepIdx);
             setEditorIsCreate(false);
             setTimeout(() => {
@@ -680,7 +684,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                     onExport={() => onExportSessions([session.id])}
                                     tags={tags}
                                     onCreatePresentation={() => onCreatePresentation(session)}
-                                    onEditPresentation={onEditPresentation}
+                                    onEditPresentation={(...args) => onEditPresentation(session, ...args)}
                                     onDeletePresentation={(id) => onDeletePresentations([id])}
                                 />
                             );
@@ -744,7 +748,7 @@ export default function ManageScheduleV2(): JSX.Element {
                     }
                 />
             </HStack>
-            <Editor
+            <Editor<ScheduleEditorRecord>
                 isOpen={editorDisclosure.isOpen}
                 onClose={editorDisclosure.onClose}
                 isCreate={editorIsCreate}
@@ -762,22 +766,26 @@ export default function ManageScheduleV2(): JSX.Element {
                         name: "Content",
                         panel: (_props) => <>TODO</>,
                     },
-                    ...("sessionEventId" in currentRecord && currentRecord.sessionEventId
-                        ? []
-                        : [
-                              {
-                                  name: "Settings",
-                                  panel: SettingsPanel,
-                              },
-                          ]),
+                    {
+                        name: "Settings",
+                        panel: SettingsPanel,
+                    },
                 ]}
                 initialStepIdx={initialStepIdx}
                 initialRecord={currentRecord}
                 isSaving={isSaving}
-                onSave={async (record) => {
+                onSave={async (inputRecord) => {
                     // TODO: After edit, refetch
                     setIsSaving(true);
                     try {
+                        let record: DeepPartial<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>;
+                        if ("session" in inputRecord) {
+                            record = { ...inputRecord };
+                            delete (record as any).session;
+                        } else {
+                            record = inputRecord;
+                        }
+
                         if (record.id) {
                             // TODO: Edit
                             return { error: "Not implemented" };

@@ -21,10 +21,6 @@ import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type {
-    ManageSchedule_PresentationFragment,
-    ManageSchedule_SessionFragment,
-} from "../../../../../generated/graphql";
 import { Content_ItemType_Enum, useManageSchedule_GetTagsQuery } from "../../../../../generated/graphql";
 import { CreatableMultiSelect } from "../../../../Chakra/MultiSelect";
 import type { PanelProps, ValidationState } from "../../../../CRUDCards/Types";
@@ -35,6 +31,7 @@ import { useRestorableState } from "../../../../Hooks/useRestorableState";
 import { roundUpToNearest } from "../../../../Utils/MathUtils";
 import { useConference } from "../../../useConference";
 import CreateTagModal from "./CreateTagModal";
+import type { ScheduleEditorRecord } from "./ScheduleEditorRecord";
 
 interface RecentlyUsedTag {
     id: string;
@@ -52,7 +49,9 @@ export default function DetailsPanel({
     onValid,
     onInvalid,
     onAnyChange,
-}: PanelProps<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>): JSX.Element {
+}: PanelProps<ScheduleEditorRecord>): JSX.Element {
+    const isSession = !("sessionEventId" in record && record.sessionEventId);
+
     const hoursOptions = useMemo(() => {
         const result: JSX.Element[] = [];
         for (let i = 0; i <= 4; i++) {
@@ -80,8 +79,10 @@ export default function DetailsPanel({
         () =>
             record.scheduledStartTime
                 ? new Date(record.scheduledStartTime)
-                : new Date(roundUpToNearest(Date.now(), 1000 * 60 * 5)),
-        [record.scheduledStartTime]
+                : isSession
+                ? new Date(roundUpToNearest(Date.now(), 1000 * 60 * 5))
+                : undefined,
+        [isSession, record.scheduledStartTime]
     );
     const durationMinutes = useMemo(
         () =>
@@ -137,37 +138,96 @@ export default function DetailsPanel({
 
     useEffect(() => {
         if (startTimeHasChanged) {
-            if (record.scheduledStartTime) {
-                setStartTimeValidation("no error");
+            if (isSession) {
+                if (record.scheduledStartTime) {
+                    setStartTimeValidation("no error");
+                } else {
+                    setStartTimeValidation({ error: "A start date/time is required." });
+                }
             } else {
-                setStartTimeValidation({ error: "A start date/time is required." });
+                if (!record.scheduledStartTime) {
+                    setStartTimeValidation("no error");
+                } else {
+                    if (
+                        new Date(record.scheduledStartTime).getTime() <
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                        new Date(record.session!.scheduledStartTime!).getTime()
+                    ) {
+                        setStartTimeValidation({
+                            error: "Presentation must start at or after the start of the session.",
+                        });
+                    } else if (
+                        new Date(record.scheduledStartTime).getTime() >=
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                        new Date(record.session!.scheduledEndTime!).getTime()
+                    ) {
+                        setStartTimeValidation({
+                            error: "Presentation must start before the end of the session.",
+                        });
+                    } else {
+                        setStartTimeValidation("no error");
+                    }
+                }
             }
         } else {
             setStartTimeValidation("no error");
         }
-    }, [record.scheduledStartTime, startTimeHasChanged]);
+    }, [isSession, record.scheduledStartTime, record, startTimeHasChanged]);
 
     useEffect(() => {
         if (durationHasChanged) {
-            if (record.scheduledStartTime && record.scheduledEndTime) {
-                const duration = Math.max(
-                    0,
-                    Math.round(
-                        (Date.parse(record.scheduledEndTime) - Date.parse(record.scheduledStartTime)) / (60 * 1000)
-                    )
-                );
-                if (duration >= 3) {
-                    setDurationValidation("no error");
+            if (isSession) {
+                if (record.scheduledStartTime && record.scheduledEndTime) {
+                    const duration = Math.max(
+                        0,
+                        Math.round(
+                            (Date.parse(record.scheduledEndTime) - Date.parse(record.scheduledStartTime)) / (60 * 1000)
+                        )
+                    );
+                    if (duration >= 3) {
+                        setDurationValidation("no error");
+                    } else {
+                        setDurationValidation({ error: "Must be at least 3 minutes." });
+                    }
                 } else {
-                    setDurationValidation({ error: "Must be at least 3 minutes." });
+                    setDurationValidation({ error: "Duration is required." });
                 }
             } else {
-                setDurationValidation({ error: "Duration is required." });
+                if (record.scheduledStartTime) {
+                    if (record.scheduledEndTime) {
+                        const durationMins = Math.max(
+                            0,
+                            Math.round(
+                                (Date.parse(record.scheduledEndTime) - Date.parse(record.scheduledStartTime)) /
+                                    (60 * 1000)
+                            )
+                        );
+                        if (durationMins >= 3) {
+                            if (
+                                new Date(record.scheduledEndTime).getTime() >
+                                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                new Date(record.session!.scheduledEndTime!).getTime()
+                            ) {
+                                setDurationValidation({
+                                    error: "Presentation must end at or before the end of the session.",
+                                });
+                            } else {
+                                setDurationValidation("no error");
+                            }
+                        } else {
+                            setDurationValidation({ error: "Must be at least 3 minutes." });
+                        }
+                    } else {
+                        setDurationValidation({ error: "Duration is required when a start time is set." });
+                    }
+                } else {
+                    setDurationValidation("no error");
+                }
             }
         } else {
             setDurationValidation("no error");
         }
-    }, [durationHasChanged, record.scheduledStartTime, record.scheduledEndTime]);
+    }, [durationHasChanged, record.scheduledStartTime, record.scheduledEndTime, isSession, record]);
 
     useEffect(() => {
         if (nameHasChanged) {
@@ -305,7 +365,6 @@ export default function DetailsPanel({
         [onAnyChange, refetchTags, updateRecord, upsertRecentlyUsedTag]
     );
 
-    const isSession = !("sessionEventId" in record && record.sessionEventId);
     const defaultItemTypeName = isSession ? Content_ItemType_Enum.Session : Content_ItemType_Enum.Presentation;
 
     return (
@@ -320,6 +379,7 @@ export default function DetailsPanel({
                     isDisabled={isDisabled}
                     ref={firstInputRef as any}
                     value={startTime}
+                    allowUndefined={!isSession}
                     onChange={(value) => {
                         setStartTimeHasChanged(true);
 
@@ -328,66 +388,77 @@ export default function DetailsPanel({
                             scheduledStartTime: value?.toISOString(),
                             scheduledEndTime: value
                                 ? new Date(value.getTime() + durationMinutes * 60 * 1000).toISOString()
-                                : new Date(startTime.getTime() + durationMinutes * 60 * 1000).toISOString(),
+                                : startTime
+                                ? new Date(startTime.getTime() + durationMinutes * 60 * 1000).toISOString()
+                                : undefined,
                         }));
                     }}
                 />
-                <FormHelperText>Enter times in your local timezone.</FormHelperText>
+                <FormHelperText>
+                    Enter times in your local timezone.{" "}
+                    {!isSession ? "Leave blank for sessions that do not follow a preset schedule." : undefined}
+                </FormHelperText>
                 <FormErrorMessage>
                     {startTimeValidation !== "no error" ? startTimeValidation.error : "No error"}
                 </FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={durationValidation !== "no error"} isDisabled={isDisabled}>
-                <FormLabel id="editor-session-duration-label">Duration</FormLabel>
-                <HStack w="auto">
-                    <InputGroup w="auto">
-                        <Select
-                            aria-labelledby="editor-session-duration-label editor-session-duration-hours-label"
-                            value={Math.floor(durationMinutes / 60)}
-                            onChange={(ev) => {
-                                setDurationHasChanged(true);
+            {isSession || startTime ? (
+                <FormControl isInvalid={durationValidation !== "no error"} isDisabled={isDisabled}>
+                    <FormLabel id="editor-session-duration-label">Duration</FormLabel>
+                    <HStack w="auto">
+                        <InputGroup w="auto">
+                            <Select
+                                aria-labelledby="editor-session-duration-label editor-session-duration-hours-label"
+                                value={Math.floor(durationMinutes / 60)}
+                                onChange={(ev) => {
+                                    setDurationHasChanged(true);
 
-                                const existingMinutes = durationMinutes % 60;
-                                const newHours = parseInt(ev.target.value, 10);
-                                const value = newHours * 60 + existingMinutes;
-                                const endTime = new Date(startTime.getTime() + value * 60 * 1000);
-                                updateRecord((old) => ({
-                                    ...old,
-                                    scheduledStartTime: startTime,
-                                    scheduledEndTime: endTime.toISOString(),
-                                }));
-                            }}
-                        >
-                            {hoursOptions}
-                        </Select>
-                        <InputRightAddon id="editor-session-duration-hours-label">hours</InputRightAddon>
-                    </InputGroup>
-                    <InputGroup w="auto">
-                        <Select
-                            aria-labelledby="editor-session-duration-label editor-session-duration-minutes-label"
-                            value={durationMinutes % 60}
-                            onChange={(ev) => {
-                                setDurationHasChanged(true);
+                                    const existingMinutes = durationMinutes % 60;
+                                    const newHours = parseInt(ev.target.value, 10);
+                                    const value = newHours * 60 + existingMinutes;
+                                    const endTime = startTime
+                                        ? new Date(startTime.getTime() + value * 60 * 1000)
+                                        : undefined;
+                                    updateRecord((old) => ({
+                                        ...old,
+                                        scheduledStartTime: startTime,
+                                        scheduledEndTime: endTime?.toISOString(),
+                                    }));
+                                }}
+                            >
+                                {hoursOptions}
+                            </Select>
+                            <InputRightAddon id="editor-session-duration-hours-label">hours</InputRightAddon>
+                        </InputGroup>
+                        <InputGroup w="auto">
+                            <Select
+                                aria-labelledby="editor-session-duration-label editor-session-duration-minutes-label"
+                                value={durationMinutes % 60}
+                                onChange={(ev) => {
+                                    setDurationHasChanged(true);
 
-                                const existingHours = Math.floor(durationMinutes / 60);
-                                const newMinutes = parseInt(ev.target.value, 10);
-                                const value = existingHours * 60 + newMinutes;
-                                const endTime = new Date(startTime.getTime() + value * 60 * 1000);
-                                updateRecord((old) => ({
-                                    ...old,
-                                    scheduledEndTime: endTime.toISOString(),
-                                }));
-                            }}
-                        >
-                            {minutesOptions}
-                        </Select>
-                        <InputRightAddon id="editor-session-duration-minutes-label">minutes</InputRightAddon>
-                    </InputGroup>
-                </HStack>
-                <FormErrorMessage>
-                    {durationValidation !== "no error" ? durationValidation.error : "No error"}
-                </FormErrorMessage>
-            </FormControl>
+                                    const existingHours = Math.floor(durationMinutes / 60);
+                                    const newMinutes = parseInt(ev.target.value, 10);
+                                    const value = existingHours * 60 + newMinutes;
+                                    const endTime = startTime
+                                        ? new Date(startTime.getTime() + value * 60 * 1000)
+                                        : undefined;
+                                    updateRecord((old) => ({
+                                        ...old,
+                                        scheduledEndTime: endTime?.toISOString(),
+                                    }));
+                                }}
+                            >
+                                {minutesOptions}
+                            </Select>
+                            <InputRightAddon id="editor-session-duration-minutes-label">minutes</InputRightAddon>
+                        </InputGroup>
+                    </HStack>
+                    <FormErrorMessage>
+                        {durationValidation !== "no error" ? durationValidation.error : "No error"}
+                    </FormErrorMessage>
+                </FormControl>
+            ) : undefined}
             <FormControl id="editor-session-name" isInvalid={nameValidation !== "no error"} isDisabled={isDisabled}>
                 <FormLabel>Name of {isSession ? "session" : "presentation"}</FormLabel>
                 <Input

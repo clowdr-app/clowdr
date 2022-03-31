@@ -418,9 +418,16 @@ function PeopleEditor({
                 ...old,
                 eventPeople: [
                     ...(old.eventPeople?.filter((x) => !x.roleName || !eventPersonRoles.includes(x.roleName)) ?? []),
-                    ...(newPeople
-                        .filter((x) => x.eventPerson)
-                        .map((x) => x.eventPerson) as DeepPartial<ManageSchedule_EventPersonFragment>[]),
+                    ...(newPeople.map(
+                        (x) =>
+                            x.eventPerson ?? {
+                                personId: x.itemPerson.id,
+                                roleName:
+                                    mapItemPersonRoleToEventPersonRole(x.itemPerson.roleName) ??
+                                    mapItemPersonRoleToEventPersonRole(defaultRole) ??
+                                    Schedule_EventProgramPersonRole_Enum.Presenter,
+                            }
+                    ) as DeepPartial<ManageSchedule_EventPersonFragment>[]),
                 ],
                 item: old.item
                     ? {
@@ -441,7 +448,8 @@ function PeopleEditor({
                       },
             }));
         },
-        [eventPersonRoles, itemPersonRoles, onAnyChange, updateRecord]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [defaultRole, eventPersonRoles, itemPersonRoles]
     );
 
     const [createPersonName, setCreatePersonName] = useState<string>("");

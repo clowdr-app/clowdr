@@ -453,7 +453,7 @@ export default function ManageScheduleV2(): JSX.Element {
 
     const [searchName, setSearchName] = useState<string>("");
     const [startAfter, setStartAfter] = useState<Date | undefined>(undefined);
-    const [limit, _setLimit] = useState<number>(4);
+    const [limit, _setLimit] = useState<number>(10);
     const [offset, setOffset] = useState<number>(0);
     const [offsetStr, setOffsetStr] = useState<string>("0");
     useEffect(() => {

@@ -534,7 +534,6 @@ function AddEventPeople_SingleProgramPersonPanel({
     );
 }
 
-// TODO
 function AddEventPeople_FromGroupPanel({
     events,
     isExpanded,

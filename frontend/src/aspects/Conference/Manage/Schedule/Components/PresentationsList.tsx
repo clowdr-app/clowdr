@@ -1,4 +1,5 @@
-import { Box, chakra, Spinner, Text, VStack } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Box, Button, chakra, Menu, MenuButton, MenuItem, MenuList, Spinner, Text, VStack } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useEffect, useMemo } from "react";
 import { gql } from "urql";
@@ -116,6 +117,7 @@ export default function PresentationsList({
                 borderWidth={3}
                 borderColor="gray.400"
                 onClick={onCreate}
+                pos="relative"
             >
                 <Text
                     w="100%"
@@ -136,6 +138,37 @@ export default function PresentationsList({
                     </chakra.span>
                 </Text>
                 <Box h={4}></Box>
+                <Menu placement="bottom-end">
+                    <MenuButton
+                        as={Button}
+                        pos="absolute"
+                        top={-2}
+                        right={0}
+                        onClick={(ev) => {
+                            ev.stopPropagation();
+                        }}
+                        minW={0}
+                        minH={0}
+                        p={0}
+                        m={0}
+                        w="3ex"
+                        h="3ex"
+                        variant="outline"
+                        colorScheme="blue"
+                        borderTopRightRadius="xl"
+                    >
+                        <ChevronDownIcon fontSize="xl" />
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem
+                            onClick={(ev) => {
+                                ev.stopPropagation();
+                            }}
+                        >
+                            Add for existing content
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
             </Card>
             <Box h={4}>&nbsp;</Box>
         </VStack>

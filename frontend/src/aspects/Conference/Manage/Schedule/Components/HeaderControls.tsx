@@ -34,6 +34,20 @@ export default function HeaderControls(onCreateSession: () => void): React.React
                             // TODO:
                         }}
                     >
+                        Add external event (e.g. Zoom)
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            // TODO:
+                        }}
+                    >
+                        Add networking
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            // TODO:
+                        }}
+                    >
                         Add for an exhibition
                     </MenuItem>
                     <MenuItem
@@ -42,6 +56,13 @@ export default function HeaderControls(onCreateSession: () => void): React.React
                         }}
                     >
                         Add for a sponsor
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            // TODO:
+                        }}
+                    >
+                        Add session for existing content
                     </MenuItem>
                     <MenuItem
                         onClick={() => {

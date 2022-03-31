@@ -206,7 +206,11 @@ gql`
             ...RoomInfo
         }
         schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                sessionEventId: { _is_null: true }
+            }
             order_by: [{ scheduledStartTime: asc }, { scheduledEndTime: asc }]
         ) {
             ...EventInfo

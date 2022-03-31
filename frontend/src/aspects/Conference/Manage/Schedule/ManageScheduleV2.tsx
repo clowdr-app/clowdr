@@ -11,7 +11,6 @@ import {
     AlertDialogOverlay,
     AlertIcon,
     AlertTitle,
-    Box,
     Button,
     ButtonGroup,
     chakra,
@@ -456,6 +455,11 @@ export default function ManageScheduleV2(): JSX.Element {
     const [startAfter, setStartAfter] = useState<Date | undefined>(undefined);
     const [limit, _setLimit] = useState<number>(4);
     const [offset, setOffset] = useState<number>(0);
+    const [offsetStr, setOffsetStr] = useState<string>("0");
+    useEffect(() => {
+        setOffsetStr(Math.ceil(1 + offset / limit).toString());
+    }, [limit, offset]);
+
     const context = useMemo(
         () =>
             makeContext({
@@ -515,6 +519,18 @@ export default function ManageScheduleV2(): JSX.Element {
     const bulkButtonBgColour = useColorModeValue("white", "#111");
 
     const deleteSessionsLeastDestructiveActionRef = useRef<HTMLButtonElement | null>(null);
+
+    const refetchPresentations = useMemo(
+        () =>
+            new Map(
+                sessionsResponse.data?.schedule_Event.map((x) => [
+                    x.id as string,
+                    React.createRef<(() => void) | null>(),
+                ]) ?? []
+            ),
+        [sessionsResponse.data?.schedule_Event]
+    );
+
     return (
         <DashboardPage
             title="Schedule"
@@ -711,6 +727,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                     onCreatePresentation={() => onCreatePresentation(session)}
                                     onEditPresentation={(...args) => onEditPresentation(session, ...args)}
                                     onDeletePresentation={(id) => onDeletePresentations([id])}
+                                    refetchPresentations={refetchPresentations.get(session.id)}
                                 />
                             );
                             return dateChanged ? (
@@ -745,12 +762,39 @@ export default function ManageScheduleV2(): JSX.Element {
                     }}
                     isDisabled={offset === 0}
                 />
-                <Box>
-                    {Math.ceil(1 + offset / limit)} of{" "}
-                    {sessionsResponse.data?.schedule_Event_aggregate.aggregate
-                        ? Math.ceil(sessionsResponse.data.schedule_Event_aggregate.aggregate.count / limit)
-                        : true}
-                </Box>
+                <HStack spacing={1}>
+                    <Input
+                        type="number"
+                        size="sm"
+                        value={offsetStr}
+                        onChange={(ev) => {
+                            setOffsetStr(ev.target.value);
+                        }}
+                        min={1}
+                        max={Math.ceil(
+                            (sessionsResponse.data?.schedule_Event_aggregate?.aggregate?.count ?? 0) / limit
+                        )}
+                        onBlur={(ev) => {
+                            if (ev.target.checkValidity()) {
+                                setOffset((ev.target.valueAsNumber - 1) * limit);
+                            }
+                        }}
+                        onKeyUp={(ev) => {
+                            if (ev.key === "Enter" && (ev.target as HTMLInputElement).checkValidity()) {
+                                setOffset(((ev.target as HTMLInputElement).valueAsNumber - 1) * limit);
+                            }
+                        }}
+                        isDisabled={!sessionsResponse.data?.schedule_Event_aggregate?.aggregate?.count}
+                        minW={0}
+                        w="3em"
+                    />
+                    <chakra.span>of</chakra.span>
+                    <chakra.span>
+                        {sessionsResponse.data?.schedule_Event_aggregate.aggregate
+                            ? Math.ceil(sessionsResponse.data.schedule_Event_aggregate.aggregate.count / limit)
+                            : "0"}
+                    </chakra.span>
+                </HStack>
                 <IconButton
                     aria-label="Next page"
                     icon={<ChevronRightIcon />}
@@ -811,49 +855,51 @@ export default function ManageScheduleV2(): JSX.Element {
                             record = inputRecord;
                         }
 
-                        const overlapsResponse = await client
-                            .query<
-                                ManageSchedule_GetPotentiallyOverlappingEventsQuery,
-                                ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables
-                            >(
-                                ManageSchedule_GetPotentiallyOverlappingEventsDocument,
-                                {
-                                    roomId: record.roomId,
-                                    sessionCond:
+                        if (record.scheduledStartTime || record.scheduledEndTime) {
+                            const overlapsResponse = await client
+                                .query<
+                                    ManageSchedule_GetPotentiallyOverlappingEventsQuery,
+                                    ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables
+                                >(
+                                    ManageSchedule_GetPotentiallyOverlappingEventsDocument,
+                                    {
+                                        roomId: record.roomId,
+                                        sessionCond:
+                                            "sessionEventId" in record && record.sessionEventId
+                                                ? {
+                                                      _eq: record.sessionEventId,
+                                                  }
+                                                : {
+                                                      _is_null: true,
+                                                  },
+                                        startBefore: record.scheduledEndTime,
+                                        endAfter: record.scheduledStartTime,
+                                    },
+                                    {
+                                        ...makeContext({
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
+                                        }),
+                                        requestPolicy: "network-only",
+                                    }
+                                )
+                                .toPromise();
+                            if (overlapsResponse.error) {
+                                return {
+                                    error:
+                                        extractActualError(overlapsResponse.error) ??
+                                        "Unknown error while checking for overlapping events.",
+                                };
+                            }
+                            if (overlapsResponse.data?.schedule_Event_aggregate.aggregate?.count) {
+                                return {
+                                    error:
                                         "sessionEventId" in record && record.sessionEventId
-                                            ? {
-                                                  _eq: record.sessionEventId,
-                                              }
-                                            : {
-                                                  _is_null: true,
-                                              },
-                                    startBefore: record.scheduledEndTime,
-                                    endAfter: record.scheduledStartTime,
-                                },
-                                {
-                                    ...makeContext({
-                                        [AuthHeader.Role]: subconferenceId
-                                            ? HasuraRoleName.SubconferenceOrganizer
-                                            : HasuraRoleName.ConferenceOrganizer,
-                                    }),
-                                    requestPolicy: "network-only",
-                                }
-                            )
-                            .toPromise();
-                        if (overlapsResponse.error) {
-                            return {
-                                error:
-                                    extractActualError(overlapsResponse.error) ??
-                                    "Unknown error while checking for overlapping events.",
-                            };
-                        }
-                        if (overlapsResponse.data?.schedule_Event_aggregate.aggregate?.count) {
-                            return {
-                                error:
-                                    "sessionEventId" in record && record.sessionEventId
-                                        ? "Presentations within a session cannot overlap. Consider using unscheduled presentations."
-                                        : "Sessions in a room cannot overlap.",
-                            };
+                                            ? "Presentations within a session cannot overlap. Consider using unscheduled presentations."
+                                            : "Sessions in a room cannot overlap.",
+                                };
+                            }
                         }
 
                         // TODO: Remove (nested) aggregate fields
@@ -957,9 +1003,13 @@ export default function ManageScheduleV2(): JSX.Element {
                                 return { error: "Unable to retrieve ordering of sessions." };
                             }
 
-                            const newId = result.data.insert_schedule_Event_one.id;
-                            const index = ordering.data.schedule_Event.findIndex((x) => x.id === newId);
-                            setOffset(Math.max(0, limit * Math.floor(index / limit)));
+                            if ("sessionEventId" in record && record.sessionEventId) {
+                                refetchPresentations.get(record.sessionEventId)?.current?.();
+                            } else {
+                                const newId = result.data.insert_schedule_Event_one.id;
+                                const index = ordering.data.schedule_Event.findIndex((x) => x.id === newId);
+                                setOffset(Math.max(0, limit * Math.floor(index / limit)));
+                            }
                         }
                     } catch (e: any) {
                         return { error: "Unhandled error: " + e.toString() };

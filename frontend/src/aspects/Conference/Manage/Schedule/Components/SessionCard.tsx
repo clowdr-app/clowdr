@@ -43,6 +43,8 @@ export default function SessionCard({
     onCreatePresentation,
     onEditPresentation,
     onDeletePresentation,
+
+    refetchPresentations,
 }: {
     session: ManageSchedule_SessionFragment;
     tags: ReadonlyArray<ManageSchedule_TagFragment>;
@@ -59,6 +61,8 @@ export default function SessionCard({
     onCreatePresentation: () => void;
     onEditPresentation: (presentation: ManageSchedule_PresentationFragment, initialStepIdx?: number) => void;
     onDeletePresentation: (presentationId: string) => void;
+
+    refetchPresentations?: React.MutableRefObject<(() => void) | null>;
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -341,6 +345,7 @@ export default function SessionCard({
                     onCreate={onCreatePresentation}
                     onEdit={onEditPresentation}
                     onDelete={onDeletePresentation}
+                    refetchPresentations={refetchPresentations}
                 />
             ) : undefined}
         </VStack>

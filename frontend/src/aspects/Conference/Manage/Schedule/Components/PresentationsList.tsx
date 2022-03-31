@@ -1,6 +1,6 @@
 import { Box, chakra, Spinner, Text, VStack } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { gql } from "urql";
 import type { ManageSchedule_PresentationFragment, ManageSchedule_TagFragment } from "../../../../../generated/graphql";
 import { useManageSchedule_GetPresentationsQuery } from "../../../../../generated/graphql";
@@ -52,6 +52,8 @@ export default function PresentationsList({
     onCreate,
     onEdit,
     onDelete,
+
+    refetchPresentations,
 }: {
     sessionId: string;
     tags: ReadonlyArray<ManageSchedule_TagFragment>;
@@ -59,6 +61,8 @@ export default function PresentationsList({
     onCreate: () => void;
     onEdit: (presentation: ManageSchedule_PresentationFragment, initialStepIdx?: number) => void;
     onDelete: (presentationId: string) => void;
+
+    refetchPresentations?: React.MutableRefObject<(() => void) | null>;
 }): JSX.Element {
     const { subconferenceId } = useAuthParameters();
     const context = useMemo(
@@ -70,13 +74,22 @@ export default function PresentationsList({
             }),
         [subconferenceId]
     );
-    const [presentationsResponse] = useManageSchedule_GetPresentationsQuery({
+    const [presentationsResponse, refetch] = useManageSchedule_GetPresentationsQuery({
         variables: {
             sessionId,
         },
         context,
     });
     const presentations = presentationsResponse.data?.schedule_Event ?? [];
+    useEffect(() => {
+        if (refetchPresentations) {
+            refetchPresentations.current = () => {
+                refetch({
+                    requestPolicy: "cache-and-network",
+                });
+            };
+        }
+    }, [refetch, refetchPresentations]);
 
     const { outlineColor } = useSelectorColors();
 

@@ -12,6 +12,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { ElementDataBlob, TextualElementBlob } from "@midspace/shared-types/content";
+import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
 import type {
     ManageSchedule_PresentationFragment,
@@ -77,7 +78,14 @@ export default function SessionCard({
         () => (session.item?.abstract?.[0]?.data as ElementDataBlob | undefined)?.[0]?.data as TextualElementBlob,
         [session.item?.abstract]
     );
-    const peopleCount = session.eventPeople.length + (session.item?.itemPeople.length ?? 0);
+    const peopleCount = useMemo(
+        () =>
+            R.uniq([
+                ...session.eventPeople.map((x) => x.personId),
+                ...(session.item?.itemPeople.map((x) => x.personId) ?? []),
+            ]).length,
+        [session.eventPeople, session.item?.itemPeople]
+    );
     const elementCount = session.item?.elements_aggregate.aggregate?.count ?? 0;
     return (
         <VStack minW="400px" w="100%" alignItems="flex-start">

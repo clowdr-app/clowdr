@@ -98,6 +98,11 @@ gql`
             id
             data
         }
+        externalEventLink: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }) {
+            id
+            data
+            name
+        }
         elements_aggregate {
             aggregate {
                 count
@@ -373,10 +378,7 @@ export default function ManageScheduleV2(): JSX.Element {
     const client = useClient();
 
     const onCreateSession = useCallback(() => {
-        setCurrentRecord({
-            // TODO: Settings panel to set default mode name and room id
-            // modeName: Schedule_Mode_Enum.VideoChat,
-        });
+        setCurrentRecord({});
         setInitialStepIdx(0);
         setEditorIsCreate(true);
         setTimeout(() => {
@@ -860,6 +862,7 @@ export default function ManageScheduleV2(): JSX.Element {
                             // TODO: Edit
                             return { error: "Not implemented" };
                         } else {
+                            // TODO: Handle that the item, elements, etc might already exist
                             const result = await client
                                 .mutation<
                                     ManageSchedule_InsertEventMutation,

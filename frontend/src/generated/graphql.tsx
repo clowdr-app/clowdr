@@ -46493,6 +46493,12 @@ export type ManageSchedule_PresentationFragment = {
             readonly id: any;
             readonly data: any;
         }>;
+        readonly externalEventLink: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly data: any;
+            readonly name: string;
+        }>;
         readonly elements_aggregate: {
             readonly __typename?: "content_Element_aggregate";
             readonly aggregate?: {
@@ -46547,6 +46553,12 @@ export type ManageSchedule_GetPresentationsQuery = {
                 readonly __typename?: "content_Element";
                 readonly id: any;
                 readonly data: any;
+            }>;
+            readonly externalEventLink: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+                readonly name: string;
             }>;
             readonly elements_aggregate: {
                 readonly __typename?: "content_Element_aggregate";
@@ -47331,6 +47343,12 @@ export type ManageSchedule_EventContentFragment = {
         readonly priority?: number | null;
     }>;
     readonly abstract: ReadonlyArray<{ readonly __typename?: "content_Element"; readonly id: any; readonly data: any }>;
+    readonly externalEventLink: ReadonlyArray<{
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly data: any;
+        readonly name: string;
+    }>;
     readonly elements_aggregate: {
         readonly __typename?: "content_Element_aggregate";
         readonly aggregate?: {
@@ -47382,6 +47400,12 @@ export type ManageSchedule_SessionFragment = {
             readonly __typename?: "content_Element";
             readonly id: any;
             readonly data: any;
+        }>;
+        readonly externalEventLink: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly data: any;
+            readonly name: string;
         }>;
         readonly elements_aggregate: {
             readonly __typename?: "content_Element_aggregate";
@@ -47482,6 +47506,12 @@ export type ManageSchedule_GetSessionsPageQuery = {
                 readonly __typename?: "content_Element";
                 readonly id: any;
                 readonly data: any;
+            }>;
+            readonly externalEventLink: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+                readonly name: string;
             }>;
             readonly elements_aggregate: {
                 readonly __typename?: "content_Element_aggregate";
@@ -51476,6 +51506,11 @@ export const ManageSchedule_EventContentFragmentDoc = gql`
         abstract: elements(where: { typeName: { _eq: ABSTRACT } }) {
             id
             data
+        }
+        externalEventLink: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }) {
+            id
+            data
+            name
         }
         elements_aggregate {
             aggregate {

@@ -1,10 +1,15 @@
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
+    chakra,
     Checkbox,
     FormControl,
     FormHelperText,
     FormLabel,
+    Input,
+    Link,
     ListItem,
     Select,
+    Text,
     UnorderedList,
     VStack,
 } from "@chakra-ui/react";
@@ -25,6 +30,7 @@ import {
     Schedule_Mode_Enum,
     useManageSchedule_ListSuitableRoomsQuery,
 } from "../../../../../generated/graphql";
+import FAIcon from "../../../../Chakra/FAIcon";
 import type { PanelProps } from "../../../../CRUDCards/Types";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import extractActualError from "../../../../GQL/ExtractActualError";
@@ -406,7 +412,7 @@ function SessionSettingsPanel({
     ]);
 
     return (
-        <VStack spacing={6} p={0}>
+        <VStack spacing={8} p={0}>
             {!record.modeName || selectableModes.includes(record.modeName) ? (
                 <FormControl id="editor-session-mode">
                     <FormLabel>Interaction mode</FormLabel>
@@ -423,9 +429,9 @@ function SessionSettingsPanel({
                             </option>
                         ))}
                     </Select>
-                    <FormHelperText>
+                    <Explanation>
                         Determines the way attendees and speakers will interact during this event.
-                    </FormHelperText>
+                    </Explanation>
                 </FormControl>
             ) : undefined}
             <FormControl id="editor-session-room">
@@ -457,15 +463,22 @@ function SessionSettingsPanel({
                         ))}
                     </optgroup>
                 </Select>
-                <FormHelperText>
-                    Sessions are scheduled in rooms, much like they would be in a physical venue. Rooms are flexible
-                    spaces with persistent chats. The session defines the mode of interaction within the room during the
-                    session. There is a conference-wide limit on the number of rooms with events scheduled in them
-                    (similar to the fact that a conference venue only has a finite number of rooms). Midspace will
-                    attempt to automatically select a room for you but you may need to set this manually for complex
-                    schedules or special events (e.g. sessions in sponsor&lsquo;s booths). Rooms should be re-used, for
-                    example by assigning all events for a single track to the same room.
-                </FormHelperText>
+                <Explanation>
+                    <Text>
+                        Sessions are scheduled in rooms, much like they would be in a physical venue. Rooms are flexible
+                        spaces with persistent chats. The session defines the mode of interaction within the room during
+                        the session.
+                    </Text>
+                    <Text>
+                        There is a conference-wide limit on the number of rooms with events scheduled in them (similar
+                        to the fact that a conference venue only has a finite number of rooms). Rooms should be re-used,
+                        for example by assigning all events for a single track to the same room.
+                    </Text>
+                    <Text>
+                        Midspace will attempt to automatically select a room for you but you may need to set this
+                        manually for complex schedules or special events (e.g. sessions in sponsor&lsquo;s booths).
+                    </Text>
+                </Explanation>
             </FormControl>
             {/* TODO: auto play element id */}
             {record.modeName === Schedule_Mode_Enum.Livestream || record.modeName === Schedule_Mode_Enum.VideoChat ? (
@@ -478,9 +491,9 @@ function SessionSettingsPanel({
                             updateRecord((old) => ({ ...old, enableRecording: ev.target.checked }));
                         }}
                     />
-                    <FormHelperText>
-                        Check to enable automatic recording for this session.
-                        <UnorderedList>
+                    <Explanation>
+                        <Text>Tick the box to enable automatic recording for this session.</Text>
+                        <UnorderedList spacing={1}>
                             <ListItem
                                 fontWeight={record.modeName === Schedule_Mode_Enum.VideoChat ? "bold" : undefined}
                             >
@@ -494,7 +507,7 @@ function SessionSettingsPanel({
                                 only way to enable recording.
                             </ListItem>
                         </UnorderedList>
-                    </FormHelperText>
+                    </Explanation>
                 </FormControl>
             ) : undefined}
             <FormControl id="editor-session-participation-survey">
@@ -506,14 +519,98 @@ function SessionSettingsPanel({
                         updateRecord((old) => ({ ...old, automaticParticipationSurvey: ev.target.checked }));
                     }}
                 />
-                <FormHelperText>
-                    Check to automatically post a participation survey in the chat at the end of the session.
-                    <br />
-                    <br />
-                    The survey remains open for 5 minutes and allows attendees to log their attendance, provide a rating
-                    on a 5-point scale, and leave a private comment.
-                </FormHelperText>
+                <Explanation>
+                    <Text>
+                        Tick the box to automatically post a participation survey in the chat at the end of the session.
+                    </Text>
+                    <Text>
+                        The survey remains open for 5 minutes and allows attendees to log their attendance, provide a
+                        rating on a 5-point scale, and leave a private comment.
+                    </Text>
+                </Explanation>
+            </FormControl>
+            {/* TODO: continuations */}
+            <FormControl>
+                <FormLabel>StreamText Event Id</FormLabel>
+                <VStack spacing={2} alignItems="flex-start" w="100%">
+                    <Input
+                        type="text"
+                        value={record.streamTextEventId ?? ""}
+                        onChange={(ev) => {
+                            onAnyChange();
+                            updateRecord((old) => ({
+                                ...old,
+                                streamTextEventId: ev.target.value.length ? ev.target.value : null,
+                            }));
+                        }}
+                    />
+                    <Explanation>
+                        <Text>
+                            The event id obtained from StreamText. This is just the id, not the full URL. Leave blank to
+                            remove the integration.
+                        </Text>
+                        <Text>
+                            StreamText is a 3rd party service for delivering real-time live captions. If you have a
+                            StreamText account you can configure an event and input your event id below. This will embed
+                            the StreamText feed within Midspace during this event.
+                        </Text>
+                        <Text>
+                            Learn more at{" "}
+                            <Link href="https://streamtext.net" isExternal>
+                                StreamText.Net
+                                <sup>
+                                    <ExternalLinkIcon />
+                                </sup>
+                            </Link>
+                            .
+                        </Text>
+                        <Text>
+                            The Midspace platform and software are not affiliated with StreamText.Net in any way. We
+                            cannot provide support with your StreamText feed. We are not responsible for any issue
+                            caused by StreamText software embedded within this site.
+                        </Text>
+                    </Explanation>
+                </VStack>
             </FormControl>
         </VStack>
+    );
+}
+
+function Explanation({ children }: React.PropsWithChildren<Record<never, any>>) {
+    const [expanded, setExpanded] = useState<boolean>(false);
+    return (
+        <FormHelperText>
+            {expanded ? (
+                <>
+                    <VStack spacing={1} alignItems="flex-start" w="100%">
+                        {typeof children === "string" ? <Text>{children}</Text> : children}
+                        <Link
+                            pt={1}
+                            href="#"
+                            onClick={(ev) => {
+                                ev.preventDefault();
+                                ev.stopPropagation();
+                                setExpanded(false);
+                            }}
+                        >
+                            Hide
+                        </Link>
+                    </VStack>
+                </>
+            ) : (
+                <Link
+                    href="#"
+                    onClick={(ev) => {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        setExpanded(true);
+                    }}
+                    textDecoration="none"
+                >
+                    <FAIcon iconStyle="s" icon="info-circle" mr={1} verticalAlign="middle" />
+                    <chakra.span verticalAlign="middle">What is this?</chakra.span>
+                </Link>
+            )}
+        </FormHelperText>
     );
 }

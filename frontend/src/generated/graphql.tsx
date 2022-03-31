@@ -46565,6 +46565,54 @@ export type ManageSchedule_GetPresentationsQuery = {
     }>;
 };
 
+export type ManageSchedule_ListSuitableRoomsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+    modes: ReadonlyArray<Schedule_Mode_Enum> | Schedule_Mode_Enum;
+    namePattern: Scalars["String"];
+}>;
+
+export type ManageSchedule_ListSuitableRoomsQuery = {
+    readonly __typename?: "query_root";
+    readonly suggestedRooms: ReadonlyArray<{
+        readonly __typename?: "room_Room";
+        readonly id: any;
+        readonly name: string;
+    }>;
+    readonly otherRooms: ReadonlyArray<{ readonly __typename?: "room_Room"; readonly id: any; readonly name: string }>;
+};
+
+export type ManageSchedule_FindSuitableRoomsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+    modes: ReadonlyArray<Schedule_Mode_Enum> | Schedule_Mode_Enum;
+    startBefore: Scalars["timestamptz"];
+    endAfter: Scalars["timestamptz"];
+    namePattern: Scalars["String"];
+}>;
+
+export type ManageSchedule_FindSuitableRoomsQuery = {
+    readonly __typename?: "query_root";
+    readonly programRooms: ReadonlyArray<{ readonly __typename?: "room_Room"; readonly id: any }>;
+    readonly nonProgramRooms: ReadonlyArray<{ readonly __typename?: "room_Room"; readonly id: any }>;
+    readonly conference_RemainingQuota: ReadonlyArray<{
+        readonly __typename?: "conference_RemainingQuota";
+        readonly conferenceId?: any | null;
+        readonly remainingStreamingProgramRooms?: any | null;
+        readonly remainingNonStreamingProgramRooms?: any | null;
+        readonly remainingPublicSocialRooms?: any | null;
+    }>;
+};
+
+export type ManageSchedule_InsertRoomMutationVariables = Exact<{
+    object: Room_Room_Insert_Input;
+}>;
+
+export type ManageSchedule_InsertRoomMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_room_Room_one?: { readonly __typename?: "room_Room"; readonly id: any } | null;
+};
+
 export type ContinuationsEditor_ContinuationFragment = {
     readonly __typename?: "schedule_Continuation";
     readonly id: any;
@@ -48037,6 +48085,21 @@ export type ManageSchedule_GetEventsForExportQuery = {
             };
         }>;
     }>;
+};
+
+export type ManageSchedule_GetPotentiallOverlappingEventsQueryVariables = Exact<{
+    roomId: Scalars["uuid"];
+    startBefore: Scalars["timestamptz"];
+    endAfter: Scalars["timestamptz"];
+    sessionCond: Uuid_Comparison_Exp;
+}>;
+
+export type ManageSchedule_GetPotentiallOverlappingEventsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event_aggregate: {
+        readonly __typename?: "schedule_Event_aggregate";
+        readonly aggregate?: { readonly __typename?: "schedule_Event_aggregate_fields"; readonly count: number } | null;
+    };
 };
 
 export type UpdateShufflePeriodMutationVariables = Exact<{
@@ -56262,6 +56325,122 @@ export function useManageSchedule_GetPresentationsQuery(
         ...options,
     });
 }
+export const ManageSchedule_ListSuitableRoomsDocument = gql`
+    query ManageSchedule_ListSuitableRooms(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+        $modes: [schedule_Mode_enum!]!
+        $namePattern: String!
+    ) {
+        suggestedRooms: room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                itemId: { _is_null: true }
+                _or: [
+                    { events: { modeName: { _in: $modes } } }
+                    { isProgramRoom: { _eq: false }, name: { _ilike: $namePattern } }
+                ]
+            }
+            order_by: [{ name: asc }]
+        ) {
+            id
+            name
+        }
+        otherRooms: room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                isProgramRoom: { _eq: false }
+                _or: [{ itemId: { _is_null: true } }, { item: { typeName: { _eq: SPONSOR } } }]
+            }
+            order_by: [{ name: asc }]
+        ) {
+            id
+            name
+        }
+    }
+`;
+
+export function useManageSchedule_ListSuitableRoomsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_ListSuitableRoomsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_ListSuitableRoomsQuery>({
+        query: ManageSchedule_ListSuitableRoomsDocument,
+        ...options,
+    });
+}
+export const ManageSchedule_FindSuitableRoomsDocument = gql`
+    query ManageSchedule_FindSuitableRooms(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+        $modes: [schedule_Mode_enum!]!
+        $startBefore: timestamptz!
+        $endAfter: timestamptz!
+        $namePattern: String!
+    ) {
+        programRooms: room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                itemId: { _is_null: true }
+                _and: [
+                    { events: { modeName: { _in: $modes } } }
+                    {
+                        _not: {
+                            events: { scheduledStartTime: { _lt: $startBefore }, scheduledEndTime: { _gt: $endAfter } }
+                        }
+                    }
+                ]
+            }
+            order_by: [{ name: asc }]
+            limit: 1
+        ) {
+            id
+        }
+        nonProgramRooms: room_Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                isProgramRoom: { _eq: false }
+                itemId: { _is_null: true }
+                name: { _ilike: $namePattern }
+            }
+            order_by: [{ name: asc }]
+            limit: 1
+        ) {
+            id
+        }
+        conference_RemainingQuota(where: { conferenceId: { _eq: $conferenceId } }) {
+            conferenceId
+            remainingStreamingProgramRooms
+            remainingNonStreamingProgramRooms
+            remainingPublicSocialRooms
+        }
+    }
+`;
+
+export function useManageSchedule_FindSuitableRoomsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_FindSuitableRoomsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_FindSuitableRoomsQuery>({
+        query: ManageSchedule_FindSuitableRoomsDocument,
+        ...options,
+    });
+}
+export const ManageSchedule_InsertRoomDocument = gql`
+    mutation ManageSchedule_InsertRoom($object: room_Room_insert_input!) {
+        insert_room_Room_one(object: $object) {
+            id
+        }
+    }
+`;
+
+export function useManageSchedule_InsertRoomMutation() {
+    return Urql.useMutation<ManageSchedule_InsertRoomMutation, ManageSchedule_InsertRoomMutationVariables>(
+        ManageSchedule_InsertRoomDocument
+    );
+}
 export const ContinuationsEditor_SelectContinuationsDocument = gql`
     query ContinuationsEditor_SelectContinuations($fromId: uuid!) {
         schedule_Continuation(
@@ -56800,6 +56979,36 @@ export function useManageSchedule_GetEventsForExportQuery(
 ) {
     return Urql.useQuery<ManageSchedule_GetEventsForExportQuery>({
         query: ManageSchedule_GetEventsForExportDocument,
+        ...options,
+    });
+}
+export const ManageSchedule_GetPotentiallOverlappingEventsDocument = gql`
+    query ManageSchedule_GetPotentiallOverlappingEvents(
+        $roomId: uuid!
+        $startBefore: timestamptz!
+        $endAfter: timestamptz!
+        $sessionCond: uuid_comparison_exp!
+    ) {
+        schedule_Event_aggregate(
+            where: {
+                roomId: { _eq: $roomId }
+                scheduledStartTime: { _lt: $startBefore }
+                scheduledEndTime: { _gt: $endAfter }
+                sessionEventId: $sessionCond
+            }
+        ) {
+            aggregate {
+                count
+            }
+        }
+    }
+`;
+
+export function useManageSchedule_GetPotentiallOverlappingEventsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetPotentiallOverlappingEventsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetPotentiallOverlappingEventsQuery>({
+        query: ManageSchedule_GetPotentiallOverlappingEventsDocument,
         ...options,
     });
 }

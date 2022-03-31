@@ -786,6 +786,9 @@ export default function ManageScheduleV2(): JSX.Element {
                             record = inputRecord;
                         }
 
+                        // TODO: Check for session overlaps
+                        // TODO: Check for presentation overlaps
+
                         if (record.id) {
                             // TODO: Edit
                             return { error: "Not implemented" };
@@ -886,7 +889,7 @@ export default function ManageScheduleV2(): JSX.Element {
 
                             const newId = result.data.insert_schedule_Event_one.id;
                             const index = ordering.data.schedule_Event.findIndex((x) => x.id === newId);
-                            setOffset(Math.max(0, Math.floor(index / limit)));
+                            setOffset(Math.max(0, limit * Math.floor(index / limit)));
                         }
                     } catch (e: any) {
                         return { error: "Unhandled error: " + e.toString() };

@@ -367,6 +367,29 @@ export default function DetailsPanel({
 
     const defaultItemTypeName = isSession ? Content_ItemType_Enum.Session : Content_ItemType_Enum.Presentation;
 
+    useEffect(() => {
+        if (isSession) {
+            updateRecord((old) => ({
+                ...old,
+                scheduledStartTime: old.scheduledStartTime ?? startTime?.toISOString(),
+                scheduledEndTime:
+                    old.scheduledEndTime ??
+                    (startTime ? new Date(startTime.getTime() + durationMinutes * 60 * 1000).toISOString() : undefined),
+                item: old.item
+                    ? { ...old.item, typeName: old.item.typeName ?? Content_ItemType_Enum.Session }
+                    : { typeName: Content_ItemType_Enum.Session },
+            }));
+        } else {
+            updateRecord((old) => ({
+                ...old,
+                item: old.item
+                    ? { ...old.item, typeName: old.item.typeName ?? Content_ItemType_Enum.Session }
+                    : { typeName: Content_ItemType_Enum.Session },
+            }));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [durationMinutes, isSession, startTime]);
+
     return (
         <VStack spacing={6} p={0}>
             <FormControl
@@ -445,6 +468,7 @@ export default function DetailsPanel({
                                         : undefined;
                                     updateRecord((old) => ({
                                         ...old,
+                                        scheduledStartTime: startTime,
                                         scheduledEndTime: endTime?.toISOString(),
                                     }));
                                 }}
@@ -470,6 +494,7 @@ export default function DetailsPanel({
                         const value = ev.target.value;
                         updateRecord((old) => ({
                             ...old,
+                            name: value,
                             item: old.item ? { ...old.item, title: value } : { title: value },
                         }));
                     }}

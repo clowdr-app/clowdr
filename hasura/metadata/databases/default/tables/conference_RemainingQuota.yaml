@@ -20,3 +20,14 @@ select_permissions:
       conferenceId:
         _in: X-Hasura-Conference-Ids
   role: conference-organizer
+- permission:
+    columns:
+    - conferenceId
+    - remainingNonStreamingProgramRooms
+    - remainingPublicSocialRooms
+    - remainingStreamingProgramRooms
+    - slug
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: subconference-organizer

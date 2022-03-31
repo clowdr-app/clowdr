@@ -46625,6 +46625,56 @@ export type ManageSchedule_InsertRoomMutation = {
     readonly insert_room_Room_one?: { readonly __typename?: "room_Room"; readonly id: any } | null;
 };
 
+export type ManageSchedule_GetVideoElementsQueryVariables = Exact<{
+    sessionId: Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetVideoElementsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event_by_pk?: {
+        readonly __typename?: "schedule_Event";
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly title: string;
+            readonly elements: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly name: string;
+            }>;
+        } | null;
+        readonly presentations: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly title: string;
+                readonly elements: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly name: string;
+                }>;
+            } | null;
+        }>;
+        readonly exhibition?: {
+            readonly __typename?: "collection_Exhibition";
+            readonly items: ReadonlyArray<{
+                readonly __typename?: "content_ItemExhibition";
+                readonly item: {
+                    readonly __typename?: "content_Item";
+                    readonly id: any;
+                    readonly title: string;
+                    readonly elements: ReadonlyArray<{
+                        readonly __typename?: "content_Element";
+                        readonly id: any;
+                        readonly name: string;
+                    }>;
+                };
+            }>;
+        } | null;
+    } | null;
+};
+
 export type ContinuationsEditor_ContinuationFragment = {
     readonly __typename?: "schedule_Continuation";
     readonly id: any;
@@ -56475,6 +56525,51 @@ export function useManageSchedule_InsertRoomMutation() {
     return Urql.useMutation<ManageSchedule_InsertRoomMutation, ManageSchedule_InsertRoomMutationVariables>(
         ManageSchedule_InsertRoomDocument
     );
+}
+export const ManageSchedule_GetVideoElementsDocument = gql`
+    query ManageSchedule_GetVideoElements($sessionId: uuid!) {
+        schedule_Event_by_pk(id: $sessionId) {
+            item {
+                id
+                title
+                elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
+                    id
+                    name
+                }
+            }
+            presentations {
+                item {
+                    id
+                    title
+                    elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
+                        id
+                        name
+                    }
+                }
+            }
+            exhibition {
+                items {
+                    item {
+                        id
+                        title
+                        elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export function useManageSchedule_GetVideoElementsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetVideoElementsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetVideoElementsQuery>({
+        query: ManageSchedule_GetVideoElementsDocument,
+        ...options,
+    });
 }
 export const ContinuationsEditor_SelectContinuationsDocument = gql`
     query ContinuationsEditor_SelectContinuations($fromId: uuid!) {

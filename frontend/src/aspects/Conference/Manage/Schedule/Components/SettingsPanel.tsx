@@ -14,6 +14,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
+import { ElementBaseType, type ElementDataBlob } from "@midspace/shared-types/content";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
 import type {
@@ -24,10 +25,12 @@ import type {
     ManageSchedule_SessionFragment,
 } from "../../../../../generated/graphql";
 import {
+    Content_ElementType_Enum,
     ManageSchedule_FindSuitableRoomsDocument,
     ManageSchedule_InsertRoomDocument,
     Room_ManagementMode_Enum,
     Schedule_Mode_Enum,
+    useManageSchedule_GetVideoElementsQuery,
     useManageSchedule_ListSuitableRoomsQuery,
 } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
@@ -128,6 +131,43 @@ gql`
     mutation ManageSchedule_InsertRoom($object: room_Room_insert_input!) {
         insert_room_Room_one(object: $object) {
             id
+        }
+    }
+
+    query ManageSchedule_GetVideoElements($sessionId: uuid!) {
+        schedule_Event_by_pk(id: $sessionId) {
+            item {
+                id
+                title
+                elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
+                    id
+                    name
+                }
+            }
+
+            presentations {
+                item {
+                    id
+                    title
+                    elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
+                        id
+                        name
+                    }
+                }
+            }
+
+            exhibition {
+                items {
+                    item {
+                        id
+                        title
+                        elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
         }
     }
 `;
@@ -411,6 +451,55 @@ function SessionSettingsPanel({
         subconferenceId,
     ]);
 
+    const [autoPlayEventResponse, refetchAutoPlayEvents] = useManageSchedule_GetVideoElementsQuery({
+        variables: {
+            sessionId: record.id,
+        },
+        context,
+        pause: record.modeName !== Schedule_Mode_Enum.Livestream,
+    });
+    const autoPlayEvent = autoPlayEventResponse.data?.schedule_Event_by_pk;
+    const autoPlayElementOptions = useMemo<
+        {
+            label: string;
+            value: string;
+        }[]
+    >(
+        () =>
+            autoPlayEvent
+                ? [
+                      ...(autoPlayEvent.item
+                          ? autoPlayEvent.item.elements.map((x) => ({
+                                label: autoPlayEvent.item?.title + " - " + x.name,
+                                value: x.id,
+                            }))
+                          : []),
+                      ...autoPlayEvent.presentations.flatMap(
+                          (pres) =>
+                              pres.item?.elements.map((x) => ({
+                                  label: pres.item?.title + " - " + x.name,
+                                  value: x.id,
+                              })) ?? []
+                      ),
+                      ...(autoPlayEvent.exhibition?.items.flatMap((item) =>
+                          item.item.elements.map((x) => ({
+                              label: item.item.title + " - " + x.name,
+                              value: x.id,
+                          }))
+                      ) ?? []),
+                  ]
+                : [],
+        [autoPlayEvent]
+    );
+    useEffect(() => {
+        if (record.modeName === Schedule_Mode_Enum.Livestream) {
+            refetchAutoPlayEvents({
+                requestPolicy: "network-only",
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [record.modeName]);
+
     return (
         <VStack spacing={8} p={0}>
             {!record.modeName || selectableModes.includes(record.modeName) ? (
@@ -480,7 +569,125 @@ function SessionSettingsPanel({
                     </Text>
                 </Explanation>
             </FormControl>
-            {/* TODO: auto play element id */}
+            {record.modeName === Schedule_Mode_Enum.Livestream ? (
+                <FormControl id="editor-session-auto-play-video">
+                    <FormLabel>Auto-play video</FormLabel>
+                    <Select
+                        value={record.autoPlayElementId ?? ""}
+                        onChange={(ev) => {
+                            onAnyChange();
+
+                            const value = ev.target.value;
+                            updateRecord((old) => ({
+                                ...old,
+                                autoPlayElementId: value.length ? value : undefined,
+                            }));
+                        }}
+                    >
+                        <option value="">No auto-play</option>
+                        {autoPlayElementOptions.map((x) => (
+                            <option key={x.value} value={x.value}>
+                                {x.label}
+                            </option>
+                        ))}
+                    </Select>
+                    <Explanation>Start the session by automatically playing out the selected video.</Explanation>
+                </FormControl>
+            ) : record.modeName === Schedule_Mode_Enum.External ? (
+                <FormControl id="editor-session-external-event-link">
+                    <FormLabel>External event link</FormLabel>
+                    <Input
+                        type="text"
+                        value={
+                            record.item?.externalEventLink?.[0]?.data?.[
+                                record.item.externalEventLink[0].data.length - 1
+                            ]?.data.url ?? ""
+                        }
+                        onChange={(ev) => {
+                            onAnyChange();
+
+                            const value = ev.target.value;
+                            updateRecord((old) => ({
+                                ...old,
+                                item: old.item
+                                    ? {
+                                          ...old.item,
+                                          externalEventLink: value.length
+                                              ? old.item.externalEventLink?.length
+                                                  ? [
+                                                        {
+                                                            ...old.item.externalEventLink[0],
+                                                            data: old.item.externalEventLink[0].data?.length
+                                                                ? ([
+                                                                      {
+                                                                          ...old.item.externalEventLink[0].data[0],
+                                                                          data: {
+                                                                              baseType: ElementBaseType.URL,
+                                                                              type: Content_ElementType_Enum.ExternalEventLink,
+                                                                              url: value,
+                                                                          },
+                                                                      },
+                                                                  ] as ElementDataBlob)
+                                                                : ([
+                                                                      {
+                                                                          createdAt: Date.now(),
+                                                                          createdBy: "user",
+                                                                          data: {
+                                                                              baseType: ElementBaseType.URL,
+                                                                              type: Content_ElementType_Enum.ExternalEventLink,
+                                                                              url: value,
+                                                                          },
+                                                                      },
+                                                                  ] as ElementDataBlob),
+                                                        },
+                                                    ]
+                                                  : [
+                                                        {
+                                                            name: "External Meeting",
+                                                            data: [
+                                                                {
+                                                                    createdAt: Date.now(),
+                                                                    createdBy: "user",
+                                                                    data: {
+                                                                        baseType: ElementBaseType.URL,
+                                                                        type: Content_ElementType_Enum.ExternalEventLink,
+                                                                        url: value,
+                                                                    },
+                                                                },
+                                                            ] as ElementDataBlob,
+                                                        },
+                                                    ]
+                                              : undefined,
+                                      }
+                                    : value.length
+                                    ? {
+                                          externalEventLink: [
+                                              {
+                                                  name: "External Meeting",
+                                                  data: [
+                                                      {
+                                                          createdAt: Date.now(),
+                                                          createdBy: "user",
+                                                          data: {
+                                                              baseType: ElementBaseType.URL,
+                                                              type: Content_ElementType_Enum.ExternalEventLink,
+                                                              url: value,
+                                                          },
+                                                      },
+                                                  ] as ElementDataBlob,
+                                              },
+                                          ],
+                                      }
+                                    : undefined,
+                            }));
+                        }}
+                    />
+                    <Explanation>
+                        Link for attendees to join the external event. This should include any password fields or
+                        similar (e.g. when using Zoom, include the full link provided by Zoom).
+                    </Explanation>
+                </FormControl>
+            ) : undefined}
             {record.modeName === Schedule_Mode_Enum.Livestream || record.modeName === Schedule_Mode_Enum.VideoChat ? (
                 <FormControl id="editor-session-recording">
                     <FormLabel>Automatic recording?</FormLabel>

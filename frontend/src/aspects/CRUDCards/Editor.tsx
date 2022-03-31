@@ -1,6 +1,8 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import type { TabsProps } from "@chakra-ui/react";
 import {
+    Alert,
+    AlertDescription,
     AlertDialog,
     AlertDialogBody,
     AlertDialogCloseButton,
@@ -8,6 +10,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
+    AlertIcon,
     Box,
     Button,
     ButtonGroup,
@@ -29,10 +32,10 @@ import {
     TabPanels,
     TabsDescendantsProvider,
     TabsProvider,
-    Tooltip,
     useDisclosure,
     useMultiStyleConfig,
     useTabs,
+    VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { DeepPartial, Step, ValidationState } from "./Types";
@@ -137,6 +140,8 @@ export default function Editor<T>({
                         if (!stepValidStates.every((x) => x === "no error")) {
                             loseChangesDisclosure.onOpen();
                         } else {
+                            setSaveError("");
+
                             const result = await onSave(record);
                             if (result === "no error") {
                                 onClose();
@@ -161,10 +166,13 @@ export default function Editor<T>({
         <Button
             colorScheme="SecondaryActionButton"
             variant="solid"
+            minW="10em"
             onClick={async () => {
                 if (isCreate && stepIdx < maxSteps - 1) {
                     setStepIdx((old) => old + 1);
                 } else {
+                    setSaveError("");
+
                     const result = await onSave(record);
                     if (result === "no error") {
                         onClose();
@@ -284,60 +292,32 @@ export default function Editor<T>({
                             </StylesProvider>
                         </DrawerBody>
                         <DrawerFooter shadow="bottom-popup-light" px={12} py={4}>
-                            <Flex w="100%" justifyContent="flex-end">
-                                {isCreate && stepIdx < maxSteps - 1 ? (
-                                    <Tooltip
-                                        label={saveError}
-                                        hasArrow
-                                        bgColor="red.600"
-                                        color="white"
-                                        placement="top-start"
-                                        onOpen={saveErrorDisclosure.onOpen}
-                                        onClose={() => {
-                                            setSaveError("");
-                                            saveErrorDisclosure.onClose();
-                                        }}
-                                        isOpen={saveErrorDisclosure.isOpen}
-                                    >
-                                        {finishOrCancelButton}
-                                    </Tooltip>
-                                ) : !isCreate ? (
-                                    finishOrCancelButton
+                            <VStack spacing={2} alignItems="flex-start" w="100%">
+                                {saveError.length ? (
+                                    <Alert status="error">
+                                        <AlertIcon />
+                                        <AlertDescription>{saveError}</AlertDescription>
+                                    </Alert>
                                 ) : undefined}
-                                <ButtonGroup ml="auto" isAttached>
-                                    {isCreate && stepIdx > 0 ? (
-                                        <IconButton
-                                            colorScheme="SecondaryActionButton"
-                                            aria-label="Previous step"
-                                            icon={<ChevronLeftIcon fontSize="115%" />}
-                                            mr="1px"
-                                            onClick={() => {
-                                                setStepIdx((old) => old - 1);
-                                            }}
-                                            isDisabled={isSaving}
-                                        />
-                                    ) : undefined}
-                                    {!isCreate || stepIdx === maxSteps - 1 ? (
-                                        <Tooltip
-                                            label={saveError}
-                                            hasArrow
-                                            bgColor="red.600"
-                                            color="white"
-                                            placement="top-end"
-                                            onOpen={saveErrorDisclosure.onOpen}
-                                            onClose={() => {
-                                                setSaveError("");
-                                                saveErrorDisclosure.onClose();
-                                            }}
-                                            isOpen={saveErrorDisclosure.isOpen}
-                                        >
-                                            {nextOrFinishButton}
-                                        </Tooltip>
-                                    ) : (
-                                        nextOrFinishButton
-                                    )}
-                                </ButtonGroup>
-                            </Flex>
+                                <Flex w="100%" justifyContent="flex-end">
+                                    {!isCreate || stepIdx < maxSteps - 1 ? finishOrCancelButton : undefined}
+                                    <ButtonGroup ml="auto" isAttached>
+                                        {isCreate && stepIdx > 0 ? (
+                                            <IconButton
+                                                colorScheme="SecondaryActionButton"
+                                                aria-label="Previous step"
+                                                icon={<ChevronLeftIcon fontSize="115%" />}
+                                                mr="1px"
+                                                onClick={() => {
+                                                    setStepIdx((old) => old - 1);
+                                                }}
+                                                isDisabled={isSaving}
+                                            />
+                                        ) : undefined}
+                                        {nextOrFinishButton}
+                                    </ButtonGroup>
+                                </Flex>
+                            </VStack>
                         </DrawerFooter>
                     </TabsProvider>
                 </TabsDescendantsProvider>

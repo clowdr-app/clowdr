@@ -48087,14 +48087,14 @@ export type ManageSchedule_GetEventsForExportQuery = {
     }>;
 };
 
-export type ManageSchedule_GetPotentiallOverlappingEventsQueryVariables = Exact<{
+export type ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables = Exact<{
     roomId: Scalars["uuid"];
     startBefore: Scalars["timestamptz"];
     endAfter: Scalars["timestamptz"];
     sessionCond: Uuid_Comparison_Exp;
 }>;
 
-export type ManageSchedule_GetPotentiallOverlappingEventsQuery = {
+export type ManageSchedule_GetPotentiallyOverlappingEventsQuery = {
     readonly __typename?: "query_root";
     readonly schedule_Event_aggregate: {
         readonly __typename?: "schedule_Event_aggregate";
@@ -56982,8 +56982,8 @@ export function useManageSchedule_GetEventsForExportQuery(
         ...options,
     });
 }
-export const ManageSchedule_GetPotentiallOverlappingEventsDocument = gql`
-    query ManageSchedule_GetPotentiallOverlappingEvents(
+export const ManageSchedule_GetPotentiallyOverlappingEventsDocument = gql`
+    query ManageSchedule_GetPotentiallyOverlappingEvents(
         $roomId: uuid!
         $startBefore: timestamptz!
         $endAfter: timestamptz!
@@ -57004,11 +57004,11 @@ export const ManageSchedule_GetPotentiallOverlappingEventsDocument = gql`
     }
 `;
 
-export function useManageSchedule_GetPotentiallOverlappingEventsQuery(
-    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetPotentiallOverlappingEventsQueryVariables>, "query">
+export function useManageSchedule_GetPotentiallyOverlappingEventsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables>, "query">
 ) {
-    return Urql.useQuery<ManageSchedule_GetPotentiallOverlappingEventsQuery>({
-        query: ManageSchedule_GetPotentiallOverlappingEventsDocument,
+    return Urql.useQuery<ManageSchedule_GetPotentiallyOverlappingEventsQuery>({
+        query: ManageSchedule_GetPotentiallyOverlappingEventsDocument,
         ...options,
     });
 }

@@ -33,6 +33,8 @@ import { gql, useClient } from "urql";
 import type {
     ManageSchedule_GetAllSessionIdsQuery,
     ManageSchedule_GetAllSessionIdsQueryVariables,
+    ManageSchedule_GetPotentiallyOverlappingEventsQuery,
+    ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables,
     ManageSchedule_InsertEventMutation,
     ManageSchedule_InsertEventMutationVariables,
     ManageSchedule_PresentationFragment,
@@ -42,6 +44,7 @@ import type {
 import {
     Content_ItemType_Enum,
     ManageSchedule_GetAllSessionIdsDocument,
+    ManageSchedule_GetPotentiallyOverlappingEventsDocument,
     ManageSchedule_InsertEventDocument,
     useManageSchedule_GetSessionsPageQuery,
     useManageSchedule_GetTagsQuery,
@@ -333,6 +336,26 @@ gql`
     query ManageSchedule_GetEventsForExport($ids: [uuid!]!) {
         schedule_Event(where: { id: { _in: $ids } }) {
             ...ManageSchedule_SessionForExport
+        }
+    }
+
+    query ManageSchedule_GetPotentiallyOverlappingEvents(
+        $roomId: uuid!
+        $startBefore: timestamptz!
+        $endAfter: timestamptz!
+        $sessionCond: uuid_comparison_exp!
+    ) {
+        schedule_Event_aggregate(
+            where: {
+                roomId: { _eq: $roomId }
+                scheduledStartTime: { _lt: $startBefore }
+                scheduledEndTime: { _gt: $endAfter }
+                sessionEventId: $sessionCond
+            }
+        ) {
+            aggregate {
+                count
+            }
         }
     }
 `;
@@ -786,8 +809,52 @@ export default function ManageScheduleV2(): JSX.Element {
                             record = inputRecord;
                         }
 
-                        // TODO: Check for session overlaps
-                        // TODO: Check for presentation overlaps
+                        const overlapsResponse = await client
+                            .query<
+                                ManageSchedule_GetPotentiallyOverlappingEventsQuery,
+                                ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables
+                            >(
+                                ManageSchedule_GetPotentiallyOverlappingEventsDocument,
+                                {
+                                    roomId: record.roomId,
+                                    sessionCond:
+                                        "sessionEventId" in record && record.sessionEventId
+                                            ? {
+                                                  _eq: record.sessionEventId,
+                                              }
+                                            : {
+                                                  _is_null: true,
+                                              },
+                                    startBefore: record.scheduledEndTime,
+                                    endAfter: record.scheduledStartTime,
+                                },
+                                {
+                                    ...makeContext({
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
+                                    }),
+                                    requestPolicy: "network-only",
+                                }
+                            )
+                            .toPromise();
+                        if (overlapsResponse.error) {
+                            return {
+                                error:
+                                    extractActualError(overlapsResponse.error) ??
+                                    "Unknown error while checking for overlapping events.",
+                            };
+                        }
+                        if (overlapsResponse.data?.schedule_Event_aggregate.aggregate?.count) {
+                            return {
+                                error:
+                                    "sessionEventId" in record && record.sessionEventId
+                                        ? "Presentations within a session cannot overlap. Consider using unscheduled presentations."
+                                        : "Sessions in a room cannot overlap.",
+                            };
+                        }
+
+                        // TODO: Remove (nested) aggregate fields
 
                         if (record.id) {
                             // TODO: Edit

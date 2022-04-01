@@ -6,7 +6,7 @@ import { add } from "date-fns";
 import * as R from "ramda";
 import { v4 as uuidv4 } from "uuid";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
-import { Schedule_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
+import { Video_RtmpInput_Enum } from "../../generated/graphql";
 import type { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import { ContentElementDataService } from "../../hasura-data/content/content-element.service";
@@ -435,36 +435,8 @@ export class ScheduleSyncService {
         const immediate = startMode.mode === "immediate";
         const offsetMillis = startMode.mode === "immediate" ? startMode.now - localAction.scheduledStartTime : 0;
         const sequenceNumber = Math.round(localAction.sequenceNumber ?? 0);
-        if (this.localScheduleService.isLive(localAction.modeName)) {
-            return [
-                {
-                    ActionName: immediate ? `i/${uuidv4()}` : `e/${localAction.eventId}/${sequenceNumber}`,
-                    ScheduleActionStartSettings: immediate
-                        ? {
-                              ImmediateModeScheduleActionStartSettings: {},
-                          }
-                        : {
-                              FixedModeScheduleActionStartSettings: {
-                                  Time: new Date(localAction.scheduledStartTime).toISOString(),
-                              },
-                          },
-                    ScheduleActionSettings: {
-                        InputSwitchSettings: {
-                            InputAttachmentNameReference:
-                                localAction.rtmpInputName === Video_RtmpInput_Enum.RtmpRoom &&
-                                channelStackDetails.rtmpRoomInput?.attachmentName
-                                    ? channelStackDetails.rtmpRoomInput.attachmentName
-                                    : localAction.rtmpInputName === Video_RtmpInput_Enum.RtmpB
-                                    ? channelStackDetails.rtmpBInputAttachmentName ??
-                                      channelStackDetails.rtmpAInputAttachmentName
-                                    : channelStackDetails.rtmpAInputAttachmentName,
-                        },
-                    },
-                },
-            ];
-        }
 
-        if (localAction.modeName === Schedule_Mode_Enum.Livestream && localAction.autoPlayElementId) {
+        if (localAction.autoPlayElementId) {
             const videoKey = localAction.videoData
                 ? this.contentElementDataService.getVideoKey(localAction.videoData)
                 : null;
@@ -533,6 +505,33 @@ export class ScheduleSyncService {
                         : []),
                 ];
             }
+        } else {
+            return [
+                {
+                    ActionName: immediate ? `i/${uuidv4()}` : `e/${localAction.eventId}/${sequenceNumber}`,
+                    ScheduleActionStartSettings: immediate
+                        ? {
+                              ImmediateModeScheduleActionStartSettings: {},
+                          }
+                        : {
+                              FixedModeScheduleActionStartSettings: {
+                                  Time: new Date(localAction.scheduledStartTime).toISOString(),
+                              },
+                          },
+                    ScheduleActionSettings: {
+                        InputSwitchSettings: {
+                            InputAttachmentNameReference:
+                                localAction.rtmpInputName === Video_RtmpInput_Enum.RtmpRoom &&
+                                channelStackDetails.rtmpRoomInput?.attachmentName
+                                    ? channelStackDetails.rtmpRoomInput.attachmentName
+                                    : localAction.rtmpInputName === Video_RtmpInput_Enum.RtmpB
+                                    ? channelStackDetails.rtmpBInputAttachmentName ??
+                                      channelStackDetails.rtmpAInputAttachmentName
+                                    : channelStackDetails.rtmpAInputAttachmentName,
+                        },
+                    },
+                },
+            ];
         }
         return [];
     }
@@ -543,12 +542,12 @@ export class ScheduleSyncService {
         }
 
         const modesMatch =
-            (remoteAction.mode === "prerecorded" && !!localAction.videoData) ||
-            (remoteAction.mode === "live" && !!localAction.rtmpInputName);
+            (remoteAction.mode === "prerecorded" && Boolean(localAction.videoData)) ||
+            (remoteAction.mode === "live" && Boolean(localAction.rtmpInputName));
         const rtmpInputsMatch = remoteAction.rtmpInputName === localAction.rtmpInputName;
-        const videosMatch =
-            !!localAction.videoData &&
-            this.contentElementDataService.getVideoKey(localAction.videoData) === remoteAction.s3Key;
+        const videosMatch = localAction.videoData
+            ? this.contentElementDataService.getVideoKey(localAction.videoData) === remoteAction.s3Key
+            : !remoteAction.s3Key;
         const timesMatch = remoteAction.scheduledStartTime === localAction.scheduledStartTime;
 
         return (

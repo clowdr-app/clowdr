@@ -5912,9 +5912,11 @@ export type Collection_Exhibition_Bool_Exp = {
 /** unique or primary key constraints on table "collection.Exhibition" */
 export enum Collection_Exhibition_Constraint {
     /** unique or primary key constraint */
-    ExhibitionNameConferenceIdFkey = "Exhibition_name_conferenceId_fkey",
-    /** unique or primary key constraint */
     ExhibitionPkey = "Exhibition_pkey",
+    /** unique or primary key constraint */
+    CollectionExhibitionNameConferenceId = "collection_Exhibition_name_conferenceId",
+    /** unique or primary key constraint */
+    CollectionExhibitionNameSubconferenceId = "collection_Exhibition_name_subconferenceId",
 }
 
 /** input type for incrementing numeric columns in table "collection.Exhibition" */
@@ -6336,13 +6338,17 @@ export type Collection_ProgramPerson_Bool_Exp = {
 /** unique or primary key constraints on table "collection.ProgramPerson" */
 export enum Collection_ProgramPerson_Constraint {
     /** unique or primary key constraint */
-    ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
-    /** unique or primary key constraint */
-    ProgramPersonConferenceIdNameKey = "ProgramPerson_conferenceId_name_key",
-    /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
     /** unique or primary key constraint */
     CollectionProgramPersonAccessToken = "collection_ProgramPerson_accessToken",
+    /** unique or primary key constraint */
+    CollectionProgramPersonConferenceIdName = "collection_ProgramPerson_conferenceId_name",
+    /** unique or primary key constraint */
+    CollectionProgramPersonConferenceIdNameAffiliation = "collection_ProgramPerson_conferenceId_name_affiliation",
+    /** unique or primary key constraint */
+    CollectionProgramPersonSubconferenceIdName = "collection_ProgramPerson_subconferenceId_name",
+    /** unique or primary key constraint */
+    CollectionProgramPersonSubconferenceIdNameAffiliation = "collection_ProgramPerson_subconferenceId_name_affiliation",
 }
 
 /** input type for incrementing numeric columns in table "collection.ProgramPerson" */
@@ -6983,6 +6989,7 @@ export type Collection_Tag_Variance_Order_By = {
 export type Collection_SearchProgramPerson_Args = {
     conferenceid?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+    subconferenceid?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -23748,9 +23755,11 @@ export type Registrant_Group_Bool_Exp = {
 /** unique or primary key constraints on table "registrant.Group" */
 export enum Registrant_Group_Constraint {
     /** unique or primary key constraint */
-    GroupConferenceIdNameKey = "Group_conferenceId_name_key",
-    /** unique or primary key constraint */
     GroupPkey = "Group_pkey",
+    /** unique or primary key constraint */
+    RegistrantGroupConferenceIdName = "registrant_Group_conferenceId_name",
+    /** unique or primary key constraint */
+    RegistrantGroupSubconferenceIdName = "registrant_Group_subconferenceId_name",
 }
 
 /** input type for inserting data into table "registrant.Group" */
@@ -29552,6 +29561,10 @@ export type Schedule_Event = {
     mode?: Maybe<Schedule_Mode>;
     modeName?: Maybe<Schedule_Mode_Enum>;
     name: Scalars["String"];
+    /** An array relationship */
+    presentations: Array<Schedule_Event>;
+    /** An aggregate relationship */
+    presentations_aggregate: Schedule_Event_Aggregate;
     /** An object relationship */
     room: Room_Room;
     roomId: Scalars["uuid"];
@@ -29559,6 +29572,8 @@ export type Schedule_Event = {
     roomName?: Maybe<Scalars["String"]>;
     scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
     scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    /** An object relationship */
+    session?: Maybe<Schedule_Event>;
     sessionEventId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     shufflePeriod?: Maybe<Room_ShufflePeriod>;
@@ -29606,6 +29621,24 @@ export type Schedule_EventEventPeople_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Schedule_EventProgramPerson_Order_By>>;
     where?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventPresentationsArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventPresentations_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** columns and relationships of "schedule.EventProgramPerson" */
@@ -30031,11 +30064,13 @@ export type Schedule_Event_Bool_Exp = {
     mode?: InputMaybe<Schedule_Mode_Bool_Exp>;
     modeName?: InputMaybe<Schedule_Mode_Enum_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
+    presentations?: InputMaybe<Schedule_Event_Bool_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     roomId?: InputMaybe<Uuid_Comparison_Exp>;
     roomName?: InputMaybe<String_Comparison_Exp>;
     scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    session?: InputMaybe<Schedule_Event_Bool_Exp>;
     sessionEventId?: InputMaybe<Uuid_Comparison_Exp>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -30073,10 +30108,12 @@ export type Schedule_Event_Insert_Input = {
     mode?: InputMaybe<Schedule_Mode_Obj_Rel_Insert_Input>;
     modeName?: InputMaybe<Schedule_Mode_Enum>;
     name?: InputMaybe<Scalars["String"]>;
+    presentations?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: InputMaybe<Scalars["uuid"]>;
     scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
     scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    session?: InputMaybe<Schedule_Event_Obj_Rel_Insert_Input>;
     sessionEventId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
@@ -30213,11 +30250,13 @@ export type Schedule_Event_Order_By = {
     mode?: InputMaybe<Schedule_Mode_Order_By>;
     modeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
+    presentations_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     roomId?: InputMaybe<Order_By>;
     roomName?: InputMaybe<Order_By>;
     scheduledEndTime?: InputMaybe<Order_By>;
     scheduledStartTime?: InputMaybe<Order_By>;
+    session?: InputMaybe<Schedule_Event_Order_By>;
     sessionEventId?: InputMaybe<Order_By>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
@@ -39678,13 +39717,8 @@ export type LocalSchedule_GetEventScheduleQuery = {
         id: any;
         scheduledEndTime?: any | null;
         scheduledStartTime?: any | null;
-        autoPlayElementId?: any | null;
         modeName?: Schedule_Mode_Enum | null;
-        item?: {
-            __typename?: "content_Item";
-            id: any;
-            elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
-        } | null;
+        autoPlayElement?: { __typename?: "content_Element"; id: any; data: any } | null;
         eventVonageSession?: {
             __typename?: "video_EventVonageSession";
             id: any;
@@ -39706,13 +39740,8 @@ export type LocalSchedule_GetScheduleQuery = {
         id: any;
         scheduledEndTime?: any | null;
         scheduledStartTime?: any | null;
-        autoPlayElementId?: any | null;
         modeName?: Schedule_Mode_Enum | null;
-        item?: {
-            __typename?: "content_Item";
-            id: any;
-            elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
-        } | null;
+        autoPlayElement?: { __typename?: "content_Element"; id: any; data: any } | null;
         eventVonageSession?: {
             __typename?: "video_EventVonageSession";
             id: any;
@@ -39731,13 +39760,8 @@ export type LocalSchedule_EventDetailsFragment = {
     id: any;
     scheduledEndTime?: any | null;
     scheduledStartTime?: any | null;
-    autoPlayElementId?: any | null;
     modeName?: Schedule_Mode_Enum | null;
-    item?: {
-        __typename?: "content_Item";
-        id: any;
-        elements: Array<{ __typename?: "content_Element"; id: any; data: any }>;
-    } | null;
+    autoPlayElement?: { __typename?: "content_Element"; id: any; data: any } | null;
     eventVonageSession?: {
         __typename?: "video_EventVonageSession";
         id: any;
@@ -39877,77 +39901,19 @@ export const LocalSchedule_EventDetailsFragmentDoc = {
                 kind: "SelectionSet",
                 selections: [
                     { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
+                    { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
                     {
                         kind: "Field",
-                        name: { kind: "Name", value: "item" },
+                        name: { kind: "Name", value: "autoPlayElement" },
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "elements" },
-                                    arguments: [
-                                        {
-                                            kind: "Argument",
-                                            name: { kind: "Name", value: "where" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "typeName" },
-                                                        value: {
-                                                            kind: "ObjectValue",
-                                                            fields: [
-                                                                {
-                                                                    kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "_eq" },
-                                                                    value: {
-                                                                        kind: "EnumValue",
-                                                                        value: "VIDEO_BROADCAST",
-                                                                    },
-                                                                },
-                                                            ],
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                        {
-                                            kind: "Argument",
-                                            name: { kind: "Name", value: "limit" },
-                                            value: { kind: "IntValue", value: "1" },
-                                        },
-                                        {
-                                            kind: "Argument",
-                                            name: { kind: "Name", value: "order_by" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "createdAt" },
-                                                        value: { kind: "EnumValue", value: "desc_nulls_last" },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            { kind: "Field", name: { kind: "Name", value: "data" } },
-                                        ],
-                                    },
-                                },
+                                { kind: "Field", name: { kind: "Name", value: "data" } },
                             ],
                         },
                     },
-                    { kind: "Field", name: { kind: "Name", value: "scheduledEndTime" } },
-                    { kind: "Field", name: { kind: "Name", value: "scheduledStartTime" } },
-                    { kind: "Field", name: { kind: "Name", value: "autoPlayElementId" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "eventVonageSession" },

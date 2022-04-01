@@ -1779,6 +1779,8 @@ type VAPIDPublicKeyOutput {
     key: String!
 }
 
+scalar _uuid
+
 """
 columns and relationships of "analytics.AppStats"
 """
@@ -24797,6 +24799,35 @@ type mutation_root {
     notifyEventStarted(eventId: uuid!): NotifyEventStarted!
     presence_Flush: PresenceFlushOutput!
     refreshYouTubeData(registrantGoogleAccountId: uuid!, registrantId: uuid!): RefreshYouTubeDataOutput
+    """
+    execute VOLATILE function "schedule.shiftTimes" which returns "schedule.Event"
+    """
+    schedule_shiftTimes(
+        """
+        input parameters for function "schedule.shiftTimes"
+        """
+        args: schedule_shiftTimes_args!
+        """
+        distinct select on columns
+        """
+        distinct_on: [schedule_Event_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [schedule_Event_order_by!]
+        """
+        filter the rows returned
+        """
+        where: schedule_Event_bool_exp
+    ): [schedule_Event!]!
     stopEventBroadcast(eventId: uuid!): StopEventBroadcastOutput
     submitGoogleOAuthCode(code: String!, state: String!): SubmitGoogleOAuthCodeOutput
     submitUploadableElement(data: jsonb!, elementId: uuid!, magicToken: String!): SubmitUploadableElementOutput
@@ -44655,6 +44686,11 @@ enum schedule_StarredEvent_update_column {
 input schedule_searchEvents_args {
     conferenceId: uuid
     search: String
+}
+
+input schedule_shiftTimes_args {
+    eventIds: _uuid
+    minutes: Int
 }
 
 """

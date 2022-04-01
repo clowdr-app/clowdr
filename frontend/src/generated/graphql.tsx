@@ -20,6 +20,7 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
+    _uuid: any;
     bigint: any;
     float8: any;
     jsonb: any;
@@ -16144,6 +16145,8 @@ export type Mutation_Root = {
     readonly notifyEventStarted: NotifyEventStarted;
     readonly presence_Flush: PresenceFlushOutput;
     readonly refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
+    /** execute VOLATILE function "schedule.shiftTimes" which returns "schedule.Event" */
+    readonly schedule_shiftTimes: ReadonlyArray<Schedule_Event>;
     readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     readonly submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     readonly submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
@@ -18838,6 +18841,16 @@ export type Mutation_RootNotifyEventStartedArgs = {
 export type Mutation_RootRefreshYouTubeDataArgs = {
     registrantGoogleAccountId: Scalars["uuid"];
     registrantId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftTimesArgs = {
+    args: Schedule_ShiftTimes_Args;
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** mutation root */
@@ -30815,6 +30828,11 @@ export enum Schedule_StarredEvent_Update_Column {
 export type Schedule_SearchEvents_Args = {
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly search?: InputMaybe<Scalars["String"]>;
+};
+
+export type Schedule_ShiftTimes_Args = {
+    readonly eventIds?: InputMaybe<Scalars["_uuid"]>;
+    readonly minutes?: InputMaybe<Scalars["Int"]>;
 };
 
 /** columns and relationships of "sponsor.Tier" */
@@ -46751,6 +46769,31 @@ export type ManageSchedule_GetVideoElementsQuery = {
     } | null;
 };
 
+export type ManageSchedule_GetEarliestEventTimeQueryVariables = Exact<{
+    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetEarliestEventTimeQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly scheduledStartTime?: any | null;
+        readonly name: string;
+        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+    }>;
+};
+
+export type ManageSchedule_ShiftTimesMutationVariables = Exact<{
+    ids?: InputMaybe<Scalars["_uuid"]>;
+    minutes: Scalars["Int"];
+}>;
+
+export type ManageSchedule_ShiftTimesMutation = {
+    readonly __typename?: "mutation_root";
+    readonly schedule_shiftTimes: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
+};
+
 export type ContinuationsEditor_ContinuationFragment = {
     readonly __typename?: "schedule_Continuation";
     readonly id: any;
@@ -56805,6 +56848,41 @@ export function useManageSchedule_GetVideoElementsQuery(
         query: ManageSchedule_GetVideoElementsDocument,
         ...options,
     });
+}
+export const ManageSchedule_GetEarliestEventTimeDocument = gql`
+    query ManageSchedule_GetEarliestEventTime($ids: [uuid!]!) {
+        schedule_Event(where: { id: { _in: $ids } }, order_by: [{ scheduledStartTime: asc }], limit: 1) {
+            id
+            scheduledStartTime
+            name
+            item {
+                id
+                title
+            }
+        }
+    }
+`;
+
+export function useManageSchedule_GetEarliestEventTimeQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetEarliestEventTimeQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetEarliestEventTimeQuery>({
+        query: ManageSchedule_GetEarliestEventTimeDocument,
+        ...options,
+    });
+}
+export const ManageSchedule_ShiftTimesDocument = gql`
+    mutation ManageSchedule_ShiftTimes($ids: _uuid, $minutes: Int!) {
+        schedule_shiftTimes(args: { eventIds: $ids, minutes: $minutes }) {
+            id
+        }
+    }
+`;
+
+export function useManageSchedule_ShiftTimesMutation() {
+    return Urql.useMutation<ManageSchedule_ShiftTimesMutation, ManageSchedule_ShiftTimesMutationVariables>(
+        ManageSchedule_ShiftTimesDocument
+    );
 }
 export const ContinuationsEditor_SelectContinuationsDocument = gql`
     query ContinuationsEditor_SelectContinuations($fromId: uuid!) {
@@ -85255,6 +85333,10 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootRefreshYouTubeDataArgs,
         Maybe<WithTypename<RefreshYouTubeDataOutput>>
     >;
+    schedule_shiftTimes?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootSchedule_ShiftTimesArgs,
+        Array<WithTypename<Schedule_Event>>
+    >;
     stopEventBroadcast?: GraphCacheOptimisticMutationResolver<
         Mutation_RootStopEventBroadcastArgs,
         Maybe<WithTypename<StopEventBroadcastOutput>>
@@ -87914,6 +87996,10 @@ export type GraphCacheUpdaters = {
         refreshYouTubeData?: GraphCacheUpdateResolver<
             { refreshYouTubeData: Maybe<WithTypename<RefreshYouTubeDataOutput>> },
             Mutation_RootRefreshYouTubeDataArgs
+        >;
+        schedule_shiftTimes?: GraphCacheUpdateResolver<
+            { schedule_shiftTimes: Array<WithTypename<Schedule_Event>> },
+            Mutation_RootSchedule_ShiftTimesArgs
         >;
         stopEventBroadcast?: GraphCacheUpdateResolver<
             { stopEventBroadcast: Maybe<WithTypename<StopEventBroadcastOutput>> },

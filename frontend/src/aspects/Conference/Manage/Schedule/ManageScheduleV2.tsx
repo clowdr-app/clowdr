@@ -70,6 +70,7 @@ import PeoplePanel from "./Components/PeoplePanel";
 import type { ScheduleEditorRecord } from "./Components/ScheduleEditorRecord";
 import SessionCard from "./Components/SessionCard";
 import SettingsPanel from "./Components/SettingsPanel";
+import ShiftTimesModal from "./Components/ShiftTimesModal";
 
 gql`
     fragment ManageSchedule_ItemTag on content_ItemTag {
@@ -442,8 +443,11 @@ export default function ManageScheduleV2(): JSX.Element {
     const editorDisclosure = useDisclosure();
     const [editorIsCreate, setEditorIsCreate] = useState<boolean>(false);
     const deleteEventsDisclosure = useDisclosure();
+    const shiftEventsDisclosure = useDisclosure();
     const [deleteEventIds, setDeleteEventIds] = useState<string[]>([]);
     const [deleteEventType, setDeleteEventType] = useState<"session" | "presentation">("session");
+
+    const [shiftEventIds, setShiftEventIds] = useState<string[]>([]);
 
     const [initialStepIdx, setInitialStepIdx] = useState<number>(0);
     const [currentRecord, setCurrentRecord] = useState<DeepPartial<ScheduleEditorRecord>>({});
@@ -476,6 +480,13 @@ export default function ManageScheduleV2(): JSX.Element {
             deleteEventsDisclosure.onOpen();
         },
         [deleteEventsDisclosure]
+    );
+    const onShiftSessions = useCallback(
+        (ids: string[]) => {
+            setShiftEventIds(ids);
+            shiftEventsDisclosure.onOpen();
+        },
+        [shiftEventsDisclosure]
     );
     const onExportSessions = useCallback((_ids: string[]) => {
         // TODO:
@@ -684,7 +695,7 @@ export default function ManageScheduleV2(): JSX.Element {
                         </>
                     ) : (
                         <HStack justifyContent="flex-end" spacing={2}>
-                            <Button
+                            {/* <Button
                                 colorScheme="blue"
                                 variant="outline"
                                 onClick={() => {
@@ -695,8 +706,8 @@ export default function ManageScheduleV2(): JSX.Element {
                                 fontWeight="400"
                             >
                                 Add people
-                            </Button>
-                            <Button
+                            </Button> */}
+                            {/* <Button
                                 colorScheme="blue"
                                 variant="outline"
                                 onClick={() => {
@@ -707,12 +718,12 @@ export default function ManageScheduleV2(): JSX.Element {
                                 fontWeight="400"
                             >
                                 Manage tags
-                            </Button>
+                            </Button> */}
                             <Button
                                 colorScheme="blue"
                                 variant="outline"
                                 onClick={() => {
-                                    // TODO:
+                                    onShiftSessions([...selectedSessions]);
                                 }}
                                 borderRadius="xl"
                                 bgColor={bulkButtonBgColour}
@@ -720,7 +731,7 @@ export default function ManageScheduleV2(): JSX.Element {
                             >
                                 Shift times
                             </Button>
-                            <Button
+                            {/* <Button
                                 colorScheme="blue"
                                 variant="outline"
                                 onClick={() => {
@@ -731,7 +742,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                 fontWeight="400"
                             >
                                 Export
-                            </Button>
+                            </Button> */}
                             <Button
                                 colorScheme="DestructiveActionButton"
                                 variant="outline"
@@ -1373,6 +1384,17 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                 }}
                 deleteEventIds={deleteEventIds}
                 deleteEventType={deleteEventType}
+            />
+            <ShiftTimesModal
+                isOpen={shiftEventsDisclosure.isOpen}
+                onClose={(didShift) => {
+                    shiftEventsDisclosure.onClose();
+                    if (didShift) {
+                        shiftEventIds.forEach((x) => refetchPresentations.get(x)?.current?.());
+                        refetchSessions();
+                    }
+                }}
+                eventIds={shiftEventIds}
             />
         </DashboardPage>
     );

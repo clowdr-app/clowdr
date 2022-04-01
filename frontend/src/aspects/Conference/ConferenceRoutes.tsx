@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect } from "react";
 import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import { Registrant_RegistrantRole_Enum } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
 import { useAuthParameters } from "../GQL/AuthParameters";
@@ -46,13 +47,22 @@ export default function ConferenceRoutes(): JSX.Element {
     }, [conference.themeComponentColors, setTheme]);
 
     const isOnManagementPage = useRouteMatch(`${path}/manage`);
-    const { setIsOnManagementPage, setSubconferenceId } = useAuthParameters();
+    const { setIsOnManagementPage, setSubconferenceId, subconferenceId } = useAuthParameters();
     useEffect(() => {
         setIsOnManagementPage(Boolean(isOnManagementPage));
-        if (!isOnManagementPage) {
+    }, [setIsOnManagementPage, isOnManagementPage]);
+    useEffect(() => {
+        if (
+            isOnManagementPage &&
+            subconferenceId &&
+            mRegistrant &&
+            !mRegistrant?.subconferenceMemberships?.find(
+                (x) => x.subconferenceId === subconferenceId && x.role === Registrant_RegistrantRole_Enum.Organizer
+            )
+        ) {
             setSubconferenceId(null);
         }
-    }, [setIsOnManagementPage, isOnManagementPage, setSubconferenceId]);
+    }, [isOnManagementPage, mRegistrant, setSubconferenceId, subconferenceId]);
 
     return (
         <Suspense fallback={<CenteredSpinner caller="ConferenceRoutes:56" />}>

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useRestorableState } from "../Hooks/useRestorableState";
 
 export interface AuthParameters {
     conferencePath: string | null;
@@ -27,7 +28,12 @@ export function AuthParametersProvider({ children }: React.PropsWithChildren<Rec
     const [conferencePath, setConferencePath] = useState<string | null>(null);
     const [conferenceSlug, setConferenceSlug] = useState<string | null>(null);
     const [conferenceId, setConferenceId] = useState<string | null>(null);
-    const [subconferenceId, setSubconferenceId] = useState<string | null>(null);
+    const [subconferenceId, setSubconferenceId] = useRestorableState<string | null>(
+        `clowdr-subconferenceId-${conferenceId}`,
+        null,
+        (x) => JSON.stringify(x),
+        (x) => JSON.parse(x)
+    );
     const [isOnManagementPage, setIsOnManagementPage] = useState<boolean>(false);
     const ctx = useMemo(
         () => ({
@@ -37,12 +43,12 @@ export function AuthParametersProvider({ children }: React.PropsWithChildren<Rec
             setConferenceSlug,
             conferenceId,
             setConferenceId,
-            subconferenceId,
+            subconferenceId: isOnManagementPage ? subconferenceId : null,
             setSubconferenceId,
             isOnManagementPage,
             setIsOnManagementPage,
         }),
-        [conferencePath, conferenceSlug, conferenceId, subconferenceId, isOnManagementPage]
+        [conferencePath, conferenceSlug, conferenceId, subconferenceId, setSubconferenceId, isOnManagementPage]
     );
 
     return <AuthParameters.Provider value={ctx}>{children}</AuthParameters.Provider>;

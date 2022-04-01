@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function useRestorableState<T>(
     uniqueKey: string,
@@ -28,6 +28,10 @@ export function useStoredState<T>(
 ): [T, Dispatch<SetStateAction<T>>] {
     const locallyStoredValue = storage.getItem(uniqueKey);
     const [t, setTInner] = useState<T>(locallyStoredValue ? parse(locallyStoredValue) : initial);
+    useEffect(() => {
+        setTInner(locallyStoredValue ? parse(locallyStoredValue) : initial);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [locallyStoredValue]);
     const setT = useCallback(
         (f: SetStateAction<T>) => {
             setTInner((old) => {

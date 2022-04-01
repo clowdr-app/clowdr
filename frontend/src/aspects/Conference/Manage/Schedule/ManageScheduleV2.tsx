@@ -36,8 +36,16 @@ import type {
     ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables,
     ManageSchedule_InsertEventMutation,
     ManageSchedule_InsertEventMutationVariables,
+    ManageSchedule_InsertItemMutation,
+    ManageSchedule_InsertItemMutationVariables,
     ManageSchedule_PresentationFragment,
     ManageSchedule_SessionFragment,
+    ManageSchedule_UpdateElementMutation,
+    ManageSchedule_UpdateElementMutationVariables,
+    ManageSchedule_UpdateEventMutation,
+    ManageSchedule_UpdateEventMutationVariables,
+    ManageSchedule_UpdateItemMutation,
+    ManageSchedule_UpdateItemMutationVariables,
     Schedule_Event_Bool_Exp,
 } from "../../../../generated/graphql";
 import {
@@ -45,18 +53,23 @@ import {
     ManageSchedule_GetAllSessionIdsDocument,
     ManageSchedule_GetPotentiallyOverlappingEventsDocument,
     ManageSchedule_InsertEventDocument,
+    ManageSchedule_InsertItemDocument,
+    ManageSchedule_UpdateElementDocument,
+    ManageSchedule_UpdateEventDocument,
+    ManageSchedule_UpdateItemDocument,
     useManageSchedule_GetSessionsPageQuery,
     useManageSchedule_GetTagsQuery,
 } from "../../../../generated/graphql";
 import SelectButton from "../../../Card/SelectButton";
 import Editor from "../../../CRUDCards/Editor";
-import type { DeepPartial } from "../../../CRUDCards/Types";
+import type { DeepPartial, ValidationState } from "../../../CRUDCards/Types";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
+import ContentPanel from "./Components/ContentPanel";
 import DetailsPanel from "./Components/DetailsPanel";
 import HeaderControls from "./Components/HeaderControls";
 import PeoplePanel from "./Components/PeoplePanel";
@@ -93,14 +106,11 @@ gql`
         itemPeople {
             ...ManageSchedule_ItemPerson
         }
-        abstract: elements(where: { typeName: { _eq: ABSTRACT } }) {
-            id
-            data
+        abstract: elements(where: { typeName: { _eq: ABSTRACT } }, limit: 1) {
+            ...ManageSchedule_Element
         }
-        externalEventLink: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }) {
-            id
-            data
-            name
+        externalEventLink: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }, limit: 1) {
+            ...ManageSchedule_Element
         }
         elements_aggregate {
             aggregate {
@@ -224,8 +234,91 @@ gql`
         }
     }
 
+    mutation ManageSchedule_UpdateEvent(
+        $id: uuid!
+        $event: schedule_Event_set_input!
+        $eventPeople: [schedule_EventProgramPerson_insert_input!]!
+        $eventPersonIds: [uuid!]!
+    ) {
+        update_schedule_Event_by_pk(pk_columns: { id: $id }, _set: $event) {
+            id
+        }
+        delete_schedule_EventProgramPerson(where: { eventId: { _eq: $id }, id: { _nin: $eventPersonIds } }) {
+            affected_rows
+        }
+        insert_schedule_EventProgramPerson(
+            objects: $eventPeople
+            on_conflict: { constraint: EventProgramPerson_eventId_personId_roleName_key, update_columns: [roleName] }
+        ) {
+            affected_rows
+        }
+    }
+
+    mutation ManageSchedule_InsertItem($object: content_Item_insert_input!) {
+        insert_content_Item_one(object: $object) {
+            id
+        }
+    }
+
+    mutation ManageSchedule_UpdateItem(
+        $id: uuid!
+        $item: content_Item_set_input!
+        $itemPeople: [content_ItemProgramPerson_insert_input!]!
+        $itemPersonIds: [uuid!]!
+        $itemTags: [content_ItemTag_insert_input!]!
+        $itemTagIds: [uuid!]!
+        $newElements: [content_Element_insert_input!]!
+        $deletedElementIds: [uuid!]!
+    ) {
+        update_content_Item_by_pk(pk_columns: { id: $id }, _set: $item) {
+            id
+        }
+        delete_content_ItemProgramPerson(where: { itemId: { _eq: $id }, id: { _nin: $itemPersonIds } }) {
+            affected_rows
+        }
+        insert_content_ItemProgramPerson(
+            objects: $itemPeople
+            on_conflict: {
+                constraint: ItemProgramPerson_roleName_personId_itemId_key
+                update_columns: [priority, roleName]
+            }
+        ) {
+            affected_rows
+        }
+        delete_content_ItemTag(where: { itemId: { _eq: $id }, id: { _nin: $itemTagIds } }) {
+            affected_rows
+        }
+        insert_content_ItemTag(
+            objects: $itemTags
+            on_conflict: { constraint: ItemTag_itemId_tagId_key, update_columns: [] }
+        ) {
+            affected_rows
+        }
+        delete_content_Element(where: { itemId: { _eq: $id }, id: { _in: $deletedElementIds } }) {
+            affected_rows
+        }
+        insert_content_Element(objects: $newElements) {
+            affected_rows
+        }
+    }
+
+    mutation ManageSchedule_UpdateElement($id: uuid!, $element: content_Element_set_input!) {
+        update_content_Element_by_pk(pk_columns: { id: $id }, _set: $element) {
+            id
+        }
+    }
+
     mutation ManageSchedule_DeleteEvents($ids: [uuid!]!) {
         delete_schedule_Event(where: { id: { _in: $ids } }) {
+            affected_rows
+        }
+    }
+
+    mutation ManageSchedule_DeleteEventsAndContent($eventIds: [uuid!]!, $itemIds: [uuid!]!) {
+        delete_schedule_Event(where: { id: { _in: $eventIds } }) {
+            affected_rows
+        }
+        delete_content_Item(where: { id: { _in: $itemIds } }) {
             affected_rows
         }
     }
@@ -348,6 +441,7 @@ gql`
         $startBefore: timestamptz!
         $endAfter: timestamptz!
         $sessionCond: uuid_comparison_exp!
+        $excludeId: uuid
     ) {
         schedule_Event_aggregate(
             where: {
@@ -355,6 +449,7 @@ gql`
                 scheduledStartTime: { _lt: $startBefore }
                 scheduledEndTime: { _gt: $endAfter }
                 sessionEventId: $sessionCond
+                id: { _neq: $excludeId }
             }
         ) {
             aggregate {
@@ -490,8 +585,7 @@ export default function ManageScheduleV2(): JSX.Element {
             clearTimeout(tId);
         };
     }, [searchName, startAfter]);
-    const [sessionsResponse] = useManageSchedule_GetSessionsPageQuery({
-        requestPolicy: "network-only",
+    const [sessionsResponse, refetchSessions] = useManageSchedule_GetSessionsPageQuery({
         variables: {
             conferenceId: conference.id,
             subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
@@ -500,6 +594,7 @@ export default function ManageScheduleV2(): JSX.Element {
             filter,
         },
         context,
+        requestPolicy: "cache-and-network",
     });
     const [tagsResponse] = useManageSchedule_GetTagsQuery({
         variables: {
@@ -507,6 +602,7 @@ export default function ManageScheduleV2(): JSX.Element {
             subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
+        requestPolicy: "cache-and-network",
     });
     const tags = useMemo(() => tagsResponse.data?.collection_Tag ?? [], [tagsResponse.data?.collection_Tag]);
     const actualError = useMemo(() => extractActualError(sessionsResponse.error), [sessionsResponse.error]);
@@ -833,7 +929,7 @@ export default function ManageScheduleV2(): JSX.Element {
                     },
                     {
                         name: "Content",
-                        panel: (_props) => <>TODO</>,
+                        panel: ContentPanel,
                     },
                     {
                         name: "Settings",
@@ -843,18 +939,9 @@ export default function ManageScheduleV2(): JSX.Element {
                 initialStepIdx={initialStepIdx}
                 initialRecord={currentRecord}
                 isSaving={isSaving}
-                onSave={async (inputRecord) => {
-                    // TODO: After edit, refetch
+                onSave={async (record) => {
                     setIsSaving(true);
                     try {
-                        let record: DeepPartial<ManageSchedule_SessionFragment | ManageSchedule_PresentationFragment>;
-                        if ("session" in inputRecord) {
-                            record = { ...inputRecord };
-                            delete (record as any).session;
-                        } else {
-                            record = inputRecord;
-                        }
-
                         if (record.scheduledStartTime || record.scheduledEndTime) {
                             const overlapsResponse = await client
                                 .query<
@@ -874,6 +961,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                                   },
                                         startBefore: record.scheduledEndTime,
                                         endAfter: record.scheduledStartTime,
+                                        excludeId: record.id,
                                     },
                                     {
                                         ...makeContext({
@@ -902,13 +990,287 @@ export default function ManageScheduleV2(): JSX.Element {
                             }
                         }
 
-                        // TODO: Remove (nested) aggregate fields
+                        let itemId: string | undefined = record.itemId;
+
+                        if (record.item) {
+                            const itemRecord = record.item;
+
+                            const newElements = record.elements?.filter((x) => !x.id) ?? [];
+                            const updatedElements = record.elements?.filter((x) => x.id) ?? [];
+                            const deletedElementIds = record.deletedElementIds ? [...record.deletedElementIds] : [];
+
+                            if (itemRecord.abstract?.length) {
+                                const abstractRecord = itemRecord.abstract[0];
+                                if (abstractRecord.id) {
+                                    updatedElements.push(abstractRecord);
+                                } else {
+                                    newElements.push(abstractRecord);
+                                }
+                            }
+
+                            if (itemRecord.externalEventLink?.length) {
+                                const externalEventLinkRecord = itemRecord.externalEventLink[0];
+                                if (externalEventLinkRecord.id) {
+                                    updatedElements.push(externalEventLinkRecord);
+                                } else {
+                                    newElements.push(externalEventLinkRecord);
+                                }
+                            }
+
+                            if (itemRecord.id) {
+                                itemId = itemRecord.id;
+
+                                {
+                                    const result = await client
+                                        .mutation<
+                                            ManageSchedule_UpdateItemMutation,
+                                            ManageSchedule_UpdateItemMutationVariables
+                                        >(
+                                            ManageSchedule_UpdateItemDocument,
+                                            {
+                                                id: itemRecord.id,
+                                                item: {
+                                                    title: itemRecord.title,
+                                                    typeName: itemRecord.typeName,
+                                                },
+                                                itemPeople:
+                                                    itemRecord.itemPeople?.map((x) => ({
+                                                        itemId: itemRecord.id,
+                                                        personId: x.personId,
+                                                        priority: x.priority,
+                                                        roleName: x.roleName,
+                                                    })) ?? [],
+                                                itemPersonIds:
+                                                    (itemRecord.itemPeople
+                                                        ?.filter((x) => Boolean(x.personId))
+                                                        .map((x) => x.personId) as string[] | undefined) ?? [],
+                                                itemTags:
+                                                    itemRecord.itemTags?.map((x) => ({
+                                                        itemId: itemRecord.id,
+                                                        tagId: x.tagId,
+                                                    })) ?? [],
+                                                itemTagIds:
+                                                    (itemRecord.itemTags
+                                                        ?.filter((x) => Boolean(x.tagId))
+                                                        .map((x) => x.tagId) as string[] | undefined) ?? [],
+                                                newElements: newElements.map((x) => ({
+                                                    itemId: itemRecord.id,
+                                                    conferenceId: conference.id,
+                                                    subconferenceId,
+                                                    data: x.data,
+                                                    layoutData: x.layoutData,
+                                                    isHidden: x.isHidden ?? false,
+                                                    name: x.name,
+                                                    typeName: x.typeName,
+                                                    uploadsRemaining: x.uploadsRemaining ?? 0,
+                                                })),
+                                                deletedElementIds,
+                                            },
+                                            makeContext({
+                                                [AuthHeader.Role]: subconferenceId
+                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                    : HasuraRoleName.ConferenceOrganizer,
+                                            })
+                                        )
+                                        .toPromise();
+
+                                    if (result.error) {
+                                        return {
+                                            error:
+                                                extractActualError(result.error) ??
+                                                "Unknown error while updating the event content.",
+                                        };
+                                    }
+                                    if (!result.data?.update_content_Item_by_pk?.id) {
+                                        return { error: "Event content not updated for unknown reason." };
+                                    }
+                                }
+
+                                const elementStates = await Promise.all<ValidationState>(
+                                    updatedElements.map(async (elementRecord) => {
+                                        const result = await client
+                                            .mutation<
+                                                ManageSchedule_UpdateElementMutation,
+                                                ManageSchedule_UpdateElementMutationVariables
+                                            >(
+                                                ManageSchedule_UpdateElementDocument,
+                                                {
+                                                    id: elementRecord.id,
+                                                    element: {
+                                                        data: elementRecord.data,
+                                                        isHidden: elementRecord.isHidden,
+                                                        layoutData: elementRecord.layoutData,
+                                                        name: elementRecord.name,
+                                                        typeName: elementRecord.typeName,
+                                                        uploadsRemaining: elementRecord.uploadsRemaining,
+                                                    },
+                                                },
+                                                makeContext({
+                                                    [AuthHeader.Role]: subconferenceId
+                                                        ? HasuraRoleName.SubconferenceOrganizer
+                                                        : HasuraRoleName.ConferenceOrganizer,
+                                                })
+                                            )
+                                            .toPromise();
+
+                                        if (result.error) {
+                                            return {
+                                                error:
+                                                    extractActualError(result.error) ??
+                                                    "Unknown error while updating the event content element.",
+                                            };
+                                        }
+                                        if (!result.data?.update_content_Element_by_pk?.id) {
+                                            return { error: "Event content element not updated for unknown reason." };
+                                        }
+                                        return "no error";
+                                    })
+                                );
+                                const anyElementUpdateErrors = elementStates.some((x) => x !== "no error");
+                                if (anyElementUpdateErrors) {
+                                    return {
+                                        error: `One or more elements failed to update:
+${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st.error}`)}
+`,
+                                    };
+                                }
+                            } else {
+                                const result = await client
+                                    .mutation<
+                                        ManageSchedule_InsertItemMutation,
+                                        ManageSchedule_InsertItemMutationVariables
+                                    >(
+                                        ManageSchedule_InsertItemDocument,
+                                        {
+                                            object: {
+                                                conferenceId: conference.id,
+                                                subconferenceId,
+
+                                                title: itemRecord.title,
+                                                typeName:
+                                                    record.item.typeName ??
+                                                    ("sessionEventId" in record && record.sessionEventId
+                                                        ? Content_ItemType_Enum.Presentation
+                                                        : Content_ItemType_Enum.Session),
+
+                                                itemTags: record.item.itemTags
+                                                    ? {
+                                                          data: record.item.itemTags.map((x) => ({
+                                                              tagId: x.tagId,
+                                                          })),
+                                                      }
+                                                    : undefined,
+                                                itemPeople: record.item.itemPeople
+                                                    ? {
+                                                          data: record.item.itemPeople.map((x) => ({
+                                                              personId: x.personId,
+                                                              priority: x.priority,
+                                                              roleName: x.roleName,
+                                                          })),
+                                                      }
+                                                    : undefined,
+
+                                                elements: {
+                                                    data: [...newElements, ...updatedElements].map((elementRecord) => ({
+                                                        conferenceId: conference.id,
+                                                        subconferenceId,
+                                                        data: elementRecord.data,
+                                                        isHidden: elementRecord.isHidden,
+                                                        layoutData: elementRecord.layoutData,
+                                                        name: elementRecord.name,
+                                                        typeName: elementRecord.typeName,
+                                                        uploadsRemaining: elementRecord.uploadsRemaining,
+                                                    })),
+                                                },
+                                            },
+                                        },
+                                        makeContext({
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
+                                        })
+                                    )
+                                    .toPromise();
+
+                                if (result.error) {
+                                    return {
+                                        error:
+                                            extractActualError(result.error) ??
+                                            "Unknown error while updating the event content.",
+                                    };
+                                }
+                                if (!result.data?.insert_content_Item_one?.id) {
+                                    return { error: "Event content not inserted for unknown reason." };
+                                }
+
+                                itemId = result.data.insert_content_Item_one.id;
+                            }
+                        }
 
                         if (record.id) {
-                            // TODO: Edit
-                            return { error: "Not implemented" };
+                            const result = await client
+                                .mutation<
+                                    ManageSchedule_UpdateEventMutation,
+                                    ManageSchedule_UpdateEventMutationVariables
+                                >(
+                                    ManageSchedule_UpdateEventDocument,
+                                    {
+                                        id: record.id,
+                                        event: {
+                                            name: record.name,
+                                            scheduledStartTime: record.scheduledStartTime,
+                                            scheduledEndTime: record.scheduledEndTime,
+                                            modeName: "modeName" in record ? record.modeName : undefined,
+                                            roomId: record.roomId,
+                                            itemId,
+                                            exhibitionId: "exhibitionId" in record ? record.exhibitionId : undefined,
+                                            shufflePeriodId:
+                                                "shufflePeriodId" in record ? record.shufflePeriodId : undefined,
+
+                                            enableRecording:
+                                                "enableRecording" in record ? record.enableRecording : undefined,
+                                            autoPlayElementId:
+                                                "autoPlayElementId" in record ? record.autoPlayElementId : undefined,
+                                            streamTextEventId:
+                                                "streamTextEventId" in record ? record.streamTextEventId : undefined,
+                                            automaticParticipationSurvey:
+                                                "automaticParticipationSurvey" in record
+                                                    ? record.automaticParticipationSurvey
+                                                    : undefined,
+                                        },
+                                        eventPeople:
+                                            record.eventPeople?.map((x) => ({
+                                                eventId: record.id,
+                                                roleName: x.roleName,
+                                                personId: x.personId,
+                                            })) ?? [],
+                                        eventPersonIds:
+                                            record.eventPeople?.filter((x) => x.personId).map((x) => x.personId) ?? [],
+                                    },
+                                    makeContext({
+                                        [AuthHeader.Role]: subconferenceId
+                                            ? HasuraRoleName.SubconferenceOrganizer
+                                            : HasuraRoleName.ConferenceOrganizer,
+                                    })
+                                )
+                                .toPromise();
+
+                            if (result.error) {
+                                return {
+                                    error:
+                                        extractActualError(result.error) ?? "Unknown error while inserting the event.",
+                                };
+                            }
+                            if (!result.data?.update_schedule_Event_by_pk) {
+                                return { error: "Event not updated for unknown reason." };
+                            }
+
+                            if ("sessionEventId" in record && record.sessionEventId) {
+                                refetchPresentations.get(record.sessionEventId)?.current?.();
+                            } else {
+                                refetchSessions();
+                            }
                         } else {
-                            // TODO: Handle that the item, elements, etc might already exist
                             const result = await client
                                 .mutation<
                                     ManageSchedule_InsertEventMutation,
@@ -917,38 +1279,39 @@ export default function ManageScheduleV2(): JSX.Element {
                                     ManageSchedule_InsertEventDocument,
                                     {
                                         object: {
-                                            // TODO: Other fields
-                                            ...record,
+                                            id: record.id,
                                             conferenceId: conference.id,
                                             subconferenceId,
+                                            sessionEventId:
+                                                "sessionEventId" in record ? record.sessionEventId : undefined,
+                                            name: record.name,
+                                            scheduledStartTime: record.scheduledStartTime,
+                                            scheduledEndTime: record.scheduledEndTime,
+                                            modeName: "modeName" in record ? record.modeName : undefined,
+                                            roomId: record.roomId,
+                                            itemId,
+                                            exhibitionId: "exhibitionId" in record ? record.exhibitionId : undefined,
+                                            shufflePeriodId:
+                                                "shufflePeriodId" in record ? record.shufflePeriodId : undefined,
+
+                                            enableRecording:
+                                                "enableRecording" in record ? record.enableRecording : undefined,
+                                            autoPlayElementId:
+                                                "autoPlayElementId" in record ? record.autoPlayElementId : undefined,
+                                            streamTextEventId:
+                                                "streamTextEventId" in record ? record.streamTextEventId : undefined,
+                                            automaticParticipationSurvey:
+                                                "automaticParticipationSurvey" in record
+                                                    ? record.automaticParticipationSurvey
+                                                    : undefined,
+
                                             eventPeople: record.eventPeople
                                                 ? {
-                                                      data: record.eventPeople,
-                                                  }
-                                                : undefined,
-                                            item: record.item
-                                                ? {
-                                                      data: {
-                                                          // TODO: Remap "abstract" field to "elements"
-                                                          ...record.item,
-                                                          conferenceId: conference.id,
-                                                          subconferenceId,
-                                                          typeName:
-                                                              record.item.typeName ??
-                                                              ("sessionEventId" in record && record.sessionEventId
-                                                                  ? Content_ItemType_Enum.Presentation
-                                                                  : Content_ItemType_Enum.Session),
-                                                          itemTags: record.item.itemTags
-                                                              ? {
-                                                                    data: record.item.itemTags,
-                                                                }
-                                                              : undefined,
-                                                          itemPeople: record.item.itemPeople
-                                                              ? {
-                                                                    data: record.item.itemPeople,
-                                                                }
-                                                              : undefined,
-                                                      },
+                                                      data: record.eventPeople.map((x) => ({
+                                                          id: x.id,
+                                                          roleName: x.roleName,
+                                                          personId: x.personId,
+                                                      })),
                                                   }
                                                 : undefined,
                                         },
@@ -960,52 +1323,52 @@ export default function ManageScheduleV2(): JSX.Element {
                                     })
                                 )
                                 .toPromise();
+
                             if (result.error) {
                                 return {
                                     error:
-                                        extractActualError(result.error) ??
-                                        "Unknown error while inserting the session.",
+                                        extractActualError(result.error) ?? "Unknown error while inserting the event.",
                                 };
                             }
                             if (!result.data?.insert_schedule_Event_one) {
-                                return { error: "Session not inserted for unknown reason." };
-                            }
-
-                            const ordering = await client
-                                .query<
-                                    ManageSchedule_GetAllSessionIdsQuery,
-                                    ManageSchedule_GetAllSessionIdsQueryVariables
-                                >(
-                                    ManageSchedule_GetAllSessionIdsDocument,
-                                    {
-                                        conferenceId: conference.id,
-                                        subconferenceCond: subconferenceId
-                                            ? { _eq: subconferenceId }
-                                            : { _is_null: true },
-                                        filter,
-                                    },
-                                    makeContext({
-                                        [AuthHeader.Role]: subconferenceId
-                                            ? HasuraRoleName.SubconferenceOrganizer
-                                            : HasuraRoleName.ConferenceOrganizer,
-                                    })
-                                )
-                                .toPromise();
-                            if (ordering.error) {
-                                return {
-                                    error:
-                                        extractActualError(ordering.error) ??
-                                        "Unknown error retrieving ordering of sessions.",
-                                };
-                            }
-
-                            if (!ordering.data) {
-                                return { error: "Unable to retrieve ordering of sessions." };
+                                return { error: "Event not inserted for unknown reason." };
                             }
 
                             if ("sessionEventId" in record && record.sessionEventId) {
                                 refetchPresentations.get(record.sessionEventId)?.current?.();
                             } else {
+                                const ordering = await client
+                                    .query<
+                                        ManageSchedule_GetAllSessionIdsQuery,
+                                        ManageSchedule_GetAllSessionIdsQueryVariables
+                                    >(
+                                        ManageSchedule_GetAllSessionIdsDocument,
+                                        {
+                                            conferenceId: conference.id,
+                                            subconferenceCond: subconferenceId
+                                                ? { _eq: subconferenceId }
+                                                : { _is_null: true },
+                                            filter,
+                                        },
+                                        makeContext({
+                                            [AuthHeader.Role]: subconferenceId
+                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                : HasuraRoleName.ConferenceOrganizer,
+                                        })
+                                    )
+                                    .toPromise();
+                                if (ordering.error) {
+                                    return {
+                                        error:
+                                            extractActualError(ordering.error) ??
+                                            "Unknown error retrieving ordering of sessions.",
+                                    };
+                                }
+
+                                if (!ordering.data) {
+                                    return { error: "Unable to retrieve ordering of sessions." };
+                                }
+
                                 const newId = result.data.insert_schedule_Event_one.id;
                                 const index = ordering.data.schedule_Event.findIndex((x) => x.id === newId);
                                 setOffset(Math.max(0, limit * Math.floor(index / limit)));

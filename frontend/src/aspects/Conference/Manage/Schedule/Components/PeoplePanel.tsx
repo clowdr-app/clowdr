@@ -272,6 +272,7 @@ function PeopleEditor({
             ids: uniquePersonIds,
         },
         context,
+        requestPolicy: "cache-and-network",
     });
 
     const mergedPeople = useMemo(() => {
@@ -418,16 +419,23 @@ function PeopleEditor({
                 ...old,
                 eventPeople: [
                     ...(old.eventPeople?.filter((x) => !x.roleName || !eventPersonRoles.includes(x.roleName)) ?? []),
-                    ...(newPeople.map(
-                        (x) =>
-                            x.eventPerson ?? {
-                                personId: x.itemPerson.id,
-                                roleName:
-                                    mapItemPersonRoleToEventPersonRole(x.itemPerson.roleName) ??
-                                    mapItemPersonRoleToEventPersonRole(defaultRole) ??
-                                    Schedule_EventProgramPersonRole_Enum.Presenter,
-                            }
-                    ) as DeepPartial<ManageSchedule_EventPersonFragment>[]),
+                    ...(newPeople
+                        .filter(
+                            (x) =>
+                                x.eventPerson ||
+                                (mapItemPersonRoleToEventPersonRole(x.itemPerson.roleName) ??
+                                    mapItemPersonRoleToEventPersonRole(defaultRole))
+                        )
+                        .map(
+                            (x) =>
+                                x.eventPerson ?? {
+                                    personId: x.itemPerson.id,
+                                    roleName:
+                                        mapItemPersonRoleToEventPersonRole(x.itemPerson.roleName) ??
+                                        mapItemPersonRoleToEventPersonRole(defaultRole) ??
+                                        Schedule_EventProgramPersonRole_Enum.Presenter,
+                                }
+                        ) as DeepPartial<ManageSchedule_EventPersonFragment>[]),
                 ],
                 item: old.item
                     ? {
@@ -462,10 +470,12 @@ function PeopleEditor({
             updateMergedPeople([
                 ...mergedPeople,
                 {
-                    eventPerson: {
-                        personId,
-                        roleName: mapItemPersonRoleToEventPersonRole(defaultRole),
-                    },
+                    eventPerson: mapItemPersonRoleToEventPersonRole(defaultRole)
+                        ? {
+                              personId,
+                              roleName: mapItemPersonRoleToEventPersonRole(defaultRole),
+                          }
+                        : undefined,
                     itemPerson: {
                         personId,
                         priority: R.findLastIndex((x) => !!x?.itemPerson, mergedPeople) + 1,
@@ -507,10 +517,12 @@ function PeopleEditor({
                                     updateMergedPeople([
                                         ...mergedPeople,
                                         {
-                                            eventPerson: {
-                                                personId: id,
-                                                roleName: mapItemPersonRoleToEventPersonRole(defaultRole),
-                                            },
+                                            eventPerson: mapItemPersonRoleToEventPersonRole(defaultRole)
+                                                ? {
+                                                      personId: id,
+                                                      roleName: mapItemPersonRoleToEventPersonRole(defaultRole),
+                                                  }
+                                                : undefined,
                                             itemPerson: {
                                                 personId: id,
                                                 priority: R.findLastIndex((x) => !!x?.itemPerson, mergedPeople) + 1,
@@ -631,68 +643,66 @@ function PeopleEditor({
                                     />
                                 </>
                             ) : undefined}
-                            <Tooltip
-                                label={
-                                    person.itemPerson
-                                        ? "Click to hide person from public schedule"
-                                        : "Click to show person in public schedule"
-                                }
-                            >
-                                <IconButton
-                                    aria-label={
+                            {person.eventPerson ? (
+                                <Tooltip
+                                    label={
                                         person.itemPerson
                                             ? "Click to hide person from public schedule"
                                             : "Click to show person in public schedule"
                                     }
-                                    icon={
-                                        person.itemPerson ? (
-                                            <FAIcon iconStyle="s" icon="eye" />
-                                        ) : (
-                                            <FAIcon iconStyle="s" icon="eye-slash" />
-                                        )
-                                    }
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => {
-                                        const newPeople: MergedPeople = [];
-                                        for (let i = 0; i < mergedPeople.length; i++) {
-                                            const p = mergedPeople[i];
-                                            if (idx === i) {
-                                                if (p.eventPerson) {
-                                                    newPeople.push({
-                                                        itemPerson: p.itemPerson
-                                                            ? undefined
-                                                            : {
-                                                                  personId: p.eventPerson.personId,
-                                                                  priority: i,
-                                                                  roleName:
-                                                                      p.eventPerson.roleName ===
-                                                                      Schedule_EventProgramPersonRole_Enum.Chair
-                                                                          ? "CHAIR"
-                                                                          : "PRESENTER",
-                                                              },
-                                                        eventPerson: p.eventPerson,
-                                                    });
-                                                } else {
-                                                    newPeople.push({
-                                                        itemPerson: undefined,
-                                                        eventPerson: {
-                                                            personId: p.itemPerson.personId,
-                                                            roleName: mapItemPersonRoleToEventPersonRole(
-                                                                p.itemPerson.roleName
-                                                            ),
-                                                        },
-                                                    });
-                                                }
-                                            } else {
-                                                newPeople.push(p);
-                                            }
+                                >
+                                    <IconButton
+                                        aria-label={
+                                            person.itemPerson
+                                                ? "Click to hide person from public schedule"
+                                                : "Click to show person in public schedule"
                                         }
+                                        icon={
+                                            person.itemPerson ? (
+                                                <FAIcon iconStyle="s" icon="eye" />
+                                            ) : (
+                                                <FAIcon iconStyle="s" icon="eye-slash" />
+                                            )
+                                        }
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                            const newPeople: MergedPeople = [];
+                                            for (let i = 0; i < mergedPeople.length; i++) {
+                                                const p = mergedPeople[i];
+                                                if (idx === i) {
+                                                    if (p.eventPerson) {
+                                                        newPeople.push({
+                                                            itemPerson: p.itemPerson
+                                                                ? undefined
+                                                                : {
+                                                                      personId: p.eventPerson.personId,
+                                                                      priority: i,
+                                                                      roleName: defaultRole,
+                                                                  },
+                                                            eventPerson: p.eventPerson,
+                                                        });
+                                                    } else {
+                                                        newPeople.push({
+                                                            itemPerson: undefined,
+                                                            eventPerson: {
+                                                                personId: p.itemPerson.personId,
+                                                                roleName: mapItemPersonRoleToEventPersonRole(
+                                                                    p.itemPerson.roleName
+                                                                ),
+                                                            },
+                                                        });
+                                                    }
+                                                } else {
+                                                    newPeople.push(p);
+                                                }
+                                            }
 
-                                        updateMergedPeople(newPeople);
-                                    }}
-                                />
-                            </Tooltip>
+                                            updateMergedPeople(newPeople);
+                                        }}
+                                    />
+                                </Tooltip>
+                            ) : undefined}
 
                             <Flex w="100%" alignItems="center" pb="2px" px={2}>
                                 <chakra.span mr={2}>

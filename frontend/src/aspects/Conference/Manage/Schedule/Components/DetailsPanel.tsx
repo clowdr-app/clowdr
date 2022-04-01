@@ -260,6 +260,7 @@ export default function DetailsPanel({
             subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
+        requestPolicy: "cache-and-network",
     });
     const tagOptions = useMemo(() => {
         const result =
@@ -495,7 +496,11 @@ export default function DetailsPanel({
                         updateRecord((old) => ({
                             ...old,
                             name: value,
-                            item: old.item ? { ...old.item, title: value } : { title: value },
+                            item: old.item
+                                ? { ...old.item, title: value }
+                                : {
+                                      title: value,
+                                  },
                         }));
                     }}
                 />

@@ -1,5 +1,6 @@
 import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, Tag, Text, VStack } from "@chakra-ui/react";
 import type { ElementDataBlob, TextualElementBlob } from "@midspace/shared-types/content";
+import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
 import type { ManageSchedule_PresentationFragment, ManageSchedule_TagFragment } from "../../../../../generated/graphql";
 import Card from "../../../../Card";
@@ -24,40 +25,58 @@ export default function PresentationCard({
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const ref = useRef<HTMLDivElement | null>(null);
-    const start = useMemo(() => new Date(presentation.scheduledStartTime), [presentation.scheduledStartTime]);
-    const end = useMemo(() => new Date(presentation.scheduledEndTime), [presentation.scheduledEndTime]);
-    const duration = useMemo(() => Math.round((end.getTime() - start.getTime()) / (60 * 1000)), [end, start]);
+    const start = useMemo(
+        () => (presentation.scheduledStartTime ? new Date(presentation.scheduledStartTime) : null),
+        [presentation.scheduledStartTime]
+    );
+    const end = useMemo(
+        () => (presentation.scheduledEndTime ? new Date(presentation.scheduledEndTime) : null),
+        [presentation.scheduledEndTime]
+    );
+    const duration = useMemo(
+        () => (start && end ? Math.round((end.getTime() - start.getTime()) / (60 * 1000)) : null),
+        [end, start]
+    );
     const now = useRealTime(60000);
-    const isLive = now >= start.getTime() && now <= end.getTime();
+    const isLive = Boolean(start && end && now >= start.getTime() && now <= end.getTime());
 
     const abstractData: TextualElementBlob | undefined = useMemo(
         () => (presentation.item?.abstract?.[0]?.data as ElementDataBlob | undefined)?.[0]?.data as TextualElementBlob,
         [presentation.item?.abstract]
     );
-    const peopleCount = presentation.eventPeople.length + (presentation.item?.itemPeople.length ?? 0);
+    const peopleCount = useMemo(
+        () =>
+            R.uniq([
+                ...presentation.eventPeople.map((x) => x.personId),
+                ...(presentation.item?.itemPeople.map((x) => x.personId) ?? []),
+            ]).length,
+        [presentation.eventPeople, presentation.item?.itemPeople]
+    );
     const elementCount = presentation.item?.elements_aggregate.aggregate?.count ?? 0;
     return (
         <VStack minW="400px" w="100%" alignItems="flex-start">
             <Card
                 ref={ref}
                 subHeading={
-                    start.toLocaleString(undefined, {
-                        hour: "numeric",
-                        minute: "numeric",
-                    }) +
-                    " - " +
-                    new Date(start.getTime() + 1000 * 60 * duration).toLocaleString(undefined, {
-                        hour: "numeric",
-                        minute: "numeric",
-                    }) +
-                    ` (${
-                        duration >= 60
-                            ? Math.floor(duration / 60).toFixed(0) +
-                              " hr" +
-                              (duration >= 120 ? "s" : "") +
-                              (duration % 60 !== 0 ? " " : "")
-                            : ""
-                    }${duration % 60 !== 0 ? (duration % 60) + " mins" : ""})`
+                    start && end && duration
+                        ? start.toLocaleString(undefined, {
+                              hour: "numeric",
+                              minute: "numeric",
+                          }) +
+                          " - " +
+                          end.toLocaleString(undefined, {
+                              hour: "numeric",
+                              minute: "numeric",
+                          }) +
+                          ` (${
+                              duration >= 60
+                                  ? Math.floor(duration / 60).toFixed(0) +
+                                    " hr" +
+                                    (duration >= 120 ? "s" : "") +
+                                    (duration % 60 !== 0 ? " " : "")
+                                  : ""
+                          }${duration % 60 !== 0 ? (duration % 60) + " mins" : ""})`
+                        : undefined
                 }
                 heading={presentation.item?.title ?? presentation.name}
                 w="100%"

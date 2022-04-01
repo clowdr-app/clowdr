@@ -80,6 +80,7 @@ export default function PresentationsList({
             sessionId,
         },
         context,
+        requestPolicy: "cache-and-network",
     });
     const presentations = presentationsResponse.data?.schedule_Event ?? [];
     useEffect(() => {

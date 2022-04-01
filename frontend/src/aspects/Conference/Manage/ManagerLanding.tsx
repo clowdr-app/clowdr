@@ -80,17 +80,17 @@ export default function ManagerLandingPage(): JSX.Element {
                     gridColumnGap="1em"
                 >
                     <RestrictedDashboardButton
+                        to="schedule/v2"
+                        name="Schedule"
+                        icon="calendar"
+                        description="Manage your program schedule: your events."
+                        organizerRole
+                    />
+                    <RestrictedDashboardButton
                         to="content"
                         name="Content"
                         icon="align-left"
                         description="Manage your program content: papers, posters, keynotes, etc."
-                        organizerRole
-                    />
-                    <RestrictedDashboardButton
-                        to="schedule"
-                        name="Schedule"
-                        icon="calendar"
-                        description="Manage your program schedule: your events."
                         organizerRole
                     />
                     <RestrictedDashboardButton

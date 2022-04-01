@@ -16,7 +16,7 @@ import {
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { ElementBaseType, type ElementDataBlob } from "@midspace/shared-types/content";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { gql, useClient } from "urql";
+import { useClient } from "urql";
 import type {
     ManageSchedule_FindSuitableRoomsQuery,
     ManageSchedule_FindSuitableRoomsQueryVariables,
@@ -39,138 +39,7 @@ import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import extractActualError from "../../../../GQL/ExtractActualError";
 import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
-import type { ScheduleEditorRecord } from "./ScheduleEditorRecord";
-
-gql`
-    query ManageSchedule_ListSuitableRooms(
-        $conferenceId: uuid!
-        $subconferenceCond: uuid_comparison_exp!
-        $modes: [schedule_Mode_enum!]!
-        $namePattern: String!
-    ) {
-        suggestedRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                subconferenceId: $subconferenceCond
-                itemId: { _is_null: true }
-                _or: [
-                    { events: { modeName: { _in: $modes } } }
-                    { isProgramRoom: { _eq: false }, name: { _ilike: $namePattern } }
-                ]
-            }
-            order_by: [{ name: asc }]
-        ) {
-            id
-            name
-        }
-
-        otherRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                subconferenceId: $subconferenceCond
-                isProgramRoom: { _eq: false }
-                _or: [{ itemId: { _is_null: true } }, { item: { typeName: { _eq: SPONSOR } } }]
-            }
-            order_by: [{ name: asc }]
-        ) {
-            id
-            name
-        }
-    }
-
-    query ManageSchedule_FindSuitableRooms(
-        $conferenceId: uuid!
-        $subconferenceCond: uuid_comparison_exp!
-        $modes: [schedule_Mode_enum!]!
-        $startBefore: timestamptz!
-        $endAfter: timestamptz!
-        $namePattern: String!
-    ) {
-        programRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                subconferenceId: $subconferenceCond
-                itemId: { _is_null: true }
-                _and: [
-                    { events: { modeName: { _in: $modes } } }
-                    {
-                        _not: {
-                            events: { scheduledStartTime: { _lt: $startBefore }, scheduledEndTime: { _gt: $endAfter } }
-                        }
-                    }
-                ]
-            }
-            order_by: [{ name: asc }]
-            limit: 1
-        ) {
-            id
-        }
-
-        nonProgramRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                subconferenceId: $subconferenceCond
-                isProgramRoom: { _eq: false }
-                itemId: { _is_null: true }
-                name: { _ilike: $namePattern }
-            }
-            order_by: [{ name: asc }]
-            limit: 1
-        ) {
-            id
-        }
-
-        conference_RemainingQuota(where: { conferenceId: { _eq: $conferenceId } }) {
-            conferenceId
-            remainingStreamingProgramRooms
-            remainingNonStreamingProgramRooms
-            remainingPublicSocialRooms
-        }
-    }
-
-    mutation ManageSchedule_InsertRoom($object: room_Room_insert_input!) {
-        insert_room_Room_one(object: $object) {
-            id
-        }
-    }
-
-    query ManageSchedule_GetVideoElements($sessionId: uuid!) {
-        schedule_Event_by_pk(id: $sessionId) {
-            item {
-                id
-                title
-                elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
-                    id
-                    name
-                }
-            }
-
-            presentations {
-                item {
-                    id
-                    title
-                    elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
-                        id
-                        name
-                    }
-                }
-            }
-
-            exhibition {
-                items {
-                    item {
-                        id
-                        title
-                        elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
-                            id
-                            name
-                        }
-                    }
-                }
-            }
-        }
-    }
-`;
+import type { ScheduleEditorRecord, ScheduleEditorRecordExtras } from "./ScheduleEditorRecord";
 
 function modeToLabel(mode: Schedule_Mode_Enum): string {
     switch (mode) {
@@ -208,7 +77,7 @@ function SessionSettingsPanel({
     onValid,
     onInvalid,
     onAnyChange,
-}: PanelProps<ManageSchedule_SessionFragment>): JSX.Element {
+}: PanelProps<ManageSchedule_SessionFragment & ScheduleEditorRecordExtras>): JSX.Element {
     const selectableModes = useMemo<Schedule_Mode_Enum[]>(
         () => [
             Schedule_Mode_Enum.VideoChat,
@@ -457,6 +326,7 @@ function SessionSettingsPanel({
         },
         context,
         pause: record.modeName !== Schedule_Mode_Enum.Livestream,
+        requestPolicy: "cache-and-network",
     });
     const autoPlayEvent = autoPlayEventResponse.data?.schedule_Event_by_pk;
     const autoPlayElementOptions = useMemo<
@@ -509,7 +379,10 @@ function SessionSettingsPanel({
                         value={record.modeName ?? Schedule_Mode_Enum.VideoChat}
                         onChange={(ev) => {
                             onAnyChange();
-                            updateRecord((old) => ({ ...old, modeName: ev.target.value as Schedule_Mode_Enum }));
+                            updateRecord((old) => ({
+                                ...old,
+                                modeName: ev.target.value as Schedule_Mode_Enum,
+                            }));
                         }}
                     >
                         {selectableModes.map((mode) => (
@@ -545,11 +418,13 @@ function SessionSettingsPanel({
                         ))}
                     </optgroup>
                     <optgroup label="Other rooms">
-                        {suitableRoomsResponse.data?.otherRooms.map((room) => (
-                            <option key={room.id} value={room.id}>
-                                {room.name}
-                            </option>
-                        ))}
+                        {suitableRoomsResponse.data?.otherRooms
+                            .filter((x) => !suitableRoomsResponse.data?.suggestedRooms.some((y) => y.id === x.id))
+                            .map((room) => (
+                                <option key={room.id} value={room.id}>
+                                    {room.name}
+                                </option>
+                            ))}
                     </optgroup>
                 </Select>
                 <Explanation>
@@ -594,99 +469,167 @@ function SessionSettingsPanel({
                     <Explanation>Start the session by automatically playing out the selected video.</Explanation>
                 </FormControl>
             ) : record.modeName === Schedule_Mode_Enum.External ? (
-                <FormControl id="editor-session-external-event-link">
-                    <FormLabel>External event link</FormLabel>
-                    <Input
-                        type="text"
-                        value={
-                            record.item?.externalEventLink?.[0]?.data?.[
-                                record.item.externalEventLink[0].data.length - 1
-                            ]?.data.url ?? ""
-                        }
-                        onChange={(ev) => {
-                            onAnyChange();
+                <VStack spacing={2} w="100%" alignItems="flex-start">
+                    <FormControl id="editor-session-external-event-link">
+                        <FormLabel>External event link</FormLabel>
+                        <Input
+                            type="text"
+                            value={
+                                record.item?.externalEventLink?.[0]?.data?.[
+                                    record.item.externalEventLink[0].data.length - 1
+                                ]?.data.url ?? ""
+                            }
+                            onChange={(ev) => {
+                                onAnyChange();
 
-                            const value = ev.target.value;
-                            updateRecord((old) => ({
-                                ...old,
-                                item: old.item
-                                    ? {
-                                          ...old.item,
-                                          externalEventLink: value.length
-                                              ? old.item.externalEventLink?.length
-                                                  ? [
-                                                        {
-                                                            ...old.item.externalEventLink[0],
-                                                            data: old.item.externalEventLink[0].data?.length
-                                                                ? ([
-                                                                      {
-                                                                          ...old.item.externalEventLink[0].data[0],
-                                                                          data: {
-                                                                              baseType: ElementBaseType.URL,
-                                                                              type: Content_ElementType_Enum.ExternalEventLink,
-                                                                              url: value,
+                                const value = ev.target.value;
+                                updateRecord((old) => ({
+                                    ...old,
+                                    item: old.item
+                                        ? {
+                                              ...old.item,
+                                              externalEventLink: value.length
+                                                  ? old.item.externalEventLink?.length
+                                                      ? [
+                                                            {
+                                                                ...old.item.externalEventLink[0],
+                                                                isHidden: true,
+                                                                typeName: Content_ElementType_Enum.ExternalEventLink,
+                                                                uploadsRemaining: 0,
+                                                                data: old.item.externalEventLink[0].data?.length
+                                                                    ? ([
+                                                                          {
+                                                                              ...old.item.externalEventLink[0].data[0],
+                                                                              data: {
+                                                                                  baseType: ElementBaseType.URL,
+                                                                                  type: Content_ElementType_Enum.ExternalEventLink,
+                                                                                  url: value,
+                                                                              },
                                                                           },
-                                                                      },
-                                                                  ] as ElementDataBlob)
-                                                                : ([
-                                                                      {
-                                                                          createdAt: Date.now(),
-                                                                          createdBy: "user",
-                                                                          data: {
-                                                                              baseType: ElementBaseType.URL,
-                                                                              type: Content_ElementType_Enum.ExternalEventLink,
-                                                                              url: value,
+                                                                      ] as ElementDataBlob)
+                                                                    : ([
+                                                                          {
+                                                                              createdAt: Date.now(),
+                                                                              createdBy: "user",
+                                                                              data: {
+                                                                                  baseType: ElementBaseType.URL,
+                                                                                  type: Content_ElementType_Enum.ExternalEventLink,
+                                                                                  url: value,
+                                                                              },
                                                                           },
-                                                                      },
-                                                                  ] as ElementDataBlob),
-                                                        },
-                                                    ]
-                                                  : [
-                                                        {
-                                                            name: "External Meeting",
-                                                            data: [
-                                                                {
-                                                                    createdAt: Date.now(),
-                                                                    createdBy: "user",
-                                                                    data: {
-                                                                        baseType: ElementBaseType.URL,
-                                                                        type: Content_ElementType_Enum.ExternalEventLink,
-                                                                        url: value,
+                                                                      ] as ElementDataBlob),
+                                                            },
+                                                        ]
+                                                      : [
+                                                            {
+                                                                name: "Zoom",
+                                                                isHidden: true,
+                                                                typeName: Content_ElementType_Enum.ExternalEventLink,
+                                                                uploadsRemaining: 0,
+                                                                data: [
+                                                                    {
+                                                                        createdAt: Date.now(),
+                                                                        createdBy: "user",
+                                                                        data: {
+                                                                            baseType: ElementBaseType.URL,
+                                                                            type: Content_ElementType_Enum.ExternalEventLink,
+                                                                            url: value,
+                                                                        },
                                                                     },
-                                                                },
-                                                            ] as ElementDataBlob,
-                                                        },
-                                                    ]
-                                              : undefined,
-                                      }
-                                    : value.length
-                                    ? {
-                                          externalEventLink: [
-                                              {
-                                                  name: "External Meeting",
-                                                  data: [
-                                                      {
-                                                          createdAt: Date.now(),
-                                                          createdBy: "user",
-                                                          data: {
-                                                              baseType: ElementBaseType.URL,
-                                                              type: Content_ElementType_Enum.ExternalEventLink,
-                                                              url: value,
+                                                                ] as ElementDataBlob,
+                                                            },
+                                                        ]
+                                                  : undefined,
+                                          }
+                                        : value.length
+                                        ? {
+                                              externalEventLink: [
+                                                  {
+                                                      name: "Zoom",
+                                                      isHidden: true,
+                                                      typeName: Content_ElementType_Enum.ExternalEventLink,
+                                                      uploadsRemaining: 0,
+                                                      data: [
+                                                          {
+                                                              createdAt: Date.now(),
+                                                              createdBy: "user",
+                                                              data: {
+                                                                  baseType: ElementBaseType.URL,
+                                                                  type: Content_ElementType_Enum.ExternalEventLink,
+                                                                  url: value,
+                                                              },
                                                           },
-                                                      },
-                                                  ] as ElementDataBlob,
-                                              },
-                                          ],
-                                      }
-                                    : undefined,
-                            }));
-                        }}
-                    />
-                    <Explanation>
-                        Link for attendees to join the external event. This should include any password fields or
-                        similar (e.g. when using Zoom, include the full link provided by Zoom).
-                    </Explanation>
-                </FormControl>
+                                                      ] as ElementDataBlob,
+                                                  },
+                                              ],
+                                          }
+                                        : undefined,
+                                }));
+                            }}
+                        />
+                        <Explanation>
+                            Link for attendees to join the external event. This should include any password fields or
+                            similar (e.g. when using Zoom, include the full link provided by Zoom).
+                        </Explanation>
+                    </FormControl>
+                    <FormControl id="editor-session-external-event-service-name">
+                        <FormLabel>External event service name</FormLabel>
+                        <Input
+                            type="text"
+                            value={record.item?.externalEventLink?.[0]?.name ?? "Zoom"}
+                            onChange={(ev) => {
+                                onAnyChange();
+
+                                const value = ev.target.value;
+                                updateRecord((old) => ({
+                                    ...old,
+                                    item: old.item
+                                        ? {
+                                              ...old.item,
+                                              externalEventLink: value.length
+                                                  ? old.item.externalEventLink?.length
+                                                      ? [
+                                                            {
+                                                                ...old.item.externalEventLink[0],
+                                                                name: value,
+                                                                isHidden: true,
+                                                                typeName: Content_ElementType_Enum.ExternalEventLink,
+                                                                uploadsRemaining: 0,
+                                                            },
+                                                        ]
+                                                      : [
+                                                            {
+                                                                name: value,
+                                                                data: [] as ElementDataBlob,
+                                                                isHidden: true,
+                                                                typeName: Content_ElementType_Enum.ExternalEventLink,
+                                                                uploadsRemaining: 0,
+                                                            },
+                                                        ]
+                                                  : undefined,
+                                          }
+                                        : value.length
+                                        ? {
+                                              externalEventLink: [
+                                                  {
+                                                      name: value,
+                                                      data: [] as ElementDataBlob,
+                                                      isHidden: true,
+                                                      typeName: Content_ElementType_Enum.ExternalEventLink,
+                                                      uploadsRemaining: 0,
+                                                  },
+                                              ],
+                                          }
+                                        : undefined,
+                                }));
+                            }}
+                        />
+                        <Explanation>
+                            Name of the external service, displayed as part of the button shown to attendees. E.g.
+                            &ldquo;Join in Zoom&rdquo;, where &ldquo;Zoom&rdquo; is the external service name.
+                        </Explanation>
+                    </FormControl>
+                </VStack>
             ) : undefined}
             {record.modeName === Schedule_Mode_Enum.Livestream || record.modeName === Schedule_Mode_Enum.VideoChat ? (
                 <FormControl id="editor-session-recording">

@@ -46314,6 +46314,17 @@ export type AddEventPeople_InsertEventPeopleMutation = {
     } | null;
 };
 
+export type ManageSchedule_ElementFragment = {
+    readonly __typename?: "content_Element";
+    readonly id: any;
+    readonly name: string;
+    readonly data: any;
+    readonly layoutData?: any | null;
+    readonly typeName: Content_ElementType_Enum;
+    readonly uploadsRemaining?: number | null;
+    readonly isHidden: boolean;
+};
+
 export type CreatePersonModal_CreatePersonMutationVariables = Exact<{
     person: Collection_ProgramPerson_Insert_Input;
 }>;
@@ -46491,13 +46502,22 @@ export type ManageSchedule_PresentationFragment = {
         readonly abstract: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly id: any;
+            readonly name: string;
             readonly data: any;
+            readonly layoutData?: any | null;
+            readonly typeName: Content_ElementType_Enum;
+            readonly uploadsRemaining?: number | null;
+            readonly isHidden: boolean;
         }>;
         readonly externalEventLink: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly id: any;
-            readonly data: any;
             readonly name: string;
+            readonly data: any;
+            readonly layoutData?: any | null;
+            readonly typeName: Content_ElementType_Enum;
+            readonly uploadsRemaining?: number | null;
+            readonly isHidden: boolean;
         }>;
         readonly elements_aggregate: {
             readonly __typename?: "content_Element_aggregate";
@@ -46552,13 +46572,22 @@ export type ManageSchedule_GetPresentationsQuery = {
             readonly abstract: ReadonlyArray<{
                 readonly __typename?: "content_Element";
                 readonly id: any;
+                readonly name: string;
                 readonly data: any;
+                readonly layoutData?: any | null;
+                readonly typeName: Content_ElementType_Enum;
+                readonly uploadsRemaining?: number | null;
+                readonly isHidden: boolean;
             }>;
             readonly externalEventLink: ReadonlyArray<{
                 readonly __typename?: "content_Element";
                 readonly id: any;
-                readonly data: any;
                 readonly name: string;
+                readonly data: any;
+                readonly layoutData?: any | null;
+                readonly typeName: Content_ElementType_Enum;
+                readonly uploadsRemaining?: number | null;
+                readonly isHidden: boolean;
             }>;
             readonly elements_aggregate: {
                 readonly __typename?: "content_Element_aggregate";
@@ -47392,12 +47421,25 @@ export type ManageSchedule_EventContentFragment = {
         readonly roleName: string;
         readonly priority?: number | null;
     }>;
-    readonly abstract: ReadonlyArray<{ readonly __typename?: "content_Element"; readonly id: any; readonly data: any }>;
+    readonly abstract: ReadonlyArray<{
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly name: string;
+        readonly data: any;
+        readonly layoutData?: any | null;
+        readonly typeName: Content_ElementType_Enum;
+        readonly uploadsRemaining?: number | null;
+        readonly isHidden: boolean;
+    }>;
     readonly externalEventLink: ReadonlyArray<{
         readonly __typename?: "content_Element";
         readonly id: any;
-        readonly data: any;
         readonly name: string;
+        readonly data: any;
+        readonly layoutData?: any | null;
+        readonly typeName: Content_ElementType_Enum;
+        readonly uploadsRemaining?: number | null;
+        readonly isHidden: boolean;
     }>;
     readonly elements_aggregate: {
         readonly __typename?: "content_Element_aggregate";
@@ -47449,13 +47491,22 @@ export type ManageSchedule_SessionFragment = {
         readonly abstract: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly id: any;
+            readonly name: string;
             readonly data: any;
+            readonly layoutData?: any | null;
+            readonly typeName: Content_ElementType_Enum;
+            readonly uploadsRemaining?: number | null;
+            readonly isHidden: boolean;
         }>;
         readonly externalEventLink: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly id: any;
-            readonly data: any;
             readonly name: string;
+            readonly data: any;
+            readonly layoutData?: any | null;
+            readonly typeName: Content_ElementType_Enum;
+            readonly uploadsRemaining?: number | null;
+            readonly isHidden: boolean;
         }>;
         readonly elements_aggregate: {
             readonly __typename?: "content_Element_aggregate";
@@ -47555,13 +47606,22 @@ export type ManageSchedule_GetSessionsPageQuery = {
             readonly abstract: ReadonlyArray<{
                 readonly __typename?: "content_Element";
                 readonly id: any;
+                readonly name: string;
                 readonly data: any;
+                readonly layoutData?: any | null;
+                readonly typeName: Content_ElementType_Enum;
+                readonly uploadsRemaining?: number | null;
+                readonly isHidden: boolean;
             }>;
             readonly externalEventLink: ReadonlyArray<{
                 readonly __typename?: "content_Element";
                 readonly id: any;
-                readonly data: any;
                 readonly name: string;
+                readonly data: any;
+                readonly layoutData?: any | null;
+                readonly typeName: Content_ElementType_Enum;
+                readonly uploadsRemaining?: number | null;
+                readonly isHidden: boolean;
             }>;
             readonly elements_aggregate: {
                 readonly __typename?: "content_Element_aggregate";
@@ -47600,6 +47660,85 @@ export type ManageSchedule_InsertEventMutation = {
     readonly insert_schedule_Event_one?: { readonly __typename?: "schedule_Event"; readonly id: any } | null;
 };
 
+export type ManageSchedule_UpdateEventMutationVariables = Exact<{
+    id: Scalars["uuid"];
+    event: Schedule_Event_Set_Input;
+    eventPeople: ReadonlyArray<Schedule_EventProgramPerson_Insert_Input> | Schedule_EventProgramPerson_Insert_Input;
+    eventPersonIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_UpdateEventMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_schedule_Event_by_pk?: { readonly __typename?: "schedule_Event"; readonly id: any } | null;
+    readonly delete_schedule_EventProgramPerson?: {
+        readonly __typename?: "schedule_EventProgramPerson_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly insert_schedule_EventProgramPerson?: {
+        readonly __typename?: "schedule_EventProgramPerson_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type ManageSchedule_InsertItemMutationVariables = Exact<{
+    object: Content_Item_Insert_Input;
+}>;
+
+export type ManageSchedule_InsertItemMutation = {
+    readonly __typename?: "mutation_root";
+    readonly insert_content_Item_one?: { readonly __typename?: "content_Item"; readonly id: any } | null;
+};
+
+export type ManageSchedule_UpdateItemMutationVariables = Exact<{
+    id: Scalars["uuid"];
+    item: Content_Item_Set_Input;
+    itemPeople: ReadonlyArray<Content_ItemProgramPerson_Insert_Input> | Content_ItemProgramPerson_Insert_Input;
+    itemPersonIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+    itemTags: ReadonlyArray<Content_ItemTag_Insert_Input> | Content_ItemTag_Insert_Input;
+    itemTagIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+    newElements: ReadonlyArray<Content_Element_Insert_Input> | Content_Element_Insert_Input;
+    deletedElementIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_UpdateItemMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_content_Item_by_pk?: { readonly __typename?: "content_Item"; readonly id: any } | null;
+    readonly delete_content_ItemProgramPerson?: {
+        readonly __typename?: "content_ItemProgramPerson_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly insert_content_ItemProgramPerson?: {
+        readonly __typename?: "content_ItemProgramPerson_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_content_ItemTag?: {
+        readonly __typename?: "content_ItemTag_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly insert_content_ItemTag?: {
+        readonly __typename?: "content_ItemTag_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_content_Element?: {
+        readonly __typename?: "content_Element_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly insert_content_Element?: {
+        readonly __typename?: "content_Element_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type ManageSchedule_UpdateElementMutationVariables = Exact<{
+    id: Scalars["uuid"];
+    element: Content_Element_Set_Input;
+}>;
+
+export type ManageSchedule_UpdateElementMutation = {
+    readonly __typename?: "mutation_root";
+    readonly update_content_Element_by_pk?: { readonly __typename?: "content_Element"; readonly id: any } | null;
+};
+
 export type ManageSchedule_DeleteEventsMutationVariables = Exact<{
     ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
 }>;
@@ -47608,6 +47747,23 @@ export type ManageSchedule_DeleteEventsMutation = {
     readonly __typename?: "mutation_root";
     readonly delete_schedule_Event?: {
         readonly __typename?: "schedule_Event_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type ManageSchedule_DeleteEventsAndContentMutationVariables = Exact<{
+    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+    itemIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_DeleteEventsAndContentMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_schedule_Event?: {
+        readonly __typename?: "schedule_Event_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_content_Item?: {
+        readonly __typename?: "content_Item_mutation_response";
         readonly affected_rows: number;
     } | null;
 };
@@ -48172,6 +48328,7 @@ export type ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables = Exact
     startBefore: Scalars["timestamptz"];
     endAfter: Scalars["timestamptz"];
     sessionCond: Uuid_Comparison_Exp;
+    excludeId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type ManageSchedule_GetPotentiallyOverlappingEventsQuery = {
@@ -51542,6 +51699,17 @@ export const ManageSchedule_ItemPersonFragmentDoc = gql`
         priority
     }
 `;
+export const ManageSchedule_ElementFragmentDoc = gql`
+    fragment ManageSchedule_Element on content_Element {
+        id
+        name
+        data
+        layoutData
+        typeName
+        uploadsRemaining
+        isHidden
+    }
+`;
 export const ManageSchedule_EventContentFragmentDoc = gql`
     fragment ManageSchedule_EventContent on content_Item {
         id
@@ -51553,14 +51721,11 @@ export const ManageSchedule_EventContentFragmentDoc = gql`
         itemPeople {
             ...ManageSchedule_ItemPerson
         }
-        abstract: elements(where: { typeName: { _eq: ABSTRACT } }) {
-            id
-            data
+        abstract: elements(where: { typeName: { _eq: ABSTRACT } }, limit: 1) {
+            ...ManageSchedule_Element
         }
-        externalEventLink: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }) {
-            id
-            data
-            name
+        externalEventLink: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }, limit: 1) {
+            ...ManageSchedule_Element
         }
         elements_aggregate {
             aggregate {
@@ -51570,6 +51735,7 @@ export const ManageSchedule_EventContentFragmentDoc = gql`
     }
     ${ManageSchedule_ItemTagFragmentDoc}
     ${ManageSchedule_ItemPersonFragmentDoc}
+    ${ManageSchedule_ElementFragmentDoc}
 `;
 export const ManageSchedule_EventPersonFragmentDoc = gql`
     fragment ManageSchedule_EventPerson on schedule_EventProgramPerson {
@@ -57086,6 +57252,108 @@ export function useManageSchedule_InsertEventMutation() {
         ManageSchedule_InsertEventDocument
     );
 }
+export const ManageSchedule_UpdateEventDocument = gql`
+    mutation ManageSchedule_UpdateEvent(
+        $id: uuid!
+        $event: schedule_Event_set_input!
+        $eventPeople: [schedule_EventProgramPerson_insert_input!]!
+        $eventPersonIds: [uuid!]!
+    ) {
+        update_schedule_Event_by_pk(pk_columns: { id: $id }, _set: $event) {
+            id
+        }
+        delete_schedule_EventProgramPerson(where: { eventId: { _eq: $id }, id: { _nin: $eventPersonIds } }) {
+            affected_rows
+        }
+        insert_schedule_EventProgramPerson(
+            objects: $eventPeople
+            on_conflict: { constraint: EventProgramPerson_eventId_personId_roleName_key, update_columns: [roleName] }
+        ) {
+            affected_rows
+        }
+    }
+`;
+
+export function useManageSchedule_UpdateEventMutation() {
+    return Urql.useMutation<ManageSchedule_UpdateEventMutation, ManageSchedule_UpdateEventMutationVariables>(
+        ManageSchedule_UpdateEventDocument
+    );
+}
+export const ManageSchedule_InsertItemDocument = gql`
+    mutation ManageSchedule_InsertItem($object: content_Item_insert_input!) {
+        insert_content_Item_one(object: $object) {
+            id
+        }
+    }
+`;
+
+export function useManageSchedule_InsertItemMutation() {
+    return Urql.useMutation<ManageSchedule_InsertItemMutation, ManageSchedule_InsertItemMutationVariables>(
+        ManageSchedule_InsertItemDocument
+    );
+}
+export const ManageSchedule_UpdateItemDocument = gql`
+    mutation ManageSchedule_UpdateItem(
+        $id: uuid!
+        $item: content_Item_set_input!
+        $itemPeople: [content_ItemProgramPerson_insert_input!]!
+        $itemPersonIds: [uuid!]!
+        $itemTags: [content_ItemTag_insert_input!]!
+        $itemTagIds: [uuid!]!
+        $newElements: [content_Element_insert_input!]!
+        $deletedElementIds: [uuid!]!
+    ) {
+        update_content_Item_by_pk(pk_columns: { id: $id }, _set: $item) {
+            id
+        }
+        delete_content_ItemProgramPerson(where: { itemId: { _eq: $id }, id: { _nin: $itemPersonIds } }) {
+            affected_rows
+        }
+        insert_content_ItemProgramPerson(
+            objects: $itemPeople
+            on_conflict: {
+                constraint: ItemProgramPerson_roleName_personId_itemId_key
+                update_columns: [priority, roleName]
+            }
+        ) {
+            affected_rows
+        }
+        delete_content_ItemTag(where: { itemId: { _eq: $id }, id: { _nin: $itemTagIds } }) {
+            affected_rows
+        }
+        insert_content_ItemTag(
+            objects: $itemTags
+            on_conflict: { constraint: ItemTag_itemId_tagId_key, update_columns: [] }
+        ) {
+            affected_rows
+        }
+        delete_content_Element(where: { itemId: { _eq: $id }, id: { _in: $deletedElementIds } }) {
+            affected_rows
+        }
+        insert_content_Element(objects: $newElements) {
+            affected_rows
+        }
+    }
+`;
+
+export function useManageSchedule_UpdateItemMutation() {
+    return Urql.useMutation<ManageSchedule_UpdateItemMutation, ManageSchedule_UpdateItemMutationVariables>(
+        ManageSchedule_UpdateItemDocument
+    );
+}
+export const ManageSchedule_UpdateElementDocument = gql`
+    mutation ManageSchedule_UpdateElement($id: uuid!, $element: content_Element_set_input!) {
+        update_content_Element_by_pk(pk_columns: { id: $id }, _set: $element) {
+            id
+        }
+    }
+`;
+
+export function useManageSchedule_UpdateElementMutation() {
+    return Urql.useMutation<ManageSchedule_UpdateElementMutation, ManageSchedule_UpdateElementMutationVariables>(
+        ManageSchedule_UpdateElementDocument
+    );
+}
 export const ManageSchedule_DeleteEventsDocument = gql`
     mutation ManageSchedule_DeleteEvents($ids: [uuid!]!) {
         delete_schedule_Event(where: { id: { _in: $ids } }) {
@@ -57098,6 +57366,23 @@ export function useManageSchedule_DeleteEventsMutation() {
     return Urql.useMutation<ManageSchedule_DeleteEventsMutation, ManageSchedule_DeleteEventsMutationVariables>(
         ManageSchedule_DeleteEventsDocument
     );
+}
+export const ManageSchedule_DeleteEventsAndContentDocument = gql`
+    mutation ManageSchedule_DeleteEventsAndContent($eventIds: [uuid!]!, $itemIds: [uuid!]!) {
+        delete_schedule_Event(where: { id: { _in: $eventIds } }) {
+            affected_rows
+        }
+        delete_content_Item(where: { id: { _in: $itemIds } }) {
+            affected_rows
+        }
+    }
+`;
+
+export function useManageSchedule_DeleteEventsAndContentMutation() {
+    return Urql.useMutation<
+        ManageSchedule_DeleteEventsAndContentMutation,
+        ManageSchedule_DeleteEventsAndContentMutationVariables
+    >(ManageSchedule_DeleteEventsAndContentDocument);
 }
 export const ManageSchedule_GetEventsForExportDocument = gql`
     query ManageSchedule_GetEventsForExport($ids: [uuid!]!) {
@@ -57122,6 +57407,7 @@ export const ManageSchedule_GetPotentiallyOverlappingEventsDocument = gql`
         $startBefore: timestamptz!
         $endAfter: timestamptz!
         $sessionCond: uuid_comparison_exp!
+        $excludeId: uuid
     ) {
         schedule_Event_aggregate(
             where: {
@@ -57129,6 +57415,7 @@ export const ManageSchedule_GetPotentiallyOverlappingEventsDocument = gql`
                 scheduledStartTime: { _lt: $startBefore }
                 scheduledEndTime: { _gt: $endAfter }
                 sessionEventId: $sessionCond
+                id: { _neq: $excludeId }
             }
         ) {
             aggregate {

@@ -103,7 +103,7 @@ export default function SessionCard({
                         minute: "numeric",
                     }) +
                     " - " +
-                    new Date(start.getTime() + 1000 * 60 * duration).toLocaleString(undefined, {
+                    end.toLocaleString(undefined, {
                         hour: "numeric",
                         minute: "numeric",
                     }) +

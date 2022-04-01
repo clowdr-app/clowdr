@@ -778,7 +778,7 @@ function RoomInner({
                             <Box
                                 // flexDirection="column"
                                 // justifyContent="center"
-                                bgColor={bgColour}
+                                bgColor={showDefaultVideoChatRoom ? bgColour : "none"}
                                 zIndex={2}
                                 flexGrow={1}
                             >
@@ -803,7 +803,7 @@ function RoomInner({
                 </Flex>
 
                 {playerEl ??
-                    (!showDefaultVideoChatRoom ? (
+                    (!showDefaultVideoChatRoom && roomDetails.isStreamingProgramRoom ? (
                         <Text h="100%" p={4} fontSize="xl">
                             There is not currently a live event in this room. The live-stream video will appear here
                             when the next event starts.

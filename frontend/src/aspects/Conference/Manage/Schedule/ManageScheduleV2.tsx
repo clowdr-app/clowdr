@@ -2,17 +2,9 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
     Alert,
     AlertDescription,
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogCloseButton,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogOverlay,
     AlertIcon,
     AlertTitle,
     Button,
-    ButtonGroup,
     chakra,
     FormControl,
     FormLabel,
@@ -27,8 +19,9 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { gql, useClient } from "urql";
+import { NIL as NIL_UUID } from "uuid";
 import type {
     ManageSchedule_GetAllSessionIdsQuery,
     ManageSchedule_GetAllSessionIdsQueryVariables,
@@ -70,6 +63,7 @@ import { makeContext } from "../../../GQL/make-context";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 import ContentPanel from "./Components/ContentPanel";
+import DeleteModal from "./Components/DeleteModal";
 import DetailsPanel from "./Components/DetailsPanel";
 import HeaderControls from "./Components/HeaderControls";
 import PeoplePanel from "./Components/PeoplePanel";
@@ -308,21 +302,6 @@ gql`
         }
     }
 
-    mutation ManageSchedule_DeleteEvents($ids: [uuid!]!) {
-        delete_schedule_Event(where: { id: { _in: $ids } }) {
-            affected_rows
-        }
-    }
-
-    mutation ManageSchedule_DeleteEventsAndContent($eventIds: [uuid!]!, $itemIds: [uuid!]!) {
-        delete_schedule_Event(where: { id: { _in: $eventIds } }) {
-            affected_rows
-        }
-        delete_content_Item(where: { id: { _in: $itemIds } }) {
-            affected_rows
-        }
-    }
-
     fragment ManageSchedule_ItemForExport on content_Item {
         id
         title
@@ -441,7 +420,7 @@ gql`
         $startBefore: timestamptz!
         $endAfter: timestamptz!
         $sessionCond: uuid_comparison_exp!
-        $excludeId: uuid
+        $excludeId: uuid!
     ) {
         schedule_Event_aggregate(
             where: {
@@ -613,8 +592,6 @@ export default function ManageScheduleV2(): JSX.Element {
     const pageBgColour = useColorModeValue("AppPage.pageBackground-light", "AppPage.pageBackground-dark");
     const inputBgColour = useColorModeValue("white", "#111");
     const bulkButtonBgColour = useColorModeValue("white", "#111");
-
-    const deleteSessionsLeastDestructiveActionRef = useRef<HTMLButtonElement | null>(null);
 
     const refetchPresentations = useMemo(
         () =>
@@ -961,7 +938,7 @@ export default function ManageScheduleV2(): JSX.Element {
                                                   },
                                         startBefore: record.scheduledEndTime,
                                         endAfter: record.scheduledStartTime,
-                                        excludeId: record.id,
+                                        excludeId: record.id ?? NIL_UUID,
                                     },
                                     {
                                         ...makeContext({
@@ -1369,6 +1346,8 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                                     return { error: "Unable to retrieve ordering of sessions." };
                                 }
 
+                                refetchSessions();
+
                                 const newId = result.data.insert_schedule_Event_one.id;
                                 const index = ordering.data.schedule_Event.findIndex((x) => x.id === newId);
                                 setOffset(Math.max(0, limit * Math.floor(index / limit)));
@@ -1382,53 +1361,19 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                     return "no error";
                 }}
             />
-            <AlertDialog
+            <DeleteModal
                 isOpen={deleteEventsDisclosure.isOpen}
-                onClose={deleteEventsDisclosure.onClose}
-                leastDestructiveRef={deleteSessionsLeastDestructiveActionRef}
-                size="xl"
-            >
-                <AlertDialogOverlay />
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        Delete {deleteEventIds.length} {deleteEventType}
-                        {deleteEventIds.length !== 1 ? "s" : ""}?
-                    </AlertDialogHeader>
-                    <AlertDialogCloseButton />
-                    <AlertDialogBody>This cannot be undone.</AlertDialogBody>
-                    <AlertDialogFooter>
-                        <ButtonGroup>
-                            <Button
-                                ref={deleteSessionsLeastDestructiveActionRef}
-                                colorScheme="blue"
-                                variant="outline"
-                                onClick={deleteEventsDisclosure.onClose}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                colorScheme="DestructiveActionButton"
-                                variant="outline"
-                                onClick={() => {
-                                    // TODO:
-                                }}
-                            >
-                                Delete {deleteEventType}
-                                {deleteEventIds.length !== 1 ? "s" : ""} including content
-                            </Button>
-                            <Button
-                                colorScheme="DestructiveActionButton"
-                                variant="outline"
-                                onClick={() => {
-                                    // TODO:
-                                }}
-                            >
-                                Delete events only
-                            </Button>
-                        </ButtonGroup>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                onClose={(didDelete) => {
+                    deleteEventsDisclosure.onClose();
+                    if (didDelete) {
+                        deleteEventIds.forEach((x) => refetchPresentations.get(x)?.current?.());
+                        refetchSessions();
+                        setSelectedSessions(new Set());
+                    }
+                }}
+                deleteEventIds={deleteEventIds}
+                deleteEventType={deleteEventType}
+            />
         </DashboardPage>
     );
 }

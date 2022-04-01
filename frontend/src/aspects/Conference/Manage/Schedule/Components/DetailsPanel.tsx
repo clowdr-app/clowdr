@@ -377,15 +377,15 @@ export default function DetailsPanel({
                     old.scheduledEndTime ??
                     (startTime ? new Date(startTime.getTime() + durationMinutes * 60 * 1000).toISOString() : undefined),
                 item: old.item
-                    ? { ...old.item, typeName: old.item.typeName ?? Content_ItemType_Enum.Session }
-                    : { typeName: Content_ItemType_Enum.Session },
+                    ? { ...old.item, typeName: old.item.typeName ?? defaultItemTypeName }
+                    : { typeName: defaultItemTypeName },
             }));
         } else {
             updateRecord((old) => ({
                 ...old,
                 item: old.item
-                    ? { ...old.item, typeName: old.item.typeName ?? Content_ItemType_Enum.Session }
-                    : { typeName: Content_ItemType_Enum.Session },
+                    ? { ...old.item, typeName: old.item.typeName ?? defaultItemTypeName }
+                    : { typeName: defaultItemTypeName },
             }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

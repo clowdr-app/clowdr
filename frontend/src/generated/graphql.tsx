@@ -46409,6 +46409,53 @@ export type CreateTagModal_CreateTagMutation = {
     readonly insert_collection_Tag_one?: { readonly __typename?: "collection_Tag"; readonly id: any } | null;
 };
 
+export type ManageSchedule_DeleteEventsMutationVariables = Exact<{
+    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_DeleteEventsMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_schedule_Event?: {
+        readonly __typename?: "schedule_Event_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type ManageSchedule_DeleteEventsAndContentMutationVariables = Exact<{
+    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+    itemIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_DeleteEventsAndContentMutation = {
+    readonly __typename?: "mutation_root";
+    readonly delete_schedule_Event?: {
+        readonly __typename?: "schedule_Event_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+    readonly delete_content_Item?: {
+        readonly __typename?: "content_Item_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type ManageSchedule_GetContentIdsQueryVariables = Exact<{
+    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetContentIdsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly itemId?: any | null;
+        readonly presentations: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly itemId?: any | null;
+        }>;
+    }>;
+};
+
 export type ManageSchedule_PersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
@@ -47739,35 +47786,6 @@ export type ManageSchedule_UpdateElementMutation = {
     readonly update_content_Element_by_pk?: { readonly __typename?: "content_Element"; readonly id: any } | null;
 };
 
-export type ManageSchedule_DeleteEventsMutationVariables = Exact<{
-    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type ManageSchedule_DeleteEventsMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_schedule_Event?: {
-        readonly __typename?: "schedule_Event_mutation_response";
-        readonly affected_rows: number;
-    } | null;
-};
-
-export type ManageSchedule_DeleteEventsAndContentMutationVariables = Exact<{
-    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-    itemIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type ManageSchedule_DeleteEventsAndContentMutation = {
-    readonly __typename?: "mutation_root";
-    readonly delete_schedule_Event?: {
-        readonly __typename?: "schedule_Event_mutation_response";
-        readonly affected_rows: number;
-    } | null;
-    readonly delete_content_Item?: {
-        readonly __typename?: "content_Item_mutation_response";
-        readonly affected_rows: number;
-    } | null;
-};
-
 export type ManageSchedule_ItemForExportFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
@@ -48328,7 +48346,7 @@ export type ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables = Exact
     startBefore: Scalars["timestamptz"];
     endAfter: Scalars["timestamptz"];
     sessionCond: Uuid_Comparison_Exp;
-    excludeId?: InputMaybe<Scalars["uuid"]>;
+    excludeId: Scalars["uuid"];
 }>;
 
 export type ManageSchedule_GetPotentiallyOverlappingEventsQuery = {
@@ -56521,6 +56539,57 @@ export function useCreateTagModal_CreateTagMutation() {
         CreateTagModal_CreateTagDocument
     );
 }
+export const ManageSchedule_DeleteEventsDocument = gql`
+    mutation ManageSchedule_DeleteEvents($ids: [uuid!]!) {
+        delete_schedule_Event(where: { id: { _in: $ids } }) {
+            affected_rows
+        }
+    }
+`;
+
+export function useManageSchedule_DeleteEventsMutation() {
+    return Urql.useMutation<ManageSchedule_DeleteEventsMutation, ManageSchedule_DeleteEventsMutationVariables>(
+        ManageSchedule_DeleteEventsDocument
+    );
+}
+export const ManageSchedule_DeleteEventsAndContentDocument = gql`
+    mutation ManageSchedule_DeleteEventsAndContent($eventIds: [uuid!]!, $itemIds: [uuid!]!) {
+        delete_schedule_Event(where: { id: { _in: $eventIds } }) {
+            affected_rows
+        }
+        delete_content_Item(where: { id: { _in: $itemIds } }) {
+            affected_rows
+        }
+    }
+`;
+
+export function useManageSchedule_DeleteEventsAndContentMutation() {
+    return Urql.useMutation<
+        ManageSchedule_DeleteEventsAndContentMutation,
+        ManageSchedule_DeleteEventsAndContentMutationVariables
+    >(ManageSchedule_DeleteEventsAndContentDocument);
+}
+export const ManageSchedule_GetContentIdsDocument = gql`
+    query ManageSchedule_GetContentIds($eventIds: [uuid!]!) {
+        schedule_Event(where: { id: { _in: $eventIds } }) {
+            id
+            itemId
+            presentations {
+                id
+                itemId
+            }
+        }
+    }
+`;
+
+export function useManageSchedule_GetContentIdsQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetContentIdsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetContentIdsQuery>({
+        query: ManageSchedule_GetContentIdsDocument,
+        ...options,
+    });
+}
 export const ManageSchedule_SearchPeopleDocument = gql`
     query ManageSchedule_SearchPeople($conferenceId: uuid!, $subconferenceId: uuid, $search: String!) {
         registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
@@ -57354,36 +57423,6 @@ export function useManageSchedule_UpdateElementMutation() {
         ManageSchedule_UpdateElementDocument
     );
 }
-export const ManageSchedule_DeleteEventsDocument = gql`
-    mutation ManageSchedule_DeleteEvents($ids: [uuid!]!) {
-        delete_schedule_Event(where: { id: { _in: $ids } }) {
-            affected_rows
-        }
-    }
-`;
-
-export function useManageSchedule_DeleteEventsMutation() {
-    return Urql.useMutation<ManageSchedule_DeleteEventsMutation, ManageSchedule_DeleteEventsMutationVariables>(
-        ManageSchedule_DeleteEventsDocument
-    );
-}
-export const ManageSchedule_DeleteEventsAndContentDocument = gql`
-    mutation ManageSchedule_DeleteEventsAndContent($eventIds: [uuid!]!, $itemIds: [uuid!]!) {
-        delete_schedule_Event(where: { id: { _in: $eventIds } }) {
-            affected_rows
-        }
-        delete_content_Item(where: { id: { _in: $itemIds } }) {
-            affected_rows
-        }
-    }
-`;
-
-export function useManageSchedule_DeleteEventsAndContentMutation() {
-    return Urql.useMutation<
-        ManageSchedule_DeleteEventsAndContentMutation,
-        ManageSchedule_DeleteEventsAndContentMutationVariables
-    >(ManageSchedule_DeleteEventsAndContentDocument);
-}
 export const ManageSchedule_GetEventsForExportDocument = gql`
     query ManageSchedule_GetEventsForExport($ids: [uuid!]!) {
         schedule_Event(where: { id: { _in: $ids } }) {
@@ -57407,7 +57446,7 @@ export const ManageSchedule_GetPotentiallyOverlappingEventsDocument = gql`
         $startBefore: timestamptz!
         $endAfter: timestamptz!
         $sessionCond: uuid_comparison_exp!
-        $excludeId: uuid
+        $excludeId: uuid!
     ) {
         schedule_Event_aggregate(
             where: {

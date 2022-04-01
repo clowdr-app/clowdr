@@ -69,7 +69,7 @@ export function EditElements({
 
     return (
         <Accordion allowToggle allowMultiple w="100%">
-            {itemType !== Content_ItemType_Enum.LandingPage ? (
+            {itemType !== Content_ItemType_Enum.LandingPage && itemType !== Content_ItemType_Enum.Session ? (
                 <AccordionItem w="100%">
                     {({ isExpanded }) => (
                         <>

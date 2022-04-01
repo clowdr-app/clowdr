@@ -83,7 +83,9 @@ interface PersonRoleOption {
     readonly value: string;
 }
 
-function mapItemPersonRoleToEventPersonRole(roleName?: string): Schedule_EventProgramPersonRole_Enum | undefined {
+export function mapItemPersonRoleToEventPersonRole(
+    roleName?: string
+): Schedule_EventProgramPersonRole_Enum | undefined {
     if (!roleName) {
         return undefined;
     }

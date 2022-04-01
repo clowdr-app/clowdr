@@ -1,10 +1,17 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Button, ButtonGroup, IconButton, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { Content_ElementType_Enum, Content_ItemType_Enum, Schedule_Mode_Enum } from "../../../../../generated/graphql";
+import type { DeepPartial } from "../../../../CRUDCards/Types";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import type { ScheduleEditorRecord } from "./ScheduleEditorRecord";
 
-export default function HeaderControls(onCreateSession: () => void): React.ReactChild[] {
+export default function HeaderControls(
+    onCreateSession: (initial?: DeepPartial<ScheduleEditorRecord>) => void,
+    onCreateSessionForExistingContent: (typeDisplayName: string, typeNames: Content_ItemType_Enum[]) => void
+): React.ReactChild[] {
     const history = useHistory();
     const { conferencePath } = useAuthParameters();
 
@@ -14,7 +21,7 @@ export default function HeaderControls(onCreateSession: () => void): React.React
                 colorScheme="SecondaryActionButton"
                 borderRadius="xl"
                 borderRightRadius={0}
-                onClick={onCreateSession}
+                onClick={() => onCreateSession()}
             >
                 Add a session
             </Button>
@@ -31,35 +38,59 @@ export default function HeaderControls(onCreateSession: () => void): React.React
                 <MenuList minWidth="auto">
                     <MenuItem
                         onClick={() => {
-                            // TODO:
+                            onCreateSession({
+                                modeName: Schedule_Mode_Enum.External,
+                                item: {
+                                    externalEventLink: [
+                                        {
+                                            name: "Zoom",
+                                            isHidden: true,
+                                            typeName: Content_ElementType_Enum.ExternalEventLink,
+                                            uploadsRemaining: 0,
+                                            data: [] as ElementDataBlob,
+                                        },
+                                    ],
+                                },
+                            });
                         }}
                     >
-                        Add external event (e.g. Zoom)
+                        Add externally-hosted session (e.g. Zoom)
                     </MenuItem>
-                    <MenuItem
+                    {/* <MenuItem
+                        onClick={() => {
+                            onCreateSession({
+                                item: {
+                                    typeName: Content_ItemType_Enum.Social,
+                                },
+                                shufflePeriodId
+                            });
+                        }}
+                    >
+                        Add networking session
+                    </MenuItem> */}
+                    {/* <MenuItem
                         onClick={() => {
                             // TODO:
                         }}
                     >
-                        Add networking
-                    </MenuItem>
+                        Add session for an exhibition
+                    </MenuItem> */}
                     <MenuItem
                         onClick={() => {
-                            // TODO:
+                            onCreateSessionForExistingContent("Sponsor", [Content_ItemType_Enum.Sponsor]);
                         }}
                     >
-                        Add for an exhibition
+                        Add session for a sponsor
                     </MenuItem>
                     <MenuItem
                         onClick={() => {
-                            // TODO:
-                        }}
-                    >
-                        Add for a sponsor
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => {
-                            // TODO:
+                            onCreateSessionForExistingContent("Existing content", [
+                                Content_ItemType_Enum.Session,
+                                Content_ItemType_Enum.Social,
+                                Content_ItemType_Enum.Symposium,
+                                Content_ItemType_Enum.Tutorial,
+                                Content_ItemType_Enum.Workshop,
+                            ]);
                         }}
                     >
                         Add session for existing content

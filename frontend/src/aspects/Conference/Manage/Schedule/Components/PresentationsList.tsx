@@ -4,7 +4,7 @@ import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useEffect, useMemo } from "react";
 import { gql } from "urql";
 import type { ManageSchedule_PresentationFragment, ManageSchedule_TagFragment } from "../../../../../generated/graphql";
-import { useManageSchedule_GetPresentationsQuery } from "../../../../../generated/graphql";
+import { Content_ItemType_Enum, useManageSchedule_GetPresentationsQuery } from "../../../../../generated/graphql";
 import Card from "../../../../Card";
 import useSelectorColors from "../../../../Card/useSelectorColors";
 import FAIcon from "../../../../Chakra/FAIcon";
@@ -51,6 +51,7 @@ export default function PresentationsList({
     tags,
 
     onCreate,
+    onCreateForExistingContent,
     onEdit,
     onDelete,
 
@@ -60,6 +61,7 @@ export default function PresentationsList({
     tags: ReadonlyArray<ManageSchedule_TagFragment>;
 
     onCreate: () => void;
+    onCreateForExistingContent: (typeDisplayName: string, typeNames: Content_ItemType_Enum[]) => void;
     onEdit: (presentation: ManageSchedule_PresentationFragment, initialStepIdx?: number) => void;
     onDelete: (presentationId: string) => void;
 
@@ -164,6 +166,15 @@ export default function PresentationsList({
                         <MenuItem
                             onClick={(ev) => {
                                 ev.stopPropagation();
+                                onCreateForExistingContent("Existing content", [
+                                    Content_ItemType_Enum.Demonstration,
+                                    Content_ItemType_Enum.Keynote,
+                                    Content_ItemType_Enum.Other,
+                                    Content_ItemType_Enum.Paper,
+                                    Content_ItemType_Enum.Poster,
+                                    Content_ItemType_Enum.Presentation,
+                                    Content_ItemType_Enum.SessionQAndA,
+                                ]);
                             }}
                         >
                             Add for existing content

@@ -46474,6 +46474,21 @@ export type ManageSchedule_GetContentIdsQuery = {
     }>;
 };
 
+export type ManageSchedule_ListAllItemTitlesQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+    typeNames: ReadonlyArray<Content_ItemType_Enum> | Content_ItemType_Enum;
+}>;
+
+export type ManageSchedule_ListAllItemTitlesQuery = {
+    readonly __typename?: "query_root";
+    readonly content_Item: ReadonlyArray<{
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+    }>;
+};
+
 export type ManageSchedule_PersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
@@ -46767,21 +46782,6 @@ export type ManageSchedule_GetVideoElementsQuery = {
             }>;
         } | null;
     } | null;
-};
-
-export type ManageSchedule_GetEarliestEventTimeQueryVariables = Exact<{
-    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type ManageSchedule_GetEarliestEventTimeQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly scheduledStartTime?: any | null;
-        readonly name: string;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
-    }>;
 };
 
 export type ManageSchedule_ShiftTimesMutationVariables = Exact<{
@@ -48398,6 +48398,60 @@ export type ManageSchedule_GetPotentiallyOverlappingEventsQuery = {
         readonly __typename?: "schedule_Event_aggregate";
         readonly aggregate?: { readonly __typename?: "schedule_Event_aggregate_fields"; readonly count: number } | null;
     };
+};
+
+export type ManageSchedule_GetExistingItemQueryVariables = Exact<{
+    id: Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetExistingItemQuery = {
+    readonly __typename?: "query_root";
+    readonly content_Item_by_pk?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+        readonly typeName: Content_ItemType_Enum;
+        readonly room?: { readonly __typename?: "room_Room"; readonly id: any } | null;
+        readonly itemTags: ReadonlyArray<{
+            readonly __typename?: "content_ItemTag";
+            readonly id: any;
+            readonly tagId: any;
+        }>;
+        readonly itemPeople: ReadonlyArray<{
+            readonly __typename?: "content_ItemProgramPerson";
+            readonly id: any;
+            readonly personId: any;
+            readonly roleName: string;
+            readonly priority?: number | null;
+        }>;
+        readonly abstract: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly name: string;
+            readonly data: any;
+            readonly layoutData?: any | null;
+            readonly typeName: Content_ElementType_Enum;
+            readonly uploadsRemaining?: number | null;
+            readonly isHidden: boolean;
+        }>;
+        readonly externalEventLink: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly name: string;
+            readonly data: any;
+            readonly layoutData?: any | null;
+            readonly typeName: Content_ElementType_Enum;
+            readonly uploadsRemaining?: number | null;
+            readonly isHidden: boolean;
+        }>;
+        readonly elements_aggregate: {
+            readonly __typename?: "content_Element_aggregate";
+            readonly aggregate?: {
+                readonly __typename?: "content_Element_aggregate_fields";
+                readonly count: number;
+            } | null;
+        };
+    } | null;
 };
 
 export type UpdateShufflePeriodMutationVariables = Exact<{
@@ -56633,6 +56687,34 @@ export function useManageSchedule_GetContentIdsQuery(
         ...options,
     });
 }
+export const ManageSchedule_ListAllItemTitlesDocument = gql`
+    query ManageSchedule_ListAllItemTitles(
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+        $typeNames: [content_ItemType_enum!]!
+    ) {
+        content_Item(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+                typeName: { _in: $typeNames }
+                _or: [{ _not: { events: {} } }, { typeName: { _eq: SPONSOR } }]
+            }
+        ) {
+            id
+            title
+        }
+    }
+`;
+
+export function useManageSchedule_ListAllItemTitlesQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_ListAllItemTitlesQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_ListAllItemTitlesQuery>({
+        query: ManageSchedule_ListAllItemTitlesDocument,
+        ...options,
+    });
+}
 export const ManageSchedule_SearchPeopleDocument = gql`
     query ManageSchedule_SearchPeople($conferenceId: uuid!, $subconferenceId: uuid, $search: String!) {
         registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
@@ -56846,28 +56928,6 @@ export function useManageSchedule_GetVideoElementsQuery(
 ) {
     return Urql.useQuery<ManageSchedule_GetVideoElementsQuery>({
         query: ManageSchedule_GetVideoElementsDocument,
-        ...options,
-    });
-}
-export const ManageSchedule_GetEarliestEventTimeDocument = gql`
-    query ManageSchedule_GetEarliestEventTime($ids: [uuid!]!) {
-        schedule_Event(where: { id: { _in: $ids } }, order_by: [{ scheduledStartTime: asc }], limit: 1) {
-            id
-            scheduledStartTime
-            name
-            item {
-                id
-                title
-            }
-        }
-    }
-`;
-
-export function useManageSchedule_GetEarliestEventTimeQuery(
-    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetEarliestEventTimeQueryVariables>, "query">
-) {
-    return Urql.useQuery<ManageSchedule_GetEarliestEventTimeQuery>({
-        query: ManageSchedule_GetEarliestEventTimeDocument,
         ...options,
     });
 }
@@ -57547,6 +57607,26 @@ export function useManageSchedule_GetPotentiallyOverlappingEventsQuery(
 ) {
     return Urql.useQuery<ManageSchedule_GetPotentiallyOverlappingEventsQuery>({
         query: ManageSchedule_GetPotentiallyOverlappingEventsDocument,
+        ...options,
+    });
+}
+export const ManageSchedule_GetExistingItemDocument = gql`
+    query ManageSchedule_GetExistingItem($id: uuid!) {
+        content_Item_by_pk(id: $id) {
+            ...ManageSchedule_EventContent
+            room {
+                id
+            }
+        }
+    }
+    ${ManageSchedule_EventContentFragmentDoc}
+`;
+
+export function useManageSchedule_GetExistingItemQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetExistingItemQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetExistingItemQuery>({
+        query: ManageSchedule_GetExistingItemDocument,
         ...options,
     });
 }

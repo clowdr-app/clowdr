@@ -25,6 +25,8 @@ import { NIL as NIL_UUID } from "uuid";
 import type {
     ManageSchedule_GetAllSessionIdsQuery,
     ManageSchedule_GetAllSessionIdsQueryVariables,
+    ManageSchedule_GetExistingItemQuery,
+    ManageSchedule_GetExistingItemQueryVariables,
     ManageSchedule_GetPotentiallyOverlappingEventsQuery,
     ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables,
     ManageSchedule_InsertEventMutation,
@@ -44,6 +46,7 @@ import type {
 import {
     Content_ItemType_Enum,
     ManageSchedule_GetAllSessionIdsDocument,
+    ManageSchedule_GetExistingItemDocument,
     ManageSchedule_GetPotentiallyOverlappingEventsDocument,
     ManageSchedule_InsertEventDocument,
     ManageSchedule_InsertItemDocument,
@@ -65,8 +68,9 @@ import { DashboardPage } from "../DashboardPage";
 import ContentPanel from "./Components/ContentPanel";
 import DeleteModal from "./Components/DeleteModal";
 import DetailsPanel from "./Components/DetailsPanel";
+import FindExistingContentModal from "./Components/FindExistingContentModal";
 import HeaderControls from "./Components/HeaderControls";
-import PeoplePanel from "./Components/PeoplePanel";
+import PeoplePanel, { mapItemPersonRoleToEventPersonRole } from "./Components/PeoplePanel";
 import type { ScheduleEditorRecord } from "./Components/ScheduleEditorRecord";
 import SessionCard from "./Components/SessionCard";
 import SettingsPanel from "./Components/SettingsPanel";
@@ -437,6 +441,15 @@ gql`
             }
         }
     }
+
+    query ManageSchedule_GetExistingItem($id: uuid!) {
+        content_Item_by_pk(id: $id) {
+            ...ManageSchedule_EventContent
+            room {
+                id
+            }
+        }
+    }
 `;
 
 export default function ManageScheduleV2(): JSX.Element {
@@ -444,24 +457,100 @@ export default function ManageScheduleV2(): JSX.Element {
     const [editorIsCreate, setEditorIsCreate] = useState<boolean>(false);
     const deleteEventsDisclosure = useDisclosure();
     const shiftEventsDisclosure = useDisclosure();
+    const addSessionForContentDisclosure = useDisclosure();
+
     const [deleteEventIds, setDeleteEventIds] = useState<string[]>([]);
     const [deleteEventType, setDeleteEventType] = useState<"session" | "presentation">("session");
 
     const [shiftEventIds, setShiftEventIds] = useState<string[]>([]);
 
+    const [addSessionForContentTypeDisplayName, setAddSessionForContentTypeDisplayName] = useState<string>("");
+    const [addSessionForContentTypeNames, setAddSessionForContentTypeNames] = useState<Content_ItemType_Enum[]>([]);
+    const [addSessionOrPresentation, setAddSessionOrPresentation] = useState<"session" | "presentation">("session");
+    const [addForExistingContentSession, setAddForExistingContentSession] =
+        useState<ManageSchedule_SessionFragment | null>(null);
+
     const [initialStepIdx, setInitialStepIdx] = useState<number>(0);
     const [currentRecord, setCurrentRecord] = useState<DeepPartial<ScheduleEditorRecord>>({});
 
+    const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
+            }),
+        [subconferenceId]
+    );
     const client = useClient();
 
-    const onCreateSession = useCallback(() => {
-        setCurrentRecord({});
-        setInitialStepIdx(0);
-        setEditorIsCreate(true);
-        setTimeout(() => {
-            editorDisclosure.onOpen();
-        }, 50);
-    }, [editorDisclosure]);
+    const onCreateSession = useCallback(
+        (initial?: DeepPartial<ScheduleEditorRecord>) => {
+            setCurrentRecord(initial ?? {});
+            setInitialStepIdx(0);
+            setEditorIsCreate(true);
+            setTimeout(() => {
+                editorDisclosure.onOpen();
+            }, 50);
+        },
+        [editorDisclosure]
+    );
+    const onBeginCreateSessionForExistingContent = useCallback(
+        (typeDisplayName: string, typeNames: Content_ItemType_Enum[]) => {
+            setAddSessionForContentTypeDisplayName(typeDisplayName);
+            setAddSessionForContentTypeNames(typeNames);
+            setAddSessionOrPresentation("session");
+            setAddForExistingContentSession(null);
+            addSessionForContentDisclosure.onOpen();
+        },
+        [addSessionForContentDisclosure]
+    );
+    const onBeginCreatePresentationForExistingContent = useCallback(
+        (session: ManageSchedule_SessionFragment, typeDisplayName: string, typeNames: Content_ItemType_Enum[]) => {
+            setAddSessionForContentTypeDisplayName(typeDisplayName);
+            setAddSessionForContentTypeNames(typeNames);
+            setAddSessionOrPresentation("presentation");
+            setAddForExistingContentSession(session);
+            addSessionForContentDisclosure.onOpen();
+        },
+        [addSessionForContentDisclosure]
+    );
+    const onDoCreateSessionForExistingContent = useCallback(
+        async (itemId: string, session: ManageSchedule_SessionFragment | null) => {
+            const itemResponse = await client
+                .query<ManageSchedule_GetExistingItemQuery, ManageSchedule_GetExistingItemQueryVariables>(
+                    ManageSchedule_GetExistingItemDocument,
+                    {
+                        id: itemId,
+                    },
+                    context
+                )
+                .toPromise();
+
+            const item = itemResponse.data?.content_Item_by_pk;
+            setCurrentRecord({
+                name: item?.title,
+                item,
+                sessionEventId: session?.id,
+                roomId:
+                    session?.roomId ?? (item?.typeName === Content_ItemType_Enum.Sponsor ? item.room?.id : undefined),
+                eventPeople: item
+                    ? item.itemPeople.map((x) => ({
+                          personId: x.personId,
+                          roleName: mapItemPersonRoleToEventPersonRole(x.roleName),
+                      }))
+                    : [],
+            });
+            setInitialStepIdx(0);
+            setEditorIsCreate(true);
+            setTimeout(() => {
+                editorDisclosure.onOpen();
+            }, 50);
+        },
+        [client, context, editorDisclosure]
+    );
     const onEditSession = useCallback(
         (session: DeepPartial<ManageSchedule_SessionFragment>, initialStepIdx = 0) => {
             setCurrentRecord(session);
@@ -491,7 +580,7 @@ export default function ManageScheduleV2(): JSX.Element {
     const onExportSessions = useCallback((_ids: string[]) => {
         // TODO:
     }, []);
-    const headerControls = HeaderControls(onCreateSession);
+    const headerControls = HeaderControls(onCreateSession, onBeginCreateSessionForExistingContent);
 
     const onCreatePresentation = useCallback(
         (session: ManageSchedule_SessionFragment) => {
@@ -533,8 +622,6 @@ export default function ManageScheduleV2(): JSX.Element {
     );
 
     const [isSaving, setIsSaving] = useState<boolean>(false);
-    const conference = useConference();
-    const { subconferenceId } = useAuthParameters();
 
     const [searchName, setSearchName] = useState<string>("");
     const [startAfter, setStartAfter] = useState<Date | undefined>(undefined);
@@ -545,15 +632,6 @@ export default function ManageScheduleV2(): JSX.Element {
         setOffsetStr(Math.ceil(1 + offset / limit).toString());
     }, [limit, offset]);
 
-    const context = useMemo(
-        () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
-        [subconferenceId]
-    );
     const [filter, setFilter] = useState<Schedule_Event_Bool_Exp>({});
     useEffect(() => {
         const tId = setTimeout(
@@ -809,6 +887,9 @@ export default function ManageScheduleV2(): JSX.Element {
                                     onExport={() => onExportSessions([session.id])}
                                     tags={tags}
                                     onCreatePresentation={() => onCreatePresentation(session)}
+                                    onCreatePresentationForExistingContent={(...args) =>
+                                        onBeginCreatePresentationForExistingContent(session, ...args)
+                                    }
                                     onEditPresentation={(...args) => onEditPresentation(session, ...args)}
                                     onDeletePresentation={(id) => onDeletePresentations([id])}
                                     refetchPresentations={refetchPresentations.get(session.id)}
@@ -1395,6 +1476,18 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                     }
                 }}
                 eventIds={shiftEventIds}
+            />
+            <FindExistingContentModal
+                isOpen={addSessionForContentDisclosure.isOpen}
+                onClose={(id) => {
+                    if (id) {
+                        onDoCreateSessionForExistingContent(id, addForExistingContentSession);
+                    }
+                    addSessionForContentDisclosure.onClose();
+                }}
+                sessionOrPresentation={addSessionOrPresentation}
+                typeDisplayName={addSessionForContentTypeDisplayName}
+                typeNames={addSessionForContentTypeNames}
             />
         </DashboardPage>
     );

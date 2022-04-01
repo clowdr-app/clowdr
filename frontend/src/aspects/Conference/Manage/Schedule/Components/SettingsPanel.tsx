@@ -98,9 +98,9 @@ function SessionSettingsPanel({
             onAnyChange();
             updateRecord((old) => ({
                 ...old,
-                modeName: Schedule_Mode_Enum.VideoChat,
-                enableRecording: true,
-                automaticParticipationSurvey: true,
+                modeName: record.modeName ?? Schedule_Mode_Enum.VideoChat,
+                enableRecording: record.enableRecording ?? true,
+                automaticParticipationSurvey: record.automaticParticipationSurvey ?? true,
             }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

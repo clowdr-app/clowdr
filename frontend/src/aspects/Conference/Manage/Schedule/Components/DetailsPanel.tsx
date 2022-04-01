@@ -103,11 +103,13 @@ export default function DetailsPanel({
 
     const updateValidity = useCallback(() => {
         if (isCreate) {
-            if (!nameHasChanged) {
+            if (!nameHasChanged && !record.item?.title?.length) {
                 onInvalid({
                     error: "A name is required.",
                 });
                 return;
+            } else if (record.item?.title?.length) {
+                onAnyChange();
             }
         }
         if (startTimeValidation !== "no error") {
@@ -120,7 +122,7 @@ export default function DetailsPanel({
             onValid();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [durationValidation, isCreate, nameHasChanged, nameValidation, startTimeValidation]);
+    }, [durationValidation, isCreate, nameHasChanged, nameValidation, startTimeValidation, record.item?.title?.length]);
 
     clearState.current = useCallback(() => {
         setStartTimeHasChanged(false);

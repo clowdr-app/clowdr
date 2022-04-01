@@ -15,6 +15,7 @@ import type { ElementDataBlob, TextualElementBlob } from "@midspace/shared-types
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
 import type {
+    Content_ItemType_Enum,
     ManageSchedule_PresentationFragment,
     ManageSchedule_SessionFragment,
     ManageSchedule_TagFragment,
@@ -42,6 +43,7 @@ export default function SessionCard({
     onExport,
 
     onCreatePresentation,
+    onCreatePresentationForExistingContent,
     onEditPresentation,
     onDeletePresentation,
 
@@ -60,6 +62,7 @@ export default function SessionCard({
     onExport: () => void;
 
     onCreatePresentation: () => void;
+    onCreatePresentationForExistingContent: (typeDisplayName: string, typeNames: Content_ItemType_Enum[]) => void;
     onEditPresentation: (presentation: ManageSchedule_PresentationFragment, initialStepIdx?: number) => void;
     onDeletePresentation: (presentationId: string) => void;
 
@@ -351,6 +354,7 @@ export default function SessionCard({
                     sessionId={session.id}
                     tags={tags}
                     onCreate={onCreatePresentation}
+                    onCreateForExistingContent={onCreatePresentationForExistingContent}
                     onEdit={onEditPresentation}
                     onDelete={onDeletePresentation}
                     refetchPresentations={refetchPresentations}

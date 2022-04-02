@@ -45637,7 +45637,13 @@ export type ConferenceTechSupportAddressQueryVariables = Exact<{
 
 export type ConferenceTechSupportAddressQuery = {
     readonly __typename?: "query_root";
-    readonly conference_Configuration_by_pk?: {
+    readonly supportAddress?: {
+        readonly __typename?: "conference_Configuration";
+        readonly conferenceId: any;
+        readonly key: Conference_ConfigurationKey_Enum;
+        readonly value: any;
+    } | null;
+    readonly techSupportAddress?: {
         readonly __typename?: "conference_Configuration";
         readonly conferenceId: any;
         readonly key: Conference_ConfigurationKey_Enum;
@@ -56126,7 +56132,12 @@ export function useGetIsExternalRtmpEnabledQuery(
 }
 export const ConferenceTechSupportAddressDocument = gql`
     query ConferenceTechSupportAddress($conferenceId: uuid!) {
-        conference_Configuration_by_pk(conferenceId: $conferenceId, key: TECH_SUPPORT_ADDRESS) {
+        supportAddress: conference_Configuration_by_pk(conferenceId: $conferenceId, key: SUPPORT_ADDRESS) {
+            conferenceId
+            key
+            value
+        }
+        techSupportAddress: conference_Configuration_by_pk(conferenceId: $conferenceId, key: TECH_SUPPORT_ADDRESS) {
             conferenceId
             key
             value

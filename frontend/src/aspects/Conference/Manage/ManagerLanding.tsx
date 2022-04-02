@@ -13,7 +13,12 @@ import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
 gql`
     query ConferenceTechSupportAddress($conferenceId: uuid!) {
-        conference_Configuration_by_pk(conferenceId: $conferenceId, key: TECH_SUPPORT_ADDRESS) {
+        supportAddress: conference_Configuration_by_pk(conferenceId: $conferenceId, key: SUPPORT_ADDRESS) {
+            conferenceId
+            key
+            value
+        }
+        techSupportAddress: conference_Configuration_by_pk(conferenceId: $conferenceId, key: TECH_SUPPORT_ADDRESS) {
             conferenceId
             key
             value
@@ -39,10 +44,15 @@ export default function ManagerLandingPage(): JSX.Element {
         },
         context,
     });
-    const techSupportAddress =
-        techSupportAddressResponse.data?.conference_Configuration_by_pk?.value ??
+    const supportAddress =
+        techSupportAddressResponse.data?.supportAddress?.value ??
         import.meta.env.VITE_TECH_SUPPORT_ADDRESS ??
         "support@midspace.app";
+    const techSupportAddress =
+        techSupportAddressResponse.data?.techSupportAddress?.value ??
+        import.meta.env.VITE_TECH_SUPPORT_ADDRESS ??
+        "support@midspace.app";
+    const primarySupportAddress = subconferenceId ? supportAddress : techSupportAddress;
 
     return (
         <DashboardPage title={`Manage ${conference.shortName}`}>
@@ -55,9 +65,10 @@ export default function ManagerLandingPage(): JSX.Element {
                 maxW="calc(902px + (2 * var(--chakra-space-8)))"
             >
                 <Text>
-                    <chakra.span fontWeight="bold">Need help?</chakra.span> Contact our support team at:&nbsp;
-                    <Link wordBreak="keep-all" whiteSpace="nowrap" href={`mailto:${techSupportAddress}`}>
-                        {techSupportAddress}
+                    <chakra.span fontWeight="bold">Need help?</chakra.span> Contact{" "}
+                    {subconferenceId ? "your conference organizing team at: " : "our support team at: "}
+                    <Link wordBreak="keep-all" whiteSpace="nowrap" href={`mailto:${primarySupportAddress}`}>
+                        {primarySupportAddress}
                     </Link>
                 </Text>
                 <HStack w="100%" alignItems="flex-end">
@@ -184,34 +195,36 @@ export default function ManagerLandingPage(): JSX.Element {
                         />
                     ) : undefined}
                 </Flex>
-                <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
-                    Registration
-                </Heading>
-                <Flex
-                    flexWrap="wrap"
-                    alignItems="stretch"
-                    justifyContent="flex-start"
-                    w="100%"
-                    gridRowGap="1em"
-                    gridColumnGap="1em"
-                >
-                    <RestrictedDashboardButton
-                        to="groups"
-                        name="Groups"
-                        icon="user-cog"
-                        description="Manage groups of registrants."
-                        organizerRole
-                    />
-                    {!subconferenceId ? (
-                        <RestrictedDashboardButton
-                            to="registrants"
-                            name="Registrants"
-                            icon="users"
-                            description="Manage who can log in and access your conference, e.g. registrants, presenters and speakers."
-                            organizerRole
-                        />
-                    ) : undefined}
-                </Flex>
+                {!subconferenceId ? (
+                    <>
+                        <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
+                            Registration
+                        </Heading>
+                        <Flex
+                            flexWrap="wrap"
+                            alignItems="stretch"
+                            justifyContent="flex-start"
+                            w="100%"
+                            gridRowGap="1em"
+                            gridColumnGap="1em"
+                        >
+                            <RestrictedDashboardButton
+                                to="groups"
+                                name="Groups"
+                                icon="user-cog"
+                                description="Manage groups of registrants."
+                                organizerRole
+                            />
+                            <RestrictedDashboardButton
+                                to="registrants"
+                                name="Registrants"
+                                icon="users"
+                                description="Manage who can log in and access your conference, e.g. registrants, presenters and speakers."
+                                organizerRole
+                            />
+                        </Flex>
+                    </>
+                ) : undefined}
                 {!subconferenceId ? (
                     <>
                         <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">

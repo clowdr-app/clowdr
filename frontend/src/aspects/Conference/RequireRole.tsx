@@ -1,6 +1,7 @@
 import React from "react";
 import { Registrant_RegistrantRole_Enum } from "../../generated/graphql";
 import { useAuthParameters } from "../GQL/AuthParameters";
+import { useMaybeConference } from "./useConference";
 import { useMaybeCurrentRegistrant } from "./useCurrentRegistrant";
 
 export default function RequireRole({
@@ -18,8 +19,13 @@ export default function RequireRole({
     permitIfAnySubconference?: boolean;
     componentIfDenied?: JSX.Element;
 }): JSX.Element | null {
+    const conference = useMaybeConference();
     const registrant = useMaybeCurrentRegistrant();
     const { subconferenceId } = useAuthParameters();
+
+    if (conference && "registrants" in conference && conference.registrants.length && !registrant) {
+        return <></>;
+    }
 
     if (
         registrant &&

@@ -57,9 +57,9 @@ import {
     useManageSchedule_GetTagsQuery,
 } from "../../../../generated/graphql";
 import SelectButton from "../../../Card/SelectButton";
+import { DateTimePicker } from "../../../Chakra/DateTimePicker";
 import Editor from "../../../CRUDCards/Editor";
 import type { DeepPartial, ValidationState } from "../../../CRUDCards/Types";
-import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";

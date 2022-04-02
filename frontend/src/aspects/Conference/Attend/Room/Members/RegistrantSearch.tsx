@@ -13,7 +13,7 @@ import { useClient } from "urql";
 import type { SearchRegistrantsQuery, SearchRegistrantsQueryVariables } from "../../../../../generated/graphql";
 import { SearchRegistrantsDocument } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
-import useDebouncedState from "../../../../CRUDTable/useDebouncedState";
+import useDebouncedState from "../../../../Hooks/useDebouncedState";
 import { useConference } from "../../../useConference";
 
 export function RegistrantSearch({

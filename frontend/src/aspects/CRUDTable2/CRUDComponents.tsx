@@ -11,9 +11,9 @@ import {
     Select,
 } from "@chakra-ui/react";
 import React from "react";
+import { DateTimePicker } from "../Chakra/DateTimePicker";
 import FAIcon from "../Chakra/FAIcon";
 import MultiSelect from "../Chakra/MultiSelect";
-import { DateTimePicker } from "../CRUDTable/DateTimePicker";
 import type { FilterFunction, FilterProps } from "./CRUDTable2";
 
 // Define a default UI for filtering

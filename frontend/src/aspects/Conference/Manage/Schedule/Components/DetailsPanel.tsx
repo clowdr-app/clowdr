@@ -22,9 +22,9 @@ import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-type
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Content_ItemType_Enum, useManageSchedule_GetTagsQuery } from "../../../../../generated/graphql";
+import { DateTimePicker } from "../../../../Chakra/DateTimePicker";
 import { CreatableMultiSelect } from "../../../../Chakra/MultiSelect";
 import type { PanelProps, ValidationState } from "../../../../CRUDCards/Types";
-import { DateTimePicker } from "../../../../CRUDTable/DateTimePicker";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { useRestorableState } from "../../../../Hooks/useRestorableState";

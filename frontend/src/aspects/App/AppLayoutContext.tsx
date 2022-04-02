@@ -1,7 +1,7 @@
 import useSize from "@react-hook/size";
 import type { PropsWithChildren } from "react";
 import React, { createContext, useEffect } from "react";
-import useDebouncedState from "../CRUDTable/useDebouncedState";
+import useDebouncedState from "../Hooks/useDebouncedState";
 
 function useValue(_props: Record<never, never>) {
     const mainPaneRef = React.useRef<HTMLDivElement>(null);

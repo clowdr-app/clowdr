@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
+import { DateTimePicker } from "../../../Chakra/DateTimePicker";
 
 export default function DateTimeSetting({
     value,

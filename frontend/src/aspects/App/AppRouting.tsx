@@ -17,7 +17,6 @@ const SubmitItemPage = React.lazy(() => import("../Submissions/SubmitItemPage"))
 const SubmitElementPage = React.lazy(() => import("../Submissions/SubmitElementPage"));
 const PushNotificationSettings = React.lazy(() => import("../PushNotifications/PushNotificationSettings"));
 const GenericErrorPage = React.lazy(() => import("../Errors/GenericErrorPage"));
-const CRUDTestPage = React.lazy(() => import("../CRUDTable/CRUDTestPage"));
 const PageNotFound = React.lazy(() => import("../Errors/PageNotFound"));
 const AcceptInvitationPage = React.lazy(() => import("../Invitation/AcceptInvitationPage"));
 const SuperUserLandingPage = React.lazy(() => import("../SuperUser/LandingPage"));
@@ -169,8 +168,6 @@ export default function AppRouting(): JSX.Element {
                     ) => <AcceptInvitationPage inviteCode={props.match.params.inviteCode} />}
                 />
                 <Route exact path="/invitation/accept" component={AcceptInvitationPage} />
-
-                <Route exact path="/crud/test" component={CRUDTestPage} />
 
                 <ProtectedRoute
                     altIfNotAuthed={<Redirect to="/" />}

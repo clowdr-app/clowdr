@@ -62,9 +62,9 @@ import {
     useUpdateEventInfoMutation,
 } from "../../../../generated/graphql";
 import { useAppSettings } from "../../../App";
+import { DateTimePicker } from "../../../Chakra/DateTimePicker";
 import FAIcon from "../../../Chakra/FAIcon";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import {
     CheckBoxColumnFilter,
     DateTimeColumnFilter,

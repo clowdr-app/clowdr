@@ -63,8 +63,8 @@ import {
     useAddEventPeople_SelectProgramPeopleQuery,
     useAddEventPeople_SelectRegistrantsQuery,
 } from "../../../../generated/graphql";
+import { DateTimePicker } from "../../../Chakra/DateTimePicker";
 import FAIcon from "../../../Chakra/FAIcon";
-import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";

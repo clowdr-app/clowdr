@@ -1,20 +1,31 @@
-import { Spinner } from "@chakra-ui/react";
-import { assert } from "@midspace/assert";
+import { Button, Flex, FormLabel, Input, Spinner, useClipboard } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
-import React, { useEffect, useMemo, useState } from "react";
-import { v4 as uuidv4, validate } from "uuid";
+import type { LegacyRef } from "react";
+import React, { useCallback, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
+import type { ManageGroups_GroupFragment } from "../../../generated/graphql";
 import {
     useCreateDeleteGroupsMutation,
     useSelectAllGroupsQuery,
     useUpdateGroupMutation,
 } from "../../../generated/graphql";
-import type { CRUDTableProps, PrimaryField, UpdateResult } from "../../CRUDTable/CRUDTable";
-import CRUDTable, { defaultStringFilter, FieldType } from "../../CRUDTable/CRUDTable";
+import FAIcon from "../../Chakra/FAIcon";
+import { TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
+import type {
+    CellProps,
+    ColumnHeaderProps,
+    ColumnSpecification,
+    Delete,
+    Insert,
+    RowSpecification,
+    Update,
+} from "../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useTitle } from "../../Hooks/useTitle";
+import { maybeCompare } from "../../Utils/maybeCompare";
 import { useConference } from "../useConference";
 import { DashboardPage } from "./DashboardPage";
 
@@ -59,18 +70,9 @@ gql`
     }
 `;
 
-type GroupDescriptor = {
-    isNew: boolean;
-    id: string;
-    name: string;
-};
-
-const GroupsCRUDTable = (props: Readonly<CRUDTableProps<GroupDescriptor, "id">>) => CRUDTable(props);
-
 export default function ManageGroups(): JSX.Element {
     const conference = useConference();
     const { subconferenceId } = useAuthParameters();
-    const title = useTitle(`Manage groups of ${conference.shortName}`);
 
     const context = useMemo(
         () =>
@@ -81,305 +83,211 @@ export default function ManageGroups(): JSX.Element {
             }),
         [subconferenceId]
     );
-    const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }, refetchAllGroups] =
-        useSelectAllGroupsQuery({
-            requestPolicy: "network-only",
-            variables: {
-                conferenceId: conference.id,
-                subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
-            },
-            context,
-        });
+    const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }] = useSelectAllGroupsQuery({
+        requestPolicy: "network-only",
+        variables: {
+            conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
+        },
+        context,
+    });
     useQueryErrorToast(errorAllGroups, false);
+    const data = useMemo(() => [...(allGroups?.registrant_Group ?? [])], [allGroups?.registrant_Group]);
 
-    const [, createDeleteGroupsMutation] = useCreateDeleteGroupsMutation();
-    const [, updateGroupMutation] = useUpdateGroupMutation();
+    const [createDeleteGroupsResponse, createDeleteGroups] = useCreateDeleteGroupsMutation();
+    const [updateGroupResponse, updateGroup] = useUpdateGroupMutation();
 
-    const [allGroupsMap, setAllGroupsMap] = useState<Map<string, GroupDescriptor>>();
-
-    const parsedDBGroups = useMemo(() => {
-        if (!allGroups) {
-            return undefined;
-        }
-
-        const result = new Map<string, GroupDescriptor>();
-
-        for (const group of allGroups.registrant_Group) {
-            result.set(group.id, {
-                isNew: false,
-                id: group.id,
-                name: group.name,
-            });
-        }
-
-        return result;
-    }, [allGroups]);
-
-    useEffect(() => {
-        if (parsedDBGroups) {
-            setAllGroupsMap(parsedDBGroups);
-        }
-    }, [parsedDBGroups]);
-
-    const fields = useMemo(() => {
-        const result: {
-            [K: string]: Readonly<PrimaryField<GroupDescriptor, any>>;
-        } = {
-            name: {
-                heading: "Name",
-                ariaLabel: "Name",
-                description: "Group name",
-                isHidden: false,
-                isEditable: true,
-                defaultValue: "New group name",
-                insert: (item, v) => {
-                    return {
-                        ...item,
-                        name: v,
-                    };
-                },
-                extract: (v) => v.name,
-                spec: {
-                    fieldType: FieldType.string,
-                    convertFromUI: (x) => x,
-                    convertToUI: (x) => x,
-                    filter: defaultStringFilter,
-                },
-                validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
+    const row: RowSpecification<ManageGroups_GroupFragment> = useMemo(
+        () => ({
+            getKey: (record) => record.id,
+            canSelect: (_record) => true,
+            pages: {
+                defaultToLast: false,
             },
-        };
-        return result;
-    }, []);
+            invalid: (record) =>
+                !record.name?.length
+                    ? {
+                          columnId: "name",
+                          reason: "Name required",
+                      }
+                    : false,
+        }),
+        []
+    );
+
+    const columns: ColumnSpecification<ManageGroups_GroupFragment>[] = useMemo(
+        () => [
+            {
+                id: "name",
+                defaultSortDirection: SortDirection.Asc,
+                header: function NameHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageGroups_GroupFragment>) {
+                    return isInCreate ? (
+                        <FormLabel>Name</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={onClick}>
+                            Name{sortDir !== null ? ` ${sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.name,
+                set: (record, value: string | undefined) => {
+                    record.name = value;
+                },
+                filterFn: (rows: Array<ManageGroups_GroupFragment>, filterValue: string) => {
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.name ?? "") === "");
+                    } else {
+                        return rows.filter((row) => row.name?.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
+                },
+                filterEl: TextColumnFilter,
+                sort: (x: string | undefined, y: string | undefined) =>
+                    maybeCompare(x, y, (a, b) => a.localeCompare(b)),
+                cell: function GroupCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageGroups_GroupFragment>, string | undefined>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
+                    return (
+                        <Flex alignItems="center">
+                            <Input
+                                type="text"
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value)}
+                                onBlur={onBlur}
+                                ref={ref as LegacyRef<HTMLInputElement>}
+                                mr={2}
+                            />
+                            <Button onClick={onCopy} size="xs" ml="auto">
+                                <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                            </Button>
+                        </Flex>
+                    );
+                },
+            },
+        ],
+        []
+    );
+
+    const insert: Insert<ManageGroups_GroupFragment> = useMemo(
+        () => ({
+            ongoing: createDeleteGroupsResponse.fetching,
+            generateDefaults: () => {
+                const groupId = uuidv4();
+                return {
+                    id: groupId,
+                    conferenceId: conference.id,
+                    subconferenceId,
+                };
+            },
+            makeWhole: (d) => (d.name?.length ? (d as ManageGroups_GroupFragment) : undefined),
+            start: (record) => {
+                createDeleteGroups(
+                    {
+                        insertGroups: [
+                            {
+                                id: record.id,
+                                conferenceId: conference.id,
+                                subconferenceId,
+                                name: record.name,
+                            },
+                        ],
+                        deleteGroupIds: [],
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
+            },
+        }),
+        [conference.id, createDeleteGroups, createDeleteGroupsResponse.fetching, subconferenceId]
+    );
+
+    const startUpdate = useCallback(
+        async (record: ManageGroups_GroupFragment) => {
+            return updateGroup(
+                {
+                    groupId: record.id,
+                    groupName: record.name as string,
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            [AuthHeader.Role]: subconferenceId
+                                ? HasuraRoleName.SubconferenceOrganizer
+                                : HasuraRoleName.ConferenceOrganizer,
+                        },
+                    },
+                }
+            );
+        },
+        [subconferenceId, updateGroup]
+    );
+
+    const update: Update<ManageGroups_GroupFragment> = useMemo(
+        () => ({
+            ongoing: updateGroupResponse.fetching,
+            start: startUpdate,
+        }),
+        [updateGroupResponse.fetching, startUpdate]
+    );
+
+    const deleteP: Delete<ManageGroups_GroupFragment> = useMemo(
+        () => ({
+            ongoing: createDeleteGroupsResponse.fetching,
+            start: (keys) => {
+                createDeleteGroups(
+                    {
+                        insertGroups: [],
+                        deleteGroupIds: keys,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                [AuthHeader.Role]: subconferenceId
+                                    ? HasuraRoleName.SubconferenceOrganizer
+                                    : HasuraRoleName.ConferenceOrganizer,
+                            },
+                        },
+                    }
+                );
+            },
+        }),
+        [createDeleteGroups, createDeleteGroupsResponse.fetching, subconferenceId]
+    );
+
+    const pageSizes = useMemo(() => [10, 20, 35, 50], []);
 
     return (
         <DashboardPage title="Groups">
-            {title}
-            {loadingAllGroups && !allGroupsMap ? (
+            {loadingAllGroups && !allGroups ? (
                 <Spinner />
             ) : errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
-            <GroupsCRUDTable
-                key="crud-table"
-                data={allGroupsMap ?? new Map()}
-                csud={{
-                    cudCallbacks: {
-                        generateTemporaryKey: () => uuidv4(),
-                        create: (tempKey, item) => {
-                            const newItem = {
-                                ...item,
-                                isNew: true,
-                                id: tempKey,
-                            } as GroupDescriptor;
-                            setAllGroupsMap((oldData) => {
-                                const newData = new Map(oldData ? oldData.entries() : []);
-                                newData.set(tempKey, newItem);
-                                return newData;
-                            });
-                            return true;
-                        },
-                        update: (items) => {
-                            const results: Map<string, UpdateResult> = new Map();
-                            items.forEach((_item, key) => {
-                                results.set(key, true);
-                            });
-
-                            setAllGroupsMap((oldData) => {
-                                if (oldData) {
-                                    const newData = new Map(oldData.entries());
-                                    items.forEach((item, key) => {
-                                        newData.set(key, item);
-                                    });
-                                    return newData;
-                                }
-                                return undefined;
-                            });
-
-                            return results;
-                        },
-                        delete: (keys) => {
-                            const results: Map<string, boolean> = new Map();
-                            keys.forEach((key) => {
-                                results.set(key, true);
-                            });
-
-                            setAllGroupsMap((oldData) => {
-                                const newData = new Map(oldData ? oldData.entries() : []);
-                                keys.forEach((key) => {
-                                    newData.delete(key);
-                                });
-                                return newData;
-                            });
-
-                            return results;
-                        },
-                        save: async (keys) => {
-                            assert.truthy(allGroupsMap);
-
-                            const newKeys = new Set<string>();
-                            const updatedKeys = new Set<string>();
-                            const deletedKeys = new Set<string>();
-
-                            const results: Map<string, boolean> = new Map();
-
-                            keys.forEach((key) => {
-                                results.set(key, false);
-                            });
-
-                            keys.forEach((key) => {
-                                const item = allGroupsMap.get(key);
-                                if (!item) {
-                                    deletedKeys.add(key);
-                                } else {
-                                    if (item.isNew) {
-                                        newKeys.add(key);
-                                    } else {
-                                        const existing = parsedDBGroups?.get(key);
-                                        if (!existing) {
-                                            console.error("Not-new value was not found in the existing DB dataset.");
-                                            results.set(key, false);
-                                            return;
-                                        }
-
-                                        if (item.name !== existing.name) {
-                                            updatedKeys.add(key);
-                                        }
-                                    }
-                                }
-                            });
-
-                            let createDeleteGroupsResult;
-                            try {
-                                createDeleteGroupsResult = await createDeleteGroupsMutation(
-                                    {
-                                        deleteGroupIds: Array.from(deletedKeys.values()),
-                                        insertGroups: Array.from(newKeys.values()).map((key) => {
-                                            const item = allGroupsMap.get(key);
-                                            assert.truthy(item);
-                                            return {
-                                                conferenceId: conference.id,
-                                                subconferenceId,
-                                                name: item.name,
-                                            };
-                                        }),
-                                    },
-                                    {
-                                        fetchOptions: {
-                                            headers: {
-                                                [AuthHeader.Role]: subconferenceId
-                                                    ? HasuraRoleName.SubconferenceOrganizer
-                                                    : HasuraRoleName.ConferenceOrganizer,
-                                            },
-                                        },
-                                    }
-                                );
-                            } catch (e) {
-                                createDeleteGroupsResult = {
-                                    error: [e],
-                                };
-                            }
-                            if (createDeleteGroupsResult.error) {
-                                newKeys.forEach((key) => {
-                                    results.set(key, false);
-                                });
-                                deletedKeys.forEach((key) => {
-                                    results.set(key, false);
-                                });
-                            } else {
-                                newKeys.forEach((key) => {
-                                    results.set(key, true);
-                                });
-                                deletedKeys.forEach((key) => {
-                                    results.set(key, true);
-                                });
-                            }
-
-                            let updatedResults: {
-                                key: string;
-                                result: any;
-                            }[];
-                            try {
-                                updatedResults = await Promise.all(
-                                    Array.from(updatedKeys.values()).map(async (key) => {
-                                        const item = allGroupsMap.get(key);
-                                        assert.truthy(item);
-                                        let result: any;
-                                        try {
-                                            result = await updateGroupMutation(
-                                                {
-                                                    groupId: item.id,
-                                                    groupName: item.name,
-                                                },
-                                                {
-                                                    fetchOptions: {
-                                                        headers: {
-                                                            [AuthHeader.Role]: subconferenceId
-                                                                ? HasuraRoleName.SubconferenceOrganizer
-                                                                : HasuraRoleName.ConferenceOrganizer,
-                                                        },
-                                                    },
-                                                }
-                                            );
-                                        } catch (e) {
-                                            result = {
-                                                error: [e],
-                                            };
-                                        }
-                                        return {
-                                            key,
-                                            result,
-                                        };
-                                    })
-                                );
-                            } catch (e) {
-                                updatedResults = [];
-                                updatedKeys.forEach((_item, key) => {
-                                    updatedResults.push({
-                                        key,
-                                        result: { error: e },
-                                    });
-                                });
-                            }
-
-                            updatedResults.forEach((result) => {
-                                if (result.result.error) {
-                                    results.set(result.key, false);
-                                } else {
-                                    results.set(result.key, true);
-                                }
-                            });
-
-                            refetchAllGroups();
-
-                            return results;
-                        },
-                    },
-                }}
-                primaryFields={{
-                    keyField: {
-                        heading: "Id",
-                        ariaLabel: "Unique identifier",
-                        description: "Unique identifier",
-                        isHidden: true,
-                        insert: (item, v) => {
-                            return {
-                                ...item,
-                                id: v,
-                            };
-                        },
-                        extract: (v) => v.id,
-                        spec: {
-                            fieldType: FieldType.string,
-                            convertToUI: (x) => x,
-                            disallowSpaces: true,
-                        },
-                        validate: (v) => validate(v) || ["Invalid UUID"],
-                        getRowTitle: (v) => v.name,
-                    },
-                    otherFields: fields,
-                }}
+            <CRUDTable
+                data={!loadingAllGroups && (allGroups?.registrant_Group ? data : null)}
+                tableUniqueName="ManageConferenceGroups"
+                row={row}
+                columns={columns}
+                pageSizes={pageSizes}
+                insert={insert}
+                update={update}
+                delete={deleteP}
             />
         </DashboardPage>
     );

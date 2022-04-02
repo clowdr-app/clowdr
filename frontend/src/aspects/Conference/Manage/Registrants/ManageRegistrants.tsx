@@ -71,7 +71,6 @@ import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { useTitle } from "../../../Hooks/useTitle";
 import { maybeCompare } from "../../../Utils/maybeCompare";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
@@ -287,7 +286,6 @@ type RegistrantDescriptor = RegistrantPartsFragment & {
 export default function ManageRegistrants(): JSX.Element {
     const conference = useConference();
     const { conferencePath, subconferenceId } = useAuthParameters();
-    const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
     const context = useMemo(
         () =>
@@ -1795,7 +1793,6 @@ export default function ManageRegistrants(): JSX.Element {
 
     return (
         <DashboardPage title="Registrants">
-            {title}
             <Box>
                 {(loadingAllGroups && !allGroups) ||
                 (loadingAllRegistrants && !allRegistrants?.registrant_Registrant) ? (

@@ -18,7 +18,6 @@ import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
 import usePolling from "../../../Hooks/usePolling";
 import { useRealTime } from "../../../Hooks/useRealTime";
-import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 import CreateQueueModal from "./CreateQueueModal";
@@ -69,8 +68,6 @@ gql`
 export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
     const { subconferenceId } = useAuthParameters();
-    const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
-
     const context = useMemo(
         () =>
             makeContext({
@@ -109,7 +106,6 @@ export default function ManageShuffle(): JSX.Element {
 
     return (
         <DashboardPage title="Networking">
-            {title}
             <Box>
                 <Text mb={2}>Data is updated every 60s.</Text>
                 {shufflePeriodsQ.error ? (

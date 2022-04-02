@@ -49,7 +49,6 @@ import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useTitle } from "../../Hooks/useTitle";
 import { maybeCompare } from "../../Utils/maybeCompare";
 import { useConference } from "../useConference";
 import { DashboardPage } from "./DashboardPage";
@@ -129,7 +128,6 @@ gql`
 export default function ManageProgramPeople(): JSX.Element {
     const conference = useConference();
     const { conferencePath, subconferenceId } = useAuthParameters();
-    const title = useTitle(`Manage program people at ${conference.shortName}`);
 
     const context = useMemo(
         () =>
@@ -847,7 +845,6 @@ export default function ManageProgramPeople(): JSX.Element {
 
     return (
         <DashboardPage title="Program People">
-            {title}
             {loadingAllProgramPersons && !allProgramPersons?.collection_ProgramPerson ? (
                 <></>
             ) : errorAllProgramPersons ? (

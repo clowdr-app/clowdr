@@ -37,7 +37,6 @@ import MessageBox from "../../../../Chat/Messages/MessageBox";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import { useRestorableState } from "../../../../Hooks/useRestorableState";
-import { useTitle } from "../../../../Hooks/useTitle";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { DashboardPage } from "../../DashboardPage";
@@ -66,13 +65,9 @@ gql`
 `;
 
 export default function ManageModeration(): JSX.Element {
-    const conference = useConference();
-    const title = useTitle(`Moderate chats for ${conference.shortName}`);
-
     return (
         <DashboardPage title="Chat Moderation">
             <Box w="100%">
-                {title}
                 <ModerationList />
             </Box>
         </DashboardPage>

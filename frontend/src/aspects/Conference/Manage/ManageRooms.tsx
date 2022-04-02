@@ -86,7 +86,6 @@ import { useAuthParameters } from "../../GQL/AuthParameters";
 import extractActualError from "../../GQL/ExtractActualError";
 import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useTitle } from "../../Hooks/useTitle";
 import useRoomParticipants from "../../Room/useRoomParticipants";
 import { useRegistrants } from "../RegistrantsContext";
 import { useConference } from "../useConference";
@@ -1597,12 +1596,8 @@ function EditableRoomsCRUDTable() {
 }
 
 export default function ManageRooms(): JSX.Element {
-    const conference = useConference();
-    const title = useTitle(`Manage rooms at ${conference.shortName}`);
-
     return (
         <DashboardPage title="Rooms">
-            {title}
             <EditableRoomsCRUDTable />
         </DashboardPage>
     );

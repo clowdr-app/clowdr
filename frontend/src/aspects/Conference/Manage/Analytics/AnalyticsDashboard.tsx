@@ -31,7 +31,6 @@ import React, { useCallback, useMemo } from "react";
 import { gql } from "urql";
 import { useConferenceStatsQuery } from "../../../../generated/graphql";
 import { makeContext } from "../../../GQL/make-context";
-import { useTitle } from "../../../Hooks/useTitle";
 import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
@@ -157,8 +156,6 @@ export default function AnalyticsDashboard(): JSX.Element {
         },
         context,
     });
-
-    const title = useTitle(`Analytics for ${conference.shortName}`);
 
     const totalItemViews = useMemo(() => {
         let total = 0;
@@ -556,7 +553,6 @@ export default function AnalyticsDashboard(): JSX.Element {
 
     return (
         <DashboardPage title="Analytics">
-            {title}
             <VStack alignItems="left">
                 <Text fontStyle="italic">Data updates every 24 hours.</Text>
                 <StatGroup w="100%" maxW="4xl" pt={8}>

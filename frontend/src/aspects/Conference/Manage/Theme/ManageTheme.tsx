@@ -17,7 +17,6 @@ import { gql } from "urql";
 import { useUpsertConferenceThemeMutation } from "../../../../generated/graphql";
 import { useConferenceTheme } from "../../../Chakra/ChakraCustomProvider";
 import defaultTheme from "../../../Chakra/Colors/ComponentMap";
-import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 
@@ -36,7 +35,6 @@ gql`
 
 export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
-    const title = useTitle(`Manage theme of ${conference.shortName}`);
 
     const { theme, setTheme } = useConferenceTheme();
     const [error, setError] = useState<string | null>(null);
@@ -80,7 +78,6 @@ export default function ManageShuffle(): JSX.Element {
 
     return (
         <DashboardPage title="Theme">
-            {title}
             <VStack alignItems="left">
                 <Text>
                     After saving your changes, please refresh the page and navigate around the attendee pages to confirm

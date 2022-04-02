@@ -85,7 +85,6 @@ import { useAuthParameters } from "../../../GQL/AuthParameters";
 import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import { useRealTime } from "../../../Hooks/useRealTime";
-import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 import BatchAddEventPeople from "./BatchAddEventPeople";
@@ -1730,12 +1729,8 @@ function EditableScheduleTable(): JSX.Element {
 }
 
 export default function ManageSchedule(): JSX.Element {
-    const conference = useConference();
-    const title = useTitle(`Manage schedule of ${conference.shortName}`);
-
     return (
         <DashboardPage title="Schedule">
-            {title}
             <EditableScheduleTable />
         </DashboardPage>
     );

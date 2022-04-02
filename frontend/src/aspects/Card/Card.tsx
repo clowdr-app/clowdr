@@ -19,6 +19,15 @@ export interface CardProps extends BoxProps {
     heading?: string;
     editControls?: React.ReactChild | React.ReactChildren | JSX.Element[];
 
+    topLeftButton?: {
+        label: string;
+        colorScheme: string;
+        iconStyle: "s" | "r";
+        icon?: string;
+        onClick?: () => void;
+        variant: string;
+        showLabel?: boolean;
+    };
     rightButton?: {
         label: string;
         colorScheme: string;
@@ -38,6 +47,8 @@ export interface CardProps extends BoxProps {
     };
 
     variant?: "solid" | "ghost" | "outline";
+
+    contentPadding?: number;
 }
 
 const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>>(function Card(
@@ -54,10 +65,13 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
         onClick,
         children,
 
+        topLeftButton,
         rightButton,
         bottomButton,
 
         variant = "solid",
+
+        contentPadding,
 
         ...props
     }: CardProps,
@@ -73,6 +87,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
             ref={ref}
             role="group"
             overflow="visible"
+            pos="relative"
             borderRadius={isSelected || variant === "solid" || variant === "outline" ? "2xl" : undefined}
             border={isSelected || variant === "solid" || variant === "outline" ? "2px solid" : undefined}
             borderColor={isSelected ? "blue.400" : borderColor}
@@ -119,6 +134,62 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
             {...props}
         >
             <Flex flexDir="column" w="100%">
+                {topLeftButton ? (
+                    topLeftButton.showLabel ? (
+                        <Button
+                            m={0}
+                            size="sm"
+                            colorScheme={topLeftButton.colorScheme}
+                            alignSelf="stretch"
+                            onClick={
+                                topLeftButton?.onClick
+                                    ? (ev) => {
+                                          ev.stopPropagation();
+                                          topLeftButton?.onClick?.();
+                                      }
+                                    : undefined
+                            }
+                            borderTopLeftRadius="2xl"
+                            borderBottomRightRadius="2xl"
+                            variant={topLeftButton.variant}
+                            py={1}
+                            h="min-content"
+                            w="min-content"
+                        >
+                            {topLeftButton.icon ? (
+                                <FAIcon
+                                    iconStyle={topLeftButton.iconStyle}
+                                    icon={topLeftButton.icon}
+                                    mr={2}
+                                    fontSize="sm"
+                                />
+                            ) : undefined}
+                            <chakra.span>{topLeftButton.label}</chakra.span>
+                        </Button>
+                    ) : topLeftButton.icon ? (
+                        <IconButton
+                            m={0}
+                            size="sm"
+                            aria-label={topLeftButton.label}
+                            icon={<FAIcon iconStyle={topLeftButton.iconStyle} icon={topLeftButton.icon} />}
+                            colorScheme={topLeftButton.colorScheme}
+                            alignSelf="stretch"
+                            onClick={
+                                topLeftButton?.onClick
+                                    ? (ev) => {
+                                          ev.stopPropagation();
+                                          topLeftButton?.onClick?.();
+                                      }
+                                    : undefined
+                            }
+                            borderTopLeftRadius="2xl"
+                            borderBottomRightRadius="2xl"
+                            variant={topLeftButton.variant}
+                            h="min-content"
+                            w="min-content"
+                        />
+                    ) : undefined
+                ) : undefined}
                 <Flex>
                     {isSelectable && !hideSelectButton ? (
                         <SelectButton
@@ -130,7 +201,14 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                             left="-1px"
                         />
                     ) : undefined}
-                    <VStack alignItems="flex-start" m={2} mb={1} flex="0 1 100%" overflow="hidden">
+                    <VStack
+                        alignItems="flex-start"
+                        m={contentPadding ?? 2}
+                        mb={contentPadding ?? 1}
+                        mt={topLeftButton ? (contentPadding ?? 2) / 2 : undefined}
+                        flex="0 1 100%"
+                        overflow="hidden"
+                    >
                         <HStack alignItems="flex-start" w="100%" p="3px">
                             <VStack alignItems="flex-start" mr="auto">
                                 {subHeading ? <Text fontSize="md">{subHeading}</Text> : undefined}

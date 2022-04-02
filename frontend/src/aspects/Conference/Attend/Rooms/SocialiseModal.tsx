@@ -30,7 +30,12 @@ import { AllRegistrantsList } from "../Registrant/RegistrantListPage";
 import { CreateRoomModal } from "../Room/CreateRoomModal";
 import ActiveSocialRooms from "./ActiveSocialRooms";
 import InactiveSocialRooms from "./InactiveSocialRooms";
-import { SocialiseModalTab } from "./SocialiseModalProvider";
+
+export enum SocialiseModalTab {
+    Rooms = "Rooms",
+    People = "People",
+    Networking = "Networking",
+}
 
 gql`
     query GetSocialRooms($conferenceId: uuid!) @cached {

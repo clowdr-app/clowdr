@@ -42077,78 +42077,166 @@ export type SponsorBoothsList_ItemFragment = {
     }>;
 };
 
-export type Schedule_HappeningSoonQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    startBefore: Scalars["timestamptz"];
-    endAfter: Scalars["timestamptz"];
+export type SelectScheduleBoundsQueryVariables = Exact<{
+    where: Schedule_Event_Bool_Exp;
 }>;
 
-export type Schedule_HappeningSoonQuery = {
+export type SelectScheduleBoundsQuery = {
+    readonly __typename?: "query_root";
+    readonly first: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly scheduledStartTime?: any | null;
+    }>;
+    readonly last: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly scheduledEndTime?: any | null;
+    }>;
+};
+
+export type ScheduleItemTagFragment = {
+    readonly __typename?: "content_ItemTag";
+    readonly id: any;
+    readonly itemId: any;
+    readonly tagId: any;
+};
+
+export type ScheduleItemPersonFragment = {
+    readonly __typename?: "content_ItemProgramPerson";
+    readonly id: any;
+    readonly itemId: any;
+    readonly personId: any;
+    readonly roleName: string;
+};
+
+export type ScheduleItemFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly title: string;
+    readonly itemTags: ReadonlyArray<{
+        readonly __typename?: "content_ItemTag";
+        readonly id: any;
+        readonly itemId: any;
+        readonly tagId: any;
+    }>;
+    readonly itemPeople: ReadonlyArray<{
+        readonly __typename?: "content_ItemProgramPerson";
+        readonly id: any;
+        readonly itemId: any;
+        readonly personId: any;
+        readonly roleName: string;
+    }>;
+    readonly abstract: ReadonlyArray<{ readonly __typename?: "content_Element"; readonly id: any; readonly data: any }>;
+};
+
+export type ScheduleEventFragment = {
+    readonly __typename?: "schedule_Event";
+    readonly id: any;
+    readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
+    readonly scheduledStartTime?: any | null;
+    readonly scheduledEndTime?: any | null;
+    readonly name: string;
+    readonly roomId: any;
+    readonly modeName?: Schedule_Mode_Enum | null;
+    readonly sessionEventId?: any | null;
+    readonly item?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+        readonly itemTags: ReadonlyArray<{
+            readonly __typename?: "content_ItemTag";
+            readonly id: any;
+            readonly itemId: any;
+            readonly tagId: any;
+        }>;
+        readonly itemPeople: ReadonlyArray<{
+            readonly __typename?: "content_ItemProgramPerson";
+            readonly id: any;
+            readonly itemId: any;
+            readonly personId: any;
+            readonly roleName: string;
+        }>;
+        readonly abstract: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly data: any;
+        }>;
+    } | null;
+};
+
+export type SelectSchedulePageQueryVariables = Exact<{
+    where: Schedule_Event_Bool_Exp;
+    ordering: ReadonlyArray<Schedule_Event_Order_By> | Schedule_Event_Order_By;
+    limit: Scalars["Int"];
+    includeAbstract: Scalars["Boolean"];
+}>;
+
+export type SelectSchedulePageQuery = {
     readonly __typename?: "query_root";
     readonly schedule_Event: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly conferenceId: any;
-        readonly roomId: any;
-        readonly modeName?: Schedule_Mode_Enum | null;
-        readonly name: string;
+        readonly subconferenceId?: any | null;
         readonly scheduledStartTime?: any | null;
         readonly scheduledEndTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
+        readonly name: string;
+        readonly roomId: any;
+        readonly modeName?: Schedule_Mode_Enum | null;
+        readonly sessionEventId?: any | null;
         readonly item?: {
             readonly __typename?: "content_Item";
             readonly id: any;
             readonly title: string;
-            readonly shortTitle?: string | null;
-            readonly typeName: Content_ItemType_Enum;
-            readonly conferenceId: any;
             readonly itemTags: ReadonlyArray<{
                 readonly __typename?: "content_ItemTag";
                 readonly id: any;
                 readonly itemId: any;
                 readonly tagId: any;
             }>;
-            readonly itemExhibitions: ReadonlyArray<{
-                readonly __typename?: "content_ItemExhibition";
-                readonly id: any;
-                readonly itemId: any;
-                readonly exhibitionId: any;
-            }>;
             readonly itemPeople: ReadonlyArray<{
                 readonly __typename?: "content_ItemProgramPerson";
                 readonly id: any;
                 readonly itemId: any;
                 readonly personId: any;
-                readonly priority?: number | null;
                 readonly roleName: string;
             }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+            }>;
         } | null;
-        readonly room: {
-            readonly __typename?: "room_Room";
-            readonly id: any;
-            readonly name: string;
-            readonly priority: number;
-            readonly managementModeName: Room_ManagementMode_Enum;
-            readonly conferenceId: any;
-        };
     }>;
-    readonly collection_ProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
-        readonly conferenceId: any;
-    }>;
+};
+
+export type SelectScheduleTagsQueryVariables = Exact<{
+    where: Collection_Tag_Bool_Exp;
+}>;
+
+export type SelectScheduleTagsQuery = {
+    readonly __typename?: "query_root";
     readonly collection_Tag: ReadonlyArray<{
         readonly __typename?: "collection_Tag";
         readonly id: any;
         readonly name: string;
         readonly colour: string;
         readonly priority: number;
-        readonly conferenceId: any;
+    }>;
+};
+
+export type SelectSchedulePeopleQueryVariables = Exact<{
+    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type SelectSchedulePeopleQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_ProgramPerson: ReadonlyArray<{
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly name: string;
     }>;
 };
 
@@ -42201,534 +42289,6 @@ export type StarEventButton_DeleteStarsMutation = {
         readonly __typename?: "schedule_StarredEvent_mutation_response";
         readonly returning: ReadonlyArray<{ readonly __typename?: "schedule_StarredEvent"; readonly id: any }>;
     } | null;
-};
-
-export type Schedule_ElementFragment = {
-    readonly __typename?: "content_Element";
-    readonly id: any;
-    readonly typeName: Content_ElementType_Enum;
-    readonly name: string;
-    readonly layoutData?: any | null;
-    readonly data: any;
-    readonly itemId: any;
-};
-
-export type Schedule_ProgramPersonFragment = {
-    readonly __typename?: "collection_ProgramPerson";
-    readonly id: any;
-    readonly name: string;
-    readonly affiliation?: string | null;
-    readonly registrantId?: any | null;
-    readonly conferenceId: any;
-};
-
-export type Schedule_ItemPersonFragment = {
-    readonly __typename?: "content_ItemProgramPerson";
-    readonly id: any;
-    readonly itemId: any;
-    readonly personId: any;
-    readonly priority?: number | null;
-    readonly roleName: string;
-};
-
-export type Schedule_ItemFieldsFragment = {
-    readonly __typename?: "content_Item";
-    readonly id: any;
-    readonly title: string;
-    readonly shortTitle?: string | null;
-    readonly typeName: Content_ItemType_Enum;
-    readonly conferenceId: any;
-    readonly itemTags: ReadonlyArray<{
-        readonly __typename?: "content_ItemTag";
-        readonly id: any;
-        readonly itemId: any;
-        readonly tagId: any;
-    }>;
-    readonly itemExhibitions: ReadonlyArray<{
-        readonly __typename?: "content_ItemExhibition";
-        readonly id: any;
-        readonly itemId: any;
-        readonly exhibitionId: any;
-    }>;
-    readonly itemPeople: ReadonlyArray<{
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly personId: any;
-        readonly priority?: number | null;
-        readonly roleName: string;
-    }>;
-};
-
-export type Schedule_ItemFragment = {
-    readonly __typename?: "content_Item";
-    readonly id: any;
-    readonly title: string;
-    readonly shortTitle?: string | null;
-    readonly typeName: Content_ItemType_Enum;
-    readonly conferenceId: any;
-    readonly abstractElements: ReadonlyArray<{
-        readonly __typename?: "content_Element";
-        readonly id: any;
-        readonly typeName: Content_ElementType_Enum;
-        readonly name: string;
-        readonly layoutData?: any | null;
-        readonly data: any;
-        readonly itemId: any;
-    }>;
-    readonly itemTags: ReadonlyArray<{
-        readonly __typename?: "content_ItemTag";
-        readonly id: any;
-        readonly itemId: any;
-        readonly tagId: any;
-    }>;
-    readonly itemExhibitions: ReadonlyArray<{
-        readonly __typename?: "content_ItemExhibition";
-        readonly id: any;
-        readonly itemId: any;
-        readonly exhibitionId: any;
-    }>;
-    readonly itemPeople: ReadonlyArray<{
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly personId: any;
-        readonly priority?: number | null;
-        readonly roleName: string;
-    }>;
-};
-
-export type Schedule_SelectItemQueryVariables = Exact<{
-    id: Scalars["uuid"];
-}>;
-
-export type Schedule_SelectItemQuery = {
-    readonly __typename?: "query_root";
-    readonly content_Item_by_pk?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly typeName: Content_ItemType_Enum;
-        readonly conferenceId: any;
-        readonly abstractElements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly name: string;
-            readonly layoutData?: any | null;
-            readonly data: any;
-            readonly itemId: any;
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tagId: any;
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-        }>;
-    } | null;
-};
-
-export type Schedule_EventSummaryFragment = {
-    readonly __typename?: "schedule_Event";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly roomId: any;
-    readonly modeName?: Schedule_Mode_Enum | null;
-    readonly name: string;
-    readonly scheduledStartTime?: any | null;
-    readonly scheduledEndTime?: any | null;
-    readonly itemId?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly shufflePeriodId?: any | null;
-};
-
-export type Schedule_RoomSummaryFragment = {
-    readonly __typename?: "room_Room";
-    readonly id: any;
-    readonly name: string;
-    readonly priority: number;
-    readonly managementModeName: Room_ManagementMode_Enum;
-    readonly conferenceId: any;
-};
-
-export type Schedule_TagFragment = {
-    readonly __typename?: "collection_Tag";
-    readonly id: any;
-    readonly name: string;
-    readonly colour: string;
-    readonly priority: number;
-    readonly conferenceId: any;
-};
-
-export type Schedule_SelectSummariesQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type Schedule_SelectSummariesQuery = {
-    readonly __typename?: "query_root";
-    readonly room_Room: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly managementModeName: Room_ManagementMode_Enum;
-        readonly conferenceId: any;
-    }>;
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly roomId: any;
-        readonly modeName?: Schedule_Mode_Enum | null;
-        readonly name: string;
-        readonly scheduledStartTime?: any | null;
-        readonly scheduledEndTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-    }>;
-    readonly content_Item: ReadonlyArray<{
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly typeName: Content_ItemType_Enum;
-        readonly conferenceId: any;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tagId: any;
-        }>;
-        readonly itemExhibitions: ReadonlyArray<{
-            readonly __typename?: "content_ItemExhibition";
-            readonly id: any;
-            readonly itemId: any;
-            readonly exhibitionId: any;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-        }>;
-    }>;
-    readonly collection_ProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
-        readonly conferenceId: any;
-    }>;
-    readonly collection_Tag: ReadonlyArray<{
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-        readonly conferenceId: any;
-    }>;
-};
-
-export type StarredEvents_SelectEventIdsQueryVariables = Exact<{
-    registrantId: Scalars["uuid"];
-}>;
-
-export type StarredEvents_SelectEventIdsQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_StarredEvent: ReadonlyArray<{
-        readonly __typename?: "schedule_StarredEvent";
-        readonly id: any;
-        readonly eventId: any;
-        readonly registrantId: any;
-    }>;
-    readonly schedule_Event: ReadonlyArray<{ readonly __typename?: "schedule_Event"; readonly id: any }>;
-};
-
-export type ScheduleV2_LightweightEventFragment = {
-    readonly __typename?: "schedule_Event";
-    readonly id: any;
-    readonly scheduledStartTime?: any | null;
-    readonly scheduledEndTime?: any | null;
-    readonly roomId: any;
-    readonly conferenceId: any;
-};
-
-export type ScheduleV2_DayLightweightEventsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    startOfDay: Scalars["timestamptz"];
-    endOfDay: Scalars["timestamptz"];
-    filter: Schedule_Event_Bool_Exp;
-}>;
-
-export type ScheduleV2_DayLightweightEventsQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly scheduledStartTime?: any | null;
-        readonly scheduledEndTime?: any | null;
-        readonly roomId: any;
-        readonly conferenceId: any;
-    }>;
-};
-
-export type ScheduleV2_DayEventsQueryVariables = Exact<{
-    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type ScheduleV2_DayEventsQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly roomId: any;
-        readonly modeName?: Schedule_Mode_Enum | null;
-        readonly name: string;
-        readonly scheduledStartTime?: any | null;
-        readonly scheduledEndTime?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly shufflePeriodId?: any | null;
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly shortTitle?: string | null;
-            readonly typeName: Content_ItemType_Enum;
-            readonly abstractElements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly typeName: Content_ElementType_Enum;
-                readonly name: string;
-                readonly layoutData?: any | null;
-                readonly data: any;
-            }>;
-            readonly itemPeople: ReadonlyArray<{
-                readonly __typename?: "content_ItemProgramPerson";
-                readonly id: any;
-                readonly priority?: number | null;
-                readonly roleName: string;
-                readonly itemId: any;
-                readonly personId: any;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
-                    readonly id: any;
-                    readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
-                    readonly conferenceId: any;
-                };
-            }>;
-            readonly itemTags: ReadonlyArray<{
-                readonly __typename?: "content_ItemTag";
-                readonly id: any;
-                readonly itemId: any;
-                readonly tagId: any;
-            }>;
-        } | null;
-    }>;
-};
-
-export type ScheduleV2_ElementFragment = {
-    readonly __typename?: "content_Element";
-    readonly id: any;
-    readonly typeName: Content_ElementType_Enum;
-    readonly name: string;
-    readonly layoutData?: any | null;
-    readonly data: any;
-};
-
-export type ScheduleV2_ProgramPersonFragment = {
-    readonly __typename?: "collection_ProgramPerson";
-    readonly id: any;
-    readonly name: string;
-    readonly affiliation?: string | null;
-    readonly registrantId?: any | null;
-    readonly conferenceId: any;
-};
-
-export type ScheduleV2_ItemPersonFragment = {
-    readonly __typename?: "content_ItemProgramPerson";
-    readonly id: any;
-    readonly priority?: number | null;
-    readonly roleName: string;
-    readonly itemId: any;
-    readonly personId: any;
-    readonly person: {
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
-        readonly affiliation?: string | null;
-        readonly registrantId?: any | null;
-        readonly conferenceId: any;
-    };
-};
-
-export type ScheduleV2_ItemElementsFragment = {
-    readonly __typename?: "content_Item";
-    readonly id: any;
-    readonly title: string;
-    readonly shortTitle?: string | null;
-    readonly typeName: Content_ItemType_Enum;
-    readonly itemTags: ReadonlyArray<{
-        readonly __typename?: "content_ItemTag";
-        readonly id: any;
-        readonly itemId: any;
-        readonly tagId: any;
-    }>;
-    readonly itemPeople: ReadonlyArray<{
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly priority?: number | null;
-        readonly roleName: string;
-        readonly itemId: any;
-        readonly personId: any;
-        readonly person: {
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
-            readonly conferenceId: any;
-        };
-    }>;
-};
-
-export type ScheduleV2_EventFragment = {
-    readonly __typename?: "schedule_Event";
-    readonly id: any;
-    readonly roomId: any;
-    readonly modeName?: Schedule_Mode_Enum | null;
-    readonly name: string;
-    readonly scheduledStartTime?: any | null;
-    readonly scheduledEndTime?: any | null;
-    readonly itemId?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly shufflePeriodId?: any | null;
-    readonly item?: {
-        readonly __typename?: "content_Item";
-        readonly id: any;
-        readonly title: string;
-        readonly shortTitle?: string | null;
-        readonly typeName: Content_ItemType_Enum;
-        readonly abstractElements: ReadonlyArray<{
-            readonly __typename?: "content_Element";
-            readonly id: any;
-            readonly typeName: Content_ElementType_Enum;
-            readonly name: string;
-            readonly layoutData?: any | null;
-            readonly data: any;
-        }>;
-        readonly itemPeople: ReadonlyArray<{
-            readonly __typename?: "content_ItemProgramPerson";
-            readonly id: any;
-            readonly priority?: number | null;
-            readonly roleName: string;
-            readonly itemId: any;
-            readonly personId: any;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
-                readonly id: any;
-                readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
-        }>;
-        readonly itemTags: ReadonlyArray<{
-            readonly __typename?: "content_ItemTag";
-            readonly id: any;
-            readonly itemId: any;
-            readonly tagId: any;
-        }>;
-    } | null;
-};
-
-export type ScheduleV2_RoomFragment = {
-    readonly __typename?: "room_Room";
-    readonly id: any;
-    readonly name: string;
-    readonly priority: number;
-    readonly conferenceId: any;
-};
-
-export type ScheduleV2_RoomsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type ScheduleV2_RoomsQuery = {
-    readonly __typename?: "query_root";
-    readonly room_Room: ReadonlyArray<{
-        readonly __typename?: "room_Room";
-        readonly id: any;
-        readonly name: string;
-        readonly priority: number;
-        readonly conferenceId: any;
-    }>;
-};
-
-export type ScheduleV2_TagFragment = {
-    readonly __typename?: "collection_Tag";
-    readonly id: any;
-    readonly name: string;
-    readonly colour: string;
-    readonly priority: number;
-    readonly conferenceId: any;
-};
-
-export type ScheduleV2_TagsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type ScheduleV2_TagsQuery = {
-    readonly __typename?: "query_root";
-    readonly collection_Tag: ReadonlyArray<{
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-        readonly conferenceId: any;
-    }>;
-};
-
-export type ScheduleV2_AllEvents_ParamsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type ScheduleV2_AllEvents_ParamsQuery = {
-    readonly __typename?: "query_root";
-    readonly earliestStartingEvent: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly scheduledStartTime?: any | null;
-        readonly conferenceId: any;
-    }>;
-    readonly latestEndingEvent: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly scheduledEndTime?: any | null;
-        readonly conferenceId: any;
-    }>;
 };
 
 export type SwagBagFragment = {
@@ -49257,35 +48817,6 @@ export type Invitation_ConfirmCurrentMutation = {
     } | null;
 };
 
-export type GetEventsInNextHourQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-    now: Scalars["timestamptz"];
-    cutoff: Scalars["timestamptz"];
-}>;
-
-export type GetEventsInNextHourQuery = {
-    readonly __typename?: "query_root";
-    readonly schedule_Event: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly conferenceId: any;
-        readonly scheduledStartTime?: any | null;
-        readonly scheduledEndTime?: any | null;
-        readonly roomId: any;
-        readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-    }>;
-};
-
-export type MinimalEventInfoFragment = {
-    readonly __typename?: "schedule_Event";
-    readonly id: any;
-    readonly conferenceId: any;
-    readonly scheduledStartTime?: any | null;
-    readonly scheduledEndTime?: any | null;
-    readonly roomId: any;
-    readonly room: { readonly __typename?: "room_Room"; readonly id: any; readonly name: string };
-};
-
 export type CountSwagBagsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
@@ -50994,204 +50525,61 @@ export const SponsorBoothsList_ItemFragmentDoc = gql`
         }
     }
 `;
+export const ScheduleItemTagFragmentDoc = gql`
+    fragment ScheduleItemTag on content_ItemTag {
+        id
+        itemId
+        tagId
+    }
+`;
+export const ScheduleItemPersonFragmentDoc = gql`
+    fragment ScheduleItemPerson on content_ItemProgramPerson {
+        id
+        itemId
+        personId
+        roleName
+    }
+`;
+export const ScheduleItemFragmentDoc = gql`
+    fragment ScheduleItem on content_Item {
+        id
+        title
+        itemTags {
+            ...ScheduleItemTag
+        }
+        itemPeople {
+            ...ScheduleItemPerson
+        }
+        abstract: elements(where: { typeName: { _eq: ABSTRACT } }, limit: 1) @include(if: $includeAbstract) {
+            id
+            data
+        }
+    }
+    ${ScheduleItemTagFragmentDoc}
+    ${ScheduleItemPersonFragmentDoc}
+`;
+export const ScheduleEventFragmentDoc = gql`
+    fragment ScheduleEvent on schedule_Event {
+        id
+        conferenceId
+        subconferenceId
+        scheduledStartTime
+        scheduledEndTime
+        name
+        roomId
+        modeName
+        sessionEventId
+        item {
+            ...ScheduleItem
+        }
+    }
+    ${ScheduleItemFragmentDoc}
+`;
 export const StarredEventFragmentDoc = gql`
     fragment StarredEvent on schedule_StarredEvent {
         id
         eventId
         registrantId
-    }
-`;
-export const Schedule_ProgramPersonFragmentDoc = gql`
-    fragment Schedule_ProgramPerson on collection_ProgramPerson {
-        id
-        name
-        affiliation
-        registrantId
-        conferenceId
-    }
-`;
-export const Schedule_ItemPersonFragmentDoc = gql`
-    fragment Schedule_ItemPerson on content_ItemProgramPerson {
-        id
-        itemId
-        personId
-        priority
-        roleName
-    }
-`;
-export const Schedule_ItemFieldsFragmentDoc = gql`
-    fragment Schedule_ItemFields on content_Item {
-        id
-        title
-        shortTitle
-        typeName
-        conferenceId
-        itemTags {
-            id
-            itemId
-            tagId
-        }
-        itemExhibitions {
-            id
-            itemId
-            exhibitionId
-        }
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            ...Schedule_ItemPerson
-        }
-    }
-    ${Schedule_ItemPersonFragmentDoc}
-`;
-export const Schedule_ElementFragmentDoc = gql`
-    fragment Schedule_Element on content_Element {
-        id
-        typeName
-        name
-        layoutData
-        data
-        itemId
-    }
-`;
-export const Schedule_ItemFragmentDoc = gql`
-    fragment Schedule_Item on content_Item {
-        ...Schedule_ItemFields
-        abstractElements: elements(where: { typeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
-            ...Schedule_Element
-        }
-    }
-    ${Schedule_ItemFieldsFragmentDoc}
-    ${Schedule_ElementFragmentDoc}
-`;
-export const Schedule_EventSummaryFragmentDoc = gql`
-    fragment Schedule_EventSummary on schedule_Event {
-        id
-        conferenceId
-        roomId
-        modeName
-        name
-        scheduledStartTime
-        scheduledEndTime
-        itemId
-        exhibitionId
-        shufflePeriodId
-    }
-`;
-export const Schedule_RoomSummaryFragmentDoc = gql`
-    fragment Schedule_RoomSummary on room_Room {
-        id
-        name
-        priority
-        managementModeName
-        conferenceId
-    }
-`;
-export const Schedule_TagFragmentDoc = gql`
-    fragment Schedule_Tag on collection_Tag {
-        id
-        name
-        colour
-        priority
-        conferenceId
-    }
-`;
-export const ScheduleV2_LightweightEventFragmentDoc = gql`
-    fragment ScheduleV2_LightweightEvent on schedule_Event {
-        id
-        scheduledStartTime
-        scheduledEndTime
-        roomId
-        conferenceId
-    }
-`;
-export const ScheduleV2_ProgramPersonFragmentDoc = gql`
-    fragment ScheduleV2_ProgramPerson on collection_ProgramPerson {
-        id
-        name
-        affiliation
-        registrantId
-        conferenceId
-    }
-`;
-export const ScheduleV2_ItemPersonFragmentDoc = gql`
-    fragment ScheduleV2_ItemPerson on content_ItemProgramPerson {
-        id
-        priority
-        roleName
-        itemId
-        personId
-        person {
-            ...ScheduleV2_ProgramPerson
-        }
-    }
-    ${ScheduleV2_ProgramPersonFragmentDoc}
-`;
-export const ScheduleV2_ItemElementsFragmentDoc = gql`
-    fragment ScheduleV2_ItemElements on content_Item {
-        id
-        title
-        shortTitle
-        typeName
-        itemTags {
-            id
-            itemId
-            tagId
-        }
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            ...ScheduleV2_ItemPerson
-        }
-    }
-    ${ScheduleV2_ItemPersonFragmentDoc}
-`;
-export const ScheduleV2_ElementFragmentDoc = gql`
-    fragment ScheduleV2_Element on content_Element {
-        id
-        typeName
-        name
-        layoutData
-        data
-    }
-`;
-export const ScheduleV2_EventFragmentDoc = gql`
-    fragment ScheduleV2_Event on schedule_Event {
-        id
-        roomId
-        modeName
-        name
-        scheduledStartTime
-        scheduledEndTime
-        itemId
-        exhibitionId
-        shufflePeriodId
-        itemId
-        item {
-            ...ScheduleV2_ItemElements
-            abstractElements: elements(where: { typeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
-                ...ScheduleV2_Element
-            }
-            itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-                ...ScheduleV2_ItemPerson
-            }
-        }
-    }
-    ${ScheduleV2_ItemElementsFragmentDoc}
-    ${ScheduleV2_ElementFragmentDoc}
-    ${ScheduleV2_ItemPersonFragmentDoc}
-`;
-export const ScheduleV2_RoomFragmentDoc = gql`
-    fragment ScheduleV2_Room on room_Room {
-        id
-        name
-        priority
-        conferenceId
-    }
-`;
-export const ScheduleV2_TagFragmentDoc = gql`
-    fragment ScheduleV2_Tag on collection_Tag {
-        id
-        name
-        colour
-        priority
-        conferenceId
     }
 `;
 export const SwagBagFragmentDoc = gql`
@@ -52383,19 +51771,6 @@ export const PublicConferenceInfoFragmentDoc = gql`
             conferenceId
             key
             value
-        }
-    }
-`;
-export const MinimalEventInfoFragmentDoc = gql`
-    fragment MinimalEventInfo on schedule_Event {
-        id
-        conferenceId
-        scheduledStartTime
-        scheduledEndTime
-        roomId
-        room {
-            id
-            name
         }
     }
 `;
@@ -53712,42 +53087,72 @@ export const GetSponsorBoothsDocument = gql`
 export function useGetSponsorBoothsQuery(options: Omit<Urql.UseQueryArgs<GetSponsorBoothsQueryVariables>, "query">) {
     return Urql.useQuery<GetSponsorBoothsQuery>({ query: GetSponsorBoothsDocument, ...options });
 }
-export const Schedule_HappeningSoonDocument = gql`
-    query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
-        schedule_Event(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                scheduledStartTime: { _lte: $startBefore }
-                scheduledEndTime: { _gte: $endAfter }
-                sessionEventId: { _is_null: true }
-            }
-        ) {
-            ...Schedule_EventSummary
-            item {
-                ...Schedule_ItemFields
-            }
-            room {
-                ...Schedule_RoomSummary
-            }
+export const SelectScheduleBoundsDocument = gql`
+    query SelectScheduleBounds($where: schedule_Event_bool_exp!) @cached {
+        first: schedule_Event(where: $where, order_by: [{ scheduledStartTime: asc }], limit: 1) {
+            id
+            scheduledStartTime
         }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_ProgramPerson
-        }
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_Tag
+        last: schedule_Event(where: $where, order_by: [{ scheduledEndTime: desc }], limit: 1) {
+            id
+            scheduledEndTime
         }
     }
-    ${Schedule_EventSummaryFragmentDoc}
-    ${Schedule_ItemFieldsFragmentDoc}
-    ${Schedule_RoomSummaryFragmentDoc}
-    ${Schedule_ProgramPersonFragmentDoc}
-    ${Schedule_TagFragmentDoc}
 `;
 
-export function useSchedule_HappeningSoonQuery(
-    options: Omit<Urql.UseQueryArgs<Schedule_HappeningSoonQueryVariables>, "query">
+export function useSelectScheduleBoundsQuery(
+    options: Omit<Urql.UseQueryArgs<SelectScheduleBoundsQueryVariables>, "query">
 ) {
-    return Urql.useQuery<Schedule_HappeningSoonQuery>({ query: Schedule_HappeningSoonDocument, ...options });
+    return Urql.useQuery<SelectScheduleBoundsQuery>({ query: SelectScheduleBoundsDocument, ...options });
+}
+export const SelectSchedulePageDocument = gql`
+    query SelectSchedulePage(
+        $where: schedule_Event_bool_exp!
+        $ordering: [schedule_Event_order_by!]!
+        $limit: Int!
+        $includeAbstract: Boolean!
+    ) @cached {
+        schedule_Event(where: $where, order_by: $ordering, limit: $limit) {
+            ...ScheduleEvent
+        }
+    }
+    ${ScheduleEventFragmentDoc}
+`;
+
+export function useSelectSchedulePageQuery(
+    options: Omit<Urql.UseQueryArgs<SelectSchedulePageQueryVariables>, "query">
+) {
+    return Urql.useQuery<SelectSchedulePageQuery>({ query: SelectSchedulePageDocument, ...options });
+}
+export const SelectScheduleTagsDocument = gql`
+    query SelectScheduleTags($where: collection_Tag_bool_exp!) @cached {
+        collection_Tag(where: $where) {
+            id
+            name
+            colour
+            priority
+        }
+    }
+`;
+
+export function useSelectScheduleTagsQuery(
+    options: Omit<Urql.UseQueryArgs<SelectScheduleTagsQueryVariables>, "query">
+) {
+    return Urql.useQuery<SelectScheduleTagsQuery>({ query: SelectScheduleTagsDocument, ...options });
+}
+export const SelectSchedulePeopleDocument = gql`
+    query SelectSchedulePeople($ids: [uuid!]!) @cached {
+        collection_ProgramPerson(where: { id: { _in: $ids } }) {
+            id
+            name
+        }
+    }
+`;
+
+export function useSelectSchedulePeopleQuery(
+    options: Omit<Urql.UseQueryArgs<SelectSchedulePeopleQueryVariables>, "query">
+) {
+    return Urql.useQuery<SelectSchedulePeopleQuery>({ query: SelectSchedulePeopleDocument, ...options });
 }
 export const StarEventButton_GetStarsDocument = gql`
     query StarEventButton_GetStars($eventIds: [uuid!]!, $registrantId: uuid!) {
@@ -53793,170 +53198,6 @@ export function useStarEventButton_DeleteStarsMutation() {
     return Urql.useMutation<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>(
         StarEventButton_DeleteStarsDocument
     );
-}
-export const Schedule_SelectItemDocument = gql`
-    query Schedule_SelectItem($id: uuid!) @cached {
-        content_Item_by_pk(id: $id) {
-            ...Schedule_Item
-        }
-    }
-    ${Schedule_ItemFragmentDoc}
-`;
-
-export function useSchedule_SelectItemQuery(
-    options: Omit<Urql.UseQueryArgs<Schedule_SelectItemQueryVariables>, "query">
-) {
-    return Urql.useQuery<Schedule_SelectItemQuery>({ query: Schedule_SelectItemDocument, ...options });
-}
-export const Schedule_SelectSummariesDocument = gql`
-    query Schedule_SelectSummaries($conferenceId: uuid!) @cached {
-        room_Room(
-            where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] }, events: {} }
-        ) {
-            ...Schedule_RoomSummary
-        }
-        schedule_Event(where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }) {
-            ...Schedule_EventSummary
-        }
-        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_ItemFields
-        }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_ProgramPerson
-        }
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_Tag
-        }
-    }
-    ${Schedule_RoomSummaryFragmentDoc}
-    ${Schedule_EventSummaryFragmentDoc}
-    ${Schedule_ItemFieldsFragmentDoc}
-    ${Schedule_ProgramPersonFragmentDoc}
-    ${Schedule_TagFragmentDoc}
-`;
-
-export function useSchedule_SelectSummariesQuery(
-    options: Omit<Urql.UseQueryArgs<Schedule_SelectSummariesQueryVariables>, "query">
-) {
-    return Urql.useQuery<Schedule_SelectSummariesQuery>({ query: Schedule_SelectSummariesDocument, ...options });
-}
-export const StarredEvents_SelectEventIdsDocument = gql`
-    query StarredEvents_SelectEventIds($registrantId: uuid!) {
-        schedule_StarredEvent(where: { registrantId: { _eq: $registrantId } }) {
-            ...StarredEvent
-        }
-        schedule_Event(where: { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
-            id
-        }
-    }
-    ${StarredEventFragmentDoc}
-`;
-
-export function useStarredEvents_SelectEventIdsQuery(
-    options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventIdsQueryVariables>, "query">
-) {
-    return Urql.useQuery<StarredEvents_SelectEventIdsQuery>({
-        query: StarredEvents_SelectEventIdsDocument,
-        ...options,
-    });
-}
-export const ScheduleV2_DayLightweightEventsDocument = gql`
-    query ScheduleV2_DayLightweightEvents(
-        $conferenceId: uuid!
-        $startOfDay: timestamptz!
-        $endOfDay: timestamptz!
-        $filter: schedule_Event_bool_exp!
-    ) @cached {
-        schedule_Event(
-            where: {
-                _and: [
-                    { conferenceId: { _eq: $conferenceId } }
-                    { scheduledStartTime: { _lt: $endOfDay } }
-                    { scheduledEndTime: { _gt: $startOfDay } }
-                    { sessionEventId: { _is_null: true } }
-                    $filter
-                ]
-            }
-        ) {
-            ...ScheduleV2_LightweightEvent
-        }
-    }
-    ${ScheduleV2_LightweightEventFragmentDoc}
-`;
-
-export function useScheduleV2_DayLightweightEventsQuery(
-    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>, "query">
-) {
-    return Urql.useQuery<ScheduleV2_DayLightweightEventsQuery>({
-        query: ScheduleV2_DayLightweightEventsDocument,
-        ...options,
-    });
-}
-export const ScheduleV2_DayEventsDocument = gql`
-    query ScheduleV2_DayEvents($eventIds: [uuid!]!) @cached {
-        schedule_Event(where: { id: { _in: $eventIds } }) {
-            ...ScheduleV2_Event
-        }
-    }
-    ${ScheduleV2_EventFragmentDoc}
-`;
-
-export function useScheduleV2_DayEventsQuery(
-    options: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query">
-) {
-    return Urql.useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
-}
-export const ScheduleV2_RoomsDocument = gql`
-    query ScheduleV2_Rooms($conferenceId: uuid!) @cached {
-        room_Room(where: { conferenceId: { _eq: $conferenceId }, events: {} }) {
-            ...ScheduleV2_Room
-        }
-    }
-    ${ScheduleV2_RoomFragmentDoc}
-`;
-
-export function useScheduleV2_RoomsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_RoomsQueryVariables>, "query">) {
-    return Urql.useQuery<ScheduleV2_RoomsQuery>({ query: ScheduleV2_RoomsDocument, ...options });
-}
-export const ScheduleV2_TagsDocument = gql`
-    query ScheduleV2_Tags($conferenceId: uuid!) @cached {
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ScheduleV2_Tag
-        }
-    }
-    ${ScheduleV2_TagFragmentDoc}
-`;
-
-export function useScheduleV2_TagsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_TagsQueryVariables>, "query">) {
-    return Urql.useQuery<ScheduleV2_TagsQuery>({ query: ScheduleV2_TagsDocument, ...options });
-}
-export const ScheduleV2_AllEvents_ParamsDocument = gql`
-    query ScheduleV2_AllEvents_Params($conferenceId: uuid!) @cached {
-        earliestStartingEvent: schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }
-            limit: 1
-            order_by: { scheduledStartTime: asc }
-        ) {
-            id
-            scheduledStartTime
-            conferenceId
-        }
-        latestEndingEvent: schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, sessionEventId: { _is_null: true } }
-            limit: 1
-            order_by: { scheduledEndTime: desc }
-        ) {
-            id
-            scheduledEndTime
-            conferenceId
-        }
-    }
-`;
-
-export function useScheduleV2_AllEvents_ParamsQuery(
-    options: Omit<Urql.UseQueryArgs<ScheduleV2_AllEvents_ParamsQueryVariables>, "query">
-) {
-    return Urql.useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
 }
 export const SelectSwagBagsDocument = gql`
     query SelectSwagBags($conferenceId: uuid!) @cached {
@@ -58042,27 +57283,6 @@ export function useInvitation_ConfirmCurrentMutation() {
     return Urql.useMutation<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>(
         Invitation_ConfirmCurrentDocument
     );
-}
-export const GetEventsInNextHourDocument = gql`
-    query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
-        schedule_Event(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                sessionEventId: { _is_null: true }
-                scheduledEndTime: { _gte: $now }
-                scheduledStartTime: { _lte: $cutoff }
-            }
-        ) {
-            ...MinimalEventInfo
-        }
-    }
-    ${MinimalEventInfoFragmentDoc}
-`;
-
-export function useGetEventsInNextHourQuery(
-    options: Omit<Urql.UseQueryArgs<GetEventsInNextHourQueryVariables>, "query">
-) {
-    return Urql.useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
 }
 export const CountSwagBagsDocument = gql`
     query CountSwagBags($conferenceId: uuid!) @cached {

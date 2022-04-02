@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Button, Container, Divider, HStack, Image, Link } from "@chakra-ui/react";
+import { AspectRatio, Box, Container, Divider, HStack, Image, Link } from "@chakra-ui/react";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, isElementDataBlob } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
@@ -7,12 +7,12 @@ import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
 import type { ElementDataFragment } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
-import { ExternalLinkButton } from "../../../../Chakra/LinkButton";
+import { ExternalLinkButton, LinkButton } from "../../../../Chakra/LinkButton";
 import { Markdown } from "../../../../Chakra/Markdown";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import LiveNow from "../../../../Menu/LeftSidebar/LiveNow";
 import ActiveSocialRooms from "../../Rooms/ActiveSocialRooms";
-import LiveProgramRooms from "../../Rooms/LiveProgramRooms";
 import SponsorBooths from "../../Rooms/SponsorBooths";
-import { ProgramModalTab, useScheduleModal } from "../../Schedule/ProgramModal";
 import { VideoElement } from "./VideoElement";
 
 export function Element({ element }: { element: ElementDataFragment }): JSX.Element {
@@ -34,14 +34,14 @@ function ElementInner({
     type: Content_ElementType_Enum;
     elementId: string;
 }): JSX.Element {
-    const scheduleModal = useScheduleModal();
+    const { conferencePath } = useAuthParameters();
 
     const el = useMemo(() => {
         const latestVersion = R.last(blob);
 
         switch (type) {
             case Content_ElementType_Enum.LiveProgramRooms:
-                return <LiveProgramRooms />;
+                return <LiveNow />;
             case Content_ElementType_Enum.ActiveSocialRooms:
                 return <ActiveSocialRooms />;
             case Content_ElementType_Enum.Divider:
@@ -51,24 +51,18 @@ function ElementInner({
             case Content_ElementType_Enum.ContentGroupList:
             case Content_ElementType_Enum.ExploreProgramButton:
                 return (
-                    <Button
-                        colorScheme="PrimaryActionButton"
-                        onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Tags)}
-                    >
-                        <FAIcon iconStyle="s" icon="tags" mr={2} />
+                    <LinkButton colorScheme="PrimaryActionButton" to={`${conferencePath}/content`}>
+                        <FAIcon iconStyle="s" icon="calendar" mr={2} />
                         Browse content
-                    </Button>
+                    </LinkButton>
                 );
             case Content_ElementType_Enum.WholeSchedule:
             case Content_ElementType_Enum.ExploreScheduleButton:
                 return (
-                    <Button
-                        colorScheme="PrimaryActionButton"
-                        onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Schedule)}
-                    >
+                    <LinkButton colorScheme="PrimaryActionButton" to={`${conferencePath}/schedule`}>
                         <FAIcon iconStyle="s" icon="calendar" mr={2} />
                         Full schedule
-                    </Button>
+                    </LinkButton>
                 );
         }
 
@@ -303,7 +297,7 @@ function ElementInner({
         }
 
         return <Box>Cannot {name} content.</Box>;
-    }, [blob, type, name, scheduleModal, elementId]);
+    }, [blob, type, name, conferencePath, elementId]);
 
     return el;
 }

@@ -23,7 +23,6 @@ import { defaultOutline_AsBoxShadow } from "../Chakra/Outline";
 import useCurrentRegistrant from "../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
-import { useNavigationState } from "../Menu/NavigationState";
 import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
 
 export default function ProfileMenu(): JSX.Element {
@@ -58,7 +57,6 @@ export default function ProfileMenu(): JSX.Element {
     const { toggleColorMode, colorMode } = useColorMode();
 
     const narrowView = useIsNarrowView();
-    const navState = useNavigationState();
 
     return (
         <Menu placement="bottom-start" offset={[-10, 5]}>
@@ -125,24 +123,19 @@ export default function ProfileMenu(): JSX.Element {
                             </Text>
                         ) : undefined}
                     </VStack>
-                    <MenuItem as={ReactLink} to={`${conferencePath}/profile`} p={3} isDisabled={navState.disabled}>
+                    <MenuItem as={ReactLink} to={`${conferencePath}/profile`} p={3}>
                         <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
                         Profile
                     </MenuItem>
-                    <MenuItem as={ReactLink} to={`${conferencePath}/recordings`} p={3} isDisabled={navState.disabled}>
+                    <MenuItem as={ReactLink} to={`${conferencePath}/recordings`} p={3}>
                         <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
                         Recordings
                     </MenuItem>
-                    <MenuItem
-                        as={ReactLink}
-                        to={`${conferencePath}/profile/backstages`}
-                        p={3}
-                        isDisabled={navState.disabled}
-                    >
+                    <MenuItem as={ReactLink} to={`${conferencePath}/profile/backstages`} p={3}>
                         <FAIcon iconStyle="s" icon="podcast" mr={2} aria-hidden={true} w="1.2em" />
                         Backstages
                     </MenuItem>
-                    <MenuItem as={ReactLink} to="/" p={3} isDisabled={navState.disabled}>
+                    <MenuItem as={ReactLink} to="/" p={3}>
                         <FAIcon iconStyle="s" icon="ticket-alt" mr={2} aria-hidden={true} w="1.2em" />
                         Conferences
                     </MenuItem>

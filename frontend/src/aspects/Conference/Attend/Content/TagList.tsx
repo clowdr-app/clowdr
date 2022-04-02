@@ -2,8 +2,9 @@ import type { StackProps } from "@chakra-ui/react";
 import { HStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { useHistory } from "react-router-dom";
 import type { ItemTagDataFragment } from "../../../../generated/graphql";
-import { useScheduleModal } from "../Schedule/ProgramModal";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { TagButton } from "./ItemList";
 
 export default function TagList({
@@ -12,6 +13,7 @@ export default function TagList({
     withBorder,
     ...props
 }: { tags: readonly ItemTagDataFragment[]; noClick?: boolean; withBorder?: boolean } & StackProps): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     const sortedTags = useMemo(
         () =>
             R.uniqBy(
@@ -20,7 +22,7 @@ export default function TagList({
             ).sort((x, y) => x.tag.priority - y.tag.priority),
         [tags]
     );
-    const { onOpen } = useScheduleModal();
+    const history = useHistory();
     return (
         <HStack flexWrap="wrap" w="100%" gridRowGap={2} {...props}>
             {sortedTags.map((tag) => (
@@ -31,7 +33,7 @@ export default function TagList({
                     setOpenId={
                         !noClick
                             ? (id) => {
-                                  onOpen(id ?? undefined);
+                                  history.push(`${conferencePath}/content/${id}`);
                               }
                             : undefined
                     }

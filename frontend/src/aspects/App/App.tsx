@@ -1,4 +1,4 @@
- import { useColorModeValue } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React, { Suspense } from "react";
 import { HelmetProvider } from "react-helmet-async";
@@ -11,9 +11,6 @@ import ChakraCustomProvider from "../Chakra/ChakraCustomProvider";
 import { GlobalChatStateProvider } from "../Chat/GlobalChatStateProvider";
 import { PermissionInstructionsProvider } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { VonageGlobalStateProvider } from "../Conference/Attend/Room/Vonage/State/VonageGlobalStateProvider";
-import { SocialiseModalInstance, SocialiseModalProvider } from "../Conference/Attend/Rooms/SocialiseModalProvider";
-import { LiveProgramRoomsProvider } from "../Conference/Attend/Rooms/useLiveProgramRooms";
-import { ProgramModal, ScheduleModalStateProvider } from "../Conference/Attend/Schedule/ProgramModal";
 import useConferenceIdUpdater from "../Conference/ConferenceIdUpdater";
 import RegistrantsContextProvider from "../Conference/RegistrantsContext";
 import { ConferenceProvider } from "../Conference/useConference";
@@ -23,8 +20,6 @@ import ForceUserRefresh from "../ForceUserRefresh/ForceUserRefresh";
 import { AuthParametersProvider, useAuthParameters } from "../GQL/AuthParameters";
 import UrqlProvider from "../GQL/UrqlProvider";
 import { LiveEventsProvider } from "../LiveEvents/LiveEvents";
-import { NavigationStateProvider } from "../Menu/NavigationState";
-import { RightSidebarCurrentTabProvider } from "../Menu/RightSidebar/RightSidebarCurrentTab";
 import { RaiseHandProvider } from "../RaiseHand/RaiseHandProvider";
 import { SharedRoomContextProvider } from "../Room/SharedRoomContextProvider";
 import CurrentUserProvider from "../Users/CurrentUser/CurrentUserProvider";
@@ -33,10 +28,6 @@ import { AppLayoutProvider } from "./AppLayoutContext";
 import AppPage from "./AppPage";
 import AppRouting from "./AppRouting";
 import DetectSlug from "./DetectSlug";
-
-// function useQuery() {
-//     return new URLSearchParams(useLocation().search);
-// }
 
 export default function App(): JSX.Element {
     return (
@@ -61,14 +52,6 @@ export default function App(): JSX.Element {
 function AppInner(): JSX.Element {
     const chimeTheme = useColorModeValue(lightTheme, darkTheme);
 
-    // const query = useQuery();
-    // const bypassDfmMatch = query.get("bypassMaintenance");
-    // console.info("bypassDfmMatch", bypassDfmMatch);
-
-    // if (!bypassDfmMatch) {
-    //     return <DownForMaintenancePage />;
-    // }
-
     const { conferenceId } = useAuthParameters();
     useConferenceIdUpdater();
 
@@ -79,47 +62,33 @@ function AppInner(): JSX.Element {
                     <DetectSlug>
                         {(detectSlugChildren) => (
                             <AppSettingsProvider>
-                                <NavigationStateProvider>
-                                    <ConferenceProvider
-                                        conferenceId={
-                                            conferenceId && conferenceId !== "NONE" ? conferenceId : undefined
-                                        }
-                                    >
-                                        {(conferenceChildren) => (
-                                            <RightSidebarCurrentTabProvider>
-                                                <CurrentRegistrantProvider>
-                                                    <ScheduleModalStateProvider>
-                                                        <SocialiseModalProvider>
-                                                            <LiveEventsProvider>
-                                                                <LiveProgramRoomsProvider>
-                                                                    <RegistrantsContextProvider>
-                                                                        <GlobalChatStateProvider>
-                                                                            <RaiseHandProvider>
-                                                                                <AppPage>
-                                                                                    {currentUserChildren ??
-                                                                                        detectSlugChildren ??
-                                                                                        conferenceChildren ?? (
-                                                                                            <ChimeThemeProvider
-                                                                                                theme={chimeTheme}
-                                                                                            >
-                                                                                                <MeetingProvider>
-                                                                                                    <AppInner2 />
-                                                                                                </MeetingProvider>
-                                                                                            </ChimeThemeProvider>
-                                                                                        )}
-                                                                                </AppPage>
-                                                                            </RaiseHandProvider>
-                                                                        </GlobalChatStateProvider>
-                                                                    </RegistrantsContextProvider>
-                                                                </LiveProgramRoomsProvider>
-                                                            </LiveEventsProvider>
-                                                        </SocialiseModalProvider>
-                                                    </ScheduleModalStateProvider>
-                                                </CurrentRegistrantProvider>
-                                            </RightSidebarCurrentTabProvider>
-                                        )}
-                                    </ConferenceProvider>
-                                </NavigationStateProvider>
+                                <ConferenceProvider
+                                    conferenceId={conferenceId && conferenceId !== "NONE" ? conferenceId : undefined}
+                                >
+                                    {(conferenceChildren) => (
+                                        <CurrentRegistrantProvider>
+                                            <LiveEventsProvider>
+                                                <RegistrantsContextProvider>
+                                                    <GlobalChatStateProvider>
+                                                        <RaiseHandProvider>
+                                                            <AppPage>
+                                                                {currentUserChildren ??
+                                                                    detectSlugChildren ??
+                                                                    conferenceChildren ?? (
+                                                                        <ChimeThemeProvider theme={chimeTheme}>
+                                                                            <MeetingProvider>
+                                                                                <AppInner2 />
+                                                                            </MeetingProvider>
+                                                                        </ChimeThemeProvider>
+                                                                    )}
+                                                            </AppPage>
+                                                        </RaiseHandProvider>
+                                                    </GlobalChatStateProvider>
+                                                </RegistrantsContextProvider>
+                                            </LiveEventsProvider>
+                                        </CurrentRegistrantProvider>
+                                    )}
+                                </ConferenceProvider>
                             </AppSettingsProvider>
                         )}
                     </DetectSlug>
@@ -145,10 +114,7 @@ function AppInner2(): JSX.Element {
                     <CurrentRegistrantUpdater />
 
                     <ForceUserRefresh />
-                    <ProgramModal />
-                    <SocialiseModalInstance />
 
-                    {/* <ShuffleRoomsQueueMonitor /> */}
                     <PermissionInstructionsProvider>
                         <AppLayoutProvider>
                             <SharedRoomContextProvider>{page}</SharedRoomContextProvider>

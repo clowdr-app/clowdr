@@ -20,15 +20,18 @@ import {
 } from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import type { UseQueryState } from "urql";
 import { gql, useClient } from "urql";
 import { NIL as NIL_UUID } from "uuid";
 import type {
+    ManageSchedule_ElementFragment,
     ManageSchedule_GetAllSessionIdsQuery,
     ManageSchedule_GetAllSessionIdsQueryVariables,
     ManageSchedule_GetExistingItemQuery,
     ManageSchedule_GetExistingItemQueryVariables,
     ManageSchedule_GetPotentiallyOverlappingEventsQuery,
     ManageSchedule_GetPotentiallyOverlappingEventsQueryVariables,
+    ManageSchedule_GetSessionsPageQuery,
     ManageSchedule_InsertEventMutation,
     ManageSchedule_InsertEventMutationVariables,
     ManageSchedule_InsertItemMutation,
@@ -44,6 +47,7 @@ import type {
     Schedule_Event_Bool_Exp,
 } from "../../../../generated/graphql";
 import {
+    Content_ElementType_Enum,
     Content_ItemType_Enum,
     ManageSchedule_GetAllSessionIdsDocument,
     ManageSchedule_GetExistingItemDocument,
@@ -837,6 +841,17 @@ export default function ManageScheduleV2(): JSX.Element {
                     )}
                 </HStack>
                 <VStack spacing={4} justifyContent="flex-start" alignItems="flex-start" w="100%">
+                    {/* {selectedSessions.size === 0 ? (
+                        <PaginationControls
+                            setOffset={setOffset}
+                            limit={limit}
+                            setSelectedSessions={setSelectedSessions}
+                            offset={offset}
+                            offsetStr={offsetStr}
+                            setOffsetStr={setOffsetStr}
+                            sessionsResponse={sessionsResponse}
+                        />
+                    ) : undefined} */}
                     {actualError ? (
                         <Alert status="error">
                             <HStack>
@@ -917,71 +932,17 @@ export default function ManageScheduleV2(): JSX.Element {
                     )}
                 </VStack>
             </VStack>
-            <HStack spacing={4} py={4} w="100%" justifyContent="center" maxW="800px">
-                <IconButton
-                    aria-label="Previous page"
-                    icon={<ChevronLeftIcon />}
-                    onClick={() => {
-                        setOffset((old) => Math.max(0, old - limit));
-                        setSelectedSessions(new Set());
-                    }}
-                    isDisabled={offset === 0}
+            {selectedSessions.size === 0 ? (
+                <PaginationControls
+                    setOffset={setOffset}
+                    limit={limit}
+                    setSelectedSessions={setSelectedSessions}
+                    offset={offset}
+                    offsetStr={offsetStr}
+                    setOffsetStr={setOffsetStr}
+                    sessionsResponse={sessionsResponse}
                 />
-                <HStack spacing={1}>
-                    <Input
-                        type="number"
-                        size="sm"
-                        value={offsetStr}
-                        onChange={(ev) => {
-                            setOffsetStr(ev.target.value);
-                        }}
-                        min={1}
-                        max={Math.ceil(
-                            (sessionsResponse.data?.schedule_Event_aggregate?.aggregate?.count ?? 0) / limit
-                        )}
-                        onBlur={(ev) => {
-                            if (ev.target.checkValidity()) {
-                                setOffset((ev.target.valueAsNumber - 1) * limit);
-                            }
-                        }}
-                        onKeyUp={(ev) => {
-                            if (ev.key === "Enter" && (ev.target as HTMLInputElement).checkValidity()) {
-                                setOffset(((ev.target as HTMLInputElement).valueAsNumber - 1) * limit);
-                            }
-                        }}
-                        isDisabled={!sessionsResponse.data?.schedule_Event_aggregate?.aggregate?.count}
-                        minW={0}
-                        w="3em"
-                    />
-                    <chakra.span>of</chakra.span>
-                    <chakra.span>
-                        {sessionsResponse.data?.schedule_Event_aggregate.aggregate
-                            ? Math.ceil(sessionsResponse.data.schedule_Event_aggregate.aggregate.count / limit)
-                            : "0"}
-                    </chakra.span>
-                </HStack>
-                <IconButton
-                    aria-label="Next page"
-                    icon={<ChevronRightIcon />}
-                    onClick={() => {
-                        setOffset((old) =>
-                            sessionsResponse.data?.schedule_Event_aggregate.aggregate
-                                ? Math.min(
-                                      sessionsResponse.data.schedule_Event_aggregate.aggregate.count -
-                                          (sessionsResponse.data.schedule_Event_aggregate.aggregate.count % limit),
-                                      old + limit
-                                  )
-                                : 0
-                        );
-                        setSelectedSessions(new Set());
-                    }}
-                    isDisabled={
-                        sessionsResponse.data?.schedule_Event_aggregate.aggregate
-                            ? offset >= sessionsResponse.data.schedule_Event_aggregate.aggregate.count - limit
-                            : true
-                    }
-                />
-            </HStack>
+            ) : undefined}
             <Editor<ScheduleEditorRecord>
                 isOpen={editorDisclosure.isOpen}
                 onClose={editorDisclosure.onClose}
@@ -1069,7 +1030,14 @@ export default function ManageScheduleV2(): JSX.Element {
                             const deletedElementIds = record.deletedElementIds ? [...record.deletedElementIds] : [];
 
                             if (itemRecord.abstract?.length) {
-                                const abstractRecord = itemRecord.abstract[0];
+                                const abstractRecord: DeepPartial<ManageSchedule_ElementFragment> = {
+                                    ...itemRecord.abstract[0],
+
+                                    isHidden: false,
+                                    typeName: Content_ElementType_Enum.Abstract,
+                                    name: "Abstract",
+                                    uploadsRemaining: 0,
+                                };
                                 if (abstractRecord.id) {
                                     updatedElements.push(abstractRecord);
                                 } else {
@@ -1078,7 +1046,13 @@ export default function ManageScheduleV2(): JSX.Element {
                             }
 
                             if (itemRecord.externalEventLink?.length) {
-                                const externalEventLinkRecord = itemRecord.externalEventLink[0];
+                                const externalEventLinkRecord = {
+                                    ...itemRecord.externalEventLink[0],
+
+                                    isHidden: true,
+                                    typeName: Content_ElementType_Enum.ExternalEventLink,
+                                    uploadsRemaining: 0,
+                                };
                                 if (externalEventLinkRecord.id) {
                                     updatedElements.push(externalEventLinkRecord);
                                 } else {
@@ -1490,5 +1464,89 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                 typeNames={addSessionForContentTypeNames}
             />
         </DashboardPage>
+    );
+}
+
+function PaginationControls({
+    setOffset,
+    limit,
+    setSelectedSessions,
+    offset,
+    offsetStr,
+    setOffsetStr,
+    sessionsResponse,
+}: {
+    setOffset: React.Dispatch<React.SetStateAction<number>>;
+    limit: number;
+    setSelectedSessions: React.Dispatch<React.SetStateAction<ReadonlySet<string>>>;
+    offset: number;
+    offsetStr: string;
+    setOffsetStr: React.Dispatch<React.SetStateAction<string>>;
+    sessionsResponse: UseQueryState<ManageSchedule_GetSessionsPageQuery, object>;
+}) {
+    return (
+        <HStack spacing={4} py={4} w="100%" justifyContent="center" maxW="800px">
+            <IconButton
+                aria-label="Previous page"
+                icon={<ChevronLeftIcon />}
+                onClick={() => {
+                    setOffset((old) => Math.max(0, old - limit));
+                    setSelectedSessions(new Set());
+                }}
+                isDisabled={offset === 0}
+            />
+            <HStack spacing={1}>
+                <Input
+                    type="number"
+                    size="sm"
+                    value={offsetStr}
+                    onChange={(ev) => {
+                        setOffsetStr(ev.target.value);
+                    }}
+                    min={1}
+                    max={Math.ceil((sessionsResponse.data?.schedule_Event_aggregate?.aggregate?.count ?? 0) / limit)}
+                    onBlur={(ev) => {
+                        if (ev.target.checkValidity()) {
+                            setOffset((ev.target.valueAsNumber - 1) * limit);
+                        }
+                    }}
+                    onKeyUp={(ev) => {
+                        if (ev.key === "Enter" && (ev.target as HTMLInputElement).checkValidity()) {
+                            setOffset(((ev.target as HTMLInputElement).valueAsNumber - 1) * limit);
+                        }
+                    }}
+                    isDisabled={!sessionsResponse.data?.schedule_Event_aggregate?.aggregate?.count}
+                    minW={0}
+                    w="3em"
+                />
+                <chakra.span>of</chakra.span>
+                <chakra.span>
+                    {sessionsResponse.data?.schedule_Event_aggregate.aggregate
+                        ? Math.ceil(sessionsResponse.data.schedule_Event_aggregate.aggregate.count / limit)
+                        : "0"}
+                </chakra.span>
+            </HStack>
+            <IconButton
+                aria-label="Next page"
+                icon={<ChevronRightIcon />}
+                onClick={() => {
+                    setOffset((old) =>
+                        sessionsResponse.data?.schedule_Event_aggregate.aggregate
+                            ? Math.min(
+                                  sessionsResponse.data.schedule_Event_aggregate.aggregate.count -
+                                      (sessionsResponse.data.schedule_Event_aggregate.aggregate.count % limit),
+                                  old + limit
+                              )
+                            : 0
+                    );
+                    setSelectedSessions(new Set());
+                }}
+                isDisabled={
+                    sessionsResponse.data?.schedule_Event_aggregate.aggregate
+                        ? offset >= sessionsResponse.data.schedule_Event_aggregate.aggregate.count - limit
+                        : true
+                }
+            />
+        </HStack>
     );
 }

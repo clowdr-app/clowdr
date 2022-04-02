@@ -1,23 +1,43 @@
-import { Slide, useColorModeValue, useOutsideClick, useToken } from "@chakra-ui/react";
-import React, { useRef } from "react";
+import { Button, Slide, useColorModeValue, useOutsideClick, useToken } from "@chakra-ui/react";
+import React, { useCallback, useRef } from "react";
+import FAIcon from "../../Chakra/FAIcon";
 import useIsNarrowView from "../../Hooks/useIsNarrowView";
 
 export default function Pullout({
     children,
     isIn,
     onClose,
-}: React.PropsWithChildren<{ isIn: boolean; isMenuExpanded: boolean; onClose: (ev: Event) => void }>): JSX.Element {
+    menuButtonId,
+}: React.PropsWithChildren<{
+    isIn: boolean;
+    isMenuExpanded: boolean;
+    onClose: () => void;
+    menuButtonId: string;
+}>): JSX.Element {
     const narrowView = useIsNarrowView();
 
     const bgColor = useColorModeValue("gray.50", "gray.700");
     const bgColorToken = useToken("colors", bgColor);
     const shadow = useToken("shadows", "left-pullout");
 
+    const onCloseWrapped = useCallback(
+        (ev: Event | React.MouseEvent<HTMLButtonElement>) => {
+            if (
+                (ev.target as HTMLElement).id !== menuButtonId &&
+                (ev.target as HTMLElement).offsetParent?.id !== menuButtonId
+            ) {
+                onClose();
+            }
+        },
+        [menuButtonId, onClose]
+    );
+
     const ref = useRef<HTMLDivElement>(null);
     useOutsideClick({
         ref,
-        handler: onClose,
+        handler: onCloseWrapped,
     });
+
     return (
         <Slide
             in={isIn}
@@ -38,7 +58,21 @@ export default function Pullout({
             }}
             ref={ref}
         >
-            {children}
+            {narrowView ? (
+                <Button
+                    aria-label="Close Live Now list"
+                    leftIcon={<FAIcon iconStyle="s" icon="times" />}
+                    colorScheme="LeftMenuButton"
+                    variant="ghost"
+                    onClick={onCloseWrapped}
+                    m="3px"
+                    size="sm"
+                    alignSelf="flex-end"
+                >
+                    Close
+                </Button>
+            ) : undefined}
+            {isIn ? children : undefined}
         </Slide>
     );
 }

@@ -4,12 +4,19 @@ import { useRouteMatch } from "react-router-dom";
 import { useGlobalChatState } from "../../Chat/GlobalChatStateProvider";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../../GQL/AuthParameters";
+import { useRestorableState } from "../../Hooks/useRestorableState";
 import { ChatsPanel } from "./Panels/ChatsPanel";
 import { ItemChatPanel } from "./Panels/ItemChatPanel";
 import { PresencePanel } from "./Panels/PresencePanel";
 import { RaiseHandPanel } from "./Panels/RaiseHandPanel";
 import { RoomChatPanel } from "./Panels/RoomChatPanel";
-import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebarCurrentTab";
+
+export enum RightSidebarTabs {
+    PageChat = 1,
+    RaiseHand = 2,
+    Chats = 3,
+    Presence = 4,
+}
 
 function RightSidebarSections_Inner({
     externalSetPageChatAvailable,
@@ -36,7 +43,12 @@ function RightSidebarSections_Inner({
     const [pageChatId, setPageChatId] = useState<string | null>(null);
 
     const chatState = useGlobalChatState();
-    const { currentTab, setCurrentTab } = useRightSidebarCurrentTab();
+    const [currentTab, setCurrentTab] = useRestorableState<RightSidebarTabs>(
+        "RightSideBar_CurrentTab",
+        RightSidebarTabs.Presence,
+        (x) => x.toString(),
+        (x) => parseInt(x, 10)
+    );
 
     useEffect(() => {
         if (roomId || itemOrExhibitionId) {

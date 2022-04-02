@@ -1,12 +1,9 @@
-import { Box, Flex, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Box, Flex, useColorModeValue, useDisclosure, useToken } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Link as ReactLink, useLocation } from "react-router-dom";
 import { useCountSwagBagsQuery, useGetSocialRoomsQuery } from "../../generated/graphql";
-import { useSocialiseModal } from "../Conference/Attend/Rooms/SocialiseModalProvider";
-import { useLiveProgramRooms } from "../Conference/Attend/Rooms/useLiveProgramRooms";
-import { ProgramModalTab, useScheduleModal } from "../Conference/Attend/Schedule/ProgramModal";
 import RequireRole from "../Conference/RequireRole";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
@@ -18,8 +15,9 @@ import { useLiveEvents } from "../LiveEvents/LiveEvents";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import LiveNow from "./LeftSidebar/LiveNow";
+import Pullout from "./LeftSidebar/Pullout";
+import Schedule from "./LeftSidebar/Schedule";
 import MenuButton from "./MenuButton";
-import { useNavigationState } from "./NavigationState";
 
 gql`
     query CountSwagBags($conferenceId: uuid!) @cached {
@@ -52,26 +50,12 @@ export default function LeftMenu({
     });
     const hasSwagBags = Boolean(swagBagsResponse.data?.content_Item_aggregate.aggregate?.count);
 
-    const location = useLocation();
-
-    const { onOpen: schedule_OnOpen, onClose: schedule_OnClose, finalFocusRef: scheduleButtonRef } = useScheduleModal();
-    const {
-        onOpen: socialise_OnOpen,
-        onClose: socialise_OnClose,
-        finalFocusRef: socialiseButtonRef,
-    } = useSocialiseModal();
-    const {
-        onOpen: liveNow_OnOpen,
-        onClose: liveNow_OnClose,
-        finalFocusRef: liveNowButtonRef,
-        isOpen: liveNow_IsOpen,
-    } = useLiveProgramRooms();
-
-    useEffect(() => {
-        liveNow_OnClose();
-        schedule_OnClose();
-        socialise_OnClose();
-    }, [location.pathname, liveNow_OnClose, schedule_OnClose, socialise_OnClose]);
+    const liveNowDisclosure = useDisclosure();
+    const scheduleDisclosure = useDisclosure();
+    const contentDisclosure = useDisclosure();
+    const exhibitionsDisclosure = useDisclosure();
+    const socialiseDisclosure = useDisclosure();
+    const sponsorsDisclosure = useDisclosure();
 
     const getSocialRoomsContext = useMemo(
         () =>
@@ -99,9 +83,9 @@ export default function LeftMenu({
         [socialRoomParticipants]
     );
 
-    const { liveEventsByRoom } = useLiveEvents();
-    const liveRoomCount = Object.keys(liveEventsByRoom).length;
-    const showLive = liveRoomCount > 0;
+    const { liveEvents } = useLiveEvents();
+    const liveEventCount = Object.keys(liveEvents).length;
+    const showLive = liveEventCount > 0;
 
     const bgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
     const triangleBgColor = useColorModeValue("gray.50", "gray.700");
@@ -109,13 +93,36 @@ export default function LeftMenu({
     const narrowView = useIsNarrowView();
     const veryNarrowView = useIsVeryNarrowView();
 
-    const navState = useNavigationState();
-
     useEffect(() => {
         if (narrowView && isExpanded) {
-            liveNow_OnClose();
+            liveNowDisclosure.onClose();
         }
-    }, [liveNow_OnClose, narrowView, isExpanded]);
+    }, [narrowView, isExpanded, liveNowDisclosure]);
+
+    const onPullOut = useCallback(
+        (disclosure: typeof liveNowDisclosure) => {
+            if (disclosure.isOpen && !narrowView) {
+                disclosure.onClose();
+            } else {
+                disclosure.onOpen();
+            }
+            if (narrowView) {
+                setIsExpanded(false);
+            }
+        },
+        [narrowView, setIsExpanded]
+    );
+
+    const location = useLocation();
+    useEffect(() => {
+        liveNowDisclosure.onClose();
+        scheduleDisclosure.onClose();
+        contentDisclosure.onClose();
+        exhibitionsDisclosure.onClose();
+        socialiseDisclosure.onClose();
+        sponsorsDisclosure.onClose();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname]);
 
     return (
         <>
@@ -133,7 +140,54 @@ export default function LeftMenu({
                 overflow="visible"
                 transition="width 0.15s cubic-bezier(0.33, 1, 0.68, 1)"
             >
-                <LiveNow isMenuExpanded={isExpanded} />
+                <Pullout
+                    isIn={liveNowDisclosure.isOpen}
+                    isMenuExpanded={isExpanded}
+                    onClose={liveNowDisclosure.onClose}
+                    menuButtonId="live-now-menu-button"
+                >
+                    <LiveNow />
+                </Pullout>
+                <Pullout
+                    isIn={scheduleDisclosure.isOpen}
+                    isMenuExpanded={isExpanded}
+                    onClose={scheduleDisclosure.onClose}
+                    menuButtonId="schedule-menu-button"
+                >
+                    <Schedule />
+                </Pullout>
+                <Pullout
+                    isIn={contentDisclosure.isOpen}
+                    isMenuExpanded={isExpanded}
+                    onClose={contentDisclosure.onClose}
+                    menuButtonId="content-menu-button"
+                >
+                    TODO: Content
+                </Pullout>
+                <Pullout
+                    isIn={exhibitionsDisclosure.isOpen}
+                    isMenuExpanded={isExpanded}
+                    onClose={exhibitionsDisclosure.onClose}
+                    menuButtonId="exhibitions-menu-button"
+                >
+                    TODO: Exhibitions
+                </Pullout>
+                <Pullout
+                    isIn={sponsorsDisclosure.isOpen}
+                    isMenuExpanded={isExpanded}
+                    onClose={sponsorsDisclosure.onClose}
+                    menuButtonId="sponsors-menu-button"
+                >
+                    TODO: Sponsors
+                </Pullout>
+                <Pullout
+                    isIn={socialiseDisclosure.isOpen}
+                    isMenuExpanded={isExpanded}
+                    onClose={socialiseDisclosure.onClose}
+                    menuButtonId="socialise-menu-button"
+                >
+                    TODO: Socialise
+                </Pullout>
                 <Flex
                     bgColor={bgColor}
                     w="100%"
@@ -153,22 +207,11 @@ export default function LeftMenu({
                             icon="podcast"
                             borderBottomRadius={0}
                             colorScheme="LiveActionButton"
-                            ref={liveNowButtonRef as React.RefObject<HTMLButtonElement>}
-                            onClick={() => {
-                                if (liveNow_IsOpen && !narrowView) {
-                                    liveNow_OnClose();
-                                } else {
-                                    liveNow_OnOpen();
-                                }
-                                if (narrowView) {
-                                    setIsExpanded(false);
-                                }
-                            }}
+                            onClick={() => onPullOut(liveNowDisclosure)}
                             mb={1}
                             showLabel={isExpanded}
-                            isDisabled={navState.disabled}
                         >
-                            {liveNow_IsOpen ? (
+                            {liveNowDisclosure.isOpen ? (
                                 <Box pos="absolute" top={0} right={0} h="100%">
                                     <svg width="7" height="100%" viewBox="0 0 7 10">
                                         <polygon points="0,5 8,0 8,10" fill={triangleBgColorToken} />
@@ -176,64 +219,73 @@ export default function LeftMenu({
                                 </Box>
                             ) : (
                                 <Box pos="absolute" top={1} right={1} fontSize="xs">
-                                    {liveRoomCount}
+                                    {liveEventCount}
                                 </Box>
                             )}
                         </MenuButton>
                     ) : undefined}
                     <MenuButton
+                        id="schedule-menu-button"
                         label="Schedule"
                         iconStyle="s"
                         icon={"calendar"}
                         px={0}
                         borderRadius={0}
                         colorScheme={colorScheme}
-                        ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
-                        onClick={!narrowView ? () => schedule_OnOpen(undefined, ProgramModalTab.Schedule) : undefined}
+                        onClick={() => onPullOut(scheduleDisclosure)}
                         as={narrowView ? ReactLink : undefined}
                         to={narrowView ? `${conferencePath}/schedule` : undefined}
                         mb={1}
                         showLabel={isExpanded}
-                        isDisabled={navState.disabled}
                     />
                     <MenuButton
+                        id="content-menu-button"
+                        label="Content"
+                        iconStyle="s"
+                        icon={"tag"}
+                        px={0}
+                        borderRadius={0}
+                        colorScheme={colorScheme}
+                        onClick={() => onPullOut(contentDisclosure)}
+                        as={narrowView ? ReactLink : undefined}
+                        to={narrowView ? `${conferencePath}/content` : undefined}
+                        mb={1}
+                        showLabel={isExpanded}
+                    />
+                    <MenuButton
+                        id="exhibitions-menu-button"
                         label="Exhibitions"
                         iconStyle="s"
                         icon={"puzzle-piece"}
                         px={0}
                         borderRadius={0}
                         colorScheme={colorScheme}
-                        ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
-                        onClick={
-                            !narrowView ? () => schedule_OnOpen(undefined, ProgramModalTab.Exhibitions) : undefined
-                        }
+                        onClick={() => onPullOut(exhibitionsDisclosure)}
                         as={narrowView ? ReactLink : undefined}
                         to={narrowView ? `${conferencePath}/exhibitions` : undefined}
                         mb={1}
                         showLabel={isExpanded}
-                        isDisabled={navState.disabled}
                     />
                     {conference.forceSponsorsMenuLink?.[0]?.value || narrowView ? (
                         <MenuButton
+                            id="sponsors-menu-button"
                             label={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
                             iconStyle="s"
                             icon={"star"}
                             px={0}
                             borderRadius={0}
                             colorScheme={colorScheme}
-                            onClick={
-                                !narrowView ? () => schedule_OnOpen(undefined, ProgramModalTab.Sponsors) : undefined
-                            }
+                            onClick={() => onPullOut(sponsorsDisclosure)}
                             as={narrowView ? ReactLink : undefined}
                             to={narrowView ? `${conferencePath}/sponsors` : undefined}
                             mb={1}
                             showLabel={isExpanded}
-                            isDisabled={navState.disabled}
                         />
                     ) : undefined}
                     {maybeRegistrant ? (
                         <>
                             <MenuButton
+                                id="socialise-menu-button"
                                 label="Socialise"
                                 ariaLabel={
                                     countOfSocialRoomParticipants
@@ -247,13 +299,11 @@ export default function LeftMenu({
                                 borderRadius={0}
                                 colorScheme={colorScheme}
                                 pos="relative"
-                                ref={socialiseButtonRef as React.RefObject<HTMLButtonElement>}
-                                onClick={!narrowView ? () => socialise_OnOpen() : undefined}
+                                onClick={() => onPullOut(socialiseDisclosure)}
                                 as={narrowView ? ReactLink : undefined}
                                 to={narrowView ? `${conferencePath}/socialise` : undefined}
                                 mb={1}
                                 showLabel={isExpanded}
-                                isDisabled={navState.disabled}
                             >
                                 {countOfSocialRoomParticipants ? (
                                     <Box pos="absolute" top={1} right={1} fontSize="xs">
@@ -269,44 +319,42 @@ export default function LeftMenu({
                                     px={0}
                                     borderRadius={0}
                                     colorScheme={colorScheme}
-                                    as={navState.disabled ? undefined : ReactLink}
+                                    as={ReactLink}
                                     to={`${conferencePath}/swag`}
                                     mb={1}
                                     showLabel={isExpanded}
-                                    isDisabled={navState.disabled}
                                 />
                             ) : undefined}
                         </>
                     ) : undefined}
                     {veryNarrowView ? (
                         <MenuButton
+                            id="search-menu-button"
                             label="Search"
                             iconStyle="s"
                             icon={"search"}
                             px={0}
                             borderRadius={0}
                             colorScheme={colorScheme}
-                            ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
                             as={ReactLink}
                             to={`${conferencePath}/search`}
                             mb={1}
                             showLabel={isExpanded}
-                            isDisabled={navState.disabled}
                         />
                     ) : undefined}
                     <Box flex="1 1 auto" />
                     <RequireRole organizerRole moderatorRole permitIfAnySubconference>
                         <MenuButton
+                            id="manage-menu-button"
                             label="Manage"
                             iconStyle="s"
                             icon="cog"
                             borderRadius={0}
                             colorScheme={colorScheme}
-                            as={navState.disabled ? undefined : ReactLink}
+                            as={ReactLink}
                             to={`${conferencePath}/manage`}
                             mb={1}
                             showLabel={isExpanded}
-                            isDisabled={navState.disabled}
                         />
                     </RequireRole>
                 </Flex>

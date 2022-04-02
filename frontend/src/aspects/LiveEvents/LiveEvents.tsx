@@ -1,42 +1,14 @@
-import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
-import type { MinimalEventInfoFragment } from "../../generated/graphql";
-import { useGetEventsInNextHourQuery } from "../../generated/graphql";
+import type { ScheduleEventFragment } from "../../generated/graphql";
+import { Order_By, useSelectSchedulePageQuery } from "../../generated/graphql";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import { useRealTime } from "../Hooks/useRealTime";
 import { roundDownToNearest, roundUpToNearest } from "../Utils/MathUtils";
 
-gql`
-    query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
-        schedule_Event(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                sessionEventId: { _is_null: true }
-                scheduledEndTime: { _gte: $now }
-                scheduledStartTime: { _lte: $cutoff }
-            }
-        ) {
-            ...MinimalEventInfo
-        }
-    }
-
-    fragment MinimalEventInfo on schedule_Event {
-        id
-        conferenceId
-        scheduledStartTime
-        scheduledEndTime
-        roomId
-        room {
-            id
-            name
-        }
-    }
-`;
-
 interface LiveEventsContext {
-    liveEventsByRoom: Record<string, MinimalEventInfoFragment[]>;
-    liveEventsInNextHour: readonly MinimalEventInfoFragment[];
+    liveEvents: ReadonlyArray<ScheduleEventFragment>;
+    upcomingEvents: ReadonlyArray<ScheduleEventFragment>;
 }
 
 const context = React.createContext<LiveEventsContext | undefined>(undefined);
@@ -71,51 +43,73 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
         [nowSlow]
     );
 
-    const [response] = useGetEventsInNextHourQuery({
+    const [response] = useSelectSchedulePageQuery({
         variables: {
-            conferenceId,
-            now: nowStr,
-            cutoff: nowCutoffStr,
+            where: {
+                conferenceId: { _eq: conferenceId },
+                scheduledEndTime: { _gte: nowStr },
+                scheduledStartTime: { _lte: nowCutoffStr },
+            },
+            includeAbstract: false,
+            limit: 10000000,
+            ordering: [{ scheduledStartTime: Order_By.Asc }, { scheduledEndTime: Order_By.Asc }],
         },
         pause: !conferenceId,
+        requestPolicy: "cache-and-network",
     });
 
     const nowQuick = useRealTime(60 * 1000);
-    const [liveEvents, setLiveEvents] = useState<MinimalEventInfoFragment[]>([]);
+    const [liveEvents, setLiveEvents] = useState<ScheduleEventFragment[]>([]);
+    const [upcomingEvents, setUpcomingEvents] = useState<ScheduleEventFragment[]>([]);
 
     useEffect(() => {
-        const newActiveEvents = response.data?.schedule_Event
-            ? R.sortBy<MinimalEventInfoFragment>(
+        const newLiveEvents = response.data?.schedule_Event
+            ? R.sortBy<ScheduleEventFragment>(
                   (x) => Date.parse(x.scheduledStartTime),
-                  R.sortBy<MinimalEventInfoFragment>(
+                  R.sortBy<ScheduleEventFragment>(
                       (x) => x.id,
                       R.filter(
                           (x) =>
-                              Date.parse(x.scheduledStartTime) <= nowQuick + 10 * 60 * 1000 &&
-                              Date.parse(x.scheduledEndTime) >= nowQuick - 2 * 60 * 1000,
+                              Date.parse(x.scheduledStartTime) <= nowQuick + 60 * 1000 &&
+                              Date.parse(x.scheduledEndTime) >= nowQuick - 60 * 1000,
+                          response.data.schedule_Event
+                      )
+                  )
+              )
+            : [];
+        const newUpcomingEvents = response.data?.schedule_Event
+            ? R.sortBy<ScheduleEventFragment>(
+                  (x) => Date.parse(x.scheduledStartTime),
+                  R.sortBy<ScheduleEventFragment>(
+                      (x) => x.id,
+                      R.filter(
+                          (x) => Date.parse(x.scheduledStartTime) > nowQuick + 60 * 1000,
                           response.data.schedule_Event
                       )
                   )
               )
             : [];
 
-        setLiveEvents((oldActiveEvents) =>
-            oldActiveEvents.length !== newActiveEvents.length ||
-            newActiveEvents.some((x, idx) => idx >= oldActiveEvents.length || oldActiveEvents[idx].id !== x.id)
-                ? newActiveEvents
-                : oldActiveEvents
+        setLiveEvents((oldLiveEvents) =>
+            oldLiveEvents.length !== newLiveEvents.length ||
+            newLiveEvents.some((x, idx) => idx >= oldLiveEvents.length || oldLiveEvents[idx].id !== x.id)
+                ? newLiveEvents
+                : oldLiveEvents
+        );
+        setUpcomingEvents((oldUpcomingEvents) =>
+            oldUpcomingEvents.length !== newUpcomingEvents.length ||
+            newUpcomingEvents.some((x, idx) => idx >= oldUpcomingEvents.length || oldUpcomingEvents[idx].id !== x.id)
+                ? newUpcomingEvents
+                : oldUpcomingEvents
         );
     }, [nowQuick, response.data?.schedule_Event]);
 
     const ctx = useMemo<LiveEventsContext>(
         () => ({
-            liveEventsByRoom: R.groupBy(
-                (x) => x.room.id,
-                liveEvents.filter((x) => !!x.room)
-            ),
-            liveEventsInNextHour: response.data?.schedule_Event ?? [],
+            liveEvents,
+            upcomingEvents,
         }),
-        [liveEvents, response.data?.schedule_Event]
+        [liveEvents, upcomingEvents]
     );
     return <context.Provider value={ctx}>{children}</context.Provider>;
 }

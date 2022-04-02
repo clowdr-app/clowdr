@@ -20,8 +20,7 @@ const ExhibitionsPage = React.lazy(() => import("./Attend/Exhibition/Exhibitions
 const MyRecordingsPage = React.lazy(() => import("./Attend/Recordings/MyRecordingsPage"));
 const RegistrantListPage = React.lazy(() => import("./Attend/Registrant/RegistrantListPage"));
 const RoomPage = React.lazy(() => import("./Attend/Room/RoomPage"));
-const Schedule = React.lazy(() => import("./Attend/Schedule/v1/Schedule"));
-const ScheduleV2 = React.lazy(() => import("./Attend/Schedule/v2/WholeSchedule"));
+const WholeSchedule = React.lazy(() => import("./Attend/Schedule/WholeSchedule"));
 const SwagBags = React.lazy(() => import("./Attend/SwagBag/SwagBags"));
 const ChatRedirectPage = React.lazy(() => import("../Chat/ChatRedirectPage"));
 const WaitingPage = React.lazy(() => import("../ShuffleRooms/WaitingPage"));
@@ -120,13 +119,13 @@ export default function ConferenceRoutes(): JSX.Element {
                 </Route>
 
                 <Route path={`${path}/registrants`}>
-                    <RequireRole componentIfDenied={<Redirect to={path} />} organizerRole>
+                    <RequireRole componentIfDenied={<Redirect to={url} />} organizerRole>
                         <RegistrantListPage />
                     </RequireRole>
                 </Route>
 
                 <Route path={`${path}/swag`}>
-                    <RequireRole componentIfDenied={<Redirect to={path} />} attendeeRole>
+                    <RequireRole componentIfDenied={<Redirect to={url} />} attendeeRole>
                         <SwagBags />
                     </RequireRole>
                 </Route>
@@ -141,15 +140,9 @@ export default function ConferenceRoutes(): JSX.Element {
                     ) => <RoomPage roomId={props.match.params.roomId} />}
                 />
 
-                <Route path={`${path}/schedule/v2`}>
-                    <RequireRole componentIfDenied={<Redirect to={path} />} attendeeRole>
-                        <ScheduleV2 />
-                    </RequireRole>
-                </Route>
-
                 <Route path={`${path}/schedule`}>
-                    <RequireRole componentIfDenied={<Redirect to={path} />} attendeeRole>
-                        <Schedule />
+                    <RequireRole componentIfDenied={<Redirect to={url} />} attendeeRole>
+                        <WholeSchedule />
                     </RequireRole>
                 </Route>
 
@@ -164,7 +157,7 @@ export default function ConferenceRoutes(): JSX.Element {
                                 }
                             />
                         ) : (
-                            <Redirect to={path} />
+                            <Redirect to={url} />
                         )
                     }
                 </Route>
@@ -180,7 +173,7 @@ export default function ConferenceRoutes(): JSX.Element {
                                 }
                             />
                         ) : (
-                            <Redirect to={path} />
+                            <Redirect to={url} />
                         )
                     }
                 </Route>
@@ -190,12 +183,12 @@ export default function ConferenceRoutes(): JSX.Element {
                         props.match?.params.chatId ? (
                             <ChatRedirectPage chatId={props.match.params.chatId} />
                         ) : (
-                            <Redirect to={path} />
+                            <Redirect to={url} />
                         )
                     }
                 </Route>
                 <Route path={`${path}/shuffle`}>
-                    <RequireRole componentIfDenied={<Redirect to={path} />} attendeeRole>
+                    <RequireRole componentIfDenied={<Redirect to={url} />} attendeeRole>
                         <WaitingPage />
                     </RequireRole>
                 </Route>

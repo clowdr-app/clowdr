@@ -3,7 +3,6 @@ import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { theme } from "../../../../../Chakra/ChakraCustomProvider";
-import { useNavigationState } from "../../../../../Menu/NavigationState";
 import { useEvent } from "../../../../../Utils/useEvent";
 import { useRecordingState } from "../Recording/useRecordingState";
 import type { TranscriptData, VonageGlobalState } from "./VonageGlobalState";
@@ -56,8 +55,6 @@ function useValue({
     cancelJoin,
     completeJoinRef,
 }: Props): Outputs {
-    const navState = useNavigationState();
-
     const vonage = useVonageGlobalState();
     const { dispatch, settings } = useVonageRoom();
 
@@ -175,7 +172,6 @@ function useValue({
 
     const onSessionConnected = useCallback(
         (isConnected: boolean) => {
-            navState.setDisabled(isConnected);
             if (!isConnected) {
                 setConnected(false);
                 setStreams([]);
@@ -189,7 +185,7 @@ function useValue({
                 setConnected(true);
             }
         },
-        [dispatch, navState]
+        [dispatch]
     );
 
     const onScreenStreamDestroyedInternal = useCallback(

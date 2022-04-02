@@ -11,7 +11,6 @@ import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useTitle } from "../../../Hooks/useTitle";
 import PageCountText from "../../../Realtime/PageCountText";
 import RequireRole from "../../RequireRole";
-import { EventsTable } from "../Content/EventsTable";
 import { ItemElements } from "../Content/ItemElements";
 import ExhibitionLayout from "./ExhibitionLayout";
 
@@ -162,7 +161,7 @@ function ExhibitionPageInner({
                             <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
                             Times are shown in your local timezone.
                         </Text>
-                        <EventsTable events={events} includeRoom={true} />
+                        <>TODO:</> {/*TODO: FOR SESSIONS: <EventsTable events={events} includeRoom={true} />*/}
                     </>
                 ) : undefined}
             </VStack>

@@ -5,13 +5,11 @@ import { defaultOutline_AsBoxShadow } from "../Chakra/Outline";
 import { useMaybeConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import useIsNarrowView from "../Hooks/useIsNarrowView";
-import { useNavigationState } from "../Menu/NavigationState";
 
 export default function NameButton(): JSX.Element {
     const maybeConference = useMaybeConference();
     const { conferencePath } = useAuthParameters();
     const narrowView = useIsNarrowView();
-    const navState = useNavigationState();
 
     const titleHoverBgColor = useColorModeValue(
         "MainMenuHeaderBar.titleHoverBackgroundColor-light",
@@ -56,8 +54,6 @@ export default function NameButton(): JSX.Element {
             _focus={{}}
             _active={{}}
             whiteSpace="normal"
-            isDisabled={navState.disabled}
-            mr={navState.disabled ? "auto" : undefined}
         >
             {maybeConference?.shortName ?? "Midspace"}
         </LinkButton>

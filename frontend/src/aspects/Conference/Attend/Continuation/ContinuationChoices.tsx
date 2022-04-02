@@ -12,9 +12,6 @@ import {
 } from "../../../../generated/graphql";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRealTime } from "../../../Hooks/useRealTime";
-import { SocialiseModalTab, useSocialiseModal } from "../Rooms/SocialiseModalProvider";
-import { useLiveProgramRooms } from "../Rooms/useLiveProgramRooms";
-import { ProgramModalTab, useScheduleModal } from "../Schedule/ProgramModal";
 import ContinuationActiveChoice from "./ContinuationActiveChoice";
 import ContinuationPassiveChoice from "./ContinuationPassiveChoice";
 
@@ -270,9 +267,7 @@ function ContinuationChoices_Inner({
 
     const toast = useToast();
     const history = useHistory();
-    const scheduleModal = useScheduleModal();
-    const socialiseModal = useSocialiseModal();
-    const liveProgramRooms = useLiveProgramRooms();
+
     useEffect(() => {
         if (activateChoice && !activatedChoice) {
             const activateChosenOption = () => {
@@ -365,34 +360,34 @@ function ContinuationChoices_Inner({
                             case ContinuationType.NavigationView:
                                 switch (to.view) {
                                     case NavigationView.LiveProgramRooms:
-                                        liveProgramRooms.onOpen();
+                                        history.push(`${conferencePath}/live`);
                                         break;
                                     case NavigationView.HappeningSoon:
-                                        scheduleModal.onOpen(undefined, ProgramModalTab.HappeningSoon);
+                                        history.push(`${conferencePath}/schedule`);
                                         break;
                                     case NavigationView.Tags:
-                                        scheduleModal.onOpen(
-                                            to.tagId?.length ? to.tagId : undefined,
-                                            ProgramModalTab.Tags
+                                        history.push(
+                                            `${conferencePath}/content${to.tagId?.length ? "/" + to.tagId : ""}`
                                         );
                                         break;
                                     case NavigationView.Exhibitions:
-                                        scheduleModal.onOpen(undefined, ProgramModalTab.Exhibitions);
+                                        history.push(`${conferencePath}/exhibitions`);
                                         break;
                                     case NavigationView.Schedule:
-                                        scheduleModal.onOpen(undefined, ProgramModalTab.Schedule);
+                                        history.push(`${conferencePath}/schedule`);
                                         break;
                                     case NavigationView.SocialRooms:
-                                        socialiseModal.onOpen(SocialiseModalTab.Rooms);
+                                        history.push(`${conferencePath}/socialise`);
                                         break;
                                     case NavigationView.People:
-                                        socialiseModal.onOpen(SocialiseModalTab.People);
+                                        history.push(`${conferencePath}/socialise`);
                                         break;
                                     case NavigationView.ShufflePeriods:
-                                        socialiseModal.onOpen(SocialiseModalTab.Networking);
+                                        history.push(`${conferencePath}/shuffle`);
                                         break;
                                     case NavigationView.MyBackstages:
                                         // Deprecated
+                                        history.push(`${conferencePath}/profile/backstages`);
                                         break;
                                 }
                                 break;

@@ -22,9 +22,14 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { gql } from "urql";
 import { v4 as uuidv4 } from "uuid";
-import type { Registrant_GroupRegistrant_Insert_Input } from "../../../../../generated/graphql";
+import type {
+    Registrant_GroupRegistrant_Insert_Input,
+    Registrant_SubconferenceMembership_Insert_Input,
+} from "../../../../../generated/graphql";
 import {
+    Registrant_RegistrantRole_Enum,
     useImportRegistrantsMutation,
+    useImportRegistrants_SelectAllSubconferencesQuery,
     useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,
 } from "../../../../../generated/graphql";
@@ -39,6 +44,7 @@ gql`
         $insertRegistrants: [registrant_Registrant_insert_input!]!
         $insertInvitations: [registrant_Invitation_insert_input!]!
         $insertGroupRegistrants: [registrant_GroupRegistrant_insert_input!]!
+        $insertSubconferenceMemberships: [registrant_SubconferenceMembership_insert_input!]!
     ) {
         insert_registrant_Registrant(objects: $insertRegistrants) {
             affected_rows
@@ -46,8 +52,28 @@ gql`
         insert_registrant_Invitation(objects: $insertInvitations) {
             affected_rows
         }
-        insert_registrant_GroupRegistrant(objects: $insertGroupRegistrants) {
+        insert_registrant_GroupRegistrant(
+            objects: $insertGroupRegistrants
+            on_conflict: { constraint: GroupRegistrant_groupId_registrantId_key, update_columns: [] }
+        ) {
             affected_rows
+        }
+        insert_registrant_SubconferenceMembership(
+            objects: $insertSubconferenceMemberships
+            on_conflict: { constraint: SubconferenceMembership_subconferenceId_registrantId_key, update_columns: [] }
+        ) {
+            affected_rows
+        }
+    }
+
+    fragment ImportRegistrants_Subconference on conference_Subconference {
+        id
+        shortName
+    }
+
+    query ImportRegistrants_SelectAllSubconferences($conferenceId: uuid!) {
+        conference_Subconference(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ImportRegistrants_Subconference
         }
     }
 `;
@@ -61,6 +87,11 @@ interface RegistrantFinalData {
         name: string;
     }[];
     missingGroups?: string[];
+    subconferences: {
+        id: string;
+        shortName: string;
+    }[];
+    missingSubconferences?: string[];
     isNew: boolean;
 }
 
@@ -83,6 +114,7 @@ export default function ImportPanel({
         [subconferenceId]
     );
     const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
             subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
@@ -90,6 +122,16 @@ export default function ImportPanel({
         context,
     });
     useQueryErrorToast(groupsError, false);
+
+    const [{ fetching: subconferencesLoading, data: subconferencesData, error: subconferencesError }] =
+        useImportRegistrants_SelectAllSubconferencesQuery({
+            requestPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+            context,
+        });
+    useQueryErrorToast(subconferencesError, false);
 
     const [{ fetching: registrantsLoading, data: registrantsData, error: registrantsError }, refetchRegistrants] =
         useSelectAllRegistrantsQuery({
@@ -109,7 +151,7 @@ export default function ImportPanel({
     useEffect(() => {
         if (importData?.insert_registrant_Registrant) {
             toast({
-                title: `Imported ${importData.insert_registrant_Registrant.affected_rows} registrants. Added registrants to groups.`,
+                title: `Imported ${importData.insert_registrant_Registrant.affected_rows} registrants. Added registrants to groups and subconferences.`,
                 status: "success",
                 duration: 3000,
                 position: "bottom",
@@ -125,6 +167,11 @@ export default function ImportPanel({
                 const group = row.group?.length
                     ? groupsData?.registrant_Group.find(
                           (g) => g.name.trim().toLowerCase() === row.group?.trim().toLowerCase()
+                      )
+                    : undefined;
+                const subconference = row.subconference?.length
+                    ? subconferencesData?.conference_Subconference.find(
+                          (g) => g.shortName.trim().toLowerCase() === row.subconference?.trim().toLowerCase()
                       )
                     : undefined;
 
@@ -153,6 +200,32 @@ export default function ImportPanel({
                             existingFinal.missingGroups.push(row.group.trim());
                         }
                     }
+
+                    if (subconference) {
+                        const existingOriginal =
+                            !existingFinal.isNew &&
+                            registrantsData?.registrant_Registrant &&
+                            registrantsData.registrant_Registrant.find((x) => x.id === existingFinal.id);
+                        if (
+                            !existingFinal.subconferences.some((x) => x.id === subconference.id) &&
+                            (!existingOriginal ||
+                                !existingOriginal.subconferenceMemberships.some(
+                                    (x) => x.subconferenceId === subconference.id
+                                ))
+                        ) {
+                            existingFinal.subconferences.push(subconference);
+                        }
+                    } else if (row.subconference?.length) {
+                        if (!existingFinal.missingSubconferences) {
+                            existingFinal.missingSubconferences = [row.subconference.trim()];
+                        } else if (
+                            !existingFinal.missingSubconferences.some(
+                                (x) => x.toLowerCase() === row.subconference?.trim().toLowerCase()
+                            )
+                        ) {
+                            existingFinal.missingSubconferences.push(row.subconference.trim());
+                        }
+                    }
                 } else {
                     const existingOriginal =
                         registrantsData?.registrant_Registrant &&
@@ -160,7 +233,14 @@ export default function ImportPanel({
                             return x.invitation && x.invitation.invitedEmailAddress.trim().toLowerCase() === email;
                         });
                     if (existingOriginal) {
-                        if (!group || !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id)) {
+                        if (
+                            (!group && row.group?.length) ||
+                            (!subconference && row.subconference?.length) ||
+                            !existingOriginal.groupRegistrants.some((x) => x.groupId === group?.id) ||
+                            !existingOriginal.subconferenceMemberships.some(
+                                (x) => x.subconferenceId === subconference?.id
+                            )
+                        ) {
                             acc.push({
                                 id: existingOriginal.id,
                                 isNew: false,
@@ -168,6 +248,9 @@ export default function ImportPanel({
                                 name: existingOriginal.displayName,
                                 groups: group ? [group] : [],
                                 missingGroups: !group && row.group ? [row.group.trim()] : undefined,
+                                subconferences: subconference ? [subconference] : [],
+                                missingSubconferences:
+                                    !subconference && row.subconference ? [row.subconference.trim()] : undefined,
                             });
                         }
                     } else {
@@ -179,6 +262,9 @@ export default function ImportPanel({
                             name,
                             groups: group ? [group] : [],
                             missingGroups: !group && row.group ? [row.group.trim()] : undefined,
+                            subconferences: subconference ? [subconference] : [],
+                            missingSubconferences:
+                                !subconference && row.subconference ? [row.subconference.trim()] : undefined,
                         });
                     }
                 }
@@ -186,13 +272,29 @@ export default function ImportPanel({
 
             return acc;
         }, [] as RegistrantFinalData[]);
-    }, [registrantsData?.registrant_Registrant, groupsData?.registrant_Group, inputData]);
+    }, [
+        inputData,
+        groupsData?.registrant_Group,
+        subconferencesData?.conference_Subconference,
+        registrantsData?.registrant_Registrant,
+    ]);
 
     const missingGroups = useMemo<string[]>(
         () => [
             ...(finalData?.reduce<Set<string>>((acc, x) => {
                 if (x.missingGroups) {
                     x.missingGroups.forEach((y) => acc.add(y));
+                }
+                return acc;
+            }, new Set<string>()) ?? []),
+        ],
+        [finalData]
+    );
+    const missingSubconferences = useMemo<string[]>(
+        () => [
+            ...(finalData?.reduce<Set<string>>((acc, x) => {
+                if (x.missingSubconferences) {
+                    x.missingSubconferences.forEach((y) => acc.add(y));
                 }
                 return acc;
             }, new Set<string>()) ?? []),
@@ -207,7 +309,7 @@ export default function ImportPanel({
         [inputData]
     );
     const totalOutputLength = useMemo(
-        () => finalData?.reduce((acc, x) => acc + 1 + x.groups.length, 0) ?? 0,
+        () => finalData?.reduce((acc, x) => acc + 1 + x.groups.length + x.subconferences.length, 0) ?? 0,
         [finalData]
     );
     const newRegistrantsCount = useMemo(
@@ -215,7 +317,11 @@ export default function ImportPanel({
         [finalData]
     );
     const existingRegistrantsCount = useMemo(
-        () => finalData?.reduce((acc, x) => acc + (!x.isNew && x.groups.length > 0 ? 1 : 0), 0) ?? 0,
+        () =>
+            finalData?.reduce(
+                (acc, x) => acc + (!x.isNew && (x.groups.length > 0 || x.subconferences.length > 0) ? 1 : 0),
+                0
+            ) ?? 0,
         [finalData]
     );
 
@@ -244,8 +350,16 @@ export default function ImportPanel({
             <HStack>
                 <Button
                     colorScheme="purple"
-                    isDisabled={!!groupsError || !!registrantsError || noName || noEmail || !!missingGroups.length}
-                    isLoading={groupsLoading || importLoading || registrantsLoading}
+                    isDisabled={
+                        !!groupsError ||
+                        !!registrantsError ||
+                        !!subconferencesError ||
+                        noName ||
+                        noEmail ||
+                        !!missingGroups.length ||
+                        !!missingSubconferences.length
+                    }
+                    isLoading={groupsLoading || importLoading || registrantsLoading || subconferencesLoading}
                     onClick={() => {
                         const newRegistrants = finalData.filter((x) => x.isNew);
                         const newGroupRegistrants: Registrant_GroupRegistrant_Insert_Input[] = finalData
@@ -254,6 +368,15 @@ export default function ImportPanel({
                                 x.groups.map((y) => ({
                                     registrantId: x.id,
                                     groupId: y.id,
+                                }))
+                            );
+                        const newSubconferenceMemberships: Registrant_SubconferenceMembership_Insert_Input[] = finalData
+                            .filter((x) => !x.isNew)
+                            .flatMap((x) =>
+                                x.subconferences.map((y) => ({
+                                    registrantId: x.id,
+                                    subconferenceId: y.id,
+                                    role: Registrant_RegistrantRole_Enum.Attendee,
                                 }))
                             );
 
@@ -269,6 +392,12 @@ export default function ImportPanel({
                                                 groupId: y.id,
                                             })),
                                         },
+                                        subconferenceMemberships: {
+                                            data: x.subconferences.map((y) => ({
+                                                subconferenceId: y.id,
+                                                role: Registrant_RegistrantRole_Enum.Attendee,
+                                            })),
+                                        },
                                     };
                                 }),
                                 insertInvitations: newRegistrants.map((x) => ({
@@ -276,6 +405,7 @@ export default function ImportPanel({
                                     invitedEmailAddress: x.email,
                                 })),
                                 insertGroupRegistrants: newGroupRegistrants,
+                                insertSubconferenceMemberships: newSubconferenceMemberships,
                             },
                             {
                                 fetchOptions: {
@@ -364,7 +494,57 @@ export default function ImportPanel({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {!noName && !noEmail && !missingGroups.length && !groupsLoading && totalOutputLength < totalInputLength ? (
+            {missingSubconferences.length && !subconferencesLoading ? (
+                <Alert
+                    status="error"
+                    variant="top-accent"
+                    flexDirection="column"
+                    alignItems="flex-start"
+                    justifyContent="center"
+                >
+                    <HStack>
+                        <AlertIcon />
+                        <AlertTitle>Error: One or more rows has an invalid subconference</AlertTitle>
+                    </HStack>
+                    <AlertDescription>
+                        <VStack alignItems="flex-start" spacing={2} my={2}>
+                            <Text overflowWrap="normal">
+                                Make sure you created any subconferences before importing registrants.
+                            </Text>
+                            <Text overflowWrap="normal">
+                                Missing subconferences are:{" "}
+                                {R.sortBy((x) => x, missingSubconferences)
+                                    .reduce<string>((acc, x) => `${acc}, ${x}`, "")
+                                    .substring(2)}
+                            </Text>
+                            <Text overflowWrap="normal">
+                                {subconferencesData
+                                    ? `Currently available subconferences are: ${R.sortBy(
+                                          (x) => x.shortName,
+                                          subconferencesData.conference_Subconference
+                                      )
+                                          .reduce<string>((acc, x) => `${acc}, ${x.shortName}`, "")
+                                          .substring(2)}`
+                                    : "Unable to load the list of subconferences - please refresh to try again."}
+                            </Text>
+                            <LinkButton
+                                to={`/conference/${conference.slug}/manage/subconferences`}
+                                colorScheme="red"
+                                mt={2}
+                            >
+                                Go to Manage Subconferences
+                            </LinkButton>
+                        </VStack>
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+            {!noName &&
+            !noEmail &&
+            !missingGroups.length &&
+            !groupsLoading &&
+            !missingSubconferences.length &&
+            !subconferencesLoading &&
+            totalOutputLength < totalInputLength ? (
                 <Alert>
                     <AlertIcon />
                     <AlertTitle>
@@ -372,17 +552,23 @@ export default function ImportPanel({
                     </AlertTitle>
                 </Alert>
             ) : undefined}
-            {!noName && !noEmail && !missingGroups.length && !groupsLoading ? (
+            {!noName &&
+            !noEmail &&
+            !missingGroups.length &&
+            !groupsLoading &&
+            !missingSubconferences.length &&
+            !subconferencesLoading ? (
                 <Alert>
                     <AlertIcon />
                     <AlertTitle>
                         {newRegistrantsCount} new registrants will be imported.
                         <br />
-                        {existingRegistrantsCount} existing registrants will be added to more groups.
+                        {existingRegistrantsCount} existing registrants will be added to more groups and subconferences.
                     </AlertTitle>
                     {totalOutputLength < totalInputLength ? (
                         <AlertDescription>
-                            ({totalInputLength - totalOutputLength} group assignments were de-duplicated)
+                            ({totalInputLength - totalOutputLength} group and subconference assignments were
+                            de-duplicated)
                         </AlertDescription>
                     ) : undefined}
                 </Alert>
@@ -392,7 +578,8 @@ export default function ImportPanel({
                     <Thead>
                         <Th>Name</Th>
                         <Th>Email</Th>
-                        <Th>Group</Th>
+                        <Th>Groups</Th>
+                        <Th>Subconferences</Th>
                     </Thead>
                     <Tbody>
                         {finalData
@@ -402,11 +589,13 @@ export default function ImportPanel({
                                     <Td>{x.name}</Td>
                                     <Td>{x.email}</Td>
                                     <Td>{x.groups.map((y) => y.name).join(", ")}</Td>
+                                    <Td>{x.subconferences.map((y) => y.shortName).join(", ")}</Td>
                                 </Tr>
                             ))}
                         {totalOutputLength === 0 ? (
                             <Tr>
                                 <Td>No new data to import</Td>
+                                <Td></Td>
                                 <Td></Td>
                                 <Td></Td>
                             </Tr>

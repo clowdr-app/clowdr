@@ -45139,6 +45139,9 @@ export type ImportRegistrantsMutationVariables = Exact<{
     insertGroupRegistrants:
         | ReadonlyArray<Registrant_GroupRegistrant_Insert_Input>
         | Registrant_GroupRegistrant_Insert_Input;
+    insertSubconferenceMemberships:
+        | ReadonlyArray<Registrant_SubconferenceMembership_Insert_Input>
+        | Registrant_SubconferenceMembership_Insert_Input;
 }>;
 
 export type ImportRegistrantsMutation = {
@@ -45155,6 +45158,29 @@ export type ImportRegistrantsMutation = {
         readonly __typename?: "registrant_GroupRegistrant_mutation_response";
         readonly affected_rows: number;
     } | null;
+    readonly insert_registrant_SubconferenceMembership?: {
+        readonly __typename?: "registrant_SubconferenceMembership_mutation_response";
+        readonly affected_rows: number;
+    } | null;
+};
+
+export type ImportRegistrants_SubconferenceFragment = {
+    readonly __typename?: "conference_Subconference";
+    readonly id: any;
+    readonly shortName: string;
+};
+
+export type ImportRegistrants_SelectAllSubconferencesQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type ImportRegistrants_SelectAllSubconferencesQuery = {
+    readonly __typename?: "query_root";
+    readonly conference_Subconference: ReadonlyArray<{
+        readonly __typename?: "conference_Subconference";
+        readonly id: any;
+        readonly shortName: string;
+    }>;
 };
 
 export type ManageGroups_GroupFragment = {
@@ -51604,6 +51630,12 @@ export const ImportJobFragmentDoc = gql`
         errors
     }
 `;
+export const ImportRegistrants_SubconferenceFragmentDoc = gql`
+    fragment ImportRegistrants_Subconference on conference_Subconference {
+        id
+        shortName
+    }
+`;
 export const ManageGroups_GroupFragmentDoc = gql`
     fragment ManageGroups_Group on registrant_Group {
         conferenceId
@@ -55755,6 +55787,7 @@ export const ImportRegistrantsDocument = gql`
         $insertRegistrants: [registrant_Registrant_insert_input!]!
         $insertInvitations: [registrant_Invitation_insert_input!]!
         $insertGroupRegistrants: [registrant_GroupRegistrant_insert_input!]!
+        $insertSubconferenceMemberships: [registrant_SubconferenceMembership_insert_input!]!
     ) {
         insert_registrant_Registrant(objects: $insertRegistrants) {
             affected_rows
@@ -55762,7 +55795,16 @@ export const ImportRegistrantsDocument = gql`
         insert_registrant_Invitation(objects: $insertInvitations) {
             affected_rows
         }
-        insert_registrant_GroupRegistrant(objects: $insertGroupRegistrants) {
+        insert_registrant_GroupRegistrant(
+            objects: $insertGroupRegistrants
+            on_conflict: { constraint: GroupRegistrant_groupId_registrantId_key, update_columns: [] }
+        ) {
+            affected_rows
+        }
+        insert_registrant_SubconferenceMembership(
+            objects: $insertSubconferenceMemberships
+            on_conflict: { constraint: SubconferenceMembership_subconferenceId_registrantId_key, update_columns: [] }
+        ) {
             affected_rows
         }
     }
@@ -55770,6 +55812,23 @@ export const ImportRegistrantsDocument = gql`
 
 export function useImportRegistrantsMutation() {
     return Urql.useMutation<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>(ImportRegistrantsDocument);
+}
+export const ImportRegistrants_SelectAllSubconferencesDocument = gql`
+    query ImportRegistrants_SelectAllSubconferences($conferenceId: uuid!) {
+        conference_Subconference(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ImportRegistrants_Subconference
+        }
+    }
+    ${ImportRegistrants_SubconferenceFragmentDoc}
+`;
+
+export function useImportRegistrants_SelectAllSubconferencesQuery(
+    options: Omit<Urql.UseQueryArgs<ImportRegistrants_SelectAllSubconferencesQueryVariables>, "query">
+) {
+    return Urql.useQuery<ImportRegistrants_SelectAllSubconferencesQuery>({
+        query: ImportRegistrants_SelectAllSubconferencesDocument,
+        ...options,
+    });
 }
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {

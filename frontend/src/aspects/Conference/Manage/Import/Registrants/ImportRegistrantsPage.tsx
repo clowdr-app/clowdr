@@ -31,7 +31,7 @@ const presetJSONata_JSON = `
 [$[$trim(Name) != ""].{
     "name": $exists(name) ? $trim(name) : $trim(Name),
     "email": $exists(email) ? $trim(email) : $trim(Email),
-    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : undefined
+    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : undefined,
     "subconference": $exists(subconference) and $trim(subconference) != "" ? $trim(subconference) : $exists(Subconference) and $trim(Subconference) != "" ? $trim(Subconference) : undefined
 }]
 `;
@@ -40,7 +40,7 @@ const presetJSONata_CSV = `
 [$[$trim(Name) != ""].{
     "name": $exists(name) ? $trim(name) : $trim(Name),
     "email": $exists(email) ? $trim(email) : $trim(Email),
-    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : undefined
+    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : undefined,
     "subconference": $exists(subconference) and $trim(subconference) != "" ? $trim(subconference) : $exists(Subconference) and $trim(Subconference) != "" ? $trim(Subconference) : undefined
 }]
 `;

@@ -5,6 +5,7 @@ export interface IntermediaryRegistrantData {
     name: string;
     email: string;
     group?: string;
+    subconference?: string;
 }
 
 function internalRegistrantConverter(data: any, query: string): IntermediaryRegistrantData[] | string {

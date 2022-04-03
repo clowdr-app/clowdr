@@ -41880,8 +41880,6 @@ export type GetRoomVonageTokenMutation = {
 
 export type RoomTile_GetRoomQueryVariables = Exact<{
     roomId: Scalars["uuid"];
-    withEvent: Scalars["Boolean"];
-    eventId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type RoomTile_GetRoomQuery = {
@@ -41893,23 +41891,6 @@ export type RoomTile_GetRoomQuery = {
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly itemId?: any | null;
         readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
-        readonly events?: ReadonlyArray<{
-            readonly __typename?: "schedule_Event";
-            readonly id: any;
-            readonly roomId: any;
-            readonly name: string;
-            readonly modeName?: Schedule_Mode_Enum | null;
-            readonly scheduledStartTime?: any | null;
-            readonly scheduledEndTime?: any | null;
-            readonly exhibitionId?: any | null;
-            readonly itemId?: any | null;
-            readonly exhibition?: {
-                readonly __typename?: "collection_Exhibition";
-                readonly id: any;
-                readonly name: string;
-            } | null;
-            readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
-        }>;
     } | null;
 };
 
@@ -41919,41 +41900,6 @@ export type RoomTile_RoomFragment = {
     readonly name: string;
     readonly managementModeName: Room_ManagementMode_Enum;
     readonly itemId?: any | null;
-    readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
-    readonly events?: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly roomId: any;
-        readonly name: string;
-        readonly modeName?: Schedule_Mode_Enum | null;
-        readonly scheduledStartTime?: any | null;
-        readonly scheduledEndTime?: any | null;
-        readonly exhibitionId?: any | null;
-        readonly itemId?: any | null;
-        readonly exhibition?: {
-            readonly __typename?: "collection_Exhibition";
-            readonly id: any;
-            readonly name: string;
-        } | null;
-        readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
-    }>;
-};
-
-export type RoomTile_EventFragment = {
-    readonly __typename?: "schedule_Event";
-    readonly id: any;
-    readonly roomId: any;
-    readonly name: string;
-    readonly modeName?: Schedule_Mode_Enum | null;
-    readonly scheduledStartTime?: any | null;
-    readonly scheduledEndTime?: any | null;
-    readonly exhibitionId?: any | null;
-    readonly itemId?: any | null;
-    readonly exhibition?: {
-        readonly __typename?: "collection_Exhibition";
-        readonly id: any;
-        readonly name: string;
-    } | null;
     readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
 };
 
@@ -42265,6 +42211,42 @@ export type SelectSchedulePageQuery = {
     }>;
 };
 
+export type ScheduleTagFragment = {
+    readonly __typename?: "collection_Tag";
+    readonly id: any;
+    readonly name: string;
+    readonly colour: string;
+    readonly priority: number;
+};
+
+export type SelectScheduleTagsQueryVariables = Exact<{
+    where: Collection_Tag_Bool_Exp;
+}>;
+
+export type SelectScheduleTagsQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_Tag: ReadonlyArray<{
+        readonly __typename?: "collection_Tag";
+        readonly id: any;
+        readonly name: string;
+        readonly colour: string;
+        readonly priority: number;
+    }>;
+};
+
+export type SelectSchedulePeopleQueryVariables = Exact<{
+    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type SelectSchedulePeopleQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_ProgramPerson: ReadonlyArray<{
+        readonly __typename?: "collection_ProgramPerson";
+        readonly id: any;
+        readonly name: string;
+    }>;
+};
+
 export type Schedule_GetPresentationsQueryVariables = Exact<{
     sessionId: Scalars["uuid"];
     includeAbstract: Scalars["Boolean"];
@@ -42342,42 +42324,6 @@ export type SelectScheduleBoundsQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly scheduledEndTime?: any | null;
-    }>;
-};
-
-export type ScheduleTagFragment = {
-    readonly __typename?: "collection_Tag";
-    readonly id: any;
-    readonly name: string;
-    readonly colour: string;
-    readonly priority: number;
-};
-
-export type SelectScheduleTagsQueryVariables = Exact<{
-    where: Collection_Tag_Bool_Exp;
-}>;
-
-export type SelectScheduleTagsQuery = {
-    readonly __typename?: "query_root";
-    readonly collection_Tag: ReadonlyArray<{
-        readonly __typename?: "collection_Tag";
-        readonly id: any;
-        readonly name: string;
-        readonly colour: string;
-        readonly priority: number;
-    }>;
-};
-
-export type SelectSchedulePeopleQueryVariables = Exact<{
-    ids: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
-}>;
-
-export type SelectSchedulePeopleQuery = {
-    readonly __typename?: "query_root";
-    readonly collection_ProgramPerson: ReadonlyArray<{
-        readonly __typename?: "collection_ProgramPerson";
-        readonly id: any;
-        readonly name: string;
     }>;
 };
 
@@ -50604,26 +50550,6 @@ export const Event_EventVonageSessionFragmentDoc = gql`
         }
     }
 `;
-export const RoomTile_EventFragmentDoc = gql`
-    fragment RoomTile_Event on schedule_Event {
-        id
-        roomId
-        name
-        modeName
-        scheduledStartTime
-        scheduledEndTime
-        exhibitionId
-        exhibition {
-            id
-            name
-        }
-        itemId
-        item {
-            id
-            title
-        }
-    }
-`;
 export const RoomTile_RoomFragmentDoc = gql`
     fragment RoomTile_Room on room_Room {
         id
@@ -50634,11 +50560,7 @@ export const RoomTile_RoomFragmentDoc = gql`
             id
             title
         }
-        events(where: { id: { _eq: $eventId } }) @include(if: $withEvent) {
-            ...RoomTile_Event
-        }
     }
-    ${RoomTile_EventFragmentDoc}
 `;
 export const SocialRoomFragmentDoc = gql`
     fragment SocialRoom on room_Room {
@@ -53195,7 +53117,7 @@ export function useGetRoomVonageTokenMutation() {
     );
 }
 export const RoomTile_GetRoomDocument = gql`
-    query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) @cached {
+    query RoomTile_GetRoom($roomId: uuid!) @cached {
         room_Room_by_pk(id: $roomId) {
             ...RoomTile_Room
         }
@@ -53261,6 +53183,34 @@ export function useSelectSchedulePageQuery(
 ) {
     return Urql.useQuery<SelectSchedulePageQuery>({ query: SelectSchedulePageDocument, ...options });
 }
+export const SelectScheduleTagsDocument = gql`
+    query SelectScheduleTags($where: collection_Tag_bool_exp!) @cached {
+        collection_Tag(where: $where) {
+            ...ScheduleTag
+        }
+    }
+    ${ScheduleTagFragmentDoc}
+`;
+
+export function useSelectScheduleTagsQuery(
+    options: Omit<Urql.UseQueryArgs<SelectScheduleTagsQueryVariables>, "query">
+) {
+    return Urql.useQuery<SelectScheduleTagsQuery>({ query: SelectScheduleTagsDocument, ...options });
+}
+export const SelectSchedulePeopleDocument = gql`
+    query SelectSchedulePeople($ids: [uuid!]!) @cached {
+        collection_ProgramPerson(where: { id: { _in: $ids } }) {
+            id
+            name
+        }
+    }
+`;
+
+export function useSelectSchedulePeopleQuery(
+    options: Omit<Urql.UseQueryArgs<SelectSchedulePeopleQueryVariables>, "query">
+) {
+    return Urql.useQuery<SelectSchedulePeopleQuery>({ query: SelectSchedulePeopleDocument, ...options });
+}
 export const Schedule_GetPresentationsDocument = gql`
     query Schedule_GetPresentations($sessionId: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!) {
         schedule_Event(
@@ -53295,34 +53245,6 @@ export function useSelectScheduleBoundsQuery(
     options: Omit<Urql.UseQueryArgs<SelectScheduleBoundsQueryVariables>, "query">
 ) {
     return Urql.useQuery<SelectScheduleBoundsQuery>({ query: SelectScheduleBoundsDocument, ...options });
-}
-export const SelectScheduleTagsDocument = gql`
-    query SelectScheduleTags($where: collection_Tag_bool_exp!) @cached {
-        collection_Tag(where: $where) {
-            ...ScheduleTag
-        }
-    }
-    ${ScheduleTagFragmentDoc}
-`;
-
-export function useSelectScheduleTagsQuery(
-    options: Omit<Urql.UseQueryArgs<SelectScheduleTagsQueryVariables>, "query">
-) {
-    return Urql.useQuery<SelectScheduleTagsQuery>({ query: SelectScheduleTagsDocument, ...options });
-}
-export const SelectSchedulePeopleDocument = gql`
-    query SelectSchedulePeople($ids: [uuid!]!) @cached {
-        collection_ProgramPerson(where: { id: { _in: $ids } }) {
-            id
-            name
-        }
-    }
-`;
-
-export function useSelectSchedulePeopleQuery(
-    options: Omit<Urql.UseQueryArgs<SelectSchedulePeopleQueryVariables>, "query">
-) {
-    return Urql.useQuery<SelectSchedulePeopleQuery>({ query: SelectSchedulePeopleDocument, ...options });
 }
 export const StarEventButton_GetStarsDocument = gql`
     query StarEventButton_GetStars($eventIds: [uuid!]!, $registrantId: uuid!) {

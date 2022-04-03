@@ -7,7 +7,7 @@ import { useGetSocialRoomsQuery } from "../../../../generated/graphql";
 import { makeContext } from "../../../GQL/make-context";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import { useConference } from "../../useConference";
-import RoomSummary from "./RoomsSummary";
+import RoomsSummary from "./RoomsSummary";
 
 export default function InactiveSocialRooms({ alignLeft }: { alignLeft?: boolean }): JSX.Element {
     const conference = useConference();
@@ -51,9 +51,9 @@ function InactiveSocialRoomsInner({
                           (x) => x.name,
                           R.filter((x) => roomParticipants[x.id]?.length === 0, rooms)
                       )
-                  ).map((room) => ({ roomId: room.id })),
+                  ).map((room) => room.id),
         [rooms, roomParticipants]
     );
 
-    return <RoomSummary rooms={sortedRooms} alignLeft={alignLeft} />;
+    return <RoomsSummary rooms={sortedRooms} alignLeft={alignLeft} />;
 }

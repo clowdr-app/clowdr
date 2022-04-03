@@ -161,7 +161,7 @@ function SelectableScheduleInner({
                 </Select>
                 {wholeScheduleLink ? (
                     <LinkButton to={`${conferencePath}/schedule`} variant="outline">
-                        Whole schedule
+                        Browse schedule
                     </LinkButton>
                 ) : undefined}
             </HStack>

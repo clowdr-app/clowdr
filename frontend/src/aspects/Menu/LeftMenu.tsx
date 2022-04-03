@@ -19,6 +19,7 @@ import Exhibitions from "./LeftSidebar/Exhibitions";
 import LiveNow from "./LeftSidebar/LiveNow";
 import Pullout from "./LeftSidebar/Pullout";
 import Schedule from "./LeftSidebar/Schedule";
+import Socialise from "./LeftSidebar/Socialise";
 import Sponsors from "./LeftSidebar/Sponsors";
 import MenuButton from "./MenuButton";
 
@@ -191,7 +192,7 @@ export default function LeftMenu({
                     onClose={socialiseDisclosure.onClose}
                     menuButtonId="socialise-menu-button"
                 >
-                    TODO: Socialise
+                    <Socialise />
                 </Pullout>
                 <Flex
                     bgColor={bgColor}

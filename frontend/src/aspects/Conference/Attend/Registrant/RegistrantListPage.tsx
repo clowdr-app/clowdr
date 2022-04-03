@@ -34,7 +34,13 @@ gql`
     }
 `;
 
-export function AllRegistrantsList(): JSX.Element {
+export function AllRegistrantsList({
+    columns,
+    linkInsteadOfModal,
+}: {
+    columns?: number;
+    linkInsteadOfModal?: boolean;
+}): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
@@ -148,6 +154,8 @@ export function AllRegistrantsList(): JSX.Element {
                     !!allRegistrants &&
                     loadedCount < ((search.length > 0 ? searched?.length : undefined) ?? allRegistrants.length)
                 }
+                columns={columns}
+                linkInsteadOfModal={linkInsteadOfModal}
             />
             {allRegistrants &&
             loadedCount < ((search.length > 0 ? searched?.length : undefined) ?? allRegistrants.length) ? (

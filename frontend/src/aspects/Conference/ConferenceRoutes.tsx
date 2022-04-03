@@ -32,7 +32,7 @@ const SponsorsPage = React.lazy(() =>
     import("./Attend/Rooms/SponsorBooths").then((x) => ({ default: x.SponsorsPage }))
 );
 const SocialisePage = React.lazy(() =>
-    import("./Attend/Rooms/SocialiseModal").then((x) => ({ default: x.SocialisePage }))
+    import("./Attend/Rooms/SocialiseTabs").then((x) => ({ default: x.SocialisePage }))
 );
 
 export default function ConferenceRoutes(): JSX.Element {

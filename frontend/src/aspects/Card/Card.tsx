@@ -1,6 +1,17 @@
 /* eslint-disable react/prop-types */
 import type { BoxProps } from "@chakra-ui/react";
-import { Button, chakra, Flex, Heading, HStack, IconButton, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import {
+    Button,
+    chakra,
+    Flex,
+    Heading,
+    HStack,
+    IconButton,
+    Image,
+    Text,
+    useColorModeValue,
+    VStack,
+} from "@chakra-ui/react";
 import React from "react";
 import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
@@ -20,6 +31,12 @@ export interface CardProps extends BoxProps {
 
     subHeading?: string;
     heading?: string;
+    picture?: {
+        url: string;
+        alt: string;
+        width?: string | number | (string | number)[];
+        height?: string | number | (string | number)[];
+    };
     editControls?: React.ReactChild | React.ReactChildren | JSX.Element[];
 
     topLeftButton?: {
@@ -63,6 +80,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
         onSelectToggle,
         subHeading,
         heading,
+        picture,
         editControls,
 
         onClick,
@@ -99,9 +117,9 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
             borderColor={isSelected ? "blue.400" : borderColor}
             bgColor={isSelected ? selectorColors.bgColor : variant === "solid" ? bgColor : undefined}
             p={!isSelected && variant === "ghost" ? "1px" : undefined}
-            cursor={to || isSelectable ? (isDisabled ? "not-allowed" : "pointer") : undefined}
+            cursor={to || isSelectable || onClick ? (isDisabled ? "not-allowed" : "pointer") : undefined}
             _hover={
-                (to || isSelectable) && !isDisabled
+                (to || isSelectable || onClick) && !isDisabled
                     ? {
                           shadow: "md",
                           borderRadius: "2xl",
@@ -110,7 +128,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                     : undefined
             }
             _active={
-                (to || isSelectable) && !isDisabled
+                (to || isSelectable || onClick) && !isDisabled
                     ? {
                           shadow: "md",
                           borderRadius: "2xl",
@@ -118,7 +136,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                     : undefined
             }
             _focus={
-                (to || isSelectable) && !isDisabled
+                (to || isSelectable || onClick) && !isDisabled
                     ? {
                           shadow: "md",
                           borderRadius: "2xl",
@@ -219,6 +237,9 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                         overflow="hidden"
                     >
                         <HStack alignItems="flex-start" w="100%" p="3px">
+                            {picture ? (
+                                <Image src={picture.url} alt={picture.alt} w={picture.width} h={picture.height} />
+                            ) : undefined}
                             <VStack alignItems="flex-start" mr="auto">
                                 {subHeading ? (
                                     <Text fontSize="md">

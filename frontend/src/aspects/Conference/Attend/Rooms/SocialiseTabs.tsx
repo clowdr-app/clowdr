@@ -2,11 +2,6 @@ import {
     Button,
     chakra,
     Heading,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalOverlay,
     Tab,
     TabList,
     TabPanel,
@@ -16,9 +11,8 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type { FocusableElement } from "@chakra-ui/utils";
 import { gql } from "@urql/core";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import FAIcon from "../../../Chakra/FAIcon";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
@@ -61,55 +55,20 @@ gql`
     }
 `;
 
-export default function SocialiseModal({
-    isOpen,
-    onClose,
-    finalFocusRef,
-    selectedTab,
-    setSelectedTab,
-}: {
-    isOpen: boolean;
-    onClose: () => void;
-    finalFocusRef: React.RefObject<FocusableElement>;
-    selectedTab: SocialiseModalTab;
-    setSelectedTab: (tab: SocialiseModalTab) => void;
-}): JSX.Element {
-    const closeRef = useRef<HTMLButtonElement | null>(null);
-
-    return (
-        <Modal
-            initialFocusRef={closeRef}
-            finalFocusRef={finalFocusRef}
-            size="full"
-            isCentered
-            autoFocus={false}
-            returnFocusOnClose={false}
-            trapFocus={true}
-            scrollBehavior="inside"
-            isOpen={isOpen}
-            onClose={onClose}
-        >
-            <ModalOverlay />
-            <ModalContent h="100vh" overflow="hidden" m={4}>
-                <ModalCloseButton ref={closeRef} />
-                <ModalBody display="flex" justifyContent="center" overflow="hidden" p={0}>
-                    {isOpen ? <SocialiseTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} /> : undefined}
-                </ModalBody>
-            </ModalContent>
-        </Modal>
-    );
-}
-
-function SocialiseTabs({
+export function SocialiseTabs({
     selectedTab,
     setSelectedTab,
     tabButtonSize = "sm",
     alignLeft,
+    columns,
+    linkInsteadOfModal,
 }: {
     selectedTab: SocialiseModalTab;
     setSelectedTab: (tab: SocialiseModalTab) => void;
     tabButtonSize?: string;
     alignLeft?: boolean;
+    columns?: number;
+    linkInsteadOfModal?: boolean;
 }): JSX.Element {
     const { isOpen: createRoom_IsOpen, onClose: createRoom_OnClose, onOpen: createRoom_OnOpen } = useDisclosure();
     const { conferencePath } = useAuthParameters();
@@ -207,7 +166,7 @@ function SocialiseTabs({
                     </TabPanel>
                     <TabPanel h="100%" overflow="hidden" px={0}>
                         <VStack spacing={4} h="100%" overflow="hidden" alignItems={alignLeft ? "flex-start" : "center"}>
-                            <AllRegistrantsList />
+                            <AllRegistrantsList columns={columns} linkInsteadOfModal={linkInsteadOfModal} />
                         </VStack>
                     </TabPanel>
                     <TabPanel h="100%" overflowY="auto" overflowX="hidden" px={0}>

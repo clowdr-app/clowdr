@@ -1,68 +1,50 @@
-import { Button, Center, Flex, Image, SimpleGrid, Spinner, Text, useDisclosure } from "@chakra-ui/react";
+import { SimpleGrid, Spinner, useDisclosure } from "@chakra-ui/react";
 import IntersectionObserver from "@researchgate/react-intersection-observer";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import BadgeList from "../../../Badges/BadgeList";
-import FAIcon from "../../../Chakra/FAIcon";
+import Card from "../../../Card";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import type { Registrant } from "../../useCurrentRegistrant";
 import ProfileModal from "./ProfileModal";
 
-export function RegistrantTile({ registrant, onClick }: { registrant: Registrant; onClick: () => void }): JSX.Element {
+export function RegistrantTile({
+    registrant,
+    onClick,
+    linkInsteadOfModal,
+}: {
+    registrant: Registrant;
+    onClick?: () => void;
+    linkInsteadOfModal?: boolean;
+}): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     return (
-        <Button
-            variant="outline"
-            borderRadius={0}
-            p={0}
-            w="auto"
-            h="auto"
+        <Card
             minH="50px"
-            justifyContent="flex-start"
             onClick={onClick}
-            overflow="hidden"
+            heading={registrant.displayName}
+            picture={
+                registrant.profile.photoURL_50x50
+                    ? {
+                          url: registrant.profile.photoURL_50x50,
+                          alt: `Picture of ${registrant.displayName}`,
+                          width: "50px",
+                          height: "50px",
+                      }
+                    : undefined
+            }
+            to={linkInsteadOfModal ? `${conferencePath}/profile/view/${registrant.id}` : undefined}
         >
-            {registrant.profile.photoURL_50x50 ? (
-                <Image
-                    flex="0 0 60px"
-                    aria-describedby={`registrant-trigger-${registrant.id}`}
-                    src={registrant.profile.photoURL_50x50}
-                    w="60px"
-                    h="60px"
-                />
-            ) : (
-                <Center w="60px" h="60px" flex="0 0 60px">
-                    <FAIcon iconStyle="s" icon="cat" />
-                </Center>
-            )}
-            <Flex
-                h="100%"
-                flex="0 1 auto"
-                mx={4}
-                overflow="hidden"
-                flexDir="column"
-                justifyContent="center"
-                alignItems="flex-start"
-            >
-                <Text
-                    as="span"
-                    id={`registrant-trigger-${registrant.id}`}
-                    maxW="100%"
+            {registrant.profile.badges ? (
+                <BadgeList
+                    badges={R.slice(0, 3, registrant.profile.badges)}
+                    mt={2}
                     whiteSpace="normal"
-                    overflowWrap="anywhere"
-                    fontSize="sm"
-                >
-                    {registrant.displayName}
-                </Text>
-                {registrant.profile.badges ? (
-                    <BadgeList
-                        badges={R.slice(0, 3, registrant.profile.badges)}
-                        mt={2}
-                        whiteSpace="normal"
-                        textAlign="left"
-                        noBottomMargin
-                    />
-                ) : undefined}
-            </Flex>
-        </Button>
+                    textAlign="left"
+                    noBottomMargin
+                />
+            ) : undefined}
+        </Card>
     );
 }
 
@@ -71,11 +53,15 @@ export default function RegistrantsList({
     searchedRegistrants,
     loadMore,
     moreAvailable,
+    columns = 3,
+    linkInsteadOfModal,
 }: {
     allRegistrants?: Registrant[];
     searchedRegistrants?: Registrant[];
     loadMore: () => void;
     moreAvailable: boolean;
+    columns?: number;
+    linkInsteadOfModal?: boolean;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedRegistrant, setSelectedRegistrant] = useState<Registrant | null>(null);
@@ -99,12 +85,17 @@ export default function RegistrantsList({
                             badges: registrant.profile.badges && R.slice(0, 3, registrant.profile.badges),
                         },
                     }}
-                    onClick={() => {
-                        openProfileModal(registrant);
-                    }}
+                    linkInsteadOfModal={linkInsteadOfModal}
+                    onClick={
+                        !linkInsteadOfModal
+                            ? () => {
+                                  openProfileModal(registrant);
+                              }
+                            : undefined
+                    }
                 />
             )),
-        [allRegistrants, openProfileModal]
+        [allRegistrants, linkInsteadOfModal, openProfileModal]
     );
     const allSearchedEls = useMemo(
         () =>
@@ -112,12 +103,17 @@ export default function RegistrantsList({
                 <RegistrantTile
                     key={registrant.id + "-search-" + idx}
                     registrant={registrant}
-                    onClick={() => {
-                        openProfileModal(registrant);
-                    }}
+                    linkInsteadOfModal={linkInsteadOfModal}
+                    onClick={
+                        !linkInsteadOfModal
+                            ? () => {
+                                  openProfileModal(registrant);
+                              }
+                            : undefined
+                    }
                 />
             )),
-        [openProfileModal, searchedRegistrants]
+        [linkInsteadOfModal, openProfileModal, searchedRegistrants]
     );
 
     const registrantsEls = allSearchedEls ?? allRegistrantsEls;
@@ -125,7 +121,11 @@ export default function RegistrantsList({
     return registrantsEls ? (
         <>
             <SimpleGrid
-                columns={[1, Math.min(2, registrantsEls.length), Math.min(3, registrantsEls.length)]}
+                columns={[
+                    1,
+                    Math.min(columns, Math.min(2, registrantsEls.length)),
+                    Math.min(columns, Math.min(3, registrantsEls.length)),
+                ]}
                 autoRows="min-content"
                 spacing={[2, 2, 4]}
                 maxW="5xl"
@@ -145,7 +145,9 @@ export default function RegistrantsList({
                     </IntersectionObserver>
                 ) : undefined}
             </SimpleGrid>
-            <ProfileModal isOpen={isOpen} onClose={onClose} registrant={selectedRegistrant} />
+            {!linkInsteadOfModal ? (
+                <ProfileModal isOpen={isOpen} onClose={onClose} registrant={selectedRegistrant} />
+            ) : undefined}
         </>
     ) : (
         <div>

@@ -1,25 +1,15 @@
-import {
-    Box,
-    chakra,
-    Flex,
-    Grid,
-    Heading,
-    HStack,
-    Text,
-    useColorMode,
-    useColorModeValue,
-    useToken,
-} from "@chakra-ui/react";
+import { Box, Grid, Text } from "@chakra-ui/react";
 import type { ElementBlob, ElementDataBlob } from "@midspace/shared-types/content";
 import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
-import Color from "tinycolor2";
+import { useHistory } from "react-router-dom";
 import type {
     ElementDataFragment,
     ExhibitionItemFragment,
     ExhibitionWithContentFragment,
 } from "../../../../generated/graphql";
 import { Content_ElementType_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
+import Card from "../../../Card";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import FAIcon from "../../../Chakra/FAIcon";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
@@ -33,35 +23,12 @@ import TagList from "../Content/TagList";
 
 function ItemTile({
     item,
-    exhibitionColour,
     hideLiveViewButton,
 }: {
     item: ExhibitionItemFragment;
-    exhibitionColour: string;
     hideLiveViewButton: boolean;
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
-    const { colorMode } = useColorMode();
-    const baseBgColour =
-        colorMode === "light" ? "Exhibition.defaultBackgroundColor-light" : "Exhibition.defaultBackgroundColor-dark";
-    const baseGrey = useToken("colors", baseBgColour);
-    const baseColour = useMemo(
-        () => (Color(exhibitionColour).getAlpha() !== 0 ? exhibitionColour : baseGrey),
-        [baseGrey, exhibitionColour]
-    );
-    const bgColour = useMemo(() => {
-        const c = Color(baseColour).desaturate(colorMode == "dark" ? 60 : 70);
-        const oldBrightness = c.getBrightness();
-        const newBrightnessOffset = colorMode == "light" ? 220 - oldBrightness : 50 - oldBrightness;
-        if (newBrightnessOffset < 0) {
-            c.darken((100 * -newBrightnessOffset) / 255);
-        } else {
-            c.brighten((100 * newBrightnessOffset) / 255);
-        }
-        return c;
-    }, [baseColour, colorMode]);
-    const bgColour_IsDark = useMemo(() => bgColour.isDark(), [bgColour]);
-    const textColour = bgColour_IsDark ? "Exhibition.textColor-dark" : "Exhibition.textColor-light";
 
     const primaryItems: ElementDataFragment[] = useMemo(() => {
         const sortOrder = [
@@ -176,41 +143,80 @@ function ItemTile({
 
     const itemUrl = `${conferencePath}/item/${item.id}`;
 
-    const shadow = useColorModeValue("md", "light-md");
+    const history = useHistory();
     return (
-        <Flex
-            flexDir="column"
-            alignItems="flex-start"
-            backgroundColor={bgColour.toRgbString()}
-            borderRadius="md"
-            boxShadow={shadow}
-            color={textColour}
+        <Card
             p={[1, 2, 4]}
-            overflow="hidden"
+            heading={item.title}
+            to={itemUrl}
+            topLeftButton={
+                liveRoomUrl && !hideLiveViewButton
+                    ? {
+                          colorScheme: "LiveActionButton",
+                          iconStyle: "s",
+                          label: "Live now",
+                          variant: "solid",
+                          onClick: () => {
+                              history.push(liveRoomUrl);
+                          },
+                      }
+                    : undefined
+            }
+            editControls={[
+                ...(discussionRoomUrl
+                    ? [
+                          <LinkButton
+                              key="internal"
+                              colorScheme="PrimaryActionButton"
+                              to={discussionRoomUrl}
+                              textDecoration="none"
+                              onClick={(ev) => {
+                                  ev.stopPropagation();
+                              }}
+                              borderRadius="2xl"
+                              size="sm"
+                          >
+                              <FAIcon iconStyle="s" icon="video" mr={2} />
+                              <Text as="span" ml={1} mr={2}>
+                                  Join in room
+                              </Text>
+                              <PageCountText path={discussionRoomUrl} fontSize="inherit" />
+                          </LinkButton>,
+                      ]
+                    : []),
+                ...(externalEventInfo
+                    ? [
+                          <ExternalLinkButton
+                              key="external"
+                              colorScheme="PrimaryActionButton"
+                              to={externalEventInfo.url}
+                              textDecoration="none"
+                              onClick={(ev) => {
+                                  ev.stopPropagation();
+                              }}
+                              borderRadius="2xl"
+                              size="sm"
+                          >
+                              <FAIcon iconStyle="s" icon="video" mr={2} />
+                              <Text as="span" ml={1} mr={2}>
+                                  Join in {externalEventInfo.name}
+                              </Text>
+                          </ExternalLinkButton>,
+                      ]
+                    : []),
+            ]}
         >
-            <HStack spacing={2}>
-                <Heading as="h2" fontSize="lg" textAlign="left" mb={4}>
-                    <chakra.span mr={4}>{item.title}</chakra.span>
-                    <PageCountText path={`${conferencePath}/item/${item.id}`} />
-                </Heading>
-                {liveRoomUrl && !hideLiveViewButton ? (
-                    <LinkButton
-                        colorScheme="LiveActionButton"
-                        to={liveRoomUrl}
-                        title={"Event is happening now. Go to room"}
-                        textDecoration="none"
-                    >
-                        <FAIcon iconStyle="s" icon="link" mr={2} />
-                        <Text as="span" ml={1} mr={2}>
-                            LIVE View
-                        </Text>
-                        <PageCountText path={liveRoomUrl} fontSize="inherit" />
-                    </LinkButton>
-                ) : undefined}
-            </HStack>
             {primaryItems.length > 0 ? <Element element={primaryItems[0]} /> : undefined}
             {primaryItems.length > 1 ? (
-                <LinkButton to={itemUrl} my={4} colorScheme="PrimaryActionButton" linkProps={{ alignSelf: "center" }}>
+                <LinkButton
+                    to={itemUrl}
+                    my={4}
+                    colorScheme="PrimaryActionButton"
+                    linkProps={{ alignSelf: "center" }}
+                    onClick={(ev) => {
+                        ev.stopPropagation();
+                    }}
+                >
                     <FAIcon iconStyle="s" icon="video" mr={2} />
                     View {primaryItems.length - 1} more videos and images
                 </LinkButton>
@@ -220,50 +226,12 @@ function ItemTile({
                     <Element key={item.id} element={item} />
                 ))}
             </Box>
-            <HStack
-                my={4}
-                spacing={4}
-                gridRowGap={4}
-                flexWrap="wrap"
-                justifyContent="center"
-                alignItems="center"
-                w="100%"
-            >
-                {discussionRoomUrl ? (
-                    <LinkButton colorScheme="PrimaryActionButton" to={discussionRoomUrl} textDecoration="none">
-                        <FAIcon iconStyle="s" icon="video" mr={2} />
-                        <Text as="span" ml={1} mr={2}>
-                            Join in room
-                        </Text>
-                        <PageCountText path={discussionRoomUrl} fontSize="inherit" />
-                    </LinkButton>
-                ) : undefined}
-                {externalEventInfo ? (
-                    <ExternalLinkButton
-                        colorScheme="PrimaryActionButton"
-                        to={externalEventInfo.url}
-                        textDecoration="none"
-                    >
-                        <FAIcon iconStyle="s" icon="video" mr={2} />
-                        <Text as="span" ml={1} mr={2}>
-                            Join in {externalEventInfo.name}
-                        </Text>
-                    </ExternalLinkButton>
-                ) : undefined}
-                <LinkButton colorScheme="SecondaryActionButton" to={itemUrl} textDecoration="none">
-                    <FAIcon iconStyle="s" icon="link" mr={2} />
-                    <Text as="span" ml={1} mr={2}>
-                        Find out more
-                    </Text>
-                    <PageCountText path={itemUrl} fontSize="inherit" />
-                </LinkButton>
-            </HStack>
             <Box my={4}>
                 <AuthorList programPeopleData={item.itemPeople} />
             </Box>
             {/* <Text>TODO: A marker to show if any of the authors are present</Text> */}
             <TagList mt="auto" tags={item.itemTags} />
-        </Flex>
+        </Card>
     );
 }
 
@@ -281,12 +249,7 @@ export default function ExhibitionLayout({
     return (
         <Grid templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(2, 1fr)"]} mt={0} gap={[2, 2, 4]} w="100%">
             {sortedItems.map((item) => (
-                <ItemTile
-                    key={item.id}
-                    item={item.item}
-                    exhibitionColour={exhibition.colour}
-                    hideLiveViewButton={hideLiveViewButton ?? false}
-                />
+                <ItemTile key={item.id} item={item.item} hideLiveViewButton={hideLiveViewButton ?? false} />
             ))}
         </Grid>
     );

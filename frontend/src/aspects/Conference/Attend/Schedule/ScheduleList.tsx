@@ -2,7 +2,7 @@
 import { Heading, VStack } from "@chakra-ui/react";
 import React, { Fragment } from "react";
 import type { ScheduleEventFragment } from "../../../../generated/graphql";
-import SessionCard from "./SessionCard";
+import EventCard from "./EventCard";
 
 export default function ScheduleList({
     events,
@@ -25,7 +25,7 @@ export default function ScheduleList({
                             previousStart.getMonth() !== thisStart.getMonth() ||
                             previousStart.getFullYear() !== thisStart.getFullYear()));
 
-                const card = <SessionCard key={event.id} session={event} />;
+                const card = <EventCard key={event.id} event={event} includePresentations />;
                 return dateChanged && !noDayHeadings ? (
                     <Fragment key={event.id}>
                         <Heading as="h2" fontSize="md" textAlign="left" pl={1} pt={4}>

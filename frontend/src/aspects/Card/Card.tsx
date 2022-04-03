@@ -152,6 +152,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                                 topLeftButton?.onClick
                                     ? (ev) => {
                                           ev.stopPropagation();
+                                          ev.preventDefault();
                                           topLeftButton?.onClick?.();
                                       }
                                     : undefined
@@ -185,6 +186,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                                 topLeftButton?.onClick
                                     ? (ev) => {
                                           ev.stopPropagation();
+                                          ev.preventDefault();
                                           topLeftButton?.onClick?.();
                                       }
                                     : undefined
@@ -243,6 +245,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                             alignSelf="stretch"
                             onClick={(ev) => {
                                 ev.stopPropagation();
+                                ev.preventDefault();
                                 bottomButton?.onClick();
                             }}
                             borderTopRadius={0}
@@ -264,6 +267,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                             alignSelf="stretch"
                             onClick={(ev) => {
                                 ev.stopPropagation();
+                                ev.preventDefault();
                                 bottomButton?.onClick();
                             }}
                             borderTopRadius={0}
@@ -283,6 +287,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                     alignSelf="stretch"
                     onClick={(ev) => {
                         ev.stopPropagation();
+                        ev.preventDefault();
                         rightButton?.onClick();
                     }}
                     borderLeftRadius={0}

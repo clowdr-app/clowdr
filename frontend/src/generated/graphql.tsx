@@ -42265,6 +42265,68 @@ export type SelectSchedulePageQuery = {
     }>;
 };
 
+export type Schedule_GetPresentationsQueryVariables = Exact<{
+    sessionId: Scalars["uuid"];
+    includeAbstract: Scalars["Boolean"];
+    includeItemEvents: Scalars["Boolean"];
+}>;
+
+export type Schedule_GetPresentationsQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly name: string;
+        readonly roomId: any;
+        readonly modeName?: Schedule_Mode_Enum | null;
+        readonly sessionEventId?: any | null;
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
+            readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly itemId: any;
+                readonly tagId: any;
+            }>;
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly itemId: any;
+                readonly personId: any;
+                readonly roleName: string;
+            }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+            }>;
+            readonly events?: ReadonlyArray<{
+                readonly __typename?: "schedule_Event";
+                readonly id: any;
+                readonly session?: {
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly item?: {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly title: string;
+                    } | null;
+                } | null;
+            }>;
+        } | null;
+    }>;
+};
+
 export type SelectScheduleBoundsQueryVariables = Exact<{
     where: Schedule_Event_Bool_Exp;
 }>;
@@ -42281,6 +42343,14 @@ export type SelectScheduleBoundsQuery = {
         readonly id: any;
         readonly scheduledEndTime?: any | null;
     }>;
+};
+
+export type ScheduleTagFragment = {
+    readonly __typename?: "collection_Tag";
+    readonly id: any;
+    readonly name: string;
+    readonly colour: string;
+    readonly priority: number;
 };
 
 export type SelectScheduleTagsQueryVariables = Exact<{
@@ -50651,6 +50721,14 @@ export const ScheduleEventFragmentDoc = gql`
     }
     ${ScheduleItemFragmentDoc}
 `;
+export const ScheduleTagFragmentDoc = gql`
+    fragment ScheduleTag on collection_Tag {
+        id
+        name
+        colour
+        priority
+    }
+`;
 export const StarredEventFragmentDoc = gql`
     fragment StarredEvent on schedule_StarredEvent {
         id
@@ -53183,6 +53261,23 @@ export function useSelectSchedulePageQuery(
 ) {
     return Urql.useQuery<SelectSchedulePageQuery>({ query: SelectSchedulePageDocument, ...options });
 }
+export const Schedule_GetPresentationsDocument = gql`
+    query Schedule_GetPresentations($sessionId: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!) {
+        schedule_Event(
+            where: { sessionEventId: { _eq: $sessionId } }
+            order_by: [{ scheduledStartTime: asc_nulls_last }]
+        ) {
+            ...ScheduleEvent
+        }
+    }
+    ${ScheduleEventFragmentDoc}
+`;
+
+export function useSchedule_GetPresentationsQuery(
+    options: Omit<Urql.UseQueryArgs<Schedule_GetPresentationsQueryVariables>, "query">
+) {
+    return Urql.useQuery<Schedule_GetPresentationsQuery>({ query: Schedule_GetPresentationsDocument, ...options });
+}
 export const SelectScheduleBoundsDocument = gql`
     query SelectScheduleBounds($where: schedule_Event_bool_exp!) @cached {
         first: schedule_Event(where: $where, order_by: [{ scheduledStartTime: asc }], limit: 1) {
@@ -53204,12 +53299,10 @@ export function useSelectScheduleBoundsQuery(
 export const SelectScheduleTagsDocument = gql`
     query SelectScheduleTags($where: collection_Tag_bool_exp!) @cached {
         collection_Tag(where: $where) {
-            id
-            name
-            colour
-            priority
+            ...ScheduleTag
         }
     }
+    ${ScheduleTagFragmentDoc}
 `;
 
 export function useSelectScheduleTagsQuery(

@@ -218,7 +218,7 @@ importers:
       react-error-boundary: ^3.1.4
       react-full-screen: ^1.1.0
       react-helmet-async: 1.2.2
-      react-hook-form: ^7.26.1
+      react-hook-form: ^7.28.1
       react-indiana-drag-scroll: ^2.1.0
       react-is: ^17.0.2
       react-markdown: ^8.0.0
@@ -365,7 +365,7 @@ importers:
       react-error-boundary: 3.1.4_react@17.0.2
       react-full-screen: 1.1.0_react@17.0.2
       react-helmet-async: 1.2.2_react-dom@17.0.2+react@17.0.2
-      react-hook-form: 7.26.1_react@17.0.2
+      react-hook-form: 7.29.0_react@17.0.2
       react-indiana-drag-scroll: 2.1.0_react-dom@17.0.2+react@17.0.2
       react-is: 17.0.2
       react-markdown: 8.0.0_a0c521d4794c7ad97f5f4c1c4a7d5818
@@ -25192,11 +25192,11 @@ packages:
       react-fast-compare: 3.2.0
       shallowequal: 1.1.0
 
-  /react-hook-form/7.26.1_react@17.0.2:
-    resolution: {integrity: sha512-/Qw/7IsCCVfYSGryJAMcouEpIDgWZJPeHR15J0IFSgo1BgofcfnY+AeUDcYD1E3yzzXYpR7NHyJehhkBKvjdMg==}
+  /react-hook-form/7.29.0_react@17.0.2:
+    resolution: {integrity: sha512-NcJqWRF6el5HMW30fqZRt27s+lorvlCCDbTpAyHoodQeYWXgQCvZJJQLC1kRMKdrJknVH0NIg3At6TUzlZJFOQ==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
-      react: ^16.8.0 || ^17
+      react: ^16.8.0 || ^17 || ^18
     dependencies:
       react: 17.0.2
     dev: false

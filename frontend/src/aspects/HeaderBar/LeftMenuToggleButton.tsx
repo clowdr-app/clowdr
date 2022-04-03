@@ -34,7 +34,6 @@ export default function LeftMenuToggleButton({ isOpen, toggle }: { isOpen: boole
                 bgColor: leftMenu_BgColor,
                 shadow: defaultOutline_AsBoxShadow,
             }}
-            isDisabled={narrowView}
         >
             <FAIcon iconStyle="s" icon="bars" />
             {!narrowView ? (

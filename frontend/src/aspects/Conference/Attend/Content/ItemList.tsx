@@ -1,8 +1,8 @@
-import type { StackProps } from "@chakra-ui/react";
 import {
     Box,
     Button,
     Center,
+    Flex,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -11,7 +11,7 @@ import {
     InputGroup,
     InputLeftAddon,
     InputRightElement,
-    SimpleGrid,
+    Select,
     Spinner,
     Text,
     useColorMode,
@@ -19,52 +19,42 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Twemoji } from "react-emoji-render";
+import * as R from "ramda";
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import Color from "tinycolor2";
 import { useClient } from "urql";
 import type {
     ContentOfTagQuery,
     ContentOfTagQueryVariables,
-    ItemList_ItemDataFragment,
     ItemList_ItemTagDataFragment,
     ItemList_TagInfoFragment,
 } from "../../../../generated/graphql";
 import { ContentOfTagDocument, useTagsQuery } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
-import { LinkButton } from "../../../Chakra/LinkButton";
-import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useRestorableState } from "../../../Hooks/useRestorableState";
 import { useConference } from "../../useConference";
-import { AuthorList } from "./AuthorList";
+import ItemCard from "./ItemCard";
 
 gql`
-    fragment ItemList_ItemData on content_Item {
-        id
-        title
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            ...ProgramPersonData
-        }
-    }
-
     fragment ItemList_ItemTagData on content_ItemTag {
         id
         tagId
         itemId
         item {
-            ...ItemList_ItemData
+            ...ScheduleItem
         }
     }
 
     fragment ItemList_TagInfo on collection_Tag {
         id
+        subconferenceId
         colour
         name
         priority
     }
 
-    query ContentOfTag($id: uuid!) @cached {
+    query ContentOfTag($id: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!) @cached {
         content_ItemTag(where: { tagId: { _eq: $id } }) {
             ...ItemList_ItemTagData
         }
@@ -128,20 +118,22 @@ export function TagButton({
             colorScheme="pink"
             isActive={isExpanded}
             aria-expanded={isExpanded}
-            padding={[1, 1, 1]}
             whiteSpace="normal"
-            margin={0}
+            w="10em"
+            m={2}
+            p={1}
             color={
                 (isExpanded && isExpandedDark) || (!isExpanded && isDark)
                     ? "TagBrowser-Tag.textColor-light"
                     : "TagBrowser-Tag.textColor-dark"
             }
             height="auto"
+            borderRadius="3xl"
             borderWidth={2}
             borderColor={isExpanded ? expandedBgColour : collapsedBgColour}
             variant="outline"
-            id={notExpander ? undefined : `content-groups-accordion-button-${tag.id}`}
-            aria-controls={notExpander ? undefined : `content-groups-accordion-panel-${tag.id}`}
+            id={notExpander ? undefined : `content-items-accordion-button-${tag.id}`}
+            aria-controls={notExpander ? undefined : `content-items-accordion-panel-${tag.id}`}
             onClick={() => (isExpanded ? setOpenId(null) : setOpenId(tag.id))}
             backgroundColor={isExpanded ? expandedBgColour : collapsedBgColour}
             _hover={{
@@ -185,31 +177,15 @@ export function TagButton({
     );
 }
 
-function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Element {
-    const shadow = useColorModeValue("md", "light-md");
-    const { conferencePath } = useAuthParameters();
-    return (
-        <LinkButton
-            to={`${conferencePath}/item/${group.id}`}
-            p={[2, 4]}
-            alignItems="flex-start"
-            justifyContent="flex-start"
-            flexDir="column"
-            width="100%"
-            height="100%"
-            colorScheme="TagBrowser-Item"
-            shadow={shadow}
-            fontSize="0.9em"
-        >
-            <Text as="p" whiteSpace="normal" fontSize="1.4em" fontWeight="600" textAlign="left" mb={4}>
-                <Twemoji className="twemoji" text={group.title} />
-            </Text>
-            <AuthorList programPeopleData={group.itemPeople} noRegistrantLink />
-        </LinkButton>
-    );
-}
-
-function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded: boolean }): JSX.Element {
+function Panel({
+    tag,
+    isExpanded,
+    noHeading,
+}: {
+    tag: ItemList_TagInfoFragment;
+    isExpanded: boolean;
+    noHeading?: boolean;
+}): JSX.Element {
     const [search, setSearch] = useRestorableState<string>(
         "ItemList_Search_" + tag.id,
         "",
@@ -225,6 +201,8 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
                 const data = await client
                     .query<ContentOfTagQuery, ContentOfTagQueryVariables>(ContentOfTagDocument, {
                         id: tag.id,
+                        includeAbstract: true,
+                        includeItemEvents: true,
                     })
                     .toPromise();
                 setContent(data.data?.content_ItemTag ? [...data.data.content_ItemTag] : []);
@@ -232,27 +210,21 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
         }
     }, [content, client, isExpanded, tag.id]);
 
-    const sortedGroups = useMemo(
+    const sortedItems = useMemo(
         () => content?.map((x) => x.item).sort((x, y) => x.title.localeCompare(y.title)),
         [content]
     );
-    const groupElements = useMemo(
+    const itemElements = useMemo(
         () =>
-            sortedGroups?.map((group) => ({
+            sortedItems?.map((group) => ({
                 title: group.title.toLowerCase(),
-                names: group.itemPeople.map((person) => person.person.name.toLowerCase()),
-                affiliations: group.itemPeople.map((person) => person.person.affiliation?.toLowerCase() ?? ""),
-                el: <ItemButton key={group.id} group={group} />,
+                el: <ItemCard key={group.id} item={group} />,
             })),
-        [sortedGroups]
+        [sortedItems]
     );
     const s = search.toLowerCase();
-    const filteredElements = groupElements?.filter((g) => {
-        return (
-            g.title.includes(s) ||
-            g.names.some((name) => name.includes(s)) ||
-            g.affiliations.some((affiliation) => affiliation.includes(s))
-        );
+    const filteredElements = itemElements?.filter((g) => {
+        return g.title.includes(s);
     });
 
     const resultCountStr = filteredElements
@@ -269,23 +241,27 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
     }, [resultCountStr]);
 
     return (
-        <Center
+        <Flex
             role="region"
-            id={`content-groups-accordion-panel-${tag.id}`}
-            aria-labelledby={`content-groups-accordion-button-${tag.id}`}
+            id={`content-items-accordion-panel-${tag.id}`}
+            aria-labelledby={`content-items-accordion-button-${tag.id}`}
             hidden={!isExpanded ? true : undefined}
             transition={"height 5s linear"}
             overflow="hidden"
             height="auto"
             width="100%"
             flexDir="column"
+            alignItems="stretch"
+            justifyContent="stretch"
             p={2}
         >
-            <Heading as="h3" fontSize="1.4rem" marginBottom="0.5rem" mb={4}>
-                {tag.name}
-            </Heading>
-            <FormControl mb={4} maxW={400}>
-                <FormLabel mt={4} textAlign="center">
+            {!noHeading ? (
+                <Heading as="h3" fontSize="1.4rem" marginBottom="0.5rem" mb={4} textAlign="left" w="100%">
+                    {tag.name}
+                </Heading>
+            ) : undefined}
+            <FormControl mb={4} w="100%" maxW={400}>
+                <FormLabel mt={noHeading ? 0 : 4} textAlign="left">
                     {resultCountStr}
                 </FormLabel>
                 <InputGroup>
@@ -320,22 +296,23 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
             {!filteredElements ? (
                 <Spinner label="Loading content" />
             ) : (
-                <SimpleGrid
-                    columns={[1, Math.min(2, filteredElements.length), Math.min(3, filteredElements.length)]}
-                    autoRows="min-content"
-                    spacing={[2, 2, 4]}
-                >
+                <Flex w="100%" flexWrap="wrap" alignItems="stretch" justifyContent="stretch">
                     {filteredElements.map((g) => g.el)}
-                </SimpleGrid>
+                </Flex>
             )}
-        </Center>
+        </Flex>
     );
 }
 
-export default function ItemList(
-    props: { overrideSelectedTag?: string | null; setOverrideSelectedTag?: (id: string | null) => void } & StackProps
-): JSX.Element {
-    const { overrideSelectedTag, setOverrideSelectedTag, ...remainingProps } = props;
+export default function ItemList({
+    selectAsDropdown,
+    ...props
+}: {
+    overrideSelectedTag?: string | null;
+    setOverrideSelectedTag?: (id: string | null) => void;
+    selectAsDropdown?: boolean;
+}): JSX.Element {
+    const { overrideSelectedTag, setOverrideSelectedTag } = props;
     const conference = useConference();
     const [{ fetching: loading, data, error }] = useTagsQuery({
         variables: {
@@ -359,17 +336,18 @@ export default function ItemList(
     );
     const openPanelId = overrideSelectedTag !== undefined ? overrideSelectedTag : internalOpenPanelId;
 
-    const sortedTags = useMemo(
-        () =>
-            data?.collection_Tag
-                ? [...data.collection_Tag]
-                      .sort((x, y) => x.name.localeCompare(y.name))
-                      .sort((x, y) => x.priority - y.priority)
-                : [],
-        [data?.collection_Tag]
-    );
+    const sortedGroupedTags = useMemo(() => {
+        if (data?.collection_Tag) {
+            const groupedTags = R.groupBy((x) => (x.subconferenceId ?? "none") as string, data.collection_Tag);
+            for (const key in groupedTags) {
+                groupedTags[key].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority);
+            }
+            return groupedTags;
+        }
+        return undefined;
+    }, [data?.collection_Tag]);
 
-    if (loading && !sortedTags) {
+    if (loading && !sortedGroupedTags) {
         return (
             <div>
                 <Spinner />
@@ -377,36 +355,89 @@ export default function ItemList(
         );
     }
 
-    if (!sortedTags) {
+    if (!sortedGroupedTags) {
         return <></>;
     }
 
     return (
-        <VStack px={4} spacing={4} {...remainingProps}>
+        <VStack px={4} spacing={4} alignItems="flex-start" w="100%" minW="min(100vw, 35em)">
             <Text>Select a tag to browse papers, posters, keynotes, and more.</Text>
-            <Center flexDirection="column">
-                <SimpleGrid
-                    aria-describedby="content-groups-accordion-header"
-                    columns={[
-                        1,
-                        Math.min(2, sortedTags.length),
-                        Math.min(3, sortedTags.length),
-                        Math.min(5, sortedTags.length),
-                    ]}
-                    maxW={1024}
-                    autoRows={["min-content", "min-content", "1fr"]}
-                    spacing={[2, 2, 4]}
-                >
-                    {sortedTags.map((tag) => (
-                        <TagButton key={tag.id} tag={tag} setOpenId={setOpenId} isExpanded={openPanelId === tag.id} />
-                    ))}
-                </SimpleGrid>
-                <Box overflow="hidden" pt={6} justifyContent="center">
-                    {sortedTags.map((tag) => (
-                        <Panel key={tag.id} tag={tag} isExpanded={openPanelId === tag.id} />
-                    ))}
-                </Box>
-            </Center>
+            {sortedGroupedTags ? (
+                !selectAsDropdown ? (
+                    Object.keys(sortedGroupedTags).map((subconferenceId) => {
+                        const sortedTags = sortedGroupedTags[subconferenceId];
+                        return (
+                            <Fragment key={"tag-buttons-" + subconferenceId}>
+                                {subconferenceId !== "none" ? (
+                                    <Heading as="h3" fontSize="md" textAlign="left">
+                                        {conference.subconferences.find((x) => x.id === subconferenceId)?.shortName ??
+                                            "Unknown subconference"}
+                                    </Heading>
+                                ) : undefined}
+                                <Flex maxW={1024} flexDir="row" flexWrap="wrap">
+                                    {sortedTags.map((tag) => (
+                                        <TagButton
+                                            key={tag.id}
+                                            tag={tag}
+                                            setOpenId={setOpenId}
+                                            isExpanded={openPanelId === tag.id}
+                                        />
+                                    ))}
+                                </Flex>
+                            </Fragment>
+                        );
+                    })
+                ) : (
+                    <Select
+                        value={openPanelId ?? ""}
+                        onChange={(ev) => setOpenId(ev.target.value.length > 0 ? ev.target.value : null)}
+                    >
+                        <option value="">Select a tag</option>
+                        {Object.keys(sortedGroupedTags).map((subconferenceId) => {
+                            const sortedTags = sortedGroupedTags[subconferenceId];
+                            return (
+                                <optgroup
+                                    key={"tag-buttons-" + subconferenceId}
+                                    label={
+                                        subconferenceId !== "none"
+                                            ? conference.subconferences.find((x) => x.id === subconferenceId)
+                                                  ?.shortName ?? "Unknown subconference"
+                                            : "Main conference"
+                                    }
+                                >
+                                    {sortedTags.map((tag) => (
+                                        <option key={tag.id} value={tag.id}>
+                                            {tag.name}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                            );
+                        })}
+                    </Select>
+                )
+            ) : undefined}
+            {sortedGroupedTags &&
+                Object.keys(sortedGroupedTags).map((subconferenceId) => {
+                    const sortedTags = sortedGroupedTags[subconferenceId];
+                    return (
+                        <Box
+                            key={"tag-panel-" + subconferenceId}
+                            overflow="hidden"
+                            pt={selectAsDropdown ? 0 : 6}
+                            justifyContent="flex-start"
+                            w="100%"
+                        >
+                            {sortedTags.map((tag) => (
+                                <Panel
+                                    key={tag.id}
+                                    tag={tag}
+                                    isExpanded={openPanelId === tag.id}
+                                    noHeading={selectAsDropdown}
+                                />
+                            ))}
+                        </Box>
+                    );
+                })}
         </VStack>
     );
 }

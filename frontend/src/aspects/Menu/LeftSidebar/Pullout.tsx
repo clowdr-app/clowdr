@@ -8,15 +8,19 @@ export default function Pullout({
     isIn,
     onClose,
     menuButtonId,
+    noOverflowY,
+    noPadding,
 }: React.PropsWithChildren<{
     isIn: boolean;
     isMenuExpanded: boolean;
     onClose: () => void;
     menuButtonId: string;
+    noOverflowY?: boolean;
+    noPadding?: boolean;
 }>): JSX.Element {
     const narrowView = useIsNarrowView();
 
-    const bgColor = useColorModeValue("gray.50", "gray.700");
+    const bgColor = useColorModeValue("gray.50", "gray.800");
     const bgColorToken = useToken("colors", bgColor);
     const shadow = useToken("shadows", "left-pullout");
 
@@ -52,9 +56,10 @@ export default function Pullout({
                 display: "flex",
                 flexDirection: "column",
                 overflowX: "hidden",
-                overflowY: "auto",
-                padding: "0.4em",
+                overflowY: noOverflowY ? "hidden" : "auto",
+                padding: noPadding ? "0" : "0.4em",
                 boxShadow: isIn ? shadow : undefined,
+                scrollbarWidth: "thin",
             }}
             ref={ref}
         >

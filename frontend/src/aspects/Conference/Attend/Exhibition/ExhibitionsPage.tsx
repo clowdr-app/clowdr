@@ -1,26 +1,15 @@
-import {
-    Grid,
-    GridItem,
-    Heading,
-    HStack,
-    Spinner,
-    Text,
-    useColorMode,
-    useColorModeValue,
-    useToken,
-    VStack,
-} from "@chakra-ui/react";
+import { Grid, Heading, Spinner, useColorMode, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { Link as ReactLink } from "react-router-dom";
 import Color from "tinycolor2";
 import type { ExhibitionSummaryFragment, ItemTagDataFragment } from "../../../../generated/graphql";
 import { useSelectAllExhibitionsQuery } from "../../../../generated/graphql";
+import Card from "../../../Card";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
-import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useTitle } from "../../../Hooks/useTitle";
-import PageCountText from "../../../Realtime/PageCountText";
 import { useConference } from "../../useConference";
 import { PlainAuthorsList } from "../Content/AuthorList";
 import TagList from "../Content/TagList";
@@ -58,7 +47,6 @@ gql`
 
 function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment }): JSX.Element {
     const { conferencePath } = useAuthParameters();
-    const borderColour = useColorModeValue("Exhibition.tileBorderColor-light", "Exhibition.tileBorderColor-dark");
 
     const { colorMode } = useColorMode();
     const baseBgColour =
@@ -99,64 +87,66 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
     );
 
     return (
-        <GridItem>
-            <LinkButton
-                to={`${conferencePath}/exhibition/${exhibition.id}`}
-                w="100%"
-                h="auto"
-                minH="100%"
-                p={4}
-                linkProps={{
-                    w: "100%",
-                    h: "auto",
-                    minH: "100%",
-                    bgColor: bgColour.toRgbString(),
-                    color: textColour,
-                    border: "1px solid",
-                    borderColor: borderColour,
-                    shadow,
-                    _hover: {
-                        bgColor: bgColour_Hover.toRgbString(),
-                        color: textColour_Hover,
-                        shadow,
-                    },
-                    _focus: {
-                        bgColor: bgColour_Hover.toRgbString(),
-                        color: textColour_Hover,
-                        boxShadow: "0 0 0 2px rgba(255, 187, 0, 0.8)",
-                    },
-                    _active: {
-                        bgColor: bgColour_Active.toRgbString(),
-                        color: textColour_Active,
-                        boxShadow: "0 0 0 2px rgba(255, 187, 0, 0.8)",
-                    },
-                }}
-                background="none"
-                color="inherit"
-                _focus={{
-                    background: "none",
-                    color: "inherit",
-                }}
-                _hover={{
-                    background: "none",
-                    color: "inherit",
-                }}
-                _active={{
-                    background: "none",
-                    color: "inherit",
-                }}
-                as={VStack}
-            >
-                <TagList tags={allTags} noClick mb={2} withBorder />
-                <HStack w="100%" justifyContent="flex-start" alignItems="center">
-                    <Text whiteSpace="normal" mr="auto" fontWeight="bold">
-                        {exhibition.name}
-                    </Text>
-                    <PageCountText path={`${conferencePath}/exhibition/${exhibition.id}`} />
-                </HStack>
-                <PlainAuthorsList people={allAuthors} fontSize="sm" sortByNameOnly />
-            </LinkButton>
-        </GridItem>
+        <Card
+            heading={exhibition.name}
+            as={ReactLink}
+            to={`${conferencePath}/exhibition/${exhibition.id}`}
+            bgColor={bgColour.toRgbString()}
+            color={textColour}
+            _hover={{
+                bgColor: bgColour_Hover.toRgbString(),
+                color: textColour_Hover,
+                shadow,
+            }}
+            _focus={{
+                bgColor: bgColour_Hover.toRgbString(),
+                color: textColour_Hover,
+                boxShadow: "0 0 0 2px rgba(255, 187, 0, 0.8)",
+            }}
+            _active={{
+                bgColor: bgColour_Active.toRgbString(),
+                color: textColour_Active,
+                boxShadow: "0 0 0 2px rgba(255, 187, 0, 0.8)",
+            }}
+            minW={["200px", "200px", "25em"]}
+        >
+            <TagList tags={allTags} noClick mb={2} withBorder />
+            <PlainAuthorsList people={allAuthors} fontSize="sm" sortByNameOnly />
+        </Card>
+    );
+}
+
+export function ExhibitionsList(): JSX.Element {
+    const conference = useConference();
+    const [exhibitionsResponse] = useSelectAllExhibitionsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+
+    const exhibitions = useMemo(
+        () =>
+            exhibitionsResponse.fetching && !exhibitionsResponse.data
+                ? undefined
+                : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
+        [exhibitionsResponse.data, exhibitionsResponse.fetching]
+    );
+    const sortedExhibitions = useMemo(
+        () =>
+            exhibitions
+                ? R.sortWith([(x, y) => x.priority - y.priority, (x, y) => x.name.localeCompare(y.name)], exhibitions)
+                : undefined,
+        [exhibitions]
+    );
+
+    return sortedExhibitions ? (
+        <VStack spacing={4} alignItems="stretch" w="100%">
+            {sortedExhibitions.map((exhibition) => (
+                <ExhibitionTile key={exhibition.id} exhibition={exhibition} />
+            ))}
+        </VStack>
+    ) : (
+        <Spinner label="Loading exhibitions" />
     );
 }
 
@@ -217,7 +207,9 @@ export default function ExhibitionsPage(): JSX.Element {
     );
     const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);
 
-    const title = useTitle(conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions");
+    const title = useTitle(
+        (conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions") + " - " + conference.shortName
+    );
 
     return (
         <>

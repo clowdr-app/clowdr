@@ -51,6 +51,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
                 scheduledStartTime: { _lte: nowCutoffStr },
             },
             includeAbstract: false,
+            includeItemEvents: false,
             limit: 10000000,
             ordering: [{ scheduledStartTime: Order_By.Asc }, { scheduledEndTime: Order_By.Asc }],
         },

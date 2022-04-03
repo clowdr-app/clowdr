@@ -14,6 +14,7 @@ const EditProfilePage = React.lazy(() => import("./Attend/Profile/EditProfilePag
 const ViewProfilePage = React.lazy(() => import("./Attend/Profile/ViewProfilePage"));
 const MyBackstages = React.lazy(() => import("./Attend/Profile/MyBackstages"));
 const ItemPage = React.lazy(() => import("./Attend/Content/ItemPage"));
+const ContentPage = React.lazy(() => import("./Attend/Content/ContentPage"));
 const ConferenceLandingPage = React.lazy(() => import("./Attend/ConferenceLandingPage"));
 const ExhibitionPage = React.lazy(() => import("./Attend/Exhibition/ExhibitionPage"));
 const ExhibitionsPage = React.lazy(() => import("./Attend/Exhibition/ExhibitionsPage"));
@@ -21,6 +22,7 @@ const MyRecordingsPage = React.lazy(() => import("./Attend/Recordings/MyRecordin
 const RegistrantListPage = React.lazy(() => import("./Attend/Registrant/RegistrantListPage"));
 const RoomPage = React.lazy(() => import("./Attend/Room/RoomPage"));
 const WholeSchedule = React.lazy(() => import("./Attend/Schedule/WholeSchedule"));
+const LiveNowPage = React.lazy(() => import("./Attend/Schedule/LiveNowPage"));
 const SwagBags = React.lazy(() => import("./Attend/SwagBag/SwagBags"));
 const ChatRedirectPage = React.lazy(() => import("../Chat/ChatRedirectPage"));
 const WaitingPage = React.lazy(() => import("../ShuffleRooms/WaitingPage"));
@@ -140,10 +142,24 @@ export default function ConferenceRoutes(): JSX.Element {
                     ) => <RoomPage roomId={props.match.params.roomId} />}
                 />
 
+                <Route path={`${path}/live`}>
+                    <RequireRole componentIfDenied={<Redirect to={url} />} attendeeRole>
+                        <LiveNowPage />
+                    </RequireRole>
+                </Route>
+
                 <Route path={`${path}/schedule`}>
                     <RequireRole componentIfDenied={<Redirect to={url} />} attendeeRole>
                         <WholeSchedule />
                     </RequireRole>
+                </Route>
+
+                <Route path={`${path}/content/:tagId?`}>
+                    {(props: RouteComponentProps<{ tagId?: string }>) => (
+                        <RequireRole componentIfDenied={<Redirect to={url} />} attendeeRole>
+                            <ContentPage overrideSelectedTag={props.match.params.tagId} />
+                        </RequireRole>
+                    )}
                 </Route>
 
                 <Route exact path={`${path}/profile/edit/:registrantId`}>

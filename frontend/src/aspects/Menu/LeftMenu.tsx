@@ -14,9 +14,12 @@ import useIsVeryNarrowView from "../Hooks/useIsVeryNarrowView";
 import { useLiveEvents } from "../LiveEvents/LiveEvents";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import Content from "./LeftSidebar/Content";
+import Exhibitions from "./LeftSidebar/Exhibitions";
 import LiveNow from "./LeftSidebar/LiveNow";
 import Pullout from "./LeftSidebar/Pullout";
 import Schedule from "./LeftSidebar/Schedule";
+import Sponsors from "./LeftSidebar/Sponsors";
 import MenuButton from "./MenuButton";
 
 gql`
@@ -83,8 +86,8 @@ export default function LeftMenu({
         [socialRoomParticipants]
     );
 
-    const { liveEvents } = useLiveEvents();
-    const liveEventCount = Object.keys(liveEvents).length;
+    const { liveEvents, upcomingEvents } = useLiveEvents();
+    const liveEventCount = liveEvents.length + upcomingEvents.length;
     const showLive = liveEventCount > 0;
 
     const bgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
@@ -153,6 +156,8 @@ export default function LeftMenu({
                     isMenuExpanded={isExpanded}
                     onClose={scheduleDisclosure.onClose}
                     menuButtonId="schedule-menu-button"
+                    noOverflowY
+                    noPadding
                 >
                     <Schedule />
                 </Pullout>
@@ -162,7 +167,7 @@ export default function LeftMenu({
                     onClose={contentDisclosure.onClose}
                     menuButtonId="content-menu-button"
                 >
-                    TODO: Content
+                    <Content />
                 </Pullout>
                 <Pullout
                     isIn={exhibitionsDisclosure.isOpen}
@@ -170,7 +175,7 @@ export default function LeftMenu({
                     onClose={exhibitionsDisclosure.onClose}
                     menuButtonId="exhibitions-menu-button"
                 >
-                    TODO: Exhibitions
+                    <Exhibitions />
                 </Pullout>
                 <Pullout
                     isIn={sponsorsDisclosure.isOpen}
@@ -178,7 +183,7 @@ export default function LeftMenu({
                     onClose={sponsorsDisclosure.onClose}
                     menuButtonId="sponsors-menu-button"
                 >
-                    TODO: Sponsors
+                    <Sponsors />
                 </Pullout>
                 <Pullout
                     isIn={socialiseDisclosure.isOpen}

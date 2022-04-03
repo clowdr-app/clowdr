@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 import { useRestorableState } from "../../../Hooks/useRestorableState";
 import { useTitle } from "../../../Hooks/useTitle";
 import { useConference } from "../../useConference";
-import type { ScheduleProps } from "./Schedule";
 import Schedule from "./Schedule";
+import type { ScheduleProps } from "./ScheduleProps";
 
 export default function WholeSchedule(): JSX.Element {
     const conference = useConference();

@@ -1,5 +1,5 @@
 import type { TextProps } from "@chakra-ui/react";
-import { Badge, Button, HStack, Text, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
+import { Badge, Button, HStack, Tag, Text, Tooltip, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -216,25 +216,6 @@ export function AuthorInner({
     badgeColour?: string;
     registrant: RegistrantDataFragment | null;
 }): JSX.Element {
-    const bgColor = useColorModeValue(
-        "ProgramPersonTile.backgroundColor-light",
-        "ProgramPersonTile.backgroundColor-dark"
-    );
-    const color = useColorModeValue("ProgramPersonTile.textColor-light", "ProgramPersonTile.textColor-dark");
-    const badgeColorDefault = useToken(
-        "colors",
-        (programPersonData.roleName.toUpperCase() === "AUTHOR"
-            ? "ProgramPersonTileRoleNameBadge.authorColor"
-            : programPersonData.roleName.toUpperCase() === "CHAIR"
-            ? "ProgramPersonTileRoleNameBadge.chairColor"
-            : programPersonData.roleName.toUpperCase() === "PRESENTER"
-            ? "ProgramPersonTileRoleNameBadge.presenterColor"
-            : programPersonData.roleName.toUpperCase() === "DISCUSSANT"
-            ? "ProgramPersonTileRoleNameBadge.discussantColor"
-            : programPersonData.roleName.toUpperCase() === "SESSION ORGANIZER"
-            ? "ProgramPersonTileRoleNameBadge.sessionOrganizerColor"
-            : undefined) ?? "ProgramPersonTileRoleNameBadge.defaultColor"
-    );
     return registrant?.profile ? (
         <ChatProfileModalProvider>
             <AuthorWithProfileContent
@@ -246,31 +227,20 @@ export function AuthorInner({
             />
         </ChatProfileModalProvider>
     ) : (
-        <VStack
-            textAlign="left"
-            justifyContent="flex-start"
-            alignItems="flex-start"
-            color={color}
-            bgColor={bgColor}
-            p={2}
-            borderRadius="lg"
+        <Tooltip
+            label={programPersonData.roleName[0].toUpperCase() + programPersonData.roleName.slice(1).toLowerCase()}
         >
-            <Text fontWeight="bold" overflowWrap="normal" whiteSpace="normal">
+            <Tag
+                size="sm"
+                textAlign="left"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                p={2}
+                borderRadius="full"
+            >
                 {programPersonData.person.name}
-            </Text>
-            {programPersonData.person.affiliation &&
-            programPersonData.person.affiliation !== "None" &&
-            programPersonData.person.affiliation !== "undefined" ? (
-                <Text fontSize="sm" maxW={180} overflowWrap="normal" whiteSpace="normal">
-                    {programPersonData.person.affiliation}
-                </Text>
-            ) : undefined}
-            {!hideRole ? (
-                <Badge ml="2" colorScheme={badgeColour ?? badgeColorDefault} verticalAlign="initial">
-                    {programPersonData.roleName}
-                </Badge>
-            ) : undefined}
-        </VStack>
+            </Tag>
+        </Tooltip>
     );
 }
 

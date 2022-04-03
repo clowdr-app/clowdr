@@ -104,7 +104,7 @@ export default function SponsorBooths({
     );
 }
 
-export function SponsorBoothsInner({
+function SponsorBoothsInner({
     tiers,
     sponsors,
     leftAlign,

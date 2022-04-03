@@ -8,9 +8,10 @@ export default function SchedulePullout(): JSX.Element {
         <Schedule
             conferenceId={conference.id}
             includeAllSubconferences
-            eventsPerPage={1000}
+            eventsPerPage={10}
             selectableDates
             includeAbstract={false}
+            wholeScheduleLink
         />
     );
 }

@@ -39895,27 +39895,6 @@ export type ItemRoomEventFragment = {
     readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
 };
 
-export type ItemList_ItemDataFragment = {
-    readonly __typename?: "content_Item";
-    readonly id: any;
-    readonly title: string;
-    readonly itemPeople: ReadonlyArray<{
-        readonly __typename?: "content_ItemProgramPerson";
-        readonly id: any;
-        readonly itemId: any;
-        readonly roleName: string;
-        readonly priority?: number | null;
-        readonly person: {
-            readonly __typename?: "collection_ProgramPerson";
-            readonly id: any;
-            readonly name: string;
-            readonly affiliation?: string | null;
-            readonly registrantId?: any | null;
-            readonly conferenceId: any;
-        };
-    }>;
-};
-
 export type ItemList_ItemTagDataFragment = {
     readonly __typename?: "content_ItemTag";
     readonly id: any;
@@ -39924,21 +39903,41 @@ export type ItemList_ItemTagDataFragment = {
     readonly item: {
         readonly __typename?: "content_Item";
         readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly title: string;
+        readonly typeName: Content_ItemType_Enum;
+        readonly itemTags: ReadonlyArray<{
+            readonly __typename?: "content_ItemTag";
+            readonly id: any;
+            readonly itemId: any;
+            readonly tagId: any;
+        }>;
         readonly itemPeople: ReadonlyArray<{
             readonly __typename?: "content_ItemProgramPerson";
             readonly id: any;
             readonly itemId: any;
+            readonly personId: any;
             readonly roleName: string;
-            readonly priority?: number | null;
-            readonly person: {
-                readonly __typename?: "collection_ProgramPerson";
+        }>;
+        readonly abstract: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly data: any;
+        }>;
+        readonly events?: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly session?: {
+                readonly __typename?: "schedule_Event";
                 readonly id: any;
                 readonly name: string;
-                readonly affiliation?: string | null;
-                readonly registrantId?: any | null;
-                readonly conferenceId: any;
-            };
+                readonly item?: {
+                    readonly __typename?: "content_Item";
+                    readonly id: any;
+                    readonly title: string;
+                } | null;
+            } | null;
         }>;
     };
 };
@@ -39946,6 +39945,7 @@ export type ItemList_ItemTagDataFragment = {
 export type ItemList_TagInfoFragment = {
     readonly __typename?: "collection_Tag";
     readonly id: any;
+    readonly subconferenceId?: any | null;
     readonly colour: string;
     readonly name: string;
     readonly priority: number;
@@ -39953,6 +39953,8 @@ export type ItemList_TagInfoFragment = {
 
 export type ContentOfTagQueryVariables = Exact<{
     id: Scalars["uuid"];
+    includeAbstract: Scalars["Boolean"];
+    includeItemEvents: Scalars["Boolean"];
 }>;
 
 export type ContentOfTagQuery = {
@@ -39965,21 +39967,41 @@ export type ContentOfTagQuery = {
         readonly item: {
             readonly __typename?: "content_Item";
             readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
             readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly itemId: any;
+                readonly tagId: any;
+            }>;
             readonly itemPeople: ReadonlyArray<{
                 readonly __typename?: "content_ItemProgramPerson";
                 readonly id: any;
                 readonly itemId: any;
+                readonly personId: any;
                 readonly roleName: string;
-                readonly priority?: number | null;
-                readonly person: {
-                    readonly __typename?: "collection_ProgramPerson";
+            }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+            }>;
+            readonly events?: ReadonlyArray<{
+                readonly __typename?: "schedule_Event";
+                readonly id: any;
+                readonly session?: {
+                    readonly __typename?: "schedule_Event";
                     readonly id: any;
                     readonly name: string;
-                    readonly affiliation?: string | null;
-                    readonly registrantId?: any | null;
-                    readonly conferenceId: any;
-                };
+                    readonly item?: {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly title: string;
+                    } | null;
+                } | null;
             }>;
         };
     }>;
@@ -39994,6 +40016,7 @@ export type TagsQuery = {
     readonly collection_Tag: ReadonlyArray<{
         readonly __typename?: "collection_Tag";
         readonly id: any;
+        readonly subconferenceId?: any | null;
         readonly colour: string;
         readonly name: string;
         readonly priority: number;
@@ -42077,24 +42100,6 @@ export type SponsorBoothsList_ItemFragment = {
     }>;
 };
 
-export type SelectScheduleBoundsQueryVariables = Exact<{
-    where: Schedule_Event_Bool_Exp;
-}>;
-
-export type SelectScheduleBoundsQuery = {
-    readonly __typename?: "query_root";
-    readonly first: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly scheduledStartTime?: any | null;
-    }>;
-    readonly last: ReadonlyArray<{
-        readonly __typename?: "schedule_Event";
-        readonly id: any;
-        readonly scheduledEndTime?: any | null;
-    }>;
-};
-
 export type ScheduleItemTagFragment = {
     readonly __typename?: "content_ItemTag";
     readonly id: any;
@@ -42113,7 +42118,10 @@ export type ScheduleItemPersonFragment = {
 export type ScheduleItemFragment = {
     readonly __typename?: "content_Item";
     readonly id: any;
+    readonly conferenceId: any;
+    readonly subconferenceId?: any | null;
     readonly title: string;
+    readonly typeName: Content_ItemType_Enum;
     readonly itemTags: ReadonlyArray<{
         readonly __typename?: "content_ItemTag";
         readonly id: any;
@@ -42128,6 +42136,16 @@ export type ScheduleItemFragment = {
         readonly roleName: string;
     }>;
     readonly abstract: ReadonlyArray<{ readonly __typename?: "content_Element"; readonly id: any; readonly data: any }>;
+    readonly events?: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly session?: {
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly name: string;
+            readonly item?: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string } | null;
+        } | null;
+    }>;
 };
 
 export type ScheduleEventFragment = {
@@ -42144,7 +42162,10 @@ export type ScheduleEventFragment = {
     readonly item?: {
         readonly __typename?: "content_Item";
         readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
         readonly title: string;
+        readonly typeName: Content_ItemType_Enum;
         readonly itemTags: ReadonlyArray<{
             readonly __typename?: "content_ItemTag";
             readonly id: any;
@@ -42163,6 +42184,20 @@ export type ScheduleEventFragment = {
             readonly id: any;
             readonly data: any;
         }>;
+        readonly events?: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly session?: {
+                readonly __typename?: "schedule_Event";
+                readonly id: any;
+                readonly name: string;
+                readonly item?: {
+                    readonly __typename?: "content_Item";
+                    readonly id: any;
+                    readonly title: string;
+                } | null;
+            } | null;
+        }>;
     } | null;
 };
 
@@ -42171,6 +42206,7 @@ export type SelectSchedulePageQueryVariables = Exact<{
     ordering: ReadonlyArray<Schedule_Event_Order_By> | Schedule_Event_Order_By;
     limit: Scalars["Int"];
     includeAbstract: Scalars["Boolean"];
+    includeItemEvents: Scalars["Boolean"];
 }>;
 
 export type SelectSchedulePageQuery = {
@@ -42189,7 +42225,10 @@ export type SelectSchedulePageQuery = {
         readonly item?: {
             readonly __typename?: "content_Item";
             readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
             readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
             readonly itemTags: ReadonlyArray<{
                 readonly __typename?: "content_ItemTag";
                 readonly id: any;
@@ -42208,7 +42247,39 @@ export type SelectSchedulePageQuery = {
                 readonly id: any;
                 readonly data: any;
             }>;
+            readonly events?: ReadonlyArray<{
+                readonly __typename?: "schedule_Event";
+                readonly id: any;
+                readonly session?: {
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly item?: {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly title: string;
+                    } | null;
+                } | null;
+            }>;
         } | null;
+    }>;
+};
+
+export type SelectScheduleBoundsQueryVariables = Exact<{
+    where: Schedule_Event_Bool_Exp;
+}>;
+
+export type SelectScheduleBoundsQuery = {
+    readonly __typename?: "query_root";
+    readonly first: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly scheduledStartTime?: any | null;
+    }>;
+    readonly last: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly scheduledEndTime?: any | null;
     }>;
 };
 
@@ -49925,30 +49996,52 @@ export const ItemRoomEventFragmentDoc = gql`
         modeName
     }
 `;
-export const ProgramPersonDataFragmentDoc = gql`
-    fragment ProgramPersonData on content_ItemProgramPerson {
+export const ScheduleItemTagFragmentDoc = gql`
+    fragment ScheduleItemTag on content_ItemTag {
         id
         itemId
-        person {
-            id
-            name
-            affiliation
-            registrantId
-            conferenceId
-        }
-        roleName
-        priority
+        tagId
     }
 `;
-export const ItemList_ItemDataFragmentDoc = gql`
-    fragment ItemList_ItemData on content_Item {
+export const ScheduleItemPersonFragmentDoc = gql`
+    fragment ScheduleItemPerson on content_ItemProgramPerson {
         id
+        itemId
+        personId
+        roleName
+    }
+`;
+export const ScheduleItemFragmentDoc = gql`
+    fragment ScheduleItem on content_Item {
+        id
+        conferenceId
+        subconferenceId
         title
-        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-            ...ProgramPersonData
+        typeName
+        itemTags {
+            ...ScheduleItemTag
+        }
+        itemPeople {
+            ...ScheduleItemPerson
+        }
+        abstract: elements(where: { typeName: { _eq: ABSTRACT } }, limit: 1) @include(if: $includeAbstract) {
+            id
+            data
+        }
+        events @include(if: $includeItemEvents) {
+            id
+            session {
+                id
+                name
+                item {
+                    id
+                    title
+                }
+            }
         }
     }
-    ${ProgramPersonDataFragmentDoc}
+    ${ScheduleItemTagFragmentDoc}
+    ${ScheduleItemPersonFragmentDoc}
 `;
 export const ItemList_ItemTagDataFragmentDoc = gql`
     fragment ItemList_ItemTagData on content_ItemTag {
@@ -49956,14 +50049,15 @@ export const ItemList_ItemTagDataFragmentDoc = gql`
         tagId
         itemId
         item {
-            ...ItemList_ItemData
+            ...ScheduleItem
         }
     }
-    ${ItemList_ItemDataFragmentDoc}
+    ${ScheduleItemFragmentDoc}
 `;
 export const ItemList_TagInfoFragmentDoc = gql`
     fragment ItemList_TagInfo on collection_Tag {
         id
+        subconferenceId
         colour
         name
         priority
@@ -50042,6 +50136,21 @@ export const ItemElements_JustElementDataFragmentDoc = gql`
         }
     }
     ${ElementDataFragmentDoc}
+`;
+export const ProgramPersonDataFragmentDoc = gql`
+    fragment ProgramPersonData on content_ItemProgramPerson {
+        id
+        itemId
+        person {
+            id
+            name
+            affiliation
+            registrantId
+            conferenceId
+        }
+        roleName
+        priority
+    }
 `;
 export const ItemTagDataFragmentDoc = gql`
     fragment ItemTagData on content_ItemTag {
@@ -50524,39 +50633,6 @@ export const SponsorBoothsList_ItemFragmentDoc = gql`
             priority
         }
     }
-`;
-export const ScheduleItemTagFragmentDoc = gql`
-    fragment ScheduleItemTag on content_ItemTag {
-        id
-        itemId
-        tagId
-    }
-`;
-export const ScheduleItemPersonFragmentDoc = gql`
-    fragment ScheduleItemPerson on content_ItemProgramPerson {
-        id
-        itemId
-        personId
-        roleName
-    }
-`;
-export const ScheduleItemFragmentDoc = gql`
-    fragment ScheduleItem on content_Item {
-        id
-        title
-        itemTags {
-            ...ScheduleItemTag
-        }
-        itemPeople {
-            ...ScheduleItemPerson
-        }
-        abstract: elements(where: { typeName: { _eq: ABSTRACT } }, limit: 1) @include(if: $includeAbstract) {
-            id
-            data
-        }
-    }
-    ${ScheduleItemTagFragmentDoc}
-    ${ScheduleItemPersonFragmentDoc}
 `;
 export const ScheduleEventFragmentDoc = gql`
     fragment ScheduleEvent on schedule_Event {
@@ -52105,7 +52181,7 @@ export function useItemElements_GetItemQuery(
     return Urql.useQuery<ItemElements_GetItemQuery>({ query: ItemElements_GetItemDocument, ...options });
 }
 export const ContentOfTagDocument = gql`
-    query ContentOfTag($id: uuid!) @cached {
+    query ContentOfTag($id: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!) @cached {
         content_ItemTag(where: { tagId: { _eq: $id } }) {
             ...ItemList_ItemTagData
         }
@@ -53087,6 +53163,26 @@ export const GetSponsorBoothsDocument = gql`
 export function useGetSponsorBoothsQuery(options: Omit<Urql.UseQueryArgs<GetSponsorBoothsQueryVariables>, "query">) {
     return Urql.useQuery<GetSponsorBoothsQuery>({ query: GetSponsorBoothsDocument, ...options });
 }
+export const SelectSchedulePageDocument = gql`
+    query SelectSchedulePage(
+        $where: schedule_Event_bool_exp!
+        $ordering: [schedule_Event_order_by!]!
+        $limit: Int!
+        $includeAbstract: Boolean!
+        $includeItemEvents: Boolean!
+    ) @cached {
+        schedule_Event(where: $where, order_by: $ordering, limit: $limit) {
+            ...ScheduleEvent
+        }
+    }
+    ${ScheduleEventFragmentDoc}
+`;
+
+export function useSelectSchedulePageQuery(
+    options: Omit<Urql.UseQueryArgs<SelectSchedulePageQueryVariables>, "query">
+) {
+    return Urql.useQuery<SelectSchedulePageQuery>({ query: SelectSchedulePageDocument, ...options });
+}
 export const SelectScheduleBoundsDocument = gql`
     query SelectScheduleBounds($where: schedule_Event_bool_exp!) @cached {
         first: schedule_Event(where: $where, order_by: [{ scheduledStartTime: asc }], limit: 1) {
@@ -53104,25 +53200,6 @@ export function useSelectScheduleBoundsQuery(
     options: Omit<Urql.UseQueryArgs<SelectScheduleBoundsQueryVariables>, "query">
 ) {
     return Urql.useQuery<SelectScheduleBoundsQuery>({ query: SelectScheduleBoundsDocument, ...options });
-}
-export const SelectSchedulePageDocument = gql`
-    query SelectSchedulePage(
-        $where: schedule_Event_bool_exp!
-        $ordering: [schedule_Event_order_by!]!
-        $limit: Int!
-        $includeAbstract: Boolean!
-    ) @cached {
-        schedule_Event(where: $where, order_by: $ordering, limit: $limit) {
-            ...ScheduleEvent
-        }
-    }
-    ${ScheduleEventFragmentDoc}
-`;
-
-export function useSelectSchedulePageQuery(
-    options: Omit<Urql.UseQueryArgs<SelectSchedulePageQueryVariables>, "query">
-) {
-    return Urql.useQuery<SelectSchedulePageQuery>({ query: SelectSchedulePageDocument, ...options });
 }
 export const SelectScheduleTagsDocument = gql`
     query SelectScheduleTags($where: collection_Tag_bool_exp!) @cached {

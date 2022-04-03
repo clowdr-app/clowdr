@@ -190,10 +190,10 @@ export default function SearchResults({
         <List spacing={0}>
             {data?.schedule_searchEvents.map((event) => {
                 const now = Date.now();
-                const start = Date.parse(event.scheduledStartTime);
-                const end = Date.parse(event.scheduledEndTime);
-                const inPast = end <= now;
-                const ongoing = start <= now && now < end;
+                const start = event.scheduledStartTime ? Date.parse(event.scheduledStartTime) : undefined;
+                const end = event.scheduledEndTime ? Date.parse(event.scheduledEndTime) : undefined;
+                const inPast = end && end <= now;
+                const ongoing = start && end && start <= now && now < end;
                 return (
                     <Fragment key={event.id}>
                         <ListItem p="3px">
@@ -215,11 +215,13 @@ export default function SearchResults({
                             >
                                 <VStack alignItems="flex-start" spacing={1} w="100%">
                                     <Text fontSize="sm" whiteSpace="normal">
-                                        {inPast
-                                            ? `Ended ${formatRelative(end, now)}`
-                                            : ongoing
-                                            ? "Happening now"
-                                            : `Starts ${formatRelative(start, now)}`}{" "}
+                                        {start && end
+                                            ? inPast
+                                                ? `Ended ${formatRelative(end, now)}`
+                                                : ongoing
+                                                ? "Happening now"
+                                                : `Starts ${formatRelative(start, now)}`
+                                            : "Takes place"}{" "}
                                         in {event.roomName}
                                     </Text>
                                     <Text fontSize="lg" whiteSpace="normal">

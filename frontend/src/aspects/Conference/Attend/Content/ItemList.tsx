@@ -3,14 +3,7 @@ import {
     Button,
     Center,
     Flex,
-    FormControl,
-    FormHelperText,
-    FormLabel,
     Heading,
-    Input,
-    InputGroup,
-    InputLeftAddon,
-    InputRightElement,
     Select,
     Spinner,
     Text,
@@ -30,7 +23,6 @@ import type {
     ItemList_TagInfoFragment,
 } from "../../../../generated/graphql";
 import { ContentOfTagDocument, useTagsQuery } from "../../../../generated/graphql";
-import FAIcon from "../../../Chakra/FAIcon";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useRestorableState } from "../../../Hooks/useRestorableState";
 import { useConference } from "../../useConference";
@@ -186,13 +178,6 @@ function Panel({
     isExpanded: boolean;
     noHeading?: boolean;
 }): JSX.Element {
-    const [search, setSearch] = useRestorableState<string>(
-        "ItemList_Search_" + tag.id,
-        "",
-        (x) => x,
-        (x) => x
-    );
-
     const client = useClient();
     const [content, setContent] = useState<ItemList_ItemTagDataFragment[] | null>(null);
     useEffect(() => {
@@ -222,23 +207,6 @@ function Panel({
             })),
         [sortedItems]
     );
-    const s = search.toLowerCase();
-    const filteredElements = itemElements?.filter((g) => {
-        return g.title.includes(s);
-    });
-
-    const resultCountStr = filteredElements
-        ? `${filteredElements.length} ${filteredElements.length !== 1 ? "items" : "item"}`
-        : "Loading content";
-    const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
-    useEffect(() => {
-        const tId = setTimeout(() => {
-            setAriaSearchResultStr(resultCountStr);
-        }, 250);
-        return () => {
-            clearTimeout(tId);
-        };
-    }, [resultCountStr]);
 
     return (
         <Flex
@@ -260,44 +228,11 @@ function Panel({
                     {tag.name}
                 </Heading>
             ) : undefined}
-            <FormControl mb={4} w="100%" maxW={400}>
-                <FormLabel mt={noHeading ? 0 : 4} textAlign="left">
-                    {resultCountStr}
-                </FormLabel>
-                <InputGroup>
-                    <InputLeftAddon aria-hidden>
-                        <FAIcon iconStyle="s" icon="search" mr={2} />
-                        Search
-                    </InputLeftAddon>
-                    <Input
-                        aria-label={"Search found " + ariaSearchResultStr}
-                        type="text"
-                        placeholder="Search"
-                        value={search}
-                        onChange={(ev) => {
-                            setSearch(ev.target.value);
-                        }}
-                    />
-                    <InputRightElement
-                        as={Button}
-                        variant="ghost"
-                        ml={1}
-                        fontSize="sm"
-                        onClick={() => {
-                            setSearch("");
-                        }}
-                        isDisabled={search === ""}
-                    >
-                        <FAIcon iconStyle="s" icon="times-circle" />
-                    </InputRightElement>
-                </InputGroup>
-                <FormHelperText>Search for an item by title or a person&apos;s name or affiliation.</FormHelperText>
-            </FormControl>
-            {!filteredElements ? (
+            {!itemElements ? (
                 <Spinner label="Loading content" />
             ) : (
                 <Flex w="100%" flexWrap="wrap" alignItems="stretch" justifyContent="stretch">
-                    {filteredElements.map((g) => g.el)}
+                    {itemElements.map((g) => g.el)}
                 </Flex>
             )}
         </Flex>

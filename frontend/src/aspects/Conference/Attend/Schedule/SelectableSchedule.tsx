@@ -145,18 +145,28 @@ function SelectableScheduleInner({
                         });
                     }}
                 >
-                    {days.map((day) => (
-                        <option
-                            key={day.value}
-                            value={day.value}
-                            css={{
-                                fontWeight: day.value === todayMillis ? "bold" : undefined,
-                            }}
-                        >
-                            {day.label}
-                        </option>
-                    ))}
-                    {days.length === 0 ? <option value={0}>No dates available</option> : undefined}
+                    <option
+                        value={-1}
+                        style={{
+                            fontWeight: "bold",
+                        }}
+                    >
+                        My schedule
+                    </option>
+                    <optgroup label="Pick a day">
+                        {days.map((day) => (
+                            <option
+                                key={day.value}
+                                value={day.value}
+                                css={{
+                                    fontWeight: day.value === todayMillis ? "bold" : undefined,
+                                }}
+                            >
+                                {day.label}
+                            </option>
+                        ))}
+                        {days.length === 0 ? <option value={0}>No dates available</option> : undefined}
+                    </optgroup>
                 </Select>
                 {wholeScheduleLink ? (
                     <LinkButton to={`${conferencePath}/schedule`} variant="outline">
@@ -179,6 +189,7 @@ function SelectableScheduleInner({
                         conferenceId={conferenceId}
                         subconferenceId={subconferenceId}
                         includeAllSubconferences={includeAllSubconferences}
+                        myEventsOnly={selectedDay.day === -1}
                         {...props}
                     />
                 ) : (

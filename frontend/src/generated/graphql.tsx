@@ -42383,6 +42383,74 @@ export type SelectSchedulePageQuery = {
     }>;
 };
 
+export type SelectMySchedulePageQueryVariables = Exact<{
+    where: Schedule_Event_Bool_Exp;
+    ordering: ReadonlyArray<Schedule_StarredEvent_Order_By> | Schedule_StarredEvent_Order_By;
+    limit: Scalars["Int"];
+    includeAbstract: Scalars["Boolean"];
+    includeItemEvents: Scalars["Boolean"];
+    registrantId: Scalars["uuid"];
+}>;
+
+export type SelectMySchedulePageQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_StarredEvent: ReadonlyArray<{
+        readonly __typename?: "schedule_StarredEvent";
+        readonly event: {
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
+            readonly name: string;
+            readonly roomId: any;
+            readonly modeName?: Schedule_Mode_Enum | null;
+            readonly sessionEventId?: any | null;
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly conferenceId: any;
+                readonly subconferenceId?: any | null;
+                readonly title: string;
+                readonly typeName: Content_ItemType_Enum;
+                readonly itemTags: ReadonlyArray<{
+                    readonly __typename?: "content_ItemTag";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly tagId: any;
+                }>;
+                readonly itemPeople: ReadonlyArray<{
+                    readonly __typename?: "content_ItemProgramPerson";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly personId: any;
+                    readonly roleName: string;
+                }>;
+                readonly abstract: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly data: any;
+                }>;
+                readonly events?: ReadonlyArray<{
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly session?: {
+                        readonly __typename?: "schedule_Event";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly item?: {
+                            readonly __typename?: "content_Item";
+                            readonly id: any;
+                            readonly title: string;
+                        } | null;
+                    } | null;
+                }>;
+            } | null;
+        };
+    }>;
+};
+
 export type ScheduleTagFragment = {
     readonly __typename?: "collection_Tag";
     readonly id: any;
@@ -53338,6 +53406,33 @@ export function useSelectSchedulePageQuery(
     options: Omit<Urql.UseQueryArgs<SelectSchedulePageQueryVariables>, "query">
 ) {
     return Urql.useQuery<SelectSchedulePageQuery>({ query: SelectSchedulePageDocument, ...options });
+}
+export const SelectMySchedulePageDocument = gql`
+    query SelectMySchedulePage(
+        $where: schedule_Event_bool_exp!
+        $ordering: [schedule_StarredEvent_order_by!]!
+        $limit: Int!
+        $includeAbstract: Boolean!
+        $includeItemEvents: Boolean!
+        $registrantId: uuid!
+    ) @cached {
+        schedule_StarredEvent(
+            where: { registrantId: { _eq: $registrantId }, event: $where }
+            order_by: $ordering
+            limit: $limit
+        ) {
+            event {
+                ...ScheduleEvent
+            }
+        }
+    }
+    ${ScheduleEventFragmentDoc}
+`;
+
+export function useSelectMySchedulePageQuery(
+    options: Omit<Urql.UseQueryArgs<SelectMySchedulePageQueryVariables>, "query">
+) {
+    return Urql.useQuery<SelectMySchedulePageQuery>({ query: SelectMySchedulePageDocument, ...options });
 }
 export const SelectScheduleTagsDocument = gql`
     query SelectScheduleTags($where: collection_Tag_bool_exp!) @cached {

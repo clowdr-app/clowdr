@@ -1,23 +1,14 @@
-import {
-    Alert,
-    AlertIcon,
-    Box,
-    Center,
-    Heading,
-    HStack,
-    Tag,
-    Text,
-    useColorModeValue,
-    Wrap,
-    WrapItem,
-} from "@chakra-ui/react";
+import { Alert, AlertIcon, Center, Tag, Text, VStack, Wrap, WrapItem } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import { Content_ItemType_Enum, Schedule_Mode_Enum } from "../../../../generated/graphql";
+import Card from "../../../Card";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { ShufflePeriodBox } from "../../../ShuffleRooms/WaitingPage";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
+import { typeNameToDisplayName } from "../Content/ItemCard";
 import { ItemElementsWrapper } from "../Content/ItemElements";
 import { ExhibitionLayoutWrapper } from "../Exhibition/ExhibitionLayout";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
@@ -36,12 +27,7 @@ export function RoomContent({
     currentlySelectedVideoElementId?: string;
     onChooseVideo?: (elementId: string) => void;
 }): JSX.Element {
-    const bgColour = useColorModeValue(
-        "Room.currentEventBackgroundColor-light",
-        "Room.currentEventBackgroundColor-dark"
-    );
-    const nextBgColour = useColorModeValue("Room.nextEventBackgroundColor-light", "Room.nextEventBackgroundColor-dark");
-
+    const { conferencePath } = useAuthParameters();
     const currentRegistrant = useCurrentRegistrant();
 
     const currentEventRole = useMemo(
@@ -89,23 +75,39 @@ export function RoomContent({
     );
 
     return (
-        <Box flexGrow={1} zIndex={1} px={[2, 2, 4]}>
+        <VStack spacing={8} flexGrow={1} zIndex={1} py={4} px={[2, 2, 4]} w="100%">
             {currentRoomEvent ? (
-                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={2}>
-                    <HStack justifyContent="space-between">
-                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.scheduledStartTime), now5s)}</Text>
-                        {currentRoomEvent.scheduledEndTime ? (
-                            <Text>Ends {formatRelative(Date.parse(currentRoomEvent.scheduledEndTime), now5s)}</Text>
-                        ) : undefined}
-                        {currentEventRole ? (
-                            <Tag colorScheme="Room-CurrentEventRoleLabel" my={2}>
-                                {currentEventRole}
-                            </Tag>
-                        ) : undefined}
-                    </HStack>
-                    <Heading as="h3" textAlign="left" size="lg" mb={2}>
-                        {currentRoomEvent.name}
-                    </Heading>
+                <Card
+                    heading={currentRoomEvent.item?.title ?? currentRoomEvent.name}
+                    subHeading={
+                        currentRoomEvent.item ? typeNameToDisplayName(currentRoomEvent.item.typeName) : undefined
+                    }
+                    to={currentRoomEvent.item ? `${conferencePath}/item/${currentRoomEvent.item.id}` : undefined}
+                    w="100%"
+                    topLeftButton={{
+                        colorScheme: "blue",
+                        iconStyle: "s",
+                        label: `Started ${formatRelative(Date.parse(currentRoomEvent.scheduledStartTime), now5s)}`,
+                        variant: "solid",
+                        showLabel: true,
+                    }}
+                    editControls={[
+                        ...(currentRoomEvent.scheduledEndTime
+                            ? [
+                                  <Tag key="ends-at" colorScheme="blue" borderRadius="full">
+                                      Ends {formatRelative(Date.parse(currentRoomEvent.scheduledEndTime), now5s)}
+                                  </Tag>,
+                              ]
+                            : []),
+                        ...(currentEventRole
+                            ? [
+                                  <Tag key="role" colorScheme="Room-CurrentEventRoleLabel" my={2} borderRadius="full">
+                                      You are {currentEventRole}
+                                  </Tag>,
+                              ]
+                            : []),
+                    ]}
+                >
                     {currentRoomEvent.shufflePeriod &&
                     currentEventEndTime &&
                     currentEventEndTime - now5s > 1.5 * 60 * 1000 ? (
@@ -117,39 +119,42 @@ export function RoomContent({
                     )}
                     {currentRoomEvent.modeName === Schedule_Mode_Enum.VideoPlayer ? currentEventVideosEl : undefined}
                     {currentRoomEvent.modeName !== Schedule_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
-                        <ItemElementsWrapper itemId={currentRoomEvent.itemId} linkToItem={true} />
+                        <ItemElementsWrapper itemId={currentRoomEvent.itemId} noHeading />
                     ) : undefined}
                     {currentRoomEvent.exhibitionId ? (
-                        <ExhibitionLayoutWrapper
-                            exhibitionId={currentRoomEvent.exhibitionId}
-                            hideLiveViewButton={true}
-                        />
+                        <ExhibitionLayoutWrapper exhibitionId={currentRoomEvent.exhibitionId} hideLiveViewButton />
                     ) : (
                         <></>
                     )}
-                </Box>
+                </Card>
             ) : (
                 <></>
             )}
             {nextRoomEvent ? (
-                <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={2}>
-                    <Heading as="h3" textAlign="left" size="lg" mb={1}>
-                        {nextRoomEvent.name}
-                    </Heading>
-                    <HStack justifyContent="space-between" mb={2}>
-                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.scheduledStartTime), now5s)}</Text>
-                        {nextEventRole ? (
-                            <Tag colorScheme="Room-NextEventRoleLabel" my={2} textTransform="none">
-                                You are {nextEventRole}
-                            </Tag>
-                        ) : undefined}
-                    </HStack>
-                    {nextRoomEvent?.itemId ? (
-                        <ItemElementsWrapper itemId={nextRoomEvent.itemId} linkToItem={true} />
-                    ) : (
-                        <></>
-                    )}
-                </Box>
+                <Card
+                    heading={nextRoomEvent.item?.title ?? nextRoomEvent.name}
+                    subHeading={nextRoomEvent.item ? typeNameToDisplayName(nextRoomEvent.item.typeName) : undefined}
+                    to={nextRoomEvent.item ? `${conferencePath}/item/${nextRoomEvent.item.id}` : undefined}
+                    w="100%"
+                    topLeftButton={{
+                        colorScheme: "blue",
+                        iconStyle: "s",
+                        label: `Starts ${formatRelative(Date.parse(nextRoomEvent.scheduledStartTime), now5s)}`,
+                        variant: "solid",
+                        showLabel: true,
+                    }}
+                    editControls={
+                        nextEventRole
+                            ? [
+                                  <Tag key="role" colorScheme="Room-CurrentEventRoleLabel" my={2} borderRadius="full">
+                                      You are {nextEventRole}
+                                  </Tag>,
+                              ]
+                            : []
+                    }
+                >
+                    {nextRoomEvent?.itemId ? <ItemElementsWrapper itemId={nextRoomEvent.itemId} noHeading /> : <></>}
+                </Card>
             ) : (
                 <></>
             )}
@@ -164,9 +169,14 @@ export function RoomContent({
             )}
 
             {roomDetails.item?.id && roomDetails.item.typeName !== Content_ItemType_Enum.Sponsor ? (
-                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={2}>
-                    <ItemElementsWrapper itemId={roomDetails.item.id} linkToItem={true} />
-                </Box>
+                <Card
+                    w="100%"
+                    heading={roomDetails.item.title}
+                    subHeading={typeNameToDisplayName(roomDetails.item.typeName)}
+                    to={`${conferencePath}/item/${roomDetails.item.id}`}
+                >
+                    <ItemElementsWrapper itemId={roomDetails.item.id} noHeading />
+                </Card>
             ) : (
                 <></>
             )}
@@ -176,6 +186,6 @@ export function RoomContent({
             ) : (
                 <></>
             )}
-        </Box>
+        </VStack>
     );
 }

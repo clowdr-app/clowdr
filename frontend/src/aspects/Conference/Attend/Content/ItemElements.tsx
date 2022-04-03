@@ -106,7 +106,15 @@ gql`
     }
 `;
 
-export function ItemElementsWrapper({ itemId, linkToItem }: { itemId: string; linkToItem?: boolean }): JSX.Element {
+export function ItemElementsWrapper({
+    itemId,
+    linkToItem,
+    noHeading,
+}: {
+    itemId: string;
+    linkToItem?: boolean;
+    noHeading?: boolean;
+}): JSX.Element {
     const [result] = useItemElements_GetItemQuery({
         variables: {
             itemId,
@@ -115,7 +123,9 @@ export function ItemElementsWrapper({ itemId, linkToItem }: { itemId: string; li
 
     return (
         <QueryWrapper getter={(data) => data.content_Item_by_pk} queryResult={result}>
-            {(item: ItemElements_ItemDataFragment) => <ItemElements itemData={item} linkToItem={linkToItem} />}
+            {(item: ItemElements_ItemDataFragment) => (
+                <ItemElements itemData={item} linkToItem={linkToItem} noHeading={noHeading} />
+            )}
         </QueryWrapper>
     );
 }

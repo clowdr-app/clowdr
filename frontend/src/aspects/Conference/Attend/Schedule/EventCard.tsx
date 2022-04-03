@@ -8,6 +8,7 @@ import Card from "../../../Card";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { useConference } from "../../useConference";
+import { typeNameToDisplayName } from "../Content/ItemCard";
 import PresentationsList from "./PresentationsList";
 import StarEventButton from "./StarEventButton";
 
@@ -36,19 +37,34 @@ gql`
 export default function EventCard({
     event,
     includePresentations,
+    includeTypeName,
+    autoExpandPresentations,
+    includeAbstract = false,
 }: {
     event: ScheduleEventFragment;
     includePresentations?: boolean;
+    includeTypeName?: boolean;
+    autoExpandPresentations?: boolean;
+    includeAbstract?: boolean;
 }) {
     const { conferencePath } = useAuthParameters();
     const conference = useConference();
 
-    const start = useMemo(() => new Date(event.scheduledStartTime), [event.scheduledStartTime]);
-    const end = useMemo(() => new Date(event.scheduledEndTime), [event.scheduledEndTime]);
-    const duration = useMemo(() => Math.round((end.getTime() - start.getTime()) / (60 * 1000)), [end, start]);
+    const start = useMemo(
+        () => (event.scheduledStartTime ? new Date(event.scheduledStartTime) : undefined),
+        [event.scheduledStartTime]
+    );
+    const end = useMemo(
+        () => (event.scheduledEndTime ? new Date(event.scheduledEndTime) : undefined),
+        [event.scheduledEndTime]
+    );
+    const duration = useMemo(
+        () => start && end && Math.round((end.getTime() - start.getTime()) / (60 * 1000)),
+        [end, start]
+    );
     const now = useRealTime(60000);
-    const isLive = now >= start.getTime() && now <= end.getTime();
-    const isStartingSoon = now + 10 * 60 * 1000 >= start.getTime() && now <= end.getTime();
+    const isLive = start && end && now >= start.getTime() && now <= end.getTime();
+    const isStartingSoon = start && end && now + 10 * 60 * 1000 >= start.getTime() && now <= end.getTime();
 
     const peopleIds = useMemo(() => event.item?.itemPeople.map((x) => x.personId), [event.item?.itemPeople]);
     const [peopleResponse] = useSelectSchedulePeopleQuery({
@@ -77,7 +93,9 @@ export default function EventCard({
         [conference.subconferences, event.subconferenceId]
     );
 
-    const presentationsDisclosure = useDisclosure();
+    const presentationsDisclosure = useDisclosure({
+        defaultIsOpen: autoExpandPresentations,
+    });
 
     return (
         <>
@@ -86,23 +104,25 @@ export default function EventCard({
                 maxW="60em"
                 heading={event.item?.title ?? event.name}
                 subHeading={
-                    start.toLocaleString(undefined, {
-                        hour: "numeric",
-                        minute: "numeric",
-                    }) +
-                    " - " +
-                    end.toLocaleString(undefined, {
-                        hour: "numeric",
-                        minute: "numeric",
-                    }) +
-                    ` (${
-                        duration >= 60
-                            ? Math.floor(duration / 60).toFixed(0) +
-                              " hr" +
-                              (duration >= 120 ? "s" : "") +
-                              (duration % 60 !== 0 ? " " : "")
-                            : ""
-                    }${duration % 60 !== 0 ? (duration % 60) + " mins" : ""})`
+                    start && end && duration
+                        ? start.toLocaleString(undefined, {
+                              hour: "numeric",
+                              minute: "numeric",
+                          }) +
+                          " - " +
+                          end.toLocaleString(undefined, {
+                              hour: "numeric",
+                              minute: "numeric",
+                          }) +
+                          ` (${
+                              duration >= 60
+                                  ? Math.floor(duration / 60).toFixed(0) +
+                                    " hr" +
+                                    (duration >= 120 ? "s" : "") +
+                                    (duration % 60 !== 0 ? " " : "")
+                                  : ""
+                          }${duration % 60 !== 0 ? (duration % 60) + " mins" : ""})`
+                        : undefined
                 }
                 to={
                     isLive || isStartingSoon || !event.item?.id
@@ -115,6 +135,14 @@ export default function EventCard({
                               colorScheme: "LiveActionButton",
                               iconStyle: "s",
                               label: isLive ? "Live" : "Starts soon",
+                              variant: "solid",
+                              showLabel: true,
+                          }
+                        : event.item && includeTypeName
+                        ? {
+                              colorScheme: "blue",
+                              iconStyle: "s",
+                              label: typeNameToDisplayName(event.item.typeName),
                               variant: "solid",
                               showLabel: true,
                           }
@@ -175,7 +203,7 @@ export default function EventCard({
                 ) : undefined}
             </Card>
             {includePresentations && presentationsDisclosure.isOpen ? (
-                <PresentationsList sessionId={event.id} />
+                <PresentationsList sessionId={event.id} includeAbstract={includeAbstract} />
             ) : undefined}
         </>
     );

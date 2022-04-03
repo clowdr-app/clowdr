@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { HStack, Select, Text, VStack } from "@chakra-ui/react";
+import { HStack, Select, Spinner, Text, VStack } from "@chakra-ui/react";
 import { DateTime, Duration, SystemZone } from "luxon";
 import React, { useEffect, useMemo } from "react";
 import { gql } from "urql";
 import { useSelectScheduleBoundsQuery } from "../../../../generated/graphql";
-import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRestorableState } from "../../../Hooks/useRestorableState";
@@ -47,7 +46,7 @@ export default function SelectableSchedule({
     });
 
     return boundsResponse.fetching ? (
-        <CenteredSpinner caller="Schedule.tsx:60" />
+        <Spinner />
     ) : boundsResponse.data ? (
         <SelectableScheduleInner
             earliestTime={boundsResponse.data.first[0]?.scheduledStartTime}
@@ -129,7 +128,7 @@ function SelectableScheduleInner({
     }, [defaultSelectedDay, selectedDay.at, setSelectedDay]);
 
     return (
-        <VStack spacing={4} alignItems="flex-start" overflow="hidden">
+        <VStack spacing={4} alignItems="flex-start" overflow="hidden" w="100%">
             <HStack w="100%" p={1}>
                 <Select
                     minW="max-content"
@@ -165,7 +164,15 @@ function SelectableScheduleInner({
                     </LinkButton>
                 ) : undefined}
             </HStack>
-            <VStack overflowX="hidden" overflowY="auto" css={{ scrollbarWidth: "thin" }} px={2} pb={4}>
+            <VStack
+                alignItems="flex-start"
+                overflowX="hidden"
+                overflowY="auto"
+                css={{ scrollbarWidth: "thin" }}
+                px={2}
+                pb={4}
+                w="100%"
+            >
                 {selectedDay.day !== 0 ? (
                     <ContinuousSchedule
                         startAtMs={selectedDay.day}

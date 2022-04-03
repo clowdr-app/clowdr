@@ -120,7 +120,7 @@ export function TagButton({
             aria-expanded={isExpanded}
             whiteSpace="normal"
             w="10em"
-            m={2}
+            my={2}
             p={1}
             color={
                 (isExpanded && isExpandedDark) || (!isExpanded && isDark)

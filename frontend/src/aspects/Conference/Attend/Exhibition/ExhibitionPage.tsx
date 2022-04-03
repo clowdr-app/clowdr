@@ -1,7 +1,11 @@
-import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
+import { chakra, Circle, Divider, Heading, Text, VStack } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import React, { useMemo } from "react";
-import type { ExhibitionWithContentFragment, ItemEventFragment } from "../../../../generated/graphql";
+import type {
+    ExhibitionWithContentFragment,
+    ItemPresentationFragment,
+    ScheduleEventFragment,
+} from "../../../../generated/graphql";
 import { useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import FAIcon from "../../../Chakra/FAIcon";
@@ -12,6 +16,7 @@ import { useTitle } from "../../../Hooks/useTitle";
 import PageCountText from "../../../Realtime/PageCountText";
 import RequireRole from "../../RequireRole";
 import { ItemElements } from "../Content/ItemElements";
+import { ItemEvents } from "../Content/ItemEvents";
 import ExhibitionLayout from "./ExhibitionLayout";
 
 gql`
@@ -83,22 +88,24 @@ gql`
         }
     }
 
-    query SelectExhibition($id: uuid!) @cached {
+    query SelectExhibition($id: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!) @cached {
         collection_Exhibition_by_pk(id: $id) {
             ...ExhibitionWithContent
         }
-        schedule_Event(where: { exhibitionId: { _eq: $id } }) {
-            ...ItemEvent
+        sessions: schedule_Event(where: { exhibitionId: { _eq: $id }, sessionEventId: { _is_null: true } }) {
+            ...ScheduleEvent
         }
     }
 `;
 
 function ExhibitionPageInner({
     exhibition,
-    events,
+    sessions,
+    presentations,
 }: {
     exhibition: ExhibitionWithContentFragment;
-    events: readonly ItemEventFragment[];
+    sessions: readonly ScheduleEventFragment[];
+    presentations: readonly ItemPresentationFragment[];
 }): JSX.Element {
     const title = useTitle(exhibition.name);
     const { conferencePath } = useAuthParameters();
@@ -155,17 +162,13 @@ function ExhibitionPageInner({
                         </RequireRole>
                     </ItemElements>
                 ) : undefined}
-                {events.length > 0 ? (
-                    <>
-                        <Text w="auto" textAlign="left" p={0}>
-                            <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                            Times are shown in your local timezone.
-                        </Text>
-                        <>TODO:</> {/*TODO: FOR SESSIONS: <EventsTable events={events} includeRoom={true} />*/}
-                    </>
-                ) : undefined}
             </VStack>
             <ExhibitionLayout exhibition={exhibition} />
+            <Divider pt={6} />
+            <Heading as="h2" size="lg" pt={4}>
+                Sessions hosting this exhibition
+            </Heading>
+            <ItemEvents sessions={sessions} presentations={presentations} autoExpandPresentations={false} />
         </VStack>
     );
 }
@@ -174,6 +177,8 @@ export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string 
     const [exhibitionResponse] = useSelectExhibitionQuery({
         variables: {
             id: exhibitionId,
+            includeAbstract: false,
+            includeItemEvents: false,
         },
     });
 
@@ -188,7 +193,8 @@ export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string 
             ) : (
                 <ExhibitionPageInner
                     exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}
-                    events={exhibitionResponse.data?.schedule_Event ?? []}
+                    sessions={exhibitionResponse.data?.sessions ?? []}
+                    presentations={[]}
                 />
             )}
         </>

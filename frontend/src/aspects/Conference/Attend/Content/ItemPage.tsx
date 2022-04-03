@@ -4,8 +4,9 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import type {
     ItemElements_ItemDataFragment,
-    ItemEventFragment,
     ItemPage_ItemRoomsFragment,
+    ItemPresentationFragment,
+    ScheduleEventFragment,
 } from "../../../../generated/graphql";
 import { Content_ItemType_Enum, useGetItemQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -19,19 +20,23 @@ import { ItemLive } from "./ItemLive";
 import { ItemVideos } from "./ItemVideos";
 
 gql`
-    query GetItem($itemId: uuid!) @cached {
+    query GetItem($itemId: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!) @cached {
         content_Item_by_pk(id: $itemId) {
             ...ItemElements_ItemData
             ...ItemPage_ItemRooms
             descriptionOfExhibitions {
                 id
-                descriptiveItemId
             }
         }
-        schedule_Event(
-            where: { _or: [{ itemId: { _eq: $itemId } }, { exhibition: { items: { itemId: { _eq: $itemId } } } }] }
+        sessions: schedule_Event(
+            where: { _and: [{ itemId: { _eq: $itemId } }, { sessionEventId: { _is_null: true } }] }
         ) {
-            ...ItemEvent
+            ...ScheduleEvent
+        }
+        presentations: schedule_Event(
+            where: { _and: [{ itemId: { _eq: $itemId } }, { sessionEventId: { _is_null: false } }] }
+        ) {
+            ...ItemPresentation
         }
     }
 
@@ -42,19 +47,11 @@ gql`
         }
     }
 
-    fragment ItemEvent on schedule_Event {
-        scheduledStartTime
-        roomId
-        room {
-            name
-            id
-        }
-        exhibitionId
+    fragment ItemPresentation on schedule_Event {
         id
-        scheduledEndTime
-        name
-        modeName
-        itemId
+        session {
+            ...ScheduleEvent
+        }
     }
 `;
 
@@ -62,6 +59,8 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
     const [result] = useGetItemQuery({
         variables: {
             itemId,
+            includeAbstract: false,
+            includeItemEvents: false,
         },
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
@@ -75,13 +74,15 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                 getter={(data) =>
                     ({
                         ...data.content_Item_by_pk,
-                        events: data.schedule_Event,
+                        sessions: data.sessions,
+                        presentations: data.presentations,
                     } as any)
                 }
             >
                 {(
                     itemData: ItemElements_ItemDataFragment & {
-                        events: readonly ItemEventFragment[];
+                        sessions: readonly ScheduleEventFragment[];
+                        presentations: readonly ItemPresentationFragment[];
                         descriptionOfExhibitions: readonly { id: string }[];
                     } & ItemPage_ItemRoomsFragment
                 ) => {
@@ -132,7 +133,10 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                                     <ItemLive itemData={itemData} />
                                                 </RequireRole>
                                             </ItemElements>
-                                            <ItemEvents events={itemData.events} itemId={itemId} />
+                                            <ItemEvents
+                                                sessions={itemData.sessions}
+                                                presentations={itemData.presentations}
+                                            />
                                         </Box>
                                     </Box>
                                 </Flex>

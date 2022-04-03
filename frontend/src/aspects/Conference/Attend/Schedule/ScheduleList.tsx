@@ -7,9 +7,15 @@ import EventCard from "./EventCard";
 export default function ScheduleList({
     events,
     noDayHeadings,
+    autoExpandPresentations,
+    includeTypeName,
+    includeAbstract,
 }: {
     events: readonly ScheduleEventFragment[];
     noDayHeadings?: boolean;
+    includeTypeName?: boolean;
+    autoExpandPresentations?: boolean;
+    includeAbstract?: boolean;
 }): JSX.Element {
     return (
         <VStack spacing={4} alignItems="stretch" justifyContent="flex-start">
@@ -25,7 +31,16 @@ export default function ScheduleList({
                             previousStart.getMonth() !== thisStart.getMonth() ||
                             previousStart.getFullYear() !== thisStart.getFullYear()));
 
-                const card = <EventCard key={event.id} event={event} includePresentations />;
+                const card = (
+                    <EventCard
+                        key={event.id}
+                        event={event}
+                        includePresentations
+                        includeTypeName={includeTypeName}
+                        autoExpandPresentations={autoExpandPresentations}
+                        includeAbstract={includeAbstract}
+                    />
+                );
                 return dateChanged && !noDayHeadings ? (
                     <Fragment key={event.id}>
                         <Heading as="h2" fontSize="md" textAlign="left" pl={1} pt={4}>

@@ -6,4 +6,5 @@ export interface ScheduleProps {
 
     includeAbstract: boolean;
     wholeScheduleLink?: boolean;
+    includeTypeName?: boolean;
 }

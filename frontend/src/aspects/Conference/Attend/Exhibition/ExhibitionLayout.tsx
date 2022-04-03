@@ -1,4 +1,4 @@
-import { Box, Grid, Text } from "@chakra-ui/react";
+import { Box, Grid, Spacer, Text } from "@chakra-ui/react";
 import type { ElementBlob, ElementDataBlob } from "@midspace/shared-types/content";
 import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
@@ -230,7 +230,8 @@ function ItemTile({
                 <AuthorList programPeopleData={item.itemPeople} />
             </Box>
             {/* <Text>TODO: A marker to show if any of the authors are present</Text> */}
-            <TagList mt="auto" tags={item.itemTags} />
+            <Spacer />
+            <TagList tags={item.itemTags} />
         </Card>
     );
 }
@@ -265,6 +266,8 @@ export function ExhibitionLayoutWrapper({
     const [exhibitionResponse] = useSelectExhibitionQuery({
         variables: {
             id: exhibitionId,
+            includeAbstract: false,
+            includeItemEvents: false,
         },
     });
 

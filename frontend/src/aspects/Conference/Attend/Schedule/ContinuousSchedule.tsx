@@ -91,6 +91,7 @@ export default function ContinuousSchedule({
     subconferenceId,
     eventsPerPage,
     includeAbstract,
+    includeTypeName,
 
     startAtMs,
 }: ScheduleProps & {
@@ -253,7 +254,7 @@ export default function ContinuousSchedule({
                     Load earlier sessions
                 </Button>
             ) : undefined}
-            <ScheduleList events={events} />
+            <ScheduleList events={events} includeTypeName={includeTypeName} includeAbstract={includeAbstract} />
             {events.length === 0 && !loadingLater && !loadingEarlier ? <Text>No sessions to display</Text> : undefined}
             {!mightHaveEarlier && !mightHaveLater && (loadingLater || loadingEarlier) ? <Spinner /> : undefined}
             {mightHaveLater ? (

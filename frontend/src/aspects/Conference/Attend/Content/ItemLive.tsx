@@ -2,8 +2,9 @@ import { chakra, Flex, Text, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type {
     ItemElements_ItemDataFragment,
-    ItemEventFragment,
     ItemPage_ItemRoomsFragment,
+    ItemPresentationFragment,
+    ScheduleEventFragment,
 } from "../../../../generated/graphql";
 import { Content_ItemType_Enum } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
@@ -15,26 +16,34 @@ import PageCountText from "../../../Realtime/PageCountText";
 export function ItemLive({
     itemData,
 }: {
-    itemData: ItemElements_ItemDataFragment & { events: readonly ItemEventFragment[] } & ItemPage_ItemRoomsFragment;
+    itemData: ItemElements_ItemDataFragment & {
+        sessions: readonly ScheduleEventFragment[];
+        presentations: readonly ItemPresentationFragment[];
+    } & ItemPage_ItemRoomsFragment;
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
-    const [liveEvents, setLiveEvents] = useState<ItemEventFragment[] | null>(null);
-    // const [nextEvent, setNextEvent] = useState<ItemEventFragment | null>(null);
-    // const [now, setNow] = useState<number>(Date.now());
+    const [liveEventRoomIds, setLiveEventRoomIds] = useState<string[] | null>(null);
     const computeLiveEvent = useCallback(() => {
         const now = Date.now();
-        const currentEvents = itemData.events.filter(
-            (event) => Date.parse(event.scheduledStartTime) <= now + 60000 && now <= Date.parse(event.scheduledEndTime)
-        );
-        setLiveEvents(currentEvents);
-
-        // const nextEvent = R.sortWith(
-        //     [R.ascend(R.prop("scheduledStartTime"))],
-        //     itemData.events.filter((event) => Date.parse(event.scheduledStartTime) > now)
-        // );
-        // setNextEvent(nextEvent.length > 0 ? nextEvent[0] : null);
-        // setNow(now);
-    }, [itemData.events]);
+        const currentEvents = [
+            ...itemData.sessions
+                .filter(
+                    (event) =>
+                        Date.parse(event.scheduledStartTime) <= now + 60000 && now <= Date.parse(event.scheduledEndTime)
+                )
+                .map((x) => x.roomId),
+            ...itemData.presentations
+                .filter(
+                    (event) =>
+                        event.session &&
+                        Date.parse(event.session.scheduledStartTime) <= now + 60000 &&
+                        now <= Date.parse(event.session.scheduledEndTime)
+                )
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                .map((x) => x.session!.roomId),
+        ];
+        setLiveEventRoomIds(currentEvents);
+    }, [itemData.presentations, itemData.sessions]);
     usePolling(computeLiveEvent, 30000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
@@ -75,11 +84,11 @@ export function ItemLive({
                     </VStack>
                 </LinkButton>
             ) : undefined}
-            {liveEvents?.map((event) => (
+            {liveEventRoomIds?.map((roomId) => (
                 <LinkButton
                     width="100%"
-                    to={`${conferencePath}/room/${event.roomId}`}
-                    key={event.id}
+                    to={`${conferencePath}/room/${roomId}`}
+                    key={roomId}
                     size="lg"
                     colorScheme="LiveActionButton"
                     height="auto"

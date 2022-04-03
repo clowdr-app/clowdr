@@ -15,24 +15,32 @@ gql`
     }
 `;
 
-export default function PresentationsList({ sessionId }: { sessionId: string }): JSX.Element {
+export default function PresentationsList({
+    sessionId,
+    includeAbstract,
+}: {
+    sessionId: string;
+    includeAbstract: boolean;
+}): JSX.Element {
     const [presentationsResponse] = useSchedule_GetPresentationsQuery({
         variables: {
             sessionId,
-            includeAbstract: true,
+            includeAbstract,
             includeItemEvents: false,
         },
     });
     const presentations = presentationsResponse.data?.schedule_Event ?? [];
 
     return (
-        <VStack pt={2} pl={24} alignItems="stretch" w="100%" zIndex={1} spacing={4}>
+        <VStack pt={2} pl={24} alignItems="stretch" w="100%" zIndex={1} spacing={4} maxW="60em">
             {presentationsResponse.fetching ? (
                 <Spinner />
             ) : presentations.length === 0 ? (
                 <Text>No presentations found - proceedings may be ad-hoc or unscheduled.</Text>
             ) : (
-                presentations.map((presentation, idx) => <EventCard key={idx} event={presentation} />)
+                presentations.map((presentation, idx) => (
+                    <EventCard key={idx} event={presentation} includeTypeName includeAbstract={includeAbstract} />
+                ))
             )}
             <Box h={4}>&nbsp;</Box>
         </VStack>

@@ -107,7 +107,7 @@ export default function ItemCard({ item }: { item: ScheduleItemFragment }) {
     );
 }
 
-function typeNameToDisplayName(typeName: Content_ItemType_Enum): string {
+export function typeNameToDisplayName(typeName: Content_ItemType_Enum): string {
     switch (typeName) {
         case Content_ItemType_Enum.Demonstration:
             return "Demonstration";

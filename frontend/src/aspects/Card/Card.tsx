@@ -217,7 +217,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithChildren<CardProps>
                         />
                     ) : undefined
                 ) : undefined}
-                <Flex>
+                <Flex h="100%">
                     {isSelectable && !hideSelectButton ? (
                         <SelectButton
                             isDisabled={isDisabled}

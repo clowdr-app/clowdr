@@ -24,7 +24,7 @@ export default function TagList({
     );
     const history = useHistory();
     return (
-        <HStack flexWrap="wrap" w="100%" gridRowGap={2} {...props}>
+        <HStack flexWrap="wrap" w="100%" spacing={2} {...props}>
             {sortedTags.map((tag) => (
                 <TagButton
                     key={tag.id}

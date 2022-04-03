@@ -17,7 +17,7 @@ export default function WholeSchedule(): JSX.Element {
     );
 
     const defaultScheduleProps = useMemo<
-        Pick<ScheduleProps, "eventsPerPage" | "includeAbstract"> & {
+        Pick<ScheduleProps, "eventsPerPage" | "includeAbstract" | "includeTypeName"> & {
             selectableDates: boolean;
         }
     >(
@@ -25,6 +25,7 @@ export default function WholeSchedule(): JSX.Element {
             eventsPerPage: 10,
             selectableDates: true,
             includeAbstract: true,
+            includeTypeName: true,
         }),
         []
     );
@@ -49,6 +50,7 @@ export default function WholeSchedule(): JSX.Element {
                         setSelectedTabIndex(idx);
                     }}
                     colorScheme="PrimaryActionButton"
+                    w="100%"
                 >
                     <TabList>
                         <Tab>All</Tab>

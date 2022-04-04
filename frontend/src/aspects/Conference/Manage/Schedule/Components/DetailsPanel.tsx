@@ -21,7 +21,12 @@ import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Content_ItemType_Enum, useManageSchedule_GetTagsQuery } from "../../../../../generated/graphql";
+import { gql } from "urql";
+import {
+    Content_ItemType_Enum,
+    useManageSchedule_GetPresentationTimesQuery,
+    useManageSchedule_GetTagsQuery,
+} from "../../../../../generated/graphql";
 import { DateTimePicker } from "../../../../Chakra/DateTimePicker";
 import { CreatableMultiSelect } from "../../../../Chakra/MultiSelect";
 import type { PanelProps, ValidationState } from "../../../../CRUDCards/Types";
@@ -39,6 +44,16 @@ interface RecentlyUsedTag {
     count: number;
 }
 
+gql`
+    query ManageSchedule_GetPresentationTimes($sessionEventId: uuid!) {
+        schedule_Event(where: { sessionEventId: { _eq: $sessionEventId }, scheduledStartTime: { _is_null: false } }) {
+            id
+            scheduledStartTime
+            scheduledEndTime
+        }
+    }
+`;
+
 export default function DetailsPanel({
     isCreate,
     isDisabled,
@@ -51,6 +66,17 @@ export default function DetailsPanel({
     onAnyChange,
 }: PanelProps<ScheduleEditorRecord>): JSX.Element {
     const isSession = !("sessionEventId" in record && record.sessionEventId);
+    const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.Role]: subconferenceId
+                    ? HasuraRoleName.SubconferenceOrganizer
+                    : HasuraRoleName.ConferenceOrganizer,
+            }),
+        [subconferenceId]
+    );
 
     const hoursOptions = useMemo(() => {
         const result: JSX.Element[] = [];
@@ -176,8 +202,50 @@ export default function DetailsPanel({
         }
     }, [isSession, record.scheduledStartTime, record, startTimeHasChanged]);
 
+    const [presentationsResponse] = useManageSchedule_GetPresentationTimesQuery({
+        variables: {
+            sessionEventId: record.id,
+        },
+        pause: !record.id,
+        context,
+        requestPolicy: "network-only",
+    });
     useEffect(() => {
         if (durationHasChanged) {
+            const presentationsMinMax = presentationsResponse.data?.schedule_Event.reduce(
+                (acc, x) => {
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const start = Date.parse(x.scheduledStartTime!);
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const end = Date.parse(x.scheduledEndTime!);
+                    if (start < acc.min) {
+                        acc.min = start;
+                    }
+                    if (end > acc.max) {
+                        acc.max = end;
+                    }
+                    return acc;
+                },
+                { min: Number.POSITIVE_INFINITY, max: Number.NEGATIVE_INFINITY }
+            );
+            const presentationsFitWithin =
+                !record.id ||
+                Boolean(
+                    presentationsResponse.data?.schedule_Event.length === 0 ||
+                        (presentationsMinMax &&
+                            record.scheduledStartTime &&
+                            record.scheduledEndTime &&
+                            Math.max(0, presentationsMinMax.max - presentationsMinMax.min) <=
+                                Math.max(
+                                    0,
+                                    Date.parse(record.scheduledEndTime) - Date.parse(record.scheduledStartTime)
+                                ))
+                );
+            if (!presentationsFitWithin) {
+                setDurationValidation({ error: "Presentations do not fit within the new session time." });
+                return;
+            }
+
             if (isSession) {
                 if (record.scheduledStartTime && record.scheduledEndTime) {
                     const duration = Math.max(
@@ -229,7 +297,14 @@ export default function DetailsPanel({
         } else {
             setDurationValidation("no error");
         }
-    }, [durationHasChanged, record.scheduledStartTime, record.scheduledEndTime, isSession, record]);
+    }, [
+        durationHasChanged,
+        record.scheduledStartTime,
+        record.scheduledEndTime,
+        isSession,
+        record,
+        presentationsResponse.data?.schedule_Event,
+    ]);
 
     useEffect(() => {
         if (nameHasChanged) {
@@ -245,17 +320,6 @@ export default function DetailsPanel({
 
     useEffect(updateValidity, [updateValidity]);
 
-    const conference = useConference();
-    const { subconferenceId } = useAuthParameters();
-    const context = useMemo(
-        () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
-        [subconferenceId]
-    );
     const [tagsResponse, refetchTags] = useManageSchedule_GetTagsQuery({
         variables: {
             conferenceId: conference.id,

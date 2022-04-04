@@ -242,6 +242,7 @@ gql`
         $event: schedule_Event_set_input!
         $eventPeople: [schedule_EventProgramPerson_insert_input!]!
         $eventPersonIds: [uuid!]!
+        $shiftPresentationsByMinutes: Int!
     ) {
         update_schedule_Event_by_pk(pk_columns: { id: $id }, _set: $event) {
             id
@@ -254,6 +255,9 @@ gql`
             on_conflict: { constraint: EventProgramPerson_eventId_personId_roleName_key, update_columns: [roleName] }
         ) {
             affected_rows
+        }
+        schedule_shiftPresentationTimes(args: { sessionId: $id, minutes: $shiftPresentationsByMinutes }) {
+            id
         }
     }
 
@@ -1251,6 +1255,23 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                         }
 
                         if (record.id) {
+                            let shiftPresentationsByMinutes = 0;
+                            if (!("sessionEventId" in record && record.sessionEventId)) {
+                                const originalEvent = sessionsResponse.data?.schedule_Event.find(
+                                    (x) => x.id === record.id
+                                );
+                                if (!originalEvent) {
+                                    return { error: "Could not find original session to check time shift." };
+                                }
+                                if (record.scheduledStartTime && originalEvent.scheduledStartTime) {
+                                    shiftPresentationsByMinutes = Math.round(
+                                        (Date.parse(record.scheduledStartTime) -
+                                            Date.parse(originalEvent.scheduledStartTime)) /
+                                            (60 * 1000)
+                                    );
+                                }
+                            }
+
                             const result = await client
                                 .mutation<
                                     ManageSchedule_UpdateEventMutation,
@@ -1289,6 +1310,7 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                                             })) ?? [],
                                         eventPersonIds:
                                             record.eventPeople?.filter((x) => x.personId).map((x) => x.personId) ?? [],
+                                        shiftPresentationsByMinutes,
                                     },
                                     makeContext({
                                         [AuthHeader.Role]: subconferenceId

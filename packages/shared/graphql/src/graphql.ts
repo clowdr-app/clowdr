@@ -16151,6 +16151,8 @@ export type Mutation_Root = {
     notifyEventStarted: NotifyEventStarted;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
+    /** execute VOLATILE function "schedule.shiftPresentationTimes" which returns "schedule.Event" */
+    schedule_shiftPresentationTimes: Array<Schedule_Event>;
     /** execute VOLATILE function "schedule.shiftTimes" which returns "schedule.Event" */
     schedule_shiftTimes: Array<Schedule_Event>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
@@ -18847,6 +18849,16 @@ export type Mutation_RootNotifyEventStartedArgs = {
 export type Mutation_RootRefreshYouTubeDataArgs = {
     registrantGoogleAccountId: Scalars["uuid"];
     registrantId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftPresentationTimesArgs = {
+    args: Schedule_ShiftPresentationTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** mutation root */
@@ -30836,6 +30848,11 @@ export enum Schedule_StarredEvent_Update_Column {
 export type Schedule_SearchEvents_Args = {
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+};
+
+export type Schedule_ShiftPresentationTimes_Args = {
+    minutes?: InputMaybe<Scalars["Int"]>;
+    sessionId?: InputMaybe<Scalars["uuid"]>;
 };
 
 export type Schedule_ShiftTimes_Args = {

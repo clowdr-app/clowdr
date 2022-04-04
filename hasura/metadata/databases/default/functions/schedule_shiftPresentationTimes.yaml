@@ -1,0 +1,8 @@
+function:
+  name: shiftPresentationTimes
+  schema: schedule
+configuration:
+  exposed_as: mutation
+permissions:
+- role: subconference-organizer
+- role: conference-organizer

@@ -49,6 +49,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
                 conferenceId: { _eq: conferenceId },
                 scheduledEndTime: { _gte: nowStr },
                 scheduledStartTime: { _lte: nowCutoffStr },
+                sessionEventId: { _is_null: true },
             },
             includeAbstract: false,
             includeItemEvents: false,

@@ -253,9 +253,12 @@ gql`
         }
     }
 
-    mutation UpdateEventInfo($eventId: uuid!, $set: schedule_Event_set_input!) {
+    mutation UpdateEventInfo($eventId: uuid!, $set: schedule_Event_set_input!, $shiftPresentationsByMinutes: Int!) {
         update_schedule_Event_by_pk(pk_columns: { id: $eventId }, _set: $set) {
             ...EventInfo
+        }
+        schedule_shiftPresentationTimes(args: { sessionId: $eventId, minutes: $shiftPresentationsByMinutes }) {
+            id
         }
     }
 
@@ -345,7 +348,10 @@ function EditableScheduleTable(): JSX.Element {
         requestPolicy: "cache-and-network",
         context: wholeScheduleContext,
     });
-    const data = useMemo(() => [...(wholeSchedule.data?.schedule_Event ?? [])], [wholeSchedule.data?.schedule_Event]);
+    const data = useMemo(
+        () => [...(wholeSchedule.data?.schedule_Event.map((x) => ({ ...x })) ?? [])],
+        [wholeSchedule.data?.schedule_Event]
+    );
 
     const shufflePeriodsNow = useMemo(() => new Date().toISOString(), []);
     const [shufflePeriodsResponse] = useManageSchedule_ShufflePeriodsQuery({
@@ -1379,6 +1385,19 @@ function EditableScheduleTable(): JSX.Element {
         () => ({
             ongoing: updateEventResponse.fetching,
             start: (record) => {
+                let shiftPresentationsByMinutes = 0;
+                if (record.id) {
+                    const originalEvent = wholeSchedule.data?.schedule_Event.find((x) => x.id === record.id);
+                    if (!originalEvent) {
+                        throw new Error("Could not find original event.");
+                    }
+                    if (record.scheduledStartTime && originalEvent.scheduledStartTime) {
+                        shiftPresentationsByMinutes = Math.round(
+                            (Date.parse(record.scheduledStartTime) - Date.parse(originalEvent.scheduledStartTime)) /
+                                (60 * 1000)
+                        );
+                    }
+                }
                 const set: any = {
                     ...record,
                 };
@@ -1391,6 +1410,7 @@ function EditableScheduleTable(): JSX.Element {
                     {
                         eventId: record.id,
                         set,
+                        shiftPresentationsByMinutes,
                     },
                     {
                         fetchOptions: {
@@ -1405,7 +1425,7 @@ function EditableScheduleTable(): JSX.Element {
                 );
             },
         }),
-        [subconferenceId, updateEvent, updateEventResponse.fetching]
+        [subconferenceId, updateEvent, updateEventResponse.fetching, wholeSchedule.data?.schedule_Event]
     );
 
     const deleteProps:

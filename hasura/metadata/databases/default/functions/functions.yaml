@@ -3,4 +3,5 @@
 - "!include content_searchItems.yaml"
 - "!include registrant_searchRegistrants.yaml"
 - "!include schedule_searchEvents.yaml"
+- "!include schedule_shiftPresentationTimes.yaml"
 - "!include schedule_shiftTimes.yaml"

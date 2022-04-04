@@ -16145,6 +16145,8 @@ export type Mutation_Root = {
     readonly notifyEventStarted: NotifyEventStarted;
     readonly presence_Flush: PresenceFlushOutput;
     readonly refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
+    /** execute VOLATILE function "schedule.shiftPresentationTimes" which returns "schedule.Event" */
+    readonly schedule_shiftPresentationTimes: ReadonlyArray<Schedule_Event>;
     /** execute VOLATILE function "schedule.shiftTimes" which returns "schedule.Event" */
     readonly schedule_shiftTimes: ReadonlyArray<Schedule_Event>;
     readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
@@ -18841,6 +18843,16 @@ export type Mutation_RootNotifyEventStartedArgs = {
 export type Mutation_RootRefreshYouTubeDataArgs = {
     registrantGoogleAccountId: Scalars["uuid"];
     registrantId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftPresentationTimesArgs = {
+    args: Schedule_ShiftPresentationTimes_Args;
+    distinct_on?: InputMaybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<ReadonlyArray<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** mutation root */
@@ -30828,6 +30840,11 @@ export enum Schedule_StarredEvent_Update_Column {
 export type Schedule_SearchEvents_Args = {
     readonly conferenceId?: InputMaybe<Scalars["uuid"]>;
     readonly search?: InputMaybe<Scalars["String"]>;
+};
+
+export type Schedule_ShiftPresentationTimes_Args = {
+    readonly minutes?: InputMaybe<Scalars["Int"]>;
+    readonly sessionId?: InputMaybe<Scalars["uuid"]>;
 };
 
 export type Schedule_ShiftTimes_Args = {
@@ -46499,6 +46516,20 @@ export type ManageSchedule_GetContentIdsQuery = {
     }>;
 };
 
+export type ManageSchedule_GetPresentationTimesQueryVariables = Exact<{
+    sessionEventId: Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetPresentationTimesQuery = {
+    readonly __typename?: "query_root";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+    }>;
+};
+
 export type ManageSchedule_ListAllItemTitlesQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
     subconferenceCond: Uuid_Comparison_Exp;
@@ -47456,6 +47487,7 @@ export type InsertEventInfoMutation = {
 export type UpdateEventInfoMutationVariables = Exact<{
     eventId: Scalars["uuid"];
     set: Schedule_Event_Set_Input;
+    shiftPresentationsByMinutes: Scalars["Int"];
 }>;
 
 export type UpdateEventInfoMutation = {
@@ -47484,6 +47516,10 @@ export type UpdateEventInfoMutation = {
             readonly personId: any;
         }>;
     } | null;
+    readonly schedule_shiftPresentationTimes: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+    }>;
 };
 
 export type DeleteEventInfosMutationVariables = Exact<{
@@ -47780,6 +47816,7 @@ export type ManageSchedule_UpdateEventMutationVariables = Exact<{
     event: Schedule_Event_Set_Input;
     eventPeople: ReadonlyArray<Schedule_EventProgramPerson_Insert_Input> | Schedule_EventProgramPerson_Insert_Input;
     eventPersonIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+    shiftPresentationsByMinutes: Scalars["Int"];
 }>;
 
 export type ManageSchedule_UpdateEventMutation = {
@@ -47793,6 +47830,10 @@ export type ManageSchedule_UpdateEventMutation = {
         readonly __typename?: "schedule_EventProgramPerson_mutation_response";
         readonly affected_rows: number;
     } | null;
+    readonly schedule_shiftPresentationTimes: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+    }>;
 };
 
 export type ManageSchedule_InsertItemMutationVariables = Exact<{
@@ -56518,6 +56559,24 @@ export function useManageSchedule_GetContentIdsQuery(
         ...options,
     });
 }
+export const ManageSchedule_GetPresentationTimesDocument = gql`
+    query ManageSchedule_GetPresentationTimes($sessionEventId: uuid!) {
+        schedule_Event(where: { sessionEventId: { _eq: $sessionEventId }, scheduledStartTime: { _is_null: false } }) {
+            id
+            scheduledStartTime
+            scheduledEndTime
+        }
+    }
+`;
+
+export function useManageSchedule_GetPresentationTimesQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetPresentationTimesQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetPresentationTimesQuery>({
+        query: ManageSchedule_GetPresentationTimesDocument,
+        ...options,
+    });
+}
 export const ManageSchedule_ListAllItemTitlesDocument = gql`
     query ManageSchedule_ListAllItemTitles(
         $conferenceId: uuid!
@@ -57157,9 +57216,12 @@ export function useInsertEventInfoMutation() {
     return Urql.useMutation<InsertEventInfoMutation, InsertEventInfoMutationVariables>(InsertEventInfoDocument);
 }
 export const UpdateEventInfoDocument = gql`
-    mutation UpdateEventInfo($eventId: uuid!, $set: schedule_Event_set_input!) {
+    mutation UpdateEventInfo($eventId: uuid!, $set: schedule_Event_set_input!, $shiftPresentationsByMinutes: Int!) {
         update_schedule_Event_by_pk(pk_columns: { id: $eventId }, _set: $set) {
             ...EventInfo
+        }
+        schedule_shiftPresentationTimes(args: { sessionId: $eventId, minutes: $shiftPresentationsByMinutes }) {
+            id
         }
     }
     ${EventInfoFragmentDoc}
@@ -57296,6 +57358,7 @@ export const ManageSchedule_UpdateEventDocument = gql`
         $event: schedule_Event_set_input!
         $eventPeople: [schedule_EventProgramPerson_insert_input!]!
         $eventPersonIds: [uuid!]!
+        $shiftPresentationsByMinutes: Int!
     ) {
         update_schedule_Event_by_pk(pk_columns: { id: $id }, _set: $event) {
             id
@@ -57308,6 +57371,9 @@ export const ManageSchedule_UpdateEventDocument = gql`
             on_conflict: { constraint: EventProgramPerson_eventId_personId_roleName_key, update_columns: [roleName] }
         ) {
             affected_rows
+        }
+        schedule_shiftPresentationTimes(args: { sessionId: $id, minutes: $shiftPresentationsByMinutes }) {
+            id
         }
     }
 `;
@@ -85224,6 +85290,10 @@ export type GraphCacheOptimisticUpdaters = {
         Mutation_RootRefreshYouTubeDataArgs,
         Maybe<WithTypename<RefreshYouTubeDataOutput>>
     >;
+    schedule_shiftPresentationTimes?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootSchedule_ShiftPresentationTimesArgs,
+        Array<WithTypename<Schedule_Event>>
+    >;
     schedule_shiftTimes?: GraphCacheOptimisticMutationResolver<
         Mutation_RootSchedule_ShiftTimesArgs,
         Array<WithTypename<Schedule_Event>>
@@ -87887,6 +87957,10 @@ export type GraphCacheUpdaters = {
         refreshYouTubeData?: GraphCacheUpdateResolver<
             { refreshYouTubeData: Maybe<WithTypename<RefreshYouTubeDataOutput>> },
             Mutation_RootRefreshYouTubeDataArgs
+        >;
+        schedule_shiftPresentationTimes?: GraphCacheUpdateResolver<
+            { schedule_shiftPresentationTimes: Array<WithTypename<Schedule_Event>> },
+            Mutation_RootSchedule_ShiftPresentationTimesArgs
         >;
         schedule_shiftTimes?: GraphCacheUpdateResolver<
             { schedule_shiftTimes: Array<WithTypename<Schedule_Event>> },

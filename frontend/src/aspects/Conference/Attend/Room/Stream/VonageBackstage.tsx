@@ -126,7 +126,7 @@ export function VonageBackstageInner({
         <VStack h="100%" justifyContent="stretch" w="100%" alignItems="flex-start">
             {!isRaiseHandPreJoin ? <BackstageControls /> : undefined}
             <Box w="100%" flexGrow={1}>
-                {event.eventVonageSession && sharedRoomContext ? (
+                {event.eventVonageSession && sharedRoomContext?.vonagePortalNode ? (
                     <portals.OutPortal<typeof VonageRoom>
                         node={sharedRoomContext.vonagePortalNode}
                         eventId={event.id}

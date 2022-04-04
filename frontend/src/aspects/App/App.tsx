@@ -71,17 +71,19 @@ function AppInner(): JSX.Element {
                                                 <RegistrantsContextProvider>
                                                     <GlobalChatStateProvider>
                                                         <RaiseHandProvider>
-                                                            <AppPage>
-                                                                {currentUserChildren ??
-                                                                    detectSlugChildren ??
-                                                                    conferenceChildren ?? (
-                                                                        <ChimeThemeProvider theme={chimeTheme}>
-                                                                            <MeetingProvider>
-                                                                                <AppInner2 />
-                                                                            </MeetingProvider>
-                                                                        </ChimeThemeProvider>
-                                                                    )}
-                                                            </AppPage>
+                                                            <AppLayoutProvider>
+                                                                <AppPage>
+                                                                    {currentUserChildren ??
+                                                                        detectSlugChildren ??
+                                                                        conferenceChildren ?? (
+                                                                            <ChimeThemeProvider theme={chimeTheme}>
+                                                                                <MeetingProvider>
+                                                                                    <AppInner2 />
+                                                                                </MeetingProvider>
+                                                                            </ChimeThemeProvider>
+                                                                        )}
+                                                                </AppPage>
+                                                            </AppLayoutProvider>
                                                         </RaiseHandProvider>
                                                     </GlobalChatStateProvider>
                                                 </RegistrantsContextProvider>
@@ -116,9 +118,7 @@ function AppInner2(): JSX.Element {
                     <ForceUserRefresh />
 
                     <PermissionInstructionsProvider>
-                        <AppLayoutProvider>
-                            <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
-                        </AppLayoutProvider>
+                        <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
                     </PermissionInstructionsProvider>
                 </>
             ) : (

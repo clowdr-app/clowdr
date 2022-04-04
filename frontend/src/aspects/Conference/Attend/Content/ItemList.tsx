@@ -113,6 +113,7 @@ export function TagButton({
             whiteSpace="normal"
             w="10em"
             my={2}
+            mr={2}
             p={1}
             color={
                 (isExpanded && isExpandedDark) || (!isExpanded && isDark)

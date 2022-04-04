@@ -17,10 +17,7 @@ export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
 
     const subconferences = useMemo(() => {
         return R.sortBy((x) => x.shortName, conference.subconferences).map((subconference) => {
-            const membership =
-                "registrants" in conference
-                    ? registrant.subconferenceMemberships?.find((m) => m.subconferenceId === subconference.id)
-                    : null;
+            const membership = registrant.subconferenceMemberships?.find((m) => m.subconferenceId === subconference.id);
             return {
                 subconference,
                 membership: membership ?? null,
@@ -29,9 +26,10 @@ export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
     }, [conference, registrant]);
 
     const organizerEl = useMemo(() => {
-        const organizerSubconferences = subconferences.filter(
-            (x) => x.membership?.role === Registrant_RegistrantRole_Enum.Organizer
-        );
+        const organizerSubconferences =
+            registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer
+                ? subconferences
+                : subconferences.filter((x) => x.membership?.role === Registrant_RegistrantRole_Enum.Organizer);
 
         return organizerSubconferences.length ? (
             organizerSubconferences.map((subconferenceEntry) => (
@@ -46,16 +44,17 @@ export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
         ) : (
             <></>
         );
-    }, [setSubconferenceId, subconferenceId, subconferences]);
+    }, [registrant.conferenceRole, setSubconferenceId, subconferenceId, subconferences]);
 
     const nonOrganizerEl = useMemo(() => {
-        const organizerSubconferences = subconferences.filter(
-            (x) => x.membership?.role !== Registrant_RegistrantRole_Enum.Organizer
-        );
+        const nonOrganizerSubconferences =
+            registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer
+                ? subconferences.filter((x) => x.membership?.role !== Registrant_RegistrantRole_Enum.Organizer)
+                : [];
 
-        return organizerSubconferences.length ? (
+        return nonOrganizerSubconferences.length ? (
             <MenuGroup title="Other subconferences">
-                {organizerSubconferences.map((subconferenceEntry) => (
+                {nonOrganizerSubconferences.map((subconferenceEntry) => (
                     <MenuItem
                         key={subconferenceEntry.subconference.id}
                         isDisabled={true}
@@ -68,7 +67,7 @@ export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
         ) : (
             <></>
         );
-    }, [subconferences]);
+    }, [registrant.conferenceRole, subconferences]);
 
     const selectedSubconference = useMemo(() => {
         return !subconferenceId

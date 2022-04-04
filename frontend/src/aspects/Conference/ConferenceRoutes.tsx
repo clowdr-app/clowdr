@@ -57,7 +57,8 @@ export default function ConferenceRoutes(): JSX.Element {
             isOnManagementPage &&
             subconferenceId &&
             mRegistrant &&
-            !mRegistrant?.subconferenceMemberships?.find(
+            mRegistrant.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
+            !mRegistrant.subconferenceMemberships?.find(
                 (x) => x.subconferenceId === subconferenceId && x.role === Registrant_RegistrantRole_Enum.Organizer
             )
         ) {

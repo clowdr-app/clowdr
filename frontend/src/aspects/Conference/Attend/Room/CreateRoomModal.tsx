@@ -127,6 +127,9 @@ export function CreateRoomModal({
                                                         }}
                                                         id="new_room_name"
                                                         placeholder="Room name"
+                                                        onClick={(ev) => {
+                                                            ev.stopPropagation();
+                                                        }}
                                                     />
                                                     <FormErrorMessage>{form.errors.new_room_name}</FormErrorMessage>
                                                 </FormControl>
@@ -143,7 +146,13 @@ export function CreateRoomModal({
                                                     mt="1em"
                                                 >
                                                     <FormLabel htmlFor="new_room_private">Private?</FormLabel>
-                                                    <Switch {...field} id="new_room_private" />
+                                                    <Switch
+                                                        {...field}
+                                                        id="new_room_private"
+                                                        onClick={(ev) => {
+                                                            ev.stopPropagation();
+                                                        }}
+                                                    />
                                                     <FormErrorMessage>{form.errors.new_room_private}</FormErrorMessage>
                                                 </FormControl>
                                             )}
@@ -157,6 +166,9 @@ export function CreateRoomModal({
                                         isLoading={props.isSubmitting}
                                         type="submit"
                                         isDisabled={!props.isValid}
+                                        onClick={(ev) => {
+                                            ev.stopPropagation();
+                                        }}
                                     >
                                         Create
                                     </Button>

@@ -242,13 +242,15 @@ function Panel({
 
 export default function ItemList({
     selectAsDropdown,
-    ...props
+    defaultSelectedTag,
+    overrideSelectedTag,
+    setOverrideSelectedTag,
 }: {
+    defaultSelectedTag?: string | null;
     overrideSelectedTag?: string | null;
     setOverrideSelectedTag?: (id: string | null) => void;
     selectAsDropdown?: boolean;
 }): JSX.Element {
-    const { overrideSelectedTag, setOverrideSelectedTag } = props;
     const conference = useConference();
     const [{ fetching: loading, data, error }] = useTagsQuery({
         variables: {
@@ -271,6 +273,13 @@ export default function ItemList({
         [setInternalOpenPanelId, setOverrideSelectedTag]
     );
     const openPanelId = overrideSelectedTag !== undefined ? overrideSelectedTag : internalOpenPanelId;
+
+    useEffect(() => {
+        if (defaultSelectedTag) {
+            setInternalOpenPanelId(defaultSelectedTag);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [defaultSelectedTag]);
 
     const sortedGroupedTags = useMemo(() => {
         if (data?.collection_Tag) {

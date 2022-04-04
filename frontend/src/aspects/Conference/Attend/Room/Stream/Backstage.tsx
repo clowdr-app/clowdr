@@ -11,10 +11,10 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
-import { AppLayoutContext } from "../../../../App/AppLayoutContext";
+import { useAppLayout } from "../../../../App/AppLayoutContext";
 import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import StreamTextCaptions from "../StreamTextCaptions";
@@ -109,7 +109,7 @@ export default function Backstage({
         () => <VonageBackstage event={event} onLeave={onLeave} hlsUri={hlsUri} />,
         [event, onLeave, hlsUri]
     );
-    const { mainPaneHeight } = useContext(AppLayoutContext);
+    const { mainPaneHeight } = useAppLayout();
     const area = useMemo(
         () =>
             isSelected ? (

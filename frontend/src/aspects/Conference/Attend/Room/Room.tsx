@@ -17,7 +17,7 @@ import {
 import type { ElementDataBlob, ExternalEventLinkBlob } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import * as R from "ramda";
-import React, { Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
@@ -28,7 +28,7 @@ import {
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
-import { AppLayoutContext } from "../../../App/AppLayoutContext";
+import { useAppLayout } from "../../../App/AppLayoutContext";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import FAIcon from "../../../Chakra/FAIcon";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
@@ -388,7 +388,7 @@ function RoomInner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent?.id]);
 
-    const { mainPaneHeight, mainPaneWidth } = useContext(AppLayoutContext);
+    const { mainPaneHeight, mainPaneWidth } = useAppLayout();
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const controlBarEl = useMemo(

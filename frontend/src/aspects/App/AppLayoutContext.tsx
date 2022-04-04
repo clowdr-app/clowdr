@@ -1,6 +1,6 @@
 import useSize from "@react-hook/size";
 import type { PropsWithChildren } from "react";
-import React, { createContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import useDebouncedState from "../Hooks/useDebouncedState";
 
 function useValue(_props: Record<never, never>) {
@@ -24,7 +24,11 @@ function useValue(_props: Record<never, never>) {
     };
 }
 
-export const AppLayoutContext = createContext({} as ReturnType<typeof useValue>);
+const AppLayoutContext = createContext({} as ReturnType<typeof useValue>);
+
+export function useAppLayout(): ReturnType<typeof useValue> {
+    return useContext(AppLayoutContext);
+}
 
 export function AppLayoutProvider(props: PropsWithChildren<Record<never, never>>): JSX.Element {
     return <AppLayoutContext.Provider value={useValue(props)}>{props.children}</AppLayoutContext.Provider>;

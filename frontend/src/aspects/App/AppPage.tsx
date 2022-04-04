@@ -1,5 +1,5 @@
 import { Box, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
@@ -10,7 +10,7 @@ import { useRestorableState } from "../Hooks/useRestorableState";
 import LeftMenu from "../Menu/LeftMenu";
 import RightMenu from "../Menu/RightMenu";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import { AppLayoutContext } from "./AppLayoutContext";
+import { useAppLayout } from "./AppLayoutContext";
 
 export default function AppPage({ children }: React.PropsWithChildren<Record<string, any>>): JSX.Element {
     const user = useMaybeCurrentUser();
@@ -26,7 +26,7 @@ export default function AppPage({ children }: React.PropsWithChildren<Record<str
     const isRootPage = locationMatchRoot !== null;
     const isAppLandingPage = isRootPage && !user?.user;
 
-    const { mainPaneRef } = useContext(AppLayoutContext);
+    const { mainPaneRef } = useAppLayout();
 
     const [rightMenuOpen, setRightMenuOpen] = useState<boolean>(false);
     const locationMatchRoom = useRouteMatch({

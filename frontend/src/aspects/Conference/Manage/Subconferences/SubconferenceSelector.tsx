@@ -1,5 +1,6 @@
 import { AddIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { Button, Menu, MenuButton, MenuDivider, MenuGroup, MenuItem, MenuList, useDisclosure } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
 import { Registrant_RegistrantRole_Enum } from "../../../../generated/graphql";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
@@ -15,7 +16,7 @@ export function SubconferenceSelector(_: Record<string, never>): JSX.Element {
     const { subconferenceId, setSubconferenceId } = useAuthParameters();
 
     const subconferences = useMemo(() => {
-        return conference.subconferences.map((subconference) => {
+        return R.sortBy((x) => x.shortName, conference.subconferences).map((subconference) => {
             const membership =
                 "registrants" in conference
                     ? registrant.subconferenceMemberships?.find((m) => m.subconferenceId === subconference.id)

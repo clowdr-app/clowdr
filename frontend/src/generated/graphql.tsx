@@ -41234,6 +41234,8 @@ export type Room_GetEventsQueryVariables = Exact<{
     roomId: Scalars["uuid"];
     now: Scalars["timestamptz"];
     cutoff: Scalars["timestamptz"];
+    includeAbstract: Scalars["Boolean"];
+    includeItemEvents: Scalars["Boolean"];
 }>;
 
 export type Room_GetEventsQuery = {
@@ -41311,6 +41313,58 @@ export type Room_GetEventsQuery = {
                 readonly registrantId?: any | null;
             };
         }>;
+        readonly presentations: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
+            readonly name: string;
+            readonly roomId: any;
+            readonly modeName?: Schedule_Mode_Enum | null;
+            readonly sessionEventId?: any | null;
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly conferenceId: any;
+                readonly subconferenceId?: any | null;
+                readonly title: string;
+                readonly typeName: Content_ItemType_Enum;
+                readonly itemTags: ReadonlyArray<{
+                    readonly __typename?: "content_ItemTag";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly tagId: any;
+                }>;
+                readonly itemPeople: ReadonlyArray<{
+                    readonly __typename?: "content_ItemProgramPerson";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly personId: any;
+                    readonly roleName: string;
+                }>;
+                readonly abstract: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly data: any;
+                }>;
+                readonly events?: ReadonlyArray<{
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly session?: {
+                        readonly __typename?: "schedule_Event";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly item?: {
+                            readonly __typename?: "content_Item";
+                            readonly id: any;
+                            readonly title: string;
+                        } | null;
+                    } | null;
+                }>;
+            } | null;
+        }>;
     }>;
 };
 
@@ -41386,6 +41440,58 @@ export type Room_EventSummaryFragment = {
             readonly affiliation?: string | null;
             readonly registrantId?: any | null;
         };
+    }>;
+    readonly presentations: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly name: string;
+        readonly roomId: any;
+        readonly modeName?: Schedule_Mode_Enum | null;
+        readonly sessionEventId?: any | null;
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
+            readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly itemId: any;
+                readonly tagId: any;
+            }>;
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly itemId: any;
+                readonly personId: any;
+                readonly roleName: string;
+            }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+            }>;
+            readonly events?: ReadonlyArray<{
+                readonly __typename?: "schedule_Event";
+                readonly id: any;
+                readonly session?: {
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly item?: {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly title: string;
+                    } | null;
+                } | null;
+            }>;
+        } | null;
     }>;
 };
 
@@ -49201,6 +49307,8 @@ export type GetConferenceLandingPageItemIdQuery = {
 
 export type RaiseHandPanel_GetEventDetailsQueryVariables = Exact<{
     eventId: Scalars["uuid"];
+    includeAbstract: Scalars["Boolean"];
+    includeItemEvents: Scalars["Boolean"];
 }>;
 
 export type RaiseHandPanel_GetEventDetailsQuery = {
@@ -49277,6 +49385,58 @@ export type RaiseHandPanel_GetEventDetailsQuery = {
                 readonly affiliation?: string | null;
                 readonly registrantId?: any | null;
             };
+        }>;
+        readonly presentations: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
+            readonly name: string;
+            readonly roomId: any;
+            readonly modeName?: Schedule_Mode_Enum | null;
+            readonly sessionEventId?: any | null;
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly conferenceId: any;
+                readonly subconferenceId?: any | null;
+                readonly title: string;
+                readonly typeName: Content_ItemType_Enum;
+                readonly itemTags: ReadonlyArray<{
+                    readonly __typename?: "content_ItemTag";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly tagId: any;
+                }>;
+                readonly itemPeople: ReadonlyArray<{
+                    readonly __typename?: "content_ItemProgramPerson";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly personId: any;
+                    readonly roleName: string;
+                }>;
+                readonly abstract: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly data: any;
+                }>;
+                readonly events?: ReadonlyArray<{
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly session?: {
+                        readonly __typename?: "schedule_Event";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly item?: {
+                            readonly __typename?: "content_Item";
+                            readonly id: any;
+                            readonly title: string;
+                        } | null;
+                    } | null;
+                }>;
+            } | null;
         }>;
     } | null;
 };
@@ -50684,8 +50844,12 @@ export const Room_EventSummaryFragmentDoc = gql`
             }
             roleName
         }
+        presentations {
+            ...ScheduleEvent
+        }
     }
     ${ShufflePeriodDataFragmentDoc}
+    ${ScheduleEventFragmentDoc}
 `;
 export const RoomPage_RoomDetailsFragmentDoc = gql`
     fragment RoomPage_RoomDetails on room_Room {
@@ -52773,7 +52937,13 @@ export function useRemoveRegistrantFromRoomMutation() {
     );
 }
 export const Room_GetEventsDocument = gql`
-    query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) @cached {
+    query Room_GetEvents(
+        $roomId: uuid!
+        $now: timestamptz!
+        $cutoff: timestamptz!
+        $includeAbstract: Boolean!
+        $includeItemEvents: Boolean!
+    ) @cached {
         schedule_Event(
             where: {
                 roomId: { _eq: $roomId }
@@ -57699,7 +57869,8 @@ export function useGetConferenceLandingPageItemIdQuery(
     });
 }
 export const RaiseHandPanel_GetEventDetailsDocument = gql`
-    query RaiseHandPanel_GetEventDetails($eventId: uuid!) @cached {
+    query RaiseHandPanel_GetEventDetails($eventId: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!)
+    @cached {
         schedule_Event_by_pk(id: $eventId) {
             ...Room_EventSummary
         }

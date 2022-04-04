@@ -11,6 +11,7 @@ import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { typeNameToDisplayName } from "../Content/ItemCard";
 import { ItemElementsWrapper } from "../Content/ItemElements";
 import { ExhibitionLayoutWrapper } from "../Exhibition/ExhibitionLayout";
+import EventCard from "../Schedule/EventCard";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { VideoElementButton } from "./Video/VideoElementButton";
 
@@ -77,56 +78,77 @@ export function RoomContent({
     return (
         <VStack spacing={8} flexGrow={1} zIndex={1} py={4} px={[2, 2, 4]} w="100%">
             {currentRoomEvent ? (
-                <Card
-                    heading={currentRoomEvent.item?.title ?? currentRoomEvent.name}
-                    subHeading={
-                        currentRoomEvent.item ? typeNameToDisplayName(currentRoomEvent.item.typeName) : undefined
-                    }
-                    to={currentRoomEvent.item ? `${conferencePath}/item/${currentRoomEvent.item.id}` : undefined}
-                    w="100%"
-                    topLeftButton={{
-                        colorScheme: "blue",
-                        iconStyle: "s",
-                        label: `Started ${formatRelative(Date.parse(currentRoomEvent.scheduledStartTime), now5s)}`,
-                        variant: "solid",
-                        showLabel: true,
-                    }}
-                    editControls={[
-                        ...(currentRoomEvent.scheduledEndTime
-                            ? [
-                                  <Tag key="ends-at" colorScheme="blue" borderRadius="full">
-                                      Ends {formatRelative(Date.parse(currentRoomEvent.scheduledEndTime), now5s)}
-                                  </Tag>,
-                              ]
-                            : []),
-                        ...(currentEventRole
-                            ? [
-                                  <Tag key="role" colorScheme="Room-CurrentEventRoleLabel" my={2} borderRadius="full">
-                                      You are {currentEventRole}
-                                  </Tag>,
-                              ]
-                            : []),
-                    ]}
-                >
-                    {currentRoomEvent.shufflePeriod &&
-                    currentEventEndTime &&
-                    currentEventEndTime - now5s > 1.5 * 60 * 1000 ? (
-                        <Center>
-                            <ShufflePeriodBox period={currentRoomEvent.shufflePeriod} />
-                        </Center>
-                    ) : (
-                        <></>
-                    )}
-                    {currentRoomEvent.modeName === Schedule_Mode_Enum.VideoPlayer ? currentEventVideosEl : undefined}
-                    {currentRoomEvent.modeName !== Schedule_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
-                        <ItemElementsWrapper itemId={currentRoomEvent.itemId} noHeading />
-                    ) : undefined}
-                    {currentRoomEvent.exhibitionId ? (
-                        <ExhibitionLayoutWrapper exhibitionId={currentRoomEvent.exhibitionId} hideLiveViewButton />
-                    ) : (
-                        <></>
-                    )}
-                </Card>
+                <VStack spacing={4} w="100%">
+                    <Card
+                        heading={currentRoomEvent.item?.title ?? currentRoomEvent.name}
+                        subHeading={
+                            currentRoomEvent.item ? typeNameToDisplayName(currentRoomEvent.item.typeName) : undefined
+                        }
+                        to={currentRoomEvent.item ? `${conferencePath}/item/${currentRoomEvent.item.id}` : undefined}
+                        w="100%"
+                        topLeftButton={{
+                            colorScheme: "LiveActionButton",
+                            iconStyle: "s",
+                            label: `Started ${formatRelative(Date.parse(currentRoomEvent.scheduledStartTime), now5s)}`,
+                            variant: "solid",
+                            showLabel: true,
+                        }}
+                        editControls={[
+                            ...(currentRoomEvent.scheduledEndTime
+                                ? [
+                                      <Tag key="ends-at" colorScheme="blue" borderRadius="full">
+                                          Ends {formatRelative(Date.parse(currentRoomEvent.scheduledEndTime), now5s)}
+                                      </Tag>,
+                                  ]
+                                : []),
+                            ...(currentEventRole
+                                ? [
+                                      <Tag
+                                          key="role"
+                                          colorScheme="Room-CurrentEventRoleLabel"
+                                          my={2}
+                                          borderRadius="full"
+                                      >
+                                          You are {currentEventRole}
+                                      </Tag>,
+                                  ]
+                                : []),
+                        ]}
+                    >
+                        {currentRoomEvent.shufflePeriod &&
+                        currentEventEndTime &&
+                        currentEventEndTime - now5s > 1.5 * 60 * 1000 ? (
+                            <Center>
+                                <ShufflePeriodBox period={currentRoomEvent.shufflePeriod} />
+                            </Center>
+                        ) : (
+                            <></>
+                        )}
+                        {currentRoomEvent.modeName === Schedule_Mode_Enum.VideoPlayer
+                            ? currentEventVideosEl
+                            : undefined}
+                        {currentRoomEvent.modeName !== Schedule_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
+                            <ItemElementsWrapper itemId={currentRoomEvent.itemId} noHeading />
+                        ) : undefined}
+                        {currentRoomEvent.exhibitionId ? (
+                            <ExhibitionLayoutWrapper exhibitionId={currentRoomEvent.exhibitionId} hideLiveViewButton />
+                        ) : (
+                            <></>
+                        )}
+                    </Card>
+                    <VStack spacing={4} pt={2} pl={[6, 10, 14]} w="100%" alignItems="flex-end">
+                        {currentRoomEvent.presentations.map((presentation) => (
+                            <EventCard
+                                key={presentation.id}
+                                event={presentation}
+                                includeAbstract={true}
+                                includePresentations={false}
+                                includeTypeName={true}
+                                limitAbstractLengthTo={-1}
+                            />
+                        ))}
+                    </VStack>
+                </VStack>
             ) : (
                 <></>
             )}

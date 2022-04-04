@@ -15,7 +15,8 @@ import { RaisedHandsList } from "./RaisedHandsList";
 import { RegistrantsList } from "./RegistrantsList";
 
 gql`
-    query RaiseHandPanel_GetEventDetails($eventId: uuid!) @cached {
+    query RaiseHandPanel_GetEventDetails($eventId: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!)
+    @cached {
         schedule_Event_by_pk(id: $eventId) {
             ...Room_EventSummary
         }
@@ -125,6 +126,8 @@ export function RaiseHandPanel(): JSX.Element {
         pause: !currentEventId || currentEventId.userRole !== Schedule_EventProgramPersonRole_Enum.Participant,
         variables: {
             eventId: currentEventId?.eventId,
+            includeAbstract: true,
+            includeItemEvents: false,
         },
     });
 

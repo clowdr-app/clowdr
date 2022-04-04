@@ -40,12 +40,14 @@ export default function EventCard({
     includeTypeName,
     autoExpandPresentations,
     includeAbstract = false,
+    limitAbstractLengthTo = 3,
 }: {
     event: ScheduleEventFragment;
     includePresentations?: boolean;
     includeTypeName?: boolean;
     autoExpandPresentations?: boolean;
     includeAbstract?: boolean;
+    limitAbstractLengthTo?: number;
 }) {
     const { conferencePath } = useAuthParameters();
     const conference = useConference();
@@ -175,7 +177,7 @@ export default function EventCard({
                 }
             >
                 {event.item?.abstract?.[0]?.data?.length ? (
-                    <Text noOfLines={3}>
+                    <Text noOfLines={limitAbstractLengthTo === -1 ? undefined : limitAbstractLengthTo}>
                         {event.item.abstract[0].data[event.item.abstract[0].data.length - 1].data.text}
                     </Text>
                 ) : undefined}

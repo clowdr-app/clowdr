@@ -58,7 +58,13 @@ const VideoPlayer = React.lazy(() => import("./Video/VideoPlayerEventPlayer"));
 const HlsPlayer = React.lazy(() => import("./Video/HlsPlayer"));
 
 gql`
-    query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) @cached {
+    query Room_GetEvents(
+        $roomId: uuid!
+        $now: timestamptz!
+        $cutoff: timestamptz!
+        $includeAbstract: Boolean!
+        $includeItemEvents: Boolean!
+    ) @cached {
         schedule_Event(
             where: {
                 roomId: { _eq: $roomId }
@@ -115,6 +121,9 @@ gql`
                 registrantId
             }
             roleName
+        }
+        presentations {
+            ...ScheduleEvent
         }
     }
 
@@ -177,6 +186,8 @@ function Room({
             roomId: roomDetails.id,
             now: nowStr,
             cutoff: nowCutoffStr,
+            includeAbstract: true,
+            includeItemEvents: false,
         },
     });
 

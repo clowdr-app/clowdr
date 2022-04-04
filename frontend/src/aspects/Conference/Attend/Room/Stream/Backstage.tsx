@@ -14,7 +14,6 @@ import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
-import { useAppLayout } from "../../../../App/AppLayoutContext";
 import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import StreamTextCaptions from "../StreamTextCaptions";
@@ -109,12 +108,11 @@ export default function Backstage({
         () => <VonageBackstage event={event} onLeave={onLeave} hlsUri={hlsUri} />,
         [event, onLeave, hlsUri]
     );
-    const { mainPaneHeight } = useAppLayout();
     const area = useMemo(
         () =>
             isSelected ? (
                 <Box
-                    h={`max(${mainPaneHeight}px, 40em)`}
+                    h="max(calc(100vh - (6ex + 6px)), 40em)"
                     mt={2}
                     p={2}
                     border={isNow ? "solid " + onAirBorderColour : undefined}
@@ -130,16 +128,7 @@ export default function Backstage({
                     This event has now finished. Once you close this backstage, you will not be able to rejoin it.
                 </Alert>
             ) : undefined,
-        [
-            isActive,
-            isNow,
-            isSelected,
-            vonageBackstage,
-            roomChatId,
-            event.streamTextEventId,
-            onAirBorderColour,
-            mainPaneHeight,
-        ]
+        [isActive, isNow, isSelected, vonageBackstage, roomChatId, event.streamTextEventId, onAirBorderColour]
     );
 
     return (

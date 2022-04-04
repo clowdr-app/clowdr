@@ -757,7 +757,11 @@ function RoomInner({
                     minW="100%"
                     maxW="100%"
                     transition="height 1s ease"
-                    h={showDefaultVideoChatRoom && !showBackstage && connected ? mainPaneHeight : "undefined"}
+                    h={
+                        showDefaultVideoChatRoom && !showBackstage && connected
+                            ? "calc(100vh - (6ex + 6px))"
+                            : "undefined"
+                    }
                 >
                     {controlBarEl}
 

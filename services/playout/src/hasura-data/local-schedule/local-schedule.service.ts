@@ -28,7 +28,6 @@ export interface LocalSchedule {
 
 export interface LocalScheduleAction {
     eventId: string;
-    modeName: Schedule_Mode_Enum;
     rtmpInputName: Video_RtmpInput_Enum | null;
     videoData: VideoBroadcastBlob | null;
     scheduledStartTime: number;
@@ -68,29 +67,28 @@ export class LocalScheduleService {
     }
 
     public toLocalScheduleAction(event: LocalSchedule_EventDetailsFragment): LocalScheduleAction {
-        const videoData = event.item?.elements.length
-            ? this.contentElementService.getLatestBroadcastVideoData(event.item.elements[0].data)
+        const videoData = event.autoPlayElement?.data
+            ? this.contentElementService.getLatestBroadcastVideoData(event.autoPlayElement?.data)
             : null;
 
         const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;
 
-        if (!event.modeName) {
-            this.logger.error({ eventId: event.id }, "Live event is missing mode");
-            throw new Error("Cannot convert an event to a local schedule action that does not have a mode");
+        if (!event.modeName || !this.isLive(event.modeName)) {
+            this.logger.error({ eventId: event.id }, "Cannot convert event that has a non-livestream mode");
+            throw new Error("Cannot convert an event with a non-livestream mode to a local schedule action");
         }
 
-        if (!event.eventVonageSession && this.isLive(event.modeName)) {
+        if (!event.eventVonageSession) {
             this.logger.warn({ eventId: event.id }, "Live event is missing a Vonage session");
         }
 
         return {
             eventId: event.id,
             rtmpInputName,
-            modeName: event.modeName,
             videoData,
             scheduledStartTime: Date.parse(event.scheduledStartTime),
             scheduledEndTime: Date.parse(event.scheduledEndTime),
-            autoPlayElementId: event.autoPlayElementId,
+            autoPlayElementId: event.autoPlayElement?.id,
         };
     }
 
@@ -136,20 +134,12 @@ export class LocalScheduleService {
 
             fragment LocalSchedule_EventDetails on schedule_Event {
                 id
-                item {
-                    id
-                    elements(
-                        where: { typeName: { _eq: VIDEO_BROADCAST } }
-                        limit: 1
-                        order_by: { createdAt: desc_nulls_last }
-                    ) {
-                        id
-                        data
-                    }
-                }
                 scheduledEndTime
                 scheduledStartTime
-                autoPlayElementId
+                autoPlayElement {
+                    id
+                    data
+                }
                 eventVonageSession {
                     id
                     rtmpInputName
@@ -185,7 +175,6 @@ export class LocalScheduleService {
 
     public async ensureRtmpInputsAlternate(scheduleData: LocalSchedule): Promise<LocalSchedule> {
         const liveEvents = scheduleData.items
-            .filter((item) => this.isLive(item.modeName))
             .filter((item) => item.scheduledStartTime > add(Date.now(), { seconds: 30 }).getTime())
             .sort((a, b) => a.scheduledStartTime - b.scheduledStartTime);
 

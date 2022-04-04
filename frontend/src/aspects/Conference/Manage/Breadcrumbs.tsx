@@ -2,19 +2,28 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import { useConference } from "../useConference";
 
 export function Breadcrumbs(): JSX.Element {
     const conference = useConference();
+    const { subconferenceId } = useAuthParameters();
+    const confTitle = useMemo(
+        () =>
+            (subconferenceId
+                ? conference.subconferences.find((x) => x.id === subconferenceId)?.shortName
+                : undefined) ?? conference.shortName,
+        [conference.shortName, conference.subconferences, subconferenceId]
+    );
     const routes = useMemo(
         () => [
             {
                 path: "/conference/:slug/manage",
-                breadcrumb: `Manage ${conference.shortName}`,
+                breadcrumb: `Manage ${confTitle}`,
             },
             {
                 path: "/c/:slug/manage",
-                breadcrumb: `Manage ${conference.shortName}`,
+                breadcrumb: `Manage ${confTitle}`,
             },
             {
                 path: "/conference/:slug/manage/export/youtube",
@@ -33,7 +42,7 @@ export function Breadcrumbs(): JSX.Element {
                 breadcrumb: "Download videos",
             },
         ],
-        [conference.shortName]
+        [confTitle]
     );
     const breadcrumbs = useBreadcrumbs(routes, {
         excludePaths: ["/", "/conference", "/c", "/conference/:slug", "/c/:slug"],

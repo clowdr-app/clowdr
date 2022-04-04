@@ -54,8 +54,15 @@ export default function ManagerLandingPage(): JSX.Element {
         "support@midspace.app";
     const primarySupportAddress = subconferenceId ? supportAddress : techSupportAddress;
 
+    const confTitle = useMemo(
+        () =>
+            (subconferenceId
+                ? conference.subconferences.find((x) => x.id === subconferenceId)?.shortName
+                : undefined) ?? conference.shortName,
+        [conference.shortName, conference.subconferences, subconferenceId]
+    );
     return (
-        <DashboardPage title={`Manage ${conference.shortName}`}>
+        <DashboardPage title={`Manage ${confTitle}`}>
             <VStack
                 w="100%"
                 alignItems="flex-start"

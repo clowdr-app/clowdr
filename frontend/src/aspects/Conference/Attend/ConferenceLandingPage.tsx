@@ -15,7 +15,14 @@ import ElementsGridLayout from "./Content/Element/ElementsGridLayout";
 
 gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) @cached {
-        content_Item(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { typeName: { _eq: LANDING_PAGE } }] }) {
+        content_Item(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: { _is_null: true }
+                typeName: { _eq: LANDING_PAGE }
+            }
+            limit: 1
+        ) {
             ...ItemElements_JustElementData
         }
     }

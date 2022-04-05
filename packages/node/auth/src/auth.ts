@@ -296,6 +296,7 @@ export async function computeAuthHeaders(
                                     if (
                                         room.conferenceId === conference.id &&
                                         (!room.subconferenceId ||
+                                            registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
                                             registrant.subconferenceMemberships.some(
                                                 (x) => x.subconferenceId === room.subconferenceId
                                             ))

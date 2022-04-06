@@ -29,9 +29,12 @@ gql`
 export function Configuration({ conferenceId }: { conferenceId: string }): JSX.Element {
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                },
+                ["conference_Configuration"]
+            ),
         []
     );
     const [conferenceConfigurationsResult] = useConferenceConfiguration_GetConferenceConfigurationsQuery({

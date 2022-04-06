@@ -250,9 +250,12 @@ export function ConferenceProvider_WithUser({
 }): JSX.Element {
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.Attendee,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.Attendee,
+                },
+                ["conference_Subconference", "conference_Configuration"]
+            ),
         []
     );
     const [requestPolicy, setRequestPolicy] = useState<RequestPolicy | undefined>(undefined);

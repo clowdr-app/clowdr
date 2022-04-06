@@ -47,11 +47,14 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
     const { conferencePath, subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["content_ItemProgramPerson"]
+            ),
         [subconferenceId]
     );
     const [itemPeopleResponse] = useManageContent_SelectItemPeopleQuery({
@@ -140,11 +143,14 @@ function AddItemPersonBody({
     const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["collection_ProgramPerson"]
+            ),
         [subconferenceId]
     );
     const [peopleResponse] = useManageContent_SelectProgramPeopleQuery({

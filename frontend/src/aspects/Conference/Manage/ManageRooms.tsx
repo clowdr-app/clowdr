@@ -278,11 +278,14 @@ function RoomSecondaryEditor({
     const { conferencePath, subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["registrant_Group", "room_Room"]
+            ),
         [subconferenceId]
     );
     const [groups] = useManageRooms_SelectGroupsQuery({
@@ -600,11 +603,14 @@ function EditableRoomsCRUDTable() {
 
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["room_Room", "conference_Configuration", "room_RoomMembership"]
+            ),
         [subconferenceId]
     );
     const [externalRtmpEnabledResponse] = useGetIsExternalRtmpEnabledQuery({

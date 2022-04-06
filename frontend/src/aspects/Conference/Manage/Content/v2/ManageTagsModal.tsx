@@ -102,11 +102,14 @@ function ManageTagsModalBody(): JSX.Element {
     const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["collection_Tag"]
+            ),
         [subconferenceId]
     );
     const [tagsResponse] = useManageContent_SelectAllTagsQuery({

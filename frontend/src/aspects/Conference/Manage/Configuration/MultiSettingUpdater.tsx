@@ -50,9 +50,12 @@ export default function MultiSettingUpdater({
 }): JSX.Element {
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                },
+                ["conference_Configuration"]
+            ),
         []
     );
     const conference = useConference();

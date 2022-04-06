@@ -131,11 +131,14 @@ export default function ManageProgramPeople(): JSX.Element {
 
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["registrant_Registrant", "registrant_Profile", "registrant_Invitation", "collection_ProgramPerson"]
+            ),
         [subconferenceId]
     );
     const [{ data: registrantsData }] = useManageProgramPeople_SelectAllRegistrantsQuery({

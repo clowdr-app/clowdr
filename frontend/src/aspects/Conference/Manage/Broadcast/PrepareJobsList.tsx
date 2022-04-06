@@ -56,9 +56,12 @@ gql`
 export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Element {
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                },
+                ["job_queues_PrepareJob"]
+            ),
         []
     );
     const [jobs, getJobs] = useGetConferencePrepareJobsQuery({

@@ -50,9 +50,12 @@ gql`
 export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                },
+                ["room_Room"]
+            ),
         []
     );
     const [{ data, fetching: loading, error }, refetch] = useGetChannelStacksQuery({

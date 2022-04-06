@@ -170,9 +170,12 @@ export default function LivestreamMonitoring(): JSX.Element {
     const laterStr = useMemo(() => new Date(roundUpToNearest(now + 20 * 60 * 1000, 60 * 1000)).toISOString(), [now]);
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                },
+                []
+            ),
         []
     );
     const [response] = useMonitorLivestreamsQuery({
@@ -567,9 +570,12 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                },
+                []
+            ),
         []
     );
     const [roomChannelStackResponse] = useRoomPage_GetRoomChannelStackQuery({

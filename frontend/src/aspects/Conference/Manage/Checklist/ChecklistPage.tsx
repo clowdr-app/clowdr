@@ -421,11 +421,14 @@ export default function ChecklistPage(): JSX.Element {
     const now = useMemo(() => new Date().toISOString(), []);
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                []
+            ),
         [subconferenceId]
     );
     const [checklistResponse] = usePreshowChecklistQuery({

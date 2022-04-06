@@ -68,11 +68,14 @@ export function AllVideoElements(): JSX.Element {
     const { reset } = useContext(VideoDownloadContext);
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["content_Element"]
+            ),
         [subconferenceId]
     );
     const [result] = useDownloadVideos_GetAllVideosQuery({

@@ -306,11 +306,14 @@ export default function ManageContentV2(): JSX.Element {
 
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                []
+            ),
         [subconferenceId]
     );
     const tagsContext = useMemo(() => ({ ...context, additionalTypenames: ["content_ItemTag"] }), [context]);

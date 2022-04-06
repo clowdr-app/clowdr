@@ -16,11 +16,14 @@ export function EditElementInner(props: {
 }): JSX.Element {
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: props.element.subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: props.element.subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["content_Element"]
+            ),
         [props.element.subconferenceId]
     );
     const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation();

@@ -79,11 +79,14 @@ function ModerationList(): JSX.Element {
     const { subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["chat_Flag"]
+            ),
         [subconferenceId]
     );
     const [flagsResponse] = useManageModeration_SelectFlagsQuery({

@@ -135,11 +135,14 @@ function SecondaryEditorInner({
     const { conferencePath, subconferenceId } = useAuthParameters();
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["content_ItemExhibition"]
+            ),
         [subconferenceId]
     );
     const [itemExhibitionsResponse] = useManageContent_SelectItemExhibitionsQuery({

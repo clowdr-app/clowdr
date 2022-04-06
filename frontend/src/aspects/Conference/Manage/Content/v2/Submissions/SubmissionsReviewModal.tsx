@@ -90,11 +90,14 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
 
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["content_ItemProgramPerson", "content_Element"]
+            ),
         [subconferenceId]
     );
     const [itemsResponse] = useSubmissionsReviewModalDataQuery({

@@ -34,9 +34,12 @@ gql`
 export function EventVonageControls({ conferenceId }: { conferenceId: string }): JSX.Element {
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                },
+                []
+            ),
         []
     );
     const [{ data }] = useEventVonageControls_GetEventsQuery({

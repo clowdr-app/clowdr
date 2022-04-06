@@ -110,11 +110,14 @@ function ModalInner({
     const itemIds = useMemo(() => items.map((x) => x.id), [items]);
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: items[0]?.subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: items[0]?.subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                []
+            ),
         [items]
     );
     const [infos] = useSEoUm_InfosQuery({

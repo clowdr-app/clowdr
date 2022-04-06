@@ -145,9 +145,12 @@ export default function AnalyticsDashboard(): JSX.Element {
     const conference = useConference();
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                },
+                []
+            ),
         []
     );
     const [statsResponse] = useConferenceStatsQuery({

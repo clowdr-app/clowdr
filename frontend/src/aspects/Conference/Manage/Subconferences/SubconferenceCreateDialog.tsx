@@ -96,10 +96,13 @@ export function SubconferenceCreateDialog({ isOpen, onClose }: { isOpen: boolean
                     throw new Error("Missing subconference short name");
                 }
 
-                const context = makeContext({
-                    [AuthHeader.Role]: "conference-organizer",
-                    [AuthHeader.SubconferenceId]: undefined,
-                });
+                const context = makeContext(
+                    {
+                        [AuthHeader.Role]: "conference-organizer",
+                        [AuthHeader.SubconferenceId]: undefined,
+                    },
+                    ["conference_Subconference"]
+                );
                 const result = await createSubconference(
                     {
                         subconference: {

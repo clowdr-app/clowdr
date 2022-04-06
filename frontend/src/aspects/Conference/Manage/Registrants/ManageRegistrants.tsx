@@ -289,11 +289,14 @@ export default function ManageRegistrants(): JSX.Element {
 
     const context = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["registrant_Group", "conference_Subconference"]
+            ),
         [subconferenceId]
     );
     const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }] = useSelectAllGroupsQuery({
@@ -308,11 +311,14 @@ export default function ManageRegistrants(): JSX.Element {
 
     const selectAllRegistrantsContext = useMemo(
         () =>
-            makeContext({
-                [AuthHeader.Role]: subconferenceId
-                    ? HasuraRoleName.SubconferenceOrganizer
-                    : HasuraRoleName.ConferenceOrganizer,
-            }),
+            makeContext(
+                {
+                    [AuthHeader.Role]: subconferenceId
+                        ? HasuraRoleName.SubconferenceOrganizer
+                        : HasuraRoleName.ConferenceOrganizer,
+                },
+                ["registrant_Invitation", "registrant_GroupRegistrant", "registrant_SubconferenceMembership"]
+            ),
         [subconferenceId]
     );
     const [

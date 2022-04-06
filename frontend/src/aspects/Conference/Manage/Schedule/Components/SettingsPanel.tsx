@@ -325,7 +325,7 @@ function SessionSettingsPanel({
             sessionId: record.id,
         },
         context,
-        pause: record.modeName !== Schedule_Mode_Enum.Livestream,
+        pause: !record.id || record.modeName !== Schedule_Mode_Enum.Livestream,
         requestPolicy: "cache-and-network",
     });
     const autoPlayEvent = autoPlayEventResponse.data?.schedule_Event_by_pk;

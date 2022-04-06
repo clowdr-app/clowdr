@@ -151,7 +151,7 @@ export async function eventEnded(req: Request, res: Response, _next?: NextFuncti
                     ":" +
                     event.roomId +
                     "@" +
-                    event.scheduledEndTime.toISOString();
+                    new Date(event.scheduledEndTime).toISOString();
                 const redisClient = await redisClientPool.acquire("/http-handlers/chat/eventEnded");
                 try {
                     const systemIdsKey = `realtime:chat.${event.room.chatId}.recentSystemIdsSeen`;

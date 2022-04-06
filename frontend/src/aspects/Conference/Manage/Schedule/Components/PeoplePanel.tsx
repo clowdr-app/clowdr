@@ -361,7 +361,7 @@ function PeopleEditor({
                                 subconferenceId,
                                 search: searchTerm,
                             },
-                            context
+                            { ...context, requestPolicy: "cache-and-network" }
                         )
                         .toPromise();
                     if (result.data) {

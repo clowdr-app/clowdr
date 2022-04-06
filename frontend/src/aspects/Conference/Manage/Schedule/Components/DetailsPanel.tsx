@@ -24,6 +24,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { gql } from "urql";
 import {
     Content_ItemType_Enum,
+    Schedule_Mode_Enum,
     useManageSchedule_GetPresentationTimesQuery,
     useManageSchedule_GetTagsQuery,
 } from "../../../../../generated/graphql";
@@ -168,7 +169,17 @@ export default function DetailsPanel({
         if (startTimeHasChanged) {
             if (isSession) {
                 if (record.scheduledStartTime) {
-                    setStartTimeValidation("no error");
+                    if ("modeName" in record && record.modeName === Schedule_Mode_Enum.Livestream) {
+                        if (Date.parse(record.scheduledStartTime) - Date.now() < 20 * 60 * 1000) {
+                            setStartTimeValidation({
+                                error: "Live-stream sessions must be scheduled at least 20 minutes in advance.",
+                            });
+                        } else {
+                            setStartTimeValidation("no error");
+                        }
+                    } else {
+                        setStartTimeValidation("no error");
+                    }
                 } else {
                     setStartTimeValidation({ error: "A start date/time is required." });
                 }

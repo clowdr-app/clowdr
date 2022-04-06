@@ -243,9 +243,16 @@ gql`
         $eventPeople: [schedule_EventProgramPerson_insert_input!]!
         $eventPersonIds: [uuid!]!
         $shiftPresentationsByMinutes: Int!
+        $roomId: uuid!
     ) {
         update_schedule_Event_by_pk(pk_columns: { id: $id }, _set: $event) {
             id
+        }
+        updatedPresentations: update_schedule_Event(
+            where: { sessionEventId: { _eq: $id } }
+            _set: { roomId: $roomId }
+        ) {
+            affected_rows
         }
         delete_schedule_EventProgramPerson(where: { eventId: { _eq: $id }, id: { _nin: $eventPersonIds } }) {
             affected_rows
@@ -951,7 +958,11 @@ export default function ManageScheduleV2(): JSX.Element {
                 isOpen={editorDisclosure.isOpen}
                 onClose={editorDisclosure.onClose}
                 isCreate={editorIsCreate}
-                recordTypeName="Session"
+                recordTypeName={
+                    currentRecord && "sessionEventId" in currentRecord && currentRecord.sessionEventId
+                        ? "Presentation"
+                        : "Session"
+                }
                 steps={[
                     {
                         name: "Details",
@@ -1280,6 +1291,7 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                                     ManageSchedule_UpdateEventDocument,
                                     {
                                         id: record.id,
+                                        roomId: record.roomId,
                                         event: {
                                             name: record.name,
                                             scheduledStartTime: record.scheduledStartTime,

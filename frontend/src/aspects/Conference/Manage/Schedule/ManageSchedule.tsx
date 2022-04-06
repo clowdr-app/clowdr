@@ -253,9 +253,20 @@ gql`
         }
     }
 
-    mutation UpdateEventInfo($eventId: uuid!, $set: schedule_Event_set_input!, $shiftPresentationsByMinutes: Int!) {
+    mutation UpdateEventInfo(
+        $eventId: uuid!
+        $set: schedule_Event_set_input!
+        $shiftPresentationsByMinutes: Int!
+        $roomId: uuid!
+    ) {
         update_schedule_Event_by_pk(pk_columns: { id: $eventId }, _set: $set) {
             ...EventInfo
+        }
+        updatedPresentations: update_schedule_Event(
+            where: { sessionEventId: { _eq: $eventId } }
+            _set: { roomId: $roomId }
+        ) {
+            affected_rows
         }
         schedule_shiftPresentationTimes(args: { sessionId: $eventId, minutes: $shiftPresentationsByMinutes }) {
             id
@@ -1411,6 +1422,7 @@ function EditableScheduleTable(): JSX.Element {
                         eventId: record.id,
                         set,
                         shiftPresentationsByMinutes,
+                        roomId: record.roomId,
                     },
                     {
                         fetchOptions: {

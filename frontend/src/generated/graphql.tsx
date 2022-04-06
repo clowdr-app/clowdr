@@ -47488,6 +47488,7 @@ export type UpdateEventInfoMutationVariables = Exact<{
     eventId: Scalars["uuid"];
     set: Schedule_Event_Set_Input;
     shiftPresentationsByMinutes: Scalars["Int"];
+    roomId: Scalars["uuid"];
 }>;
 
 export type UpdateEventInfoMutation = {
@@ -47515,6 +47516,10 @@ export type UpdateEventInfoMutation = {
             readonly roleName: Schedule_EventProgramPersonRole_Enum;
             readonly personId: any;
         }>;
+    } | null;
+    readonly updatedPresentations?: {
+        readonly __typename?: "schedule_Event_mutation_response";
+        readonly affected_rows: number;
     } | null;
     readonly schedule_shiftPresentationTimes: ReadonlyArray<{
         readonly __typename?: "schedule_Event";
@@ -47817,11 +47822,16 @@ export type ManageSchedule_UpdateEventMutationVariables = Exact<{
     eventPeople: ReadonlyArray<Schedule_EventProgramPerson_Insert_Input> | Schedule_EventProgramPerson_Insert_Input;
     eventPersonIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
     shiftPresentationsByMinutes: Scalars["Int"];
+    roomId: Scalars["uuid"];
 }>;
 
 export type ManageSchedule_UpdateEventMutation = {
     readonly __typename?: "mutation_root";
     readonly update_schedule_Event_by_pk?: { readonly __typename?: "schedule_Event"; readonly id: any } | null;
+    readonly updatedPresentations?: {
+        readonly __typename?: "schedule_Event_mutation_response";
+        readonly affected_rows: number;
+    } | null;
     readonly delete_schedule_EventProgramPerson?: {
         readonly __typename?: "schedule_EventProgramPerson_mutation_response";
         readonly affected_rows: number;
@@ -57216,9 +57226,20 @@ export function useInsertEventInfoMutation() {
     return Urql.useMutation<InsertEventInfoMutation, InsertEventInfoMutationVariables>(InsertEventInfoDocument);
 }
 export const UpdateEventInfoDocument = gql`
-    mutation UpdateEventInfo($eventId: uuid!, $set: schedule_Event_set_input!, $shiftPresentationsByMinutes: Int!) {
+    mutation UpdateEventInfo(
+        $eventId: uuid!
+        $set: schedule_Event_set_input!
+        $shiftPresentationsByMinutes: Int!
+        $roomId: uuid!
+    ) {
         update_schedule_Event_by_pk(pk_columns: { id: $eventId }, _set: $set) {
             ...EventInfo
+        }
+        updatedPresentations: update_schedule_Event(
+            where: { sessionEventId: { _eq: $eventId } }
+            _set: { roomId: $roomId }
+        ) {
+            affected_rows
         }
         schedule_shiftPresentationTimes(args: { sessionId: $eventId, minutes: $shiftPresentationsByMinutes }) {
             id
@@ -57359,9 +57380,16 @@ export const ManageSchedule_UpdateEventDocument = gql`
         $eventPeople: [schedule_EventProgramPerson_insert_input!]!
         $eventPersonIds: [uuid!]!
         $shiftPresentationsByMinutes: Int!
+        $roomId: uuid!
     ) {
         update_schedule_Event_by_pk(pk_columns: { id: $id }, _set: $event) {
             id
+        }
+        updatedPresentations: update_schedule_Event(
+            where: { sessionEventId: { _eq: $id } }
+            _set: { roomId: $roomId }
+        ) {
+            affected_rows
         }
         delete_schedule_EventProgramPerson(where: { eventId: { _eq: $id }, id: { _nin: $eventPersonIds } }) {
             affected_rows

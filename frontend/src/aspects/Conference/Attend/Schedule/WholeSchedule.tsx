@@ -52,7 +52,7 @@ export default function WholeSchedule(): JSX.Element {
                     colorScheme="PrimaryActionButton"
                     w="100%"
                 >
-                    <TabList>
+                    <TabList overflowX="auto" overflowY="hidden" css={{ scrollbarWidth: "thin" }}>
                         <Tab>All</Tab>
                         <Tab>{conference.shortName}</Tab>
                         {sortedSubconferences.map((subconf) => (

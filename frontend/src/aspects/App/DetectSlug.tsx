@@ -12,7 +12,7 @@ import { makeContext } from "../GQL/make-context";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
-    query GetSlugForUrl($url: String!) @cached {
+    query GetSlugForUrl($url: String!) {
         getSlug(url: $url) {
             slug
         }

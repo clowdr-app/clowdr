@@ -52425,7 +52425,7 @@ export const RegistrantFieldsFragmentDoc = gql`
     }
 `;
 export const GetSlugForUrlDocument = gql`
-    query GetSlugForUrl($url: String!) @cached {
+    query GetSlugForUrl($url: String!) {
         getSlug(url: $url) {
             slug
         }

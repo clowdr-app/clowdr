@@ -165,17 +165,31 @@ function ErrorList({ errors }: { errors: any[] }): JSX.Element {
     return (
         <VStack spacing={4} alignItems="flex-start" mt={4}>
             {errors.map((error, idx) => {
-                const message = JSON.parse(error.message);
-                return (
-                    <Card
-                        key={idx}
-                        heading={message.errorString ?? message.error?.toString() ?? "Unknown error"}
-                        subHeading={message.data?.outputs[0]?.outputName ?? "For unknown output"}
-                        userSelect="text"
-                    >
-                        <Markdown>{"```json\n" + JSON.stringify(message.data, null, 2) + "\n```"}</Markdown>
-                    </Card>
-                );
+                try {
+                    const message = JSON.parse(error.message);
+                    return (
+                        <Card
+                            key={idx}
+                            heading={message.errorString ?? message.error?.toString() ?? "Unknown error"}
+                            subHeading={message.data?.outputs[0]?.outputName ?? "For unknown output"}
+                            userSelect="text"
+                        >
+                            <Markdown>{"```json\n" + JSON.stringify(message.data, null, 2) + "\n```"}</Markdown>
+                        </Card>
+                    );
+                } catch {
+                    const message: string = error.message;
+                    const newlineIdx = message.indexOf("\n");
+                    return (
+                        <Card
+                            key={idx}
+                            heading={newlineIdx >= 0 ? message.substring(0, newlineIdx) : message}
+                            userSelect="text"
+                        >
+                            <Markdown>{newlineIdx >= 0 ? message.substring(newlineIdx) : ""}</Markdown>
+                        </Card>
+                    );
+                }
             })}
         </VStack>
     );

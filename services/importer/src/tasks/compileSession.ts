@@ -14,23 +14,31 @@ export async function compileSession(jobId: string, fileIndex: number, sessionIn
     }
 
     let ok = false;
+    let errorMsg = "";
 
-    const entities = generateSessionEntities(
-        job.data[fileIndex].data.sessions[sessionIndex],
-        generateSessionRootOutputName(fileIndex, sessionIndex),
-        job.options,
-        {
-            conferenceId: job.conferenceId,
-            subconferenceId: job.subconferenceId,
-            createdBy: job.createdBy ?? undefined,
-            createdByLabel: "importer:" + (job.createdBy ?? "unknown"),
-        }
-    ).filter((x) => x.__typename);
-    const mergedEntities: Entity[] = mergeEntities(entities);
-    const sortedEntities = sortEntities(mergedEntities);
-    await applyEntities(sortedEntities, job);
+    let sortedEntities: Entity[] = [];
+    try {
+        const entities = generateSessionEntities(
+            job.data[fileIndex].data.sessions[sessionIndex],
+            generateSessionRootOutputName(fileIndex, sessionIndex),
+            job.options,
+            {
+                conferenceId: job.conferenceId,
+                subconferenceId: job.subconferenceId,
+                createdBy: job.createdBy ?? undefined,
+                createdByLabel: "importer:" + (job.createdBy ?? "unknown"),
+            }
+        ).filter((x) => x.__typename);
 
-    ok = true;
+        const mergedEntities: Entity[] = mergeEntities(entities);
+        sortedEntities = sortEntities(mergedEntities);
+        await applyEntities(sortedEntities, job);
+
+        ok = true;
+    } catch (e: any) {
+        ok = false;
+        errorMsg = e.message ?? e.toString();
+    }
 
     if (!ok) {
         logger.info({ jobId, fileIndex, sessionIndex }, "Failed to compile session");
@@ -38,7 +46,7 @@ export async function compileSession(jobId: string, fileIndex: number, sessionIn
             jobId,
             [
                 {
-                    message: `Failed to compile session: File: ${fileIndex}, Session: ${sessionIndex}`,
+                    message: `Failed to compile session: File: ${fileIndex}, Session: ${sessionIndex}.\n\n${errorMsg}`,
                 },
             ],
             true

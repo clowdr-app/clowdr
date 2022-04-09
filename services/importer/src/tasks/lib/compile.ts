@@ -198,6 +198,7 @@ export function generateSessionEntities(
     // Assign times to presentations
 
     const sessionStart = typeof session.event.start === "string" ? new Date(session.event.start) : session.event.start;
+    const sessionEnd = new Date(sessionStart.getTime() + session.event.duration * 60 * 1000);
     let presentationStartMs = sessionStart.getTime();
     let presentationsWithTimes: PresentationWithAllocatedTime[] = [];
     for (const presentation of session.presentations) {
@@ -222,6 +223,13 @@ export function generateSessionEntities(
     }
     // Drop presentations that were only for filling time (i.e. ones with no content type)
     presentationsWithTimes = presentationsWithTimes.filter((x) => x.content.type);
+    if (presentationStartMs > sessionEnd.getTime()) {
+        throw new Error(
+            `Presentations scheduled back to back exceed specified session time (session title: ${
+                session.content.title ?? "[No title]"
+            }; Internal identifier is ${rootOutputName}).`
+        );
+    }
 
     if (sessionHasExhibition) {
         // Generate session exhibition

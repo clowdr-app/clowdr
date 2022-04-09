@@ -13,21 +13,30 @@ export async function compileExhibition(jobId: string, fileIndex: number, exhibi
     }
 
     let ok = false;
+    let errorMsg = "";
 
-    const entities = generateRootExhibitionEntities(
-        job.data[fileIndex].data.exhibitions[exhibitionIndex],
-        generateExhibitionRootOutputName(fileIndex, exhibitionIndex),
-        job.options,
-        {
-            conferenceId: job.conferenceId,
-            subconferenceId: job.subconferenceId,
-            createdBy: job.createdBy ?? undefined,
-            createdByLabel: "importer:" + (job.createdBy ?? "unknown"),
-        }
-    ).filter((x) => x.__typename);
-    const mergedEntities: Entity[] = mergeEntities(entities);
-    const sortedEntities = sortEntities(mergedEntities);
-    await applyEntities(sortedEntities, job);
+    let sortedEntities: Entity[] = [];
+    try {
+        const entities = generateRootExhibitionEntities(
+            job.data[fileIndex].data.exhibitions[exhibitionIndex],
+            generateExhibitionRootOutputName(fileIndex, exhibitionIndex),
+            job.options,
+            {
+                conferenceId: job.conferenceId,
+                subconferenceId: job.subconferenceId,
+                createdBy: job.createdBy ?? undefined,
+                createdByLabel: "importer:" + (job.createdBy ?? "unknown"),
+            }
+        ).filter((x) => x.__typename);
+        const mergedEntities: Entity[] = mergeEntities(entities);
+        sortedEntities = sortEntities(mergedEntities);
+        await applyEntities(sortedEntities, job);
+
+        ok = true;
+    } catch (e: any) {
+        ok = false;
+        errorMsg = e.message ?? e.toString();
+    }
 
     ok = true;
 
@@ -37,7 +46,7 @@ export async function compileExhibition(jobId: string, fileIndex: number, exhibi
             jobId,
             [
                 {
-                    message: `Failed to compile exhibition: File: ${fileIndex}, Exhibition: ${exhibitionIndex}`,
+                    message: `Failed to compile exhibition: File: ${fileIndex}, Exhibition: ${exhibitionIndex}\n\n${errorMsg}`,
                 },
             ],
             true

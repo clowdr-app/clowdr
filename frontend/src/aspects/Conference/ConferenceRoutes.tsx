@@ -299,14 +299,14 @@ function ManageConferenceRoutes(): JSX.Element {
                 <Route path={`${path}/export`}>
                     <ManageExport />
                 </Route>
-                <Route path={`${path}/schedule`}>
-                    <ManageScheduleV2 />
-                </Route>
                 <Route path={`${path}/schedule/v2`}>
                     <ManageScheduleV2 />
                 </Route>
                 <Route path={`${path}/schedule/v1`}>
                     <ManageSchedule />
+                </Route>
+                <Route path={`${path}/schedule`}>
+                    <ManageScheduleV2 />
                 </Route>
                 {!subconferenceId ? (
                     <Route path={`${path}/chats/moderation`}>

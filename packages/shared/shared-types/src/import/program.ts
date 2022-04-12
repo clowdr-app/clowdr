@@ -31,8 +31,8 @@ export interface Chair {
 
 export interface Speaker {
     name: string;
-    affiliation: string;
-    email: string;
+    affiliation?: string;
+    email?: string;
 }
 
 export interface Author {

@@ -16,6 +16,7 @@ import { anyErrors } from "@midspace/shared-types/import/program";
 import React, { useEffect, useMemo, useState } from "react";
 import type { ParsedData } from "../../../../../Files/useCSVJSONXMLParser";
 import Step from "./Step";
+import { getUTCDateInstance } from "./Utilities";
 
 const interactionModes: Event<string>["interactionMode"][] = [
     "video-chat",
@@ -251,7 +252,7 @@ function processSessionEvent(record: RawRecord): ErrorAnnotation<WithErrors<Even
         try {
             if (record.sessionStart?.length) {
                 start = {
-                    value: new Date(record.sessionStart),
+                    value: getUTCDateInstance(record.sessionStart),
                 };
             }
         } catch (e: any) {

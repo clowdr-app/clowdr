@@ -37,6 +37,7 @@ import FAIcon from "../../../../../Chakra/FAIcon";
 import { Markdown } from "../../../../../Chakra/Markdown";
 import type { ParsedData } from "../../../../../Files/useCSVJSONXMLParser";
 import Step from "./Step";
+import { getUTCDateInstance } from "./Utilities";
 
 export default function ReviewDataStep({
     data,
@@ -170,7 +171,8 @@ function SessionCard({
     const [selection, setSelection] = useState<"session" | { index: number; type: "presentation" }>("session");
 
     const ref = useRef<HTMLDivElement | null>(null);
-    const start = typeof session.event.start === "string" ? new Date(session.event.start) : session.event.start;
+    const start =
+        typeof session.event.start === "string" ? getUTCDateInstance(session.event.start) : session.event.start;
 
     return (
         <HStack w="100%" minW="calc(800px + var(--chakra-space-4))" spacing={4} alignItems="flex-start">
@@ -528,7 +530,8 @@ function ExhibitionCard({
 }
 
 function SessionDetailsCard({ session }: { session: Session }): JSX.Element {
-    const start = typeof session.event.start === "string" ? new Date(session.event.start) : session.event.start;
+    const start =
+        typeof session.event.start === "string" ? getUTCDateInstance(session.event.start) : session.event.start;
 
     return (
         <Card

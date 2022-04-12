@@ -106,6 +106,8 @@ router.post(
             const result = await handleJoinEvent(req.log, body.input, req.userId, req.registrantIds);
             res.status(200).json(result);
         } catch (err: unknown) {
+            req.log.error({ error: err }, "Error in /joinEvent - User unable to join Vonage room for event.");
+
             if (err instanceof TypeGuardError) {
                 next(new BadRequestError("Invalid request", { originalError: err }));
             } else if (err instanceof Error) {
@@ -130,6 +132,8 @@ router.post(
             const result = await handleJoinRoom(req.log, body.input, req.registrantIds, req.roomIds, req.userId);
             res.status(200).json(result);
         } catch (err: unknown) {
+            req.log.error({ error: err }, "Error in /joinRoom - User unable to join Vonage room.");
+
             if (err instanceof TypeGuardError) {
                 next(new BadRequestError("Invalid request", { originalError: err }));
             } else if (err instanceof Error) {

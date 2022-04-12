@@ -478,6 +478,7 @@ export async function handleJoinEvent(
 
     if (
         result.data.schedule_Event_by_pk?.subconferenceId &&
+        result.data.registrant_Registrant_by_pk?.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
         !result.data.registrant_Registrant_by_pk?.subconferenceMemberships.some(
             (x) => x.subconferenceId === result.data.schedule_Event_by_pk?.subconferenceId
         )
@@ -660,6 +661,7 @@ export async function handleJoinRoom(
 
     if (
         roomInfo.data.room_Room_by_pk.subconferenceId &&
+        registrant.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
         !registrant.subconferenceMemberships.some(
             (x) => x.subconferenceId === roomInfo.data.room_Room_by_pk?.subconferenceId
         )

@@ -45,6 +45,10 @@ export async function handleEventUpdated(logger: P.Logger, payload: EventPayload
         return;
     }
 
+    if (!newRow.modeName) {
+        return;
+    }
+
     try {
         if (newRow && newRow.scheduledStartTime && newRow.scheduledEndTime) {
             await createEventStartTrigger(

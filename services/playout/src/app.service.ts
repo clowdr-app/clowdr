@@ -84,7 +84,7 @@ export interface BaseData {
 }
 
 export interface EventData extends BaseData {
-    modeName: Schedule_Mode_Enum;
+    modeName?: Schedule_Mode_Enum | null;
     name: string;
     scheduledEndTime: string | null;
     scheduledStartTime: string | null;

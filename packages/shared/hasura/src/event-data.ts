@@ -85,10 +85,10 @@ export interface CombineVideosJobData extends BaseData {
 }
 
 export interface EventData extends BaseData {
-    modeName: Schedule_Mode_Enum;
+    modeName?: Schedule_Mode_Enum | null;
     name: string;
-    scheduledEndTime: string | null;
-    scheduledStartTime: string | null;
+    scheduledEndTime?: string | null;
+    scheduledStartTime?: string | null;
     conferenceId: string;
     subconferenceId?: string | null | undefined;
     itemId: string | null;

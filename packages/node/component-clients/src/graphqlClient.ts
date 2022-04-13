@@ -1,5 +1,5 @@
 import type { Client } from "@urql/core";
-import { createClient, dedupExchange, fetchExchange, gql } from "@urql/core";
+import { createClient, fetchExchange, gql } from "@urql/core";
 import { retryExchange } from "@urql/exchange-retry";
 import fetch from "node-fetch";
 
@@ -21,7 +21,6 @@ if (process.env.GRAPHQL_API_DOMAIN && process.env.HASURA_ADMIN_SECRET) {
         // our long-running server nodes.
         requestPolicy: "network-only",
         exchanges: [
-            dedupExchange,
             retryExchange({
                 initialDelayMs: 500,
                 maxDelayMs: 5000,

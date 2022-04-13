@@ -1,7 +1,7 @@
 import { TabList, TabPanel, TabPanels, Tabs, Text, VStack } from "@chakra-ui/react";
 import type { DataWithValidation, RawRecord, ValidatedData } from "@midspace/shared-types/import/program";
 import type { ProgramImportOptions } from "@midspace/shared-types/import/programImportOptions";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import type { ImportJobFragment } from "../../../../../generated/graphql";
 import Card from "../../../../Card";
 import { Markdown } from "../../../../Chakra/Markdown";
@@ -167,10 +167,15 @@ function ErrorList({ errors }: { errors: any[] }): JSX.Element {
             {errors.map((error, idx) => {
                 try {
                     const message = JSON.parse(error.message);
+                    const errorString = message.errorString ?? message.error?.toString() ?? "Unknown error";
+                    if (errorString.includes("Unable to retrieve job output")) {
+                        return <Fragment key={idx}></Fragment>;
+                    }
+
                     return (
                         <Card
                             key={idx}
-                            heading={message.errorString ?? message.error?.toString() ?? "Unknown error"}
+                            heading={errorString}
                             subHeading={message.data?.outputs[0]?.outputName ?? "For unknown output"}
                             userSelect="text"
                         >

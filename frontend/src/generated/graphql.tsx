@@ -46792,6 +46792,7 @@ export type ManageSchedule_InsertRoomMutation = {
 
 export type ManageSchedule_GetVideoElementsQueryVariables = Exact<{
     sessionId: Scalars["uuid"];
+    sessionExists: Scalars["Boolean"];
     sessionItemId: Scalars["uuid"];
     sessionItemIdExists: Scalars["Boolean"];
 }>;
@@ -56789,7 +56790,12 @@ export function useManageSchedule_InsertRoomMutation() {
     );
 }
 export const ManageSchedule_GetVideoElementsDocument = gql`
-    query ManageSchedule_GetVideoElements($sessionId: uuid!, $sessionItemId: uuid!, $sessionItemIdExists: Boolean!) {
+    query ManageSchedule_GetVideoElements(
+        $sessionId: uuid!
+        $sessionExists: Boolean!
+        $sessionItemId: uuid!
+        $sessionItemIdExists: Boolean!
+    ) {
         content_Item_by_pk(id: $sessionItemId) @include(if: $sessionItemIdExists) {
             id
             title
@@ -56798,7 +56804,7 @@ export const ManageSchedule_GetVideoElementsDocument = gql`
                 name
             }
         }
-        schedule_Event_by_pk(id: $sessionId) {
+        schedule_Event_by_pk(id: $sessionId) @include(if: $sessionExists) {
             presentations {
                 item {
                     id

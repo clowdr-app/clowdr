@@ -97,7 +97,12 @@ gql`
         }
     }
 
-    query ManageSchedule_GetVideoElements($sessionId: uuid!, $sessionItemId: uuid!, $sessionItemIdExists: Boolean!) {
+    query ManageSchedule_GetVideoElements(
+        $sessionId: uuid!
+        $sessionExists: Boolean!
+        $sessionItemId: uuid!
+        $sessionItemIdExists: Boolean!
+    ) {
         content_Item_by_pk(id: $sessionItemId) @include(if: $sessionItemIdExists) {
             id
             title
@@ -107,7 +112,7 @@ gql`
             }
         }
 
-        schedule_Event_by_pk(id: $sessionId) {
+        schedule_Event_by_pk(id: $sessionId) @include(if: $sessionExists) {
             presentations {
                 item {
                     id

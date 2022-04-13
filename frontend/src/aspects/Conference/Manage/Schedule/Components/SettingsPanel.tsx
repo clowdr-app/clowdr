@@ -322,7 +322,8 @@ function SessionSettingsPanel({
 
     const [autoPlayEventResponse, refetchAutoPlayEvents] = useManageSchedule_GetVideoElementsQuery({
         variables: {
-            sessionId: record.id,
+            sessionId: record.id ?? "00000000-0000-0000-0000-000000000000",
+            sessionExists: Boolean(record.id),
             sessionItemId: record.itemId ?? record.item?.id ?? "00000000-0000-0000-0000-000000000000",
             sessionItemIdExists: Boolean(record.itemId ?? record.item?.id),
         },

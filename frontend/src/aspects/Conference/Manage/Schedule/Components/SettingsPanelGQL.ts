@@ -97,17 +97,17 @@ gql`
         }
     }
 
-    query ManageSchedule_GetVideoElements($sessionId: uuid!) {
-        schedule_Event_by_pk(id: $sessionId) {
-            item {
+    query ManageSchedule_GetVideoElements($sessionId: uuid!, $sessionItemId: uuid!, $sessionItemIdExists: Boolean!) {
+        content_Item_by_pk(id: $sessionItemId) @include(if: $sessionItemIdExists) {
+            id
+            title
+            elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
                 id
-                title
-                elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
-                    id
-                    name
-                }
+                name
             }
+        }
 
+        schedule_Event_by_pk(id: $sessionId) {
             presentations {
                 item {
                     id

@@ -46792,22 +46792,24 @@ export type ManageSchedule_InsertRoomMutation = {
 
 export type ManageSchedule_GetVideoElementsQueryVariables = Exact<{
     sessionId: Scalars["uuid"];
+    sessionItemId: Scalars["uuid"];
+    sessionItemIdExists: Scalars["Boolean"];
 }>;
 
 export type ManageSchedule_GetVideoElementsQuery = {
     readonly __typename?: "query_root";
+    readonly content_Item_by_pk?: {
+        readonly __typename?: "content_Item";
+        readonly id: any;
+        readonly title: string;
+        readonly elements: ReadonlyArray<{
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly name: string;
+        }>;
+    } | null;
     readonly schedule_Event_by_pk?: {
         readonly __typename?: "schedule_Event";
-        readonly item?: {
-            readonly __typename?: "content_Item";
-            readonly id: any;
-            readonly title: string;
-            readonly elements: ReadonlyArray<{
-                readonly __typename?: "content_Element";
-                readonly id: any;
-                readonly name: string;
-            }>;
-        } | null;
         readonly presentations: ReadonlyArray<{
             readonly __typename?: "schedule_Event";
             readonly item?: {
@@ -56787,16 +56789,16 @@ export function useManageSchedule_InsertRoomMutation() {
     );
 }
 export const ManageSchedule_GetVideoElementsDocument = gql`
-    query ManageSchedule_GetVideoElements($sessionId: uuid!) {
-        schedule_Event_by_pk(id: $sessionId) {
-            item {
+    query ManageSchedule_GetVideoElements($sessionId: uuid!, $sessionItemId: uuid!, $sessionItemIdExists: Boolean!) {
+        content_Item_by_pk(id: $sessionItemId) @include(if: $sessionItemIdExists) {
+            id
+            title
+            elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
                 id
-                title
-                elements(where: { typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST] } }) {
-                    id
-                    name
-                }
+                name
             }
+        }
+        schedule_Event_by_pk(id: $sessionId) {
             presentations {
                 item {
                     id

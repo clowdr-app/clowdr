@@ -323,43 +323,43 @@ function SessionSettingsPanel({
     const [autoPlayEventResponse, refetchAutoPlayEvents] = useManageSchedule_GetVideoElementsQuery({
         variables: {
             sessionId: record.id,
+            sessionItemId: record.itemId ?? record.item?.id ?? "00000000-0000-0000-0000-000000000000",
+            sessionItemIdExists: Boolean(record.itemId ?? record.item?.id),
         },
         context,
         pause: !record.id || record.modeName !== Schedule_Mode_Enum.Livestream,
         requestPolicy: "cache-and-network",
     });
     const autoPlayEvent = autoPlayEventResponse.data?.schedule_Event_by_pk;
+    const autoPlayContent = autoPlayEventResponse.data?.content_Item_by_pk;
     const autoPlayElementOptions = useMemo<
         {
             label: string;
             value: string;
         }[]
     >(
-        () =>
-            autoPlayEvent
-                ? [
-                      ...(autoPlayEvent.item
-                          ? autoPlayEvent.item.elements.map((x) => ({
-                                label: autoPlayEvent.item?.title + " - " + x.name,
-                                value: x.id,
-                            }))
-                          : []),
-                      ...autoPlayEvent.presentations.flatMap(
-                          (pres) =>
-                              pres.item?.elements.map((x) => ({
-                                  label: pres.item?.title + " - " + x.name,
-                                  value: x.id,
-                              })) ?? []
-                      ),
-                      ...(autoPlayEvent.exhibition?.items.flatMap((item) =>
-                          item.item.elements.map((x) => ({
-                              label: item.item.title + " - " + x.name,
-                              value: x.id,
-                          }))
-                      ) ?? []),
-                  ]
-                : [],
-        [autoPlayEvent]
+        () => [
+            ...(autoPlayContent
+                ? autoPlayContent.elements.map((x) => ({
+                      label: autoPlayContent?.title + " - " + x.name,
+                      value: x.id,
+                  }))
+                : []),
+            ...(autoPlayEvent?.presentations.flatMap(
+                (pres) =>
+                    pres.item?.elements.map((x) => ({
+                        label: pres.item?.title + " - " + x.name,
+                        value: x.id,
+                    })) ?? []
+            ) ?? []),
+            ...(autoPlayEvent?.exhibition?.items.flatMap((item) =>
+                item.item.elements.map((x) => ({
+                    label: item.item.title + " - " + x.name,
+                    value: x.id,
+                }))
+            ) ?? []),
+        ],
+        [autoPlayContent, autoPlayEvent?.exhibition?.items, autoPlayEvent?.presentations]
     );
     useEffect(() => {
         if (record.modeName === Schedule_Mode_Enum.Livestream) {

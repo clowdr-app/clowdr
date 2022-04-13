@@ -818,7 +818,7 @@ function RoomInner({
                 </Flex>
 
                 {playerEl ??
-                    (!showDefaultVideoChatRoom && roomDetails.isStreamingProgramRoom ? (
+                    (!showDefaultVideoChatRoom && roomDetails.isStreamingProgramRoom && !showBackstage ? (
                         <Text h="100%" p={4} fontSize="xl">
                             There is not currently a live event in this room. The live-stream video will appear here
                             when the next event starts.

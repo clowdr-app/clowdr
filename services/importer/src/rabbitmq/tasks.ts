@@ -67,16 +67,14 @@ export async function publishTask(task: Task): Promise<boolean> {
 
 export async function onTask(handler: (rabbitMQMsg: ConsumeMessage, task: Task) => Promise<void>): Promise<void> {
     const channel = await tasksDownChannel();
-    channel.consume(tasksQueue, (rabbitMQMsg) => {
+    channel.consume(tasksQueue, async (rabbitMQMsg) => {
         try {
             if (rabbitMQMsg) {
                 // Do not ack until the task has been successfully executed
 
                 const message = JSON.parse(rabbitMQMsg.content.toString());
                 if (is<Task>(message)) {
-                    setTimeout(() => {
-                        handler(rabbitMQMsg, message);
-                    }, 20);
+                    await handler(rabbitMQMsg, message);
                 } else {
                     logger.warn({ message }, "Invalid task received. Data does not match type.");
                     // Ack invalid messages to remove them from the queue

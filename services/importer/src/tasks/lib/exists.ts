@@ -184,7 +184,7 @@ export async function entityExists(
                             conferenceId: { _eq: data.value.conferenceId },
                             subconferenceId: data.value.subconferenceId
                                 ? { _eq: data.value.subconferenceId }
-                                : undefined,
+                                : { _is_null: true },
                             name: { _eq: data.value.name },
                         },
                     })
@@ -232,7 +232,7 @@ export async function entityExists(
                                 conferenceId: { _eq: data.value.conferenceId },
                                 subconferenceId: data.value.subconferenceId
                                     ? { _eq: data.value.subconferenceId }
-                                    : undefined,
+                                    : { _is_null: true },
                                 name: { _eq: data.value.name },
                             },
                         }
@@ -289,7 +289,7 @@ export async function entityExists(
                                 conferenceId: { _eq: data.value.conferenceId },
                                 subconferenceId: data.value.subconferenceId
                                     ? { _eq: data.value.subconferenceId }
-                                    : undefined,
+                                    : { _is_null: true },
                                 name: { _eq: data.value.name },
                             },
                         }
@@ -338,7 +338,7 @@ export async function entityExists(
                                 conferenceId: { _eq: data.value.conferenceId },
                                 subconferenceId: data.value.subconferenceId
                                     ? { _eq: data.value.subconferenceId }
-                                    : undefined,
+                                    : { _is_null: true },
                                 name: { _eq: data.value.name },
                                 ...(data.value.affiliation
                                     ? {
@@ -426,7 +426,7 @@ export async function entityExists(
                                 conferenceId: { _eq: data.value.conferenceId },
                                 subconferenceId: data.value.subconferenceId
                                     ? { _eq: data.value.subconferenceId }
-                                    : undefined,
+                                    : { _is_null: true },
                                 name: { _eq: data.value.name },
                             },
                         }
@@ -454,7 +454,7 @@ export async function entityExists(
                                 conferenceId: { _eq: data.value.conferenceId },
                                 subconferenceId: data.value.subconferenceId
                                     ? { _eq: data.value.subconferenceId }
-                                    : undefined,
+                                    : { _is_null: true },
                                 title: { _eq: data.value.title },
                             },
                         }
@@ -597,7 +597,7 @@ export async function entityExists(
                                 conferenceId: { _eq: data.value.conferenceId },
                                 subconferenceId: data.value.subconferenceId
                                     ? { _eq: data.value.subconferenceId }
-                                    : undefined,
+                                    : { _is_null: true },
                                 itemId: { _eq: data.value.itemId },
                                 name: { _eq: data.value.name },
                             },
@@ -639,7 +639,7 @@ export async function entityExists(
                                     conferenceId: { _eq: data.value.conferenceId },
                                     subconferenceId: data.value.subconferenceId
                                         ? { _eq: data.value.subconferenceId }
-                                        : undefined,
+                                        : { _is_null: true },
                                     sessionEventId: sessionEventId ? { _eq: sessionEventId } : { _is_null: true },
 
                                     _or: [
@@ -755,7 +755,7 @@ export async function entityExists(
                                     conferenceId: { _eq: data.value.conferenceId },
                                     subconferenceId: data.value.subconferenceId
                                         ? { _eq: data.value.subconferenceId }
-                                        : undefined,
+                                        : { _is_null: true },
                                     sessionEventId: sessionEventId ? { _eq: sessionEventId } : { _is_null: true },
 
                                     // Same name, also unscheduled and same room

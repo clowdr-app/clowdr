@@ -12,6 +12,7 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
+    _uuid: any;
     bigint: any;
     float8: any;
     jsonb: any;
@@ -6990,6 +6991,7 @@ export type Collection_Tag_Variance_Order_By = {
 export type Collection_SearchProgramPerson_Args = {
     conferenceid?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+    subconferenceid?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -16135,6 +16137,10 @@ export type Mutation_Root = {
     notifyEventStarted: NotifyEventStarted;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
+    /** execute VOLATILE function "schedule.shiftPresentationTimes" which returns "schedule.Event" */
+    schedule_shiftPresentationTimes: Array<Schedule_Event>;
+    /** execute VOLATILE function "schedule.shiftTimes" which returns "schedule.Event" */
+    schedule_shiftTimes: Array<Schedule_Event>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
@@ -18829,6 +18835,26 @@ export type Mutation_RootNotifyEventStartedArgs = {
 export type Mutation_RootRefreshYouTubeDataArgs = {
     registrantGoogleAccountId: Scalars["uuid"];
     registrantId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftPresentationTimesArgs = {
+    args: Schedule_ShiftPresentationTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftTimesArgs = {
+    args: Schedule_ShiftTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** mutation root */
@@ -30808,6 +30834,16 @@ export type Schedule_SearchEvents_Args = {
     search?: InputMaybe<Scalars["String"]>;
 };
 
+export type Schedule_ShiftPresentationTimes_Args = {
+    minutes?: InputMaybe<Scalars["Int"]>;
+    sessionId?: InputMaybe<Scalars["uuid"]>;
+};
+
+export type Schedule_ShiftTimes_Args = {
+    eventIds?: InputMaybe<Scalars["_uuid"]>;
+    minutes?: InputMaybe<Scalars["Int"]>;
+};
+
 /** columns and relationships of "sponsor.Tier" */
 export type Sponsor_Tier = {
     __typename?: "sponsor_Tier";
@@ -39189,6 +39225,15 @@ export enum Video_YouTubeUpload_Update_Column {
     VideoTitle = "videoTitle",
 }
 
+export type FindExistingDefaultRoomsQueryVariables = Exact<{
+    where: Room_Room_Bool_Exp;
+}>;
+
+export type FindExistingDefaultRoomsQuery = {
+    __typename?: "query_root";
+    room_Room: Array<{ __typename?: "room_Room"; id: any; name: string }>;
+};
+
 export type InitializeJobMutationVariables = Exact<{
     id: Scalars["uuid"];
 }>;
@@ -39761,6 +39806,49 @@ export const ImportJobFragmentDoc = {
                     { kind: "Field", name: { kind: "Name", value: "errors" } },
                     { kind: "Field", name: { kind: "Name", value: "progress" } },
                     { kind: "Field", name: { kind: "Name", value: "progressMaximum" } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const FindExistingDefaultRoomsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "FindExistingDefaultRooms" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "where" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "room_Room_bool_exp" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "where" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "name" } },
+                            ],
+                        },
+                    },
                 ],
             },
         },

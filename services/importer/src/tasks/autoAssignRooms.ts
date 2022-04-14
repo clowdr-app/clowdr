@@ -71,7 +71,7 @@ export async function autoAssignRoomsTask(jobId: string): Promise<boolean> {
         logger.info({ sortedSessions }, "Assigning rooms to sessions");
 
         const roomEndTimes: number[] = [];
-        for (let idx = 1; idx < sortedSessions.length; idx++) {
+        for (let idx = 0; idx < sortedSessions.length; idx++) {
             const session = sortedSessions[idx];
             const start = toMilliseconds(session.event.start);
 

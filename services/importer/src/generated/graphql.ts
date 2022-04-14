@@ -39605,7 +39605,22 @@ export type UpdateJobMutationVariables = Exact<{
 
 export type UpdateJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_ImportJob_by_pk?: { __typename?: "job_queues_ImportJob"; id: any } | null;
+    update_job_queues_ImportJob_by_pk?: {
+        __typename?: "job_queues_ImportJob";
+        id: any;
+        created_at: any;
+        updated_at: any;
+        status: string;
+        data: any;
+        options: any;
+        createdBy?: any | null;
+        completed_at?: any | null;
+        conferenceId: any;
+        subconferenceId?: any | null;
+        errors?: any | null;
+        progress: number;
+        progressMaximum: number;
+    } | null;
 };
 
 export type IncreaseJobProgressMutationVariables = Exact<{
@@ -41301,12 +41316,13 @@ export const UpdateJobDocument = {
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ImportJob" } }],
                         },
                     },
                 ],
             },
         },
+        ...ImportJobFragmentDoc.definitions,
     ],
 } as unknown as DocumentNode;
 export const IncreaseJobProgressDocument = {

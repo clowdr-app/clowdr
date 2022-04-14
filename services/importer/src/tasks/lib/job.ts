@@ -7,6 +7,7 @@ import type {
     GetJobOutputQueryVariables,
     GetJobQuery,
     GetJobQueryVariables,
+    ImportJobFragment,
     IncreaseJobProgressMutation,
     IncreaseJobProgressMutationVariables,
     Job_Queues_ImportJob_Set_Input,
@@ -49,7 +50,22 @@ gql`
     }
 `;
 
-export async function getJob(jobId: string): Promise<ImportJob> {
+const localJobCache = new Map<string, { fetchedAt: number; value: ImportJobFragment }>();
+export async function getJob(jobId: string, ignoreCache = false): Promise<ImportJob> {
+    for (const key of localJobCache.keys()) {
+        const job = localJobCache.get(key);
+        if (job) {
+            if (Date.now() - job.fetchedAt > 20 * 60 * 1000) {
+                localJobCache.delete(key);
+            }
+        }
+    }
+
+    const cachedJob = localJobCache.get(jobId);
+    if (!ignoreCache && cachedJob) {
+        return cachedJob.value;
+    }
+
     const response = await gqlClient
         ?.query<GetJobQuery, GetJobQueryVariables>(GetJobDocument, {
             jobId,
@@ -62,6 +78,7 @@ export async function getJob(jobId: string): Promise<ImportJob> {
     if (!job) {
         throw new Error("Unable to retrieve job");
     }
+    localJobCache.set(jobId, { fetchedAt: Date.now(), value: job });
     return job;
 }
 
@@ -95,7 +112,7 @@ export async function getJobOutput(jobId: string, name: string): Promise<ImportO
 gql`
     mutation UpdateJob($jobId: uuid!, $update: job_queues_ImportJob_set_input!) {
         update_job_queues_ImportJob_by_pk(pk_columns: { id: $jobId }, _set: $update) {
-            id
+            ...ImportJob
         }
     }
 `;
@@ -109,6 +126,9 @@ export async function updateJob(jobId: string, update: Job_Queues_ImportJob_Set_
         .toPromise();
     if (response?.error) {
         throw response.error;
+    }
+    if (localJobCache.has(jobId) && response?.data?.update_job_queues_ImportJob_by_pk) {
+        localJobCache.set(jobId, { fetchedAt: Date.now(), value: response.data.update_job_queues_ImportJob_by_pk });
     }
 }
 
@@ -124,6 +144,7 @@ export async function completeJob(jobId: string): Promise<void> {
     if (response?.error) {
         throw response.error;
     }
+    localJobCache.delete(jobId);
 }
 
 gql`
@@ -148,6 +169,11 @@ export async function increaseJobProgress(jobId: string, increase: number): Prom
     }
     if (result?.data?.update_job_queues_ImportJob_by_pk) {
         const data = result.data.update_job_queues_ImportJob_by_pk;
+        const cachedJob = localJobCache.get(jobId);
+        if (cachedJob) {
+            cachedJob.value.progress = data.progress;
+            cachedJob.value.progressMaximum = data.progressMaximum;
+        }
         return data.progress >= data.progressMaximum;
     } else {
         throw new Error("Unable to update job progress");
@@ -177,6 +203,7 @@ export async function appendJobErrors(jobId: string, errors: ImportErrors, markC
     if (response?.error) {
         throw response.error;
     }
+    localJobCache.delete(jobId);
 }
 
 gql`
@@ -214,6 +241,11 @@ export async function updateJobProgressAndOutputs(jobId: string, outputs: Import
     }
     if (result?.data?.update_job_queues_ImportJob_by_pk) {
         const data = result.data.update_job_queues_ImportJob_by_pk;
+        const cachedJob = localJobCache.get(jobId);
+        if (cachedJob) {
+            cachedJob.value.progress = data.progress;
+            cachedJob.value.progressMaximum = data.progressMaximum;
+        }
         return data.progress >= data.progressMaximum;
     } else {
         throw new Error("Unable to update job progress and outputs");

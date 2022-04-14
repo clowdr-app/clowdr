@@ -18,7 +18,7 @@ gql`
 `;
 
 export async function autoAssignRoomsTask(jobId: string): Promise<boolean> {
-    const job = await getJob(jobId);
+    const job = await getJob(jobId, true);
     if (job.completed_at) {
         // Ignore completed jobs
         return true;

@@ -6,6 +6,7 @@ import type { ImportJobFragment } from "../../../../../generated/graphql";
 import Card from "../../../../Card";
 import { Markdown } from "../../../../Chakra/Markdown";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
+import extractActualError from "../../../../GQL/ExtractActualError";
 import FixIssuesStep from "./Steps/FixIssuesStep";
 import ReviewDataStep from "./Steps/ReviewDataStep";
 import SelectFileStep from "./Steps/SelectFileStep";
@@ -167,7 +168,11 @@ function ErrorList({ errors }: { errors: any[] }): JSX.Element {
             {errors.map((error, idx) => {
                 try {
                     const message = JSON.parse(error.message);
-                    const errorString = message.errorString ?? message.error?.toString() ?? "Unknown error";
+                    const errorString =
+                        (typeof message.error === "object" ? extractActualError(message.error) : undefined) ??
+                        message.errorString ??
+                        message.error?.toString() ??
+                        "Unknown error";
                     if (errorString.includes("Unable to retrieve job output")) {
                         return <Fragment key={idx}></Fragment>;
                     }

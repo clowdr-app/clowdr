@@ -16,15 +16,15 @@ import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
 import type {
-    ManageSchedule_DeleteEventsAndContentMutation,
-    ManageSchedule_DeleteEventsAndContentMutationVariables,
+    ManageSchedule_DeleteContentMutation,
+    ManageSchedule_DeleteContentMutationVariables,
     ManageSchedule_DeleteEventsMutation,
     ManageSchedule_DeleteEventsMutationVariables,
     ManageSchedule_GetContentIdsQuery,
     ManageSchedule_GetContentIdsQueryVariables,
 } from "../../../../../generated/graphql";
 import {
-    ManageSchedule_DeleteEventsAndContentDocument,
+    ManageSchedule_DeleteContentDocument,
     ManageSchedule_DeleteEventsDocument,
     ManageSchedule_GetContentIdsDocument,
 } from "../../../../../generated/graphql";
@@ -40,10 +40,7 @@ gql`
         }
     }
 
-    mutation ManageSchedule_DeleteEventsAndContent($eventIds: [uuid!]!, $itemIds: [uuid!]!) {
-        delete_schedule_Event(where: { id: { _in: $eventIds } }) {
-            affected_rows
-        }
+    mutation ManageSchedule_DeleteContent($itemIds: [uuid!]!) {
         delete_content_Item(where: { id: { _in: $itemIds } }) {
             affected_rows
         }
@@ -144,14 +141,24 @@ function DeleteModalInner({
                         .flatMap((x) => [x.itemId, ...x.presentations.map((y) => y.itemId)])
                         .filter((x) => !!x) ?? []) as string[];
 
-                    const response = await client
-                        .mutation<
-                            ManageSchedule_DeleteEventsAndContentMutation,
-                            ManageSchedule_DeleteEventsAndContentMutationVariables
-                        >(
-                            ManageSchedule_DeleteEventsAndContentDocument,
+                    const response2 = await client
+                        .mutation<ManageSchedule_DeleteEventsMutation, ManageSchedule_DeleteEventsMutationVariables>(
+                            ManageSchedule_DeleteEventsDocument,
                             {
-                                eventIds: deleteEventIds,
+                                ids: deleteEventIds,
+                            },
+                            context
+                        )
+                        .toPromise();
+
+                    if (response2.error) {
+                        throw extractActualError(response2.error) ?? "Unknown error deleting events.";
+                    }
+
+                    const response = await client
+                        .mutation<ManageSchedule_DeleteContentMutation, ManageSchedule_DeleteContentMutationVariables>(
+                            ManageSchedule_DeleteContentDocument,
+                            {
                                 itemIds,
                             },
                             context

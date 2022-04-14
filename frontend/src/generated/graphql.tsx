@@ -46481,17 +46481,12 @@ export type ManageSchedule_DeleteEventsMutation = {
     } | null;
 };
 
-export type ManageSchedule_DeleteEventsAndContentMutationVariables = Exact<{
-    eventIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
+export type ManageSchedule_DeleteContentMutationVariables = Exact<{
     itemIds: ReadonlyArray<Scalars["uuid"]> | Scalars["uuid"];
 }>;
 
-export type ManageSchedule_DeleteEventsAndContentMutation = {
+export type ManageSchedule_DeleteContentMutation = {
     readonly __typename?: "mutation_root";
-    readonly delete_schedule_Event?: {
-        readonly __typename?: "schedule_Event_mutation_response";
-        readonly affected_rows: number;
-    } | null;
     readonly delete_content_Item?: {
         readonly __typename?: "content_Item_mutation_response";
         readonly affected_rows: number;
@@ -56534,22 +56529,18 @@ export function useManageSchedule_DeleteEventsMutation() {
         ManageSchedule_DeleteEventsDocument
     );
 }
-export const ManageSchedule_DeleteEventsAndContentDocument = gql`
-    mutation ManageSchedule_DeleteEventsAndContent($eventIds: [uuid!]!, $itemIds: [uuid!]!) {
-        delete_schedule_Event(where: { id: { _in: $eventIds } }) {
-            affected_rows
-        }
+export const ManageSchedule_DeleteContentDocument = gql`
+    mutation ManageSchedule_DeleteContent($itemIds: [uuid!]!) {
         delete_content_Item(where: { id: { _in: $itemIds } }) {
             affected_rows
         }
     }
 `;
 
-export function useManageSchedule_DeleteEventsAndContentMutation() {
-    return Urql.useMutation<
-        ManageSchedule_DeleteEventsAndContentMutation,
-        ManageSchedule_DeleteEventsAndContentMutationVariables
-    >(ManageSchedule_DeleteEventsAndContentDocument);
+export function useManageSchedule_DeleteContentMutation() {
+    return Urql.useMutation<ManageSchedule_DeleteContentMutation, ManageSchedule_DeleteContentMutationVariables>(
+        ManageSchedule_DeleteContentDocument
+    );
 }
 export const ManageSchedule_GetContentIdsDocument = gql`
     query ManageSchedule_GetContentIds($eventIds: [uuid!]!) {

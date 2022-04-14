@@ -92,7 +92,25 @@ gql`
     }
 `;
 
-export async function getJobOutput(jobId: string, name: string): Promise<ImportOutput> {
+const localJobOutputCache = new Map<string, { fetchedAt: number; value: ImportOutput }>();
+export function clearLocalJobOutputCache() {
+    localJobOutputCache.clear();
+}
+export async function getJobOutput(jobId: string, name: string, ignoreCache = false): Promise<ImportOutput> {
+    for (const key of localJobOutputCache.keys()) {
+        const job = localJobOutputCache.get(key);
+        if (job) {
+            if (Date.now() - job.fetchedAt > 20 * 60 * 1000) {
+                localJobOutputCache.delete(key);
+            }
+        }
+    }
+
+    const cachedJobOutput = localJobOutputCache.get(jobId + "::" + name);
+    if (!ignoreCache && cachedJobOutput) {
+        return cachedJobOutput.value;
+    }
+
     const response = await gqlClient
         ?.query<GetJobOutputQuery, GetJobOutputQueryVariables>(GetJobOutputDocument, {
             jobId,
@@ -106,6 +124,9 @@ export async function getJobOutput(jobId: string, name: string): Promise<ImportO
     if (!jobOutput) {
         throw new Error(`Unable to retrieve job output: ${name}`);
     }
+
+    localJobOutputCache.set(jobId + "::" + name, { fetchedAt: Date.now(), value: jobOutput });
+
     return jobOutput;
 }
 
@@ -246,6 +267,11 @@ export async function updateJobProgressAndOutputs(jobId: string, outputs: Import
             cachedJob.value.progress = data.progress;
             cachedJob.value.progressMaximum = data.progressMaximum;
         }
+
+        for (const output of outputs) {
+            localJobOutputCache.set(jobId + "::" + output.name, { fetchedAt: Date.now(), value: output });
+        }
+
         return data.progress >= data.progressMaximum;
     } else {
         throw new Error("Unable to update job progress and outputs");

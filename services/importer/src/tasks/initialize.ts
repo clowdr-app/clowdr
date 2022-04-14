@@ -3,6 +3,7 @@ import { gql } from "graphql-tag";
 import type { InitializeJobMutation, InitializeJobMutationVariables } from "../generated/graphql";
 import { InitializeJobDocument } from "../generated/graphql";
 import { publishTask } from "../rabbitmq/tasks";
+import { clearLocalJobOutputCache } from "./lib/job";
 
 gql`
     mutation InitializeJob($id: uuid!) {
@@ -19,6 +20,8 @@ gql`
 `;
 
 export async function initializeTask(jobId: string): Promise<boolean> {
+    clearLocalJobOutputCache();
+
     await publishTask({
         type: "assign_rooms",
         jobId,

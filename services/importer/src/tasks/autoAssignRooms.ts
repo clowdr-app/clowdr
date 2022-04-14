@@ -2,11 +2,8 @@ import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import type { Session } from "@midspace/shared-types/import/program";
 import { gql } from "@urql/core";
 import * as R from "ramda";
-import {
-    FindExistingDefaultRoomsDocument,
-    FindExistingDefaultRoomsQuery,
-    FindExistingDefaultRoomsQueryVariables,
-} from "../generated/graphql";
+import type { FindExistingDefaultRoomsQuery, FindExistingDefaultRoomsQueryVariables } from "../generated/graphql";
+import { FindExistingDefaultRoomsDocument } from "../generated/graphql";
 import { logger } from "../logger";
 import { publishTask } from "../rabbitmq/tasks";
 import { getJob, updateJob } from "./lib/job";
@@ -71,23 +68,30 @@ export async function autoAssignRoomsTask(jobId: string): Promise<boolean> {
     );
 
     if (sortedSessions.length > 0) {
-        let roomNumber = defaultRoomMaxNumber + 1;
-
         logger.info({ sortedSessions }, "Assigning rooms to sessions");
-        let end = toMilliseconds(sortedSessions[0].event.start) + sortedSessions[0].event.duration * 60 * 1000;
 
-        sortedSessions[0].event.roomName = `Auditorium ${roomNumber}`;
-
+        const roomEndTimes: number[] = [];
         for (let idx = 1; idx < sortedSessions.length; idx++) {
             const session = sortedSessions[idx];
             const start = toMilliseconds(session.event.start);
-            if (start < end) {
-                roomNumber++;
-            } else {
-                roomNumber = defaultRoomMaxNumber + 1;
+
+            let nextEndingRoomIndex = findIndexOfLowest(roomEndTimes);
+            while (nextEndingRoomIndex !== undefined) {
+                const end = roomEndTimes[nextEndingRoomIndex];
+                if (start >= end) {
+                    roomEndTimes[nextEndingRoomIndex] = Number.POSITIVE_INFINITY;
+                } else {
+                    break;
+                }
+
+                nextEndingRoomIndex = findIndexOfLowest(roomEndTimes);
             }
+
+            const roomNumber =
+                insertAtFirstInfinityOrEnd(roomEndTimes, start + session.event.duration * 60 * 1000) +
+                1 +
+                defaultRoomMaxNumber;
             session.event.roomName = `Auditorium ${roomNumber}`;
-            end = Math.max(end, start + session.event.duration * 60 * 1000);
         }
     }
 
@@ -106,6 +110,29 @@ export async function autoAssignRoomsTask(jobId: string): Promise<boolean> {
     });
 
     return true;
+}
+
+function findIndexOfLowest(arr: number[]): number | undefined {
+    let lowest = Number.POSITIVE_INFINITY;
+    let result: number | undefined;
+    for (let index = 0; index < arr.length; index++) {
+        if (arr[index] < lowest) {
+            lowest = arr[index];
+            result = index;
+        }
+    }
+    return result;
+}
+
+function insertAtFirstInfinityOrEnd(arr: number[], value: number): number {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === Number.POSITIVE_INFINITY) {
+            arr[i] = value;
+            return i;
+        }
+    }
+    arr.push(value);
+    return arr.length - 1;
 }
 
 function hasNoAssignedRoomOrIsDefaultRoom(session: Session) {

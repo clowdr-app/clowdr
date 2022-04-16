@@ -193,7 +193,7 @@ function ErrorList({ errors }: { errors: any[] }): JSX.Element {
 
                         return (
                             <Card key={idx} heading={heading} subHeading={subheading} userSelect="text">
-                                {body}
+                                <Text>{body}</Text>
                             </Card>
                         );
                     } else {

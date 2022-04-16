@@ -168,25 +168,55 @@ function ErrorList({ errors }: { errors: any[] }): JSX.Element {
             {errors.map((error, idx) => {
                 try {
                     const message = JSON.parse(error.message);
-                    const errorString =
-                        (typeof message.error === "object" ? extractActualError(message.error) : undefined) ??
-                        message.errorString ??
-                        message.error?.toString() ??
-                        "Unknown error";
-                    if (errorString.includes("Unable to retrieve job output")) {
-                        return <Fragment key={idx}></Fragment>;
-                    }
+                    if (message.name === "TypeGuardError") {
+                        const heading = "Import data does not match required format.";
 
-                    return (
-                        <Card
-                            key={idx}
-                            heading={errorString}
-                            subHeading={message.data?.outputs[0]?.outputName ?? "For unknown output"}
-                            userSelect="text"
-                        >
-                            <Markdown>{"```json\n" + JSON.stringify(message.data, null, 2) + "\n```"}</Markdown>
-                        </Card>
-                    );
+                        const fileIndex = parseInt(message.path[5].substring(1, message.path[5].length - 1), 10);
+                        const isSession = message.path[7] === "sessions";
+                        const sessionIndex = parseInt(message.path[8].substring(1, message.path[8].length - 1), 10);
+                        const subheading = `File ${fileIndex}, ${isSession ? "Session" : "Exhibition"} ${sessionIndex}`;
+
+                        const body =
+                            message.path[9] === "event" || message.path[9] === "content"
+                                ? `The issue is with the following ${isSession ? "session" : "exhibition"} column: ${(
+                                      message.path as string[]
+                                  )
+                                      .slice(10)
+                                      .reduce((acc, x) => `${acc} → ${x}`, "")
+                                      .substring(3)}`
+                                : `The issue is with the following ${isSession ? "presentation" : "item"}: ${(
+                                      message.path as string[]
+                                  )
+                                      .slice(10)
+                                      .reduce((acc, x) => `${acc} → ${x}`, "")
+                                      .substring(3)}`;
+
+                        return (
+                            <Card key={idx} heading={heading} subHeading={subheading} userSelect="text">
+                                {body}
+                            </Card>
+                        );
+                    } else {
+                        const errorString =
+                            (typeof message.error === "object" ? extractActualError(message.error) : undefined) ??
+                            message.errorString ??
+                            message.error?.toString() ??
+                            "Unknown error";
+                        if (errorString.includes("Unable to retrieve job output")) {
+                            return <Fragment key={idx}></Fragment>;
+                        }
+
+                        return (
+                            <Card
+                                key={idx}
+                                heading={errorString}
+                                subHeading={message.data?.outputs[0]?.outputName ?? "For unknown output"}
+                                userSelect="text"
+                            >
+                                <Markdown>{"```json\n" + JSON.stringify(message.data, null, 2) + "\n```"}</Markdown>
+                            </Card>
+                        );
+                    }
                 } catch {
                     const message: string = error.message;
                     const newlineIdx = message.indexOf("\n");

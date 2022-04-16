@@ -24,12 +24,13 @@ router.post("/inserted", json({ limit: "5mb" }), async (req: Request, res: Respo
         });
 
         res.status(200).json("OK");
-    } catch (err) {
+    } catch (err: any) {
         req.log.error({ err }, "Failure while handling import job inserted event");
         res.status(500).json("Failure while handling import job inserted event");
 
         try {
             if (req?.body?.event?.data?.new?.id) {
+                delete err.input;
                 await appendJobErrors(
                     req.body.event.data.new.id,
                     [

@@ -338,8 +338,16 @@ export async function appendJobErrors(jobId: string, errors: ImportErrors, markC
 }
 
 gql`
-    mutation UpdateJobProgressAndOutputs($jobId: uuid!, $outputs: [job_queues_ImportJobOutput_insert_input!]!) {
-        update_job_queues_ImportJob_by_pk(pk_columns: { id: $jobId }, _inc: { progress: 1 }) {
+    mutation UpdateJobProgressAndOutputs(
+        $jobId: uuid!
+        $status: String!
+        $outputs: [job_queues_ImportJobOutput_insert_input!]!
+    ) {
+        update_job_queues_ImportJob_by_pk(
+            pk_columns: { id: $jobId }
+            _set: { status: $status }
+            _inc: { progress: 1 }
+        ) {
             id
             progress
             progressMaximum
@@ -353,12 +361,17 @@ gql`
     }
 `;
 
-export async function updateJobProgressAndOutputs(jobId: string, outputs: ImportOutput[]): Promise<boolean> {
+export async function updateJobProgressAndOutputs(
+    jobId: string,
+    status: string,
+    outputs: ImportOutput[]
+): Promise<boolean> {
     const result = await gqlClient
         ?.mutation<UpdateJobProgressAndOutputsMutation, UpdateJobProgressAndOutputsMutationVariables>(
             UpdateJobProgressAndOutputsDocument,
             {
                 jobId,
+                status,
                 outputs: outputs.map((output) => ({
                     jobId,
                     name: output.name,

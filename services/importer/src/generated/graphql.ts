@@ -39685,6 +39685,7 @@ export type AppendJobErrorsMutation = {
 
 export type UpdateJobProgressAndOutputsMutationVariables = Exact<{
     jobId: Scalars["uuid"];
+    status: Scalars["String"];
     outputs: Array<Job_Queues_ImportJobOutput_Insert_Input> | Job_Queues_ImportJobOutput_Insert_Input;
 }>;
 
@@ -39947,7 +39948,7 @@ export const InitializeJobDocument = {
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "status" },
-                                            value: { kind: "StringValue", value: "initializing", block: false },
+                                            value: { kind: "StringValue", value: "initialize", block: false },
                                         },
                                         {
                                             kind: "ObjectField",
@@ -39962,12 +39963,12 @@ export const InitializeJobDocument = {
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "progress" },
-                                            value: { kind: "IntValue", value: "0" },
+                                            value: { kind: "IntValue", value: "1" },
                                         },
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "progressMaximum" },
-                                            value: { kind: "IntValue", value: "1" },
+                                            value: { kind: "IntValue", value: "2" },
                                         },
                                     ],
                                 },
@@ -41738,6 +41739,11 @@ export const UpdateJobProgressAndOutputsDocument = {
                 },
                 {
                     kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "outputs" } },
                     type: {
                         kind: "NonNullType",
@@ -41771,6 +41777,20 @@ export const UpdateJobProgressAndOutputsDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "id" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "jobId" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "status" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
                                         },
                                     ],
                                 },

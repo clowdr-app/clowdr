@@ -164,7 +164,7 @@ export async function insertTask(jobId: string, data: InsertData): Promise<boole
         value: result[outputSource.columnName] ?? null,
     }));
 
-    await updateJobProgressAndOutputs(jobId, outputs);
+    await updateJobProgressAndOutputs(jobId, "insert_new", outputs);
 
     return true;
 }

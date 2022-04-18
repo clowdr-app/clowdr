@@ -167,7 +167,7 @@ export async function updateEntity(jobId: string, data: UpdateData): Promise<boo
         value: result[outputSource.columnName] ?? null,
     }));
 
-    await updateJobProgressAndOutputs(jobId, outputs);
+    await updateJobProgressAndOutputs(jobId, "apply_existing:update_required", outputs);
 
     return true;
 }

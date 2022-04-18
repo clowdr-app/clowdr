@@ -33,7 +33,7 @@ export async function applyTask(jobId: string, data: InsertData): Promise<boolea
                         value: exists.value[outputSource.columnName] ?? null,
                     }));
 
-                    await updateJobProgressAndOutputs(jobId, outputs);
+                    await updateJobProgressAndOutputs(jobId, "apply_existing:update_not_required", outputs);
                 }
                 break;
         }

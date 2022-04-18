@@ -245,12 +245,8 @@ export async function entityExists(
                 if (allExisting?.length) {
                     const matching = allExisting.find(
                         (existing) =>
-                            existing.endAt === data.value.endAt &&
-                            existing.maxRegistrantsPerRoom === data.value.maxRegistrantsPerRoom &&
-                            existing.roomDurationMinutes === data.value.roomDurationMinutes &&
-                            existing.startAt === data.value.startAt &&
-                            existing.targetRegistrantsPerRoom === data.value.targetRegistrantsPerRoom &&
-                            existing.waitRoomMaxDurationSeconds === data.value.waitRoomMaxDurationSeconds
+                            Date.parse(existing.endAt) === Date.parse(data.value.endAt) &&
+                            Date.parse(existing.startAt) === Date.parse(data.value.startAt)
                     );
                     if (matching) {
                         return {

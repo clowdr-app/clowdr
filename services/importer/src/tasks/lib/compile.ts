@@ -35,7 +35,6 @@ import {
 } from "../../generated/graphql";
 import { publishTask } from "../../rabbitmq/tasks";
 import type { Context } from "../../types/context";
-import type { ImportJob } from "../../types/job";
 import type { ImportOutputSelector, InsertData } from "../../types/task";
 import { composeOutputNames } from "./names";
 
@@ -229,7 +228,11 @@ export function generateSessionEntities(
         throw new Error(
             `Presentations scheduled back to back exceed specified session time (session title: ${
                 session.content.title ?? "[No title]"
-            }; Internal identifier is ${rootOutputName}).`
+            }; Internal identifier is ${rootOutputName}). 
+
+${((sessionEnd.getTime() - sessionStart.getTime()) / (60 * 1000)).toFixed(1)} minutes scheduled for the session.
+${((presentationStartMs - sessionStart.getTime()) / (60 * 1000)).toFixed(1)} minutes scheduled for presentations.
+`
         );
     }
 
@@ -901,25 +904,76 @@ export function sortEntities(mergedEntities: Entity[]) {
     }, mergedEntities);
 }
 
-export async function applyEntities(sortedEntities: Entity[], job: ImportJob) {
-    await Promise.all(
-        sortedEntities.map((entity) => {
-            const value: any = {
-                ...entity,
-            };
-            delete value.__typename;
-            delete value.__outputs;
-            delete value.__remapColumns;
-            return publishTask({
-                type: "apply",
-                data: {
-                    outputs: entity.__outputs,
-                    remapColumns: entity.__remapColumns,
-                    type: entityTypenamesToApplyType[entity.__typename!],
-                    value,
-                },
-                jobId: job.id,
-            });
-        })
-    );
+export async function applyEntities(
+    sortedEntities: Entity[] | InsertData[],
+    jobId: string
+): Promise<{ expected: number; results: boolean[] }> {
+    if (sortedEntities.length > 0) {
+        const thisBatchType =
+            "remapColumns" in sortedEntities[0]
+                ? sortedEntities[0].type
+                : entityTypenamesToApplyType[sortedEntities[0].__typename!];
+        const sessionEventId =
+            "sessionEventId" in sortedEntities[0] && sortedEntities[0].sessionEventId?.length
+                ? sortedEntities[0].sessionEventId
+                : undefined;
+        const followOnBatchIndex =
+            R.findLastIndex<Entity | InsertData>((x) => {
+                const xType = "remapColumns" in x ? x.type : entityTypenamesToApplyType[x.__typename!];
+                return (
+                    xType === thisBatchType &&
+                    (!sessionEventId
+                        ? !("sessionEventId" in x) || !x.sessionEventId?.length
+                        : "sessionEventId" in x && x.sessionEventId === sessionEventId)
+                );
+            }, sortedEntities) + 1;
+        const thisBatch = sortedEntities.slice(0, followOnBatchIndex);
+        const followOnBatch = sortedEntities.slice(followOnBatchIndex);
+        return {
+            expected: thisBatch.length,
+            results: await Promise.all(
+                thisBatch.map((entity, idx) => {
+                    const value: any = {
+                        ...entity,
+                    };
+                    delete value.__typename;
+                    delete value.__outputs;
+                    delete value.__remapColumns;
+                    return publishTask({
+                        type: "apply",
+                        data:
+                            "remapColumns" in entity
+                                ? entity
+                                : {
+                                      outputs: entity.__outputs,
+                                      remapColumns: entity.__remapColumns,
+                                      type: entityTypenamesToApplyType[entity.__typename!],
+                                      value,
+                                  },
+                        jobId,
+                        followOn:
+                            idx === thisBatch.length - 1
+                                ? followOnBatch.map((entity2) => {
+                                      const value2: any = {
+                                          ...entity2,
+                                      };
+                                      delete value2.__typename;
+                                      delete value2.__outputs;
+                                      delete value2.__remapColumns;
+                                      return "remapColumns" in entity2
+                                          ? entity2
+                                          : {
+                                                outputs: entity2.__outputs,
+                                                remapColumns: entity2.__remapColumns,
+                                                type: entityTypenamesToApplyType[entity2.__typename!],
+                                                value: value2,
+                                            };
+                                  })
+                                : null,
+                    });
+                })
+            ),
+        };
+    }
+    return { expected: 0, results: [] };
 }

@@ -6,7 +6,7 @@ import type { FindExistingDefaultRoomsQuery, FindExistingDefaultRoomsQueryVariab
 import { FindExistingDefaultRoomsDocument } from "../generated/graphql";
 import { logger } from "../logger";
 import { publishTask } from "../rabbitmq/tasks";
-import { getJob, updateJob } from "./lib/job";
+import { getJob, increaseJobProgressAndProgressMaximum, updateJob } from "./lib/job";
 
 gql`
     query FindExistingDefaultRooms($where: room_Room_bool_exp!) {
@@ -24,12 +24,7 @@ export async function autoAssignRoomsTask(jobId: string): Promise<boolean> {
         return true;
     }
 
-    const progressMaximum = job.data.reduce((acc, file) => acc + file.data.sessions.length, 0);
-    await updateJob(jobId, {
-        status: "assign_rooms",
-        progress: 0,
-        progressMaximum,
-    });
+    await updateJob(jobId, { status: "assign_rooms" });
 
     const existingDefaultRooms = await gqlClient
         ?.query<FindExistingDefaultRoomsQuery, FindExistingDefaultRoomsQueryVariables>(
@@ -97,8 +92,8 @@ export async function autoAssignRoomsTask(jobId: string): Promise<boolean> {
 
     await updateJob(jobId, {
         data: job.data,
-        progress: progressMaximum,
     });
+    await increaseJobProgressAndProgressMaximum(jobId, "assign_rooms", 1, 2);
 
     await publishTask({
         type: "queue_sessions",

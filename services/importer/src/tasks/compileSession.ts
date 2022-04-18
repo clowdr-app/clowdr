@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { logger } from "../logger";
-import { publishTask } from "../rabbitmq/tasks";
 import type { Entity } from "./lib/compile";
 import { applyEntities, generateSessionEntities, mergeEntities, sortEntities } from "./lib/compile";
-import { appendJobErrors, completeJob, getJob, updateJob } from "./lib/job";
+import { appendJobErrors, getJob, increaseJobProgressAndProgressMaximum, updateJob } from "./lib/job";
 import { generateSessionRootOutputName } from "./lib/names";
 
 export async function compileSession(jobId: string, fileIndex: number, sessionIndex: number): Promise<boolean> {
@@ -13,10 +12,13 @@ export async function compileSession(jobId: string, fileIndex: number, sessionIn
         return true;
     }
 
+    await updateJob(jobId, { status: "compile_session" });
+
     let ok = false;
     let errorMsg = "";
 
     let sortedEntities: Entity[] = [];
+    let appliedCount = 0;
     try {
         const entities = generateSessionEntities(
             job.data[fileIndex].data.sessions[sessionIndex],
@@ -32,13 +34,17 @@ export async function compileSession(jobId: string, fileIndex: number, sessionIn
 
         const mergedEntities: Entity[] = mergeEntities(entities);
         sortedEntities = sortEntities(mergedEntities);
-        await applyEntities(sortedEntities, job);
+        const results = await applyEntities(sortedEntities, jobId);
+        appliedCount = results.results.reduce((acc, x) => (x ? acc + 1 : acc), 0);
 
-        ok = true;
+        ok = appliedCount === results.expected;
+        errorMsg = !ok ? "Failed to publish apply tasks for one or more entities." : "";
     } catch (e: any) {
         ok = false;
         errorMsg = e.message ?? e.toString();
     }
+
+    await increaseJobProgressAndProgressMaximum(jobId, "compile_session", 1, sortedEntities.length);
 
     if (!ok) {
         logger.info({ jobId, fileIndex, sessionIndex }, "Failed to compile session");
@@ -51,36 +57,6 @@ export async function compileSession(jobId: string, fileIndex: number, sessionIn
             ],
             true
         );
-    } else {
-        const sessionCount = job.data.reduce((acc, file) => acc + file.data.sessions.length, 0);
-        const exhibitionCount = job.data.reduce((acc, file) => acc + file.data.exhibitions.length, 0);
-
-        await updateJob(jobId, {
-            progress: job.progress + 1,
-            progressMaximum: job.progressMaximum + sortedEntities.length,
-        });
-        if (job.progress + 1 >= sessionCount) {
-            if (job.data.some((file) => file.data.exhibitions.length > 0)) {
-                await updateJob(jobId, {
-                    status: "compile_exhibitions",
-                });
-            } else {
-                const progressMaximum = job.progressMaximum + sortedEntities.length - (sessionCount + exhibitionCount);
-                if (progressMaximum === 0) {
-                    await completeJob(jobId);
-                } else {
-                    await publishTask({
-                        type: "complete",
-                        jobId,
-                    });
-                    await updateJob(jobId, {
-                        status: "inserts_and_updates",
-                        progress: 0,
-                        progressMaximum,
-                    });
-                }
-            }
-        }
     }
 
     return true;

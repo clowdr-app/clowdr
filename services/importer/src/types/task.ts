@@ -55,9 +55,7 @@ export type Task = {
     | {
           type: "apply";
           data: InsertData;
-      }
-    | {
-          type: "complete";
+          followOn?: InsertData[] | null | undefined;
       }
 );
 

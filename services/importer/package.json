@@ -8,7 +8,8 @@
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
         "start": "concurrently -n s: pnpm:start:*",
         "start:web": "node --enable-source-maps -r dotenv/config build/web-server.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
-        "start:tasksWorker": "node --enable-source-maps -r dotenv/config build/workers/tasks.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
+        "start:stage1Worker": "node --enable-source-maps -r dotenv/config build/workers/stage1.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
+        "start:stage2Worker": "node --enable-source-maps -r dotenv/config build/workers/stage2.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
         "dev": "pnpm copy-resources && tsc-watch -b --onSuccess \"pnpm start\"",
         "codegen": "pnpm exec graphql-codegen --config codegen.js"
     },

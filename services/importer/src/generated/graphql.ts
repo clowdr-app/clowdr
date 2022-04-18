@@ -39626,9 +39626,43 @@ export type UpdateJobMutation = {
 export type IncreaseJobProgressMutationVariables = Exact<{
     jobId: Scalars["uuid"];
     increase: Scalars["Int"];
+    status: Scalars["String"];
 }>;
 
 export type IncreaseJobProgressMutation = {
+    __typename?: "mutation_root";
+    update_job_queues_ImportJob_by_pk?: {
+        __typename?: "job_queues_ImportJob";
+        id: any;
+        progress: number;
+        progressMaximum: number;
+    } | null;
+};
+
+export type IncreaseJobProgressMaximumMutationVariables = Exact<{
+    jobId: Scalars["uuid"];
+    increase: Scalars["Int"];
+    status: Scalars["String"];
+}>;
+
+export type IncreaseJobProgressMaximumMutation = {
+    __typename?: "mutation_root";
+    update_job_queues_ImportJob_by_pk?: {
+        __typename?: "job_queues_ImportJob";
+        id: any;
+        progress: number;
+        progressMaximum: number;
+    } | null;
+};
+
+export type IncreaseJobProgressAndProgressMaximumMutationVariables = Exact<{
+    jobId: Scalars["uuid"];
+    increaseProgress: Scalars["Int"];
+    increaseProgressMaximum: Scalars["Int"];
+    status: Scalars["String"];
+}>;
+
+export type IncreaseJobProgressAndProgressMaximumMutation = {
     __typename?: "mutation_root";
     update_job_queues_ImportJob_by_pk?: {
         __typename?: "job_queues_ImportJob";
@@ -39913,7 +39947,7 @@ export const InitializeJobDocument = {
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "status" },
-                                            value: { kind: "StringValue", value: "Initializing", block: false },
+                                            value: { kind: "StringValue", value: "initializing", block: false },
                                         },
                                         {
                                             kind: "ObjectField",
@@ -39928,7 +39962,7 @@ export const InitializeJobDocument = {
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "progress" },
-                                            value: { kind: "IntValue", value: "1" },
+                                            value: { kind: "IntValue", value: "0" },
                                         },
                                         {
                                             kind: "ObjectField",
@@ -41343,6 +41377,11 @@ export const IncreaseJobProgressDocument = {
                     variable: { kind: "Variable", name: { kind: "Name", value: "increase" } },
                     type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "Int" } } },
                 },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
             ],
             selectionSet: {
                 kind: "SelectionSet",
@@ -41367,6 +41406,20 @@ export const IncreaseJobProgressDocument = {
                             },
                             {
                                 kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "status" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
                                 name: { kind: "Name", value: "_inc" },
                                 value: {
                                     kind: "ObjectValue",
@@ -41375,6 +41428,198 @@ export const IncreaseJobProgressDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "progress" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "increase" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "progress" } },
+                                { kind: "Field", name: { kind: "Name", value: "progressMaximum" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const IncreaseJobProgressMaximumDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "IncreaseJobProgressMaximum" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "jobId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "increase" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "Int" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_job_queues_ImportJob_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "pk_columns" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "id" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "jobId" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "status" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_inc" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "progressMaximum" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "increase" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "progress" } },
+                                { kind: "Field", name: { kind: "Name", value: "progressMaximum" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const IncreaseJobProgressAndProgressMaximumDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "IncreaseJobProgressAndProgressMaximum" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "jobId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "increaseProgress" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "Int" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "increaseProgressMaximum" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "Int" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_job_queues_ImportJob_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "pk_columns" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "id" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "jobId" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "status" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_inc" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "progress" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "increaseProgress" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "progressMaximum" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "increaseProgressMaximum" },
+                                            },
                                         },
                                     ],
                                 },

@@ -9,7 +9,7 @@ gql`
     mutation InitializeJob($id: uuid!) {
         update_job_queues_ImportJob_by_pk(
             pk_columns: { id: $id }
-            _set: { status: "Initializing", completed_at: null, errors: [], progress: 1, progressMaximum: 1 }
+            _set: { status: "initialize", completed_at: null, errors: [], progress: 1, progressMaximum: 2 }
         ) {
             id
         }

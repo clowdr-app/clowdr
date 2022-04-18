@@ -1,2 +1,3 @@
 web: node services/importer/build/web-server.js
-tasksWorker: node services/importer/build/workers/tasks.js
+stage1Worker: node services/importer/build/workers/stage1.js
+stage2Worker: node services/importer/build/workers/stage2.js

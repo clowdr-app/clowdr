@@ -3,7 +3,7 @@ import type { ImportOutput } from "../types/job";
 import type { InsertData } from "../types/task";
 import { entityExists } from "./lib/exists";
 import { insertTask as insertEntity } from "./lib/insert";
-import { appendJobErrors, getJobOutput, updateJobProgressAndOutputs } from "./lib/job";
+import { appendJobErrors, getJobOutput, increaseJobProgress, updateJobProgressAndOutputs } from "./lib/job";
 import { updateEntity } from "./lib/update";
 
 export async function applyTask(jobId: string, data: InsertData): Promise<boolean> {
@@ -53,6 +53,7 @@ export async function applyTask(jobId: string, data: InsertData): Promise<boolea
                     ),
                 },
             ]);
+            await increaseJobProgress(jobId, "apply", 1);
         } catch (error2: any) {
             logger.error(
                 { error: error2, errorString: error2?.toString(), jobId },

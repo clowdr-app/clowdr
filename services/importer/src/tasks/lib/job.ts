@@ -8,6 +8,10 @@ import type {
     GetJobQuery,
     GetJobQueryVariables,
     ImportJobFragment,
+    IncreaseJobProgressAndProgressMaximumMutation,
+    IncreaseJobProgressAndProgressMaximumMutationVariables,
+    IncreaseJobProgressMaximumMutation,
+    IncreaseJobProgressMaximumMutationVariables,
     IncreaseJobProgressMutation,
     IncreaseJobProgressMutationVariables,
     Job_Queues_ImportJob_Set_Input,
@@ -20,7 +24,9 @@ import {
     AppendJobErrorsDocument,
     GetJobDocument,
     GetJobOutputDocument,
+    IncreaseJobProgressAndProgressMaximumDocument,
     IncreaseJobProgressDocument,
+    IncreaseJobProgressMaximumDocument,
     UpdateJobDocument,
     UpdateJobProgressAndOutputsDocument,
 } from "../../generated/graphql";
@@ -138,7 +144,10 @@ gql`
     }
 `;
 
-export async function updateJob(jobId: string, update: Job_Queues_ImportJob_Set_Input): Promise<void> {
+export async function updateJob(
+    jobId: string,
+    update: Omit<Job_Queues_ImportJob_Set_Input, "progress" | "progressMaximum">
+): Promise<void> {
     const response = await gqlClient
         ?.mutation<UpdateJobMutation, UpdateJobMutationVariables>(UpdateJobDocument, {
             jobId,
@@ -169,8 +178,12 @@ export async function completeJob(jobId: string): Promise<void> {
 }
 
 gql`
-    mutation IncreaseJobProgress($jobId: uuid!, $increase: Int!) {
-        update_job_queues_ImportJob_by_pk(pk_columns: { id: $jobId }, _inc: { progress: $increase }) {
+    mutation IncreaseJobProgress($jobId: uuid!, $increase: Int!, $status: String!) {
+        update_job_queues_ImportJob_by_pk(
+            pk_columns: { id: $jobId }
+            _set: { status: $status }
+            _inc: { progress: $increase }
+        ) {
             id
             progress
             progressMaximum
@@ -178,11 +191,12 @@ gql`
     }
 `;
 
-export async function increaseJobProgress(jobId: string, increase: number): Promise<boolean> {
+export async function increaseJobProgress(jobId: string, status: string, increase: number): Promise<boolean> {
     const result = await gqlClient
         ?.mutation<IncreaseJobProgressMutation, IncreaseJobProgressMutationVariables>(IncreaseJobProgressDocument, {
             jobId,
             increase,
+            status,
         })
         .toPromise();
     if (result?.error) {
@@ -195,9 +209,105 @@ export async function increaseJobProgress(jobId: string, increase: number): Prom
             cachedJob.value.progress = data.progress;
             cachedJob.value.progressMaximum = data.progressMaximum;
         }
-        return data.progress >= data.progressMaximum;
+
+        return handleMaybeComplete(jobId, data.progress, data.progressMaximum);
     } else {
         throw new Error("Unable to update job progress");
+    }
+}
+
+gql`
+    mutation IncreaseJobProgressMaximum($jobId: uuid!, $increase: Int!, $status: String!) {
+        update_job_queues_ImportJob_by_pk(
+            pk_columns: { id: $jobId }
+            _set: { status: $status }
+            _inc: { progressMaximum: $increase }
+        ) {
+            id
+            progress
+            progressMaximum
+        }
+    }
+`;
+
+export async function increaseJobProgressMaximum(jobId: string, status: string, increase: number): Promise<boolean> {
+    const result = await gqlClient
+        ?.mutation<IncreaseJobProgressMaximumMutation, IncreaseJobProgressMaximumMutationVariables>(
+            IncreaseJobProgressMaximumDocument,
+            {
+                jobId,
+                increase,
+                status,
+            }
+        )
+        .toPromise();
+    if (result?.error) {
+        throw result.error;
+    }
+    if (result?.data?.update_job_queues_ImportJob_by_pk) {
+        const data = result.data.update_job_queues_ImportJob_by_pk;
+        const cachedJob = localJobCache.get(jobId);
+        if (cachedJob) {
+            cachedJob.value.progress = data.progress;
+            cachedJob.value.progressMaximum = data.progressMaximum;
+        }
+
+        return handleMaybeComplete(jobId, data.progress, data.progressMaximum);
+    } else {
+        throw new Error("Unable to update job progressMaximum");
+    }
+}
+
+gql`
+    mutation IncreaseJobProgressAndProgressMaximum(
+        $jobId: uuid!
+        $increaseProgress: Int!
+        $increaseProgressMaximum: Int!
+        $status: String!
+    ) {
+        update_job_queues_ImportJob_by_pk(
+            pk_columns: { id: $jobId }
+            _set: { status: $status }
+            _inc: { progress: $increaseProgress, progressMaximum: $increaseProgressMaximum }
+        ) {
+            id
+            progress
+            progressMaximum
+        }
+    }
+`;
+
+export async function increaseJobProgressAndProgressMaximum(
+    jobId: string,
+    status: string,
+    increaseProgress: number,
+    increaseProgressMaximum: number
+): Promise<boolean> {
+    const result = await gqlClient
+        ?.mutation<
+            IncreaseJobProgressAndProgressMaximumMutation,
+            IncreaseJobProgressAndProgressMaximumMutationVariables
+        >(IncreaseJobProgressAndProgressMaximumDocument, {
+            jobId,
+            increaseProgress,
+            increaseProgressMaximum,
+            status,
+        })
+        .toPromise();
+    if (result?.error) {
+        throw result.error;
+    }
+    if (result?.data?.update_job_queues_ImportJob_by_pk) {
+        const data = result.data.update_job_queues_ImportJob_by_pk;
+        const cachedJob = localJobCache.get(jobId);
+        if (cachedJob) {
+            cachedJob.value.progress = data.progress;
+            cachedJob.value.progressMaximum = data.progressMaximum;
+        }
+
+        return handleMaybeComplete(jobId, data.progress, data.progressMaximum);
+    } else {
+        throw new Error("Unable to update job progressMaximum");
     }
 }
 
@@ -272,8 +382,17 @@ export async function updateJobProgressAndOutputs(jobId: string, outputs: Import
             localJobOutputCache.set(jobId + "::" + output.name, { fetchedAt: Date.now(), value: output });
         }
 
-        return data.progress >= data.progressMaximum;
+        return handleMaybeComplete(jobId, data.progress, data.progressMaximum);
     } else {
         throw new Error("Unable to update job progress and outputs");
     }
+}
+
+async function handleMaybeComplete(jobId: string, progress: number, progressMaximum: number) {
+    // logger.info({ jobId, progress, progressMaximum }, `Progress update for ${jobId}`);
+    if (progress >= progressMaximum) {
+        await completeJob(jobId);
+        return true;
+    }
+    return false;
 }

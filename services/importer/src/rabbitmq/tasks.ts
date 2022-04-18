@@ -27,7 +27,7 @@ async function uplinkChannel() {
     return _uplinkChannel;
 }
 
-const tasksQueue = `${exchange}`;
+const tasksQueue = (type: string) => `${exchange}.${type}`;
 
 let _tasksDownlinkChannel: Channel;
 const tasksDownChannelMutex = new Mutex();
@@ -46,15 +46,21 @@ async function tasksDownlinkChannel() {
     return _tasksDownlinkChannel;
 }
 
-async function tasksDownChannel() {
+async function tasksDownChannel(taskType: Task["type"]) {
+    const queueName = tasksQueue(taskType ?? "any");
+
     const channel = await tasksDownlinkChannel();
     // Prefetch enables us to fetch N messages before we have to ack some to receive more messages
     channel.prefetch(1);
-    await _tasksDownlinkChannel.assertQueue(tasksQueue, {
+    await _tasksDownlinkChannel.assertQueue(queueName, {
         autoDelete: false,
         durable: true,
     });
-    await _tasksDownlinkChannel.bindQueue(tasksQueue, exchange, "*");
+    if (!taskType) {
+        await _tasksDownlinkChannel.bindQueue(queueName, exchange, "*");
+    } else {
+        await _tasksDownlinkChannel.bindQueue(queueName, exchange, taskType);
+    }
     return channel;
 }
 
@@ -65,37 +71,42 @@ export async function publishTask(task: Task): Promise<boolean> {
     });
 }
 
-export async function onTask(handler: (rabbitMQMsg: ConsumeMessage, task: Task) => Promise<void>): Promise<void> {
-    const channel = await tasksDownChannel();
-    channel.consume(tasksQueue, async (rabbitMQMsg) => {
-        try {
-            if (rabbitMQMsg) {
-                // Do not ack until the task has been successfully executed
+export async function onTask(
+    handler: (rabbitMQMsg: ConsumeMessage, task: Task, channel: Channel) => Promise<void>,
+    taskTypes: Task["type"][]
+): Promise<void> {
+    const setup = async (taskType: Task["type"]) => {
+        const channel = await tasksDownChannel(taskType);
+        channel.consume(tasksQueue(taskType ?? "any"), async (rabbitMQMsg) => {
+            try {
+                if (rabbitMQMsg) {
+                    // Do not ack until the task has been successfully executed
 
-                const message = JSON.parse(rabbitMQMsg.content.toString());
-                if (is<Task>(message)) {
-                    await handler(rabbitMQMsg, message);
-                } else {
-                    logger.warn({ message }, "Invalid task received. Data does not match type.");
-                    // Ack invalid messages to remove them from the queue
-                    channel.ack(rabbitMQMsg);
+                    const message = JSON.parse(rabbitMQMsg.content.toString());
+                    if (is<Task>(message)) {
+                        await handler(rabbitMQMsg, message, channel);
+                    } else {
+                        logger.warn({ message }, "Invalid task received. Data does not match type.");
+                        // Ack invalid messages to remove them from the queue
+                        channel.ack(rabbitMQMsg);
+                    }
                 }
+            } catch (error: any) {
+                logger.error({ error }, "Error processing task");
             }
-        } catch (error: any) {
-            logger.error({ error }, "Error processing task");
-        }
-    });
+        });
+    };
+
+    await Promise.all(taskTypes.map(setup));
 }
 
-export async function onTasksComplete(rabbitMQMsgs: ConsumeMessage[]): Promise<void> {
-    const channel = await tasksDownChannel();
+export async function onTasksComplete(rabbitMQMsgs: ConsumeMessage[], channel: Channel): Promise<void> {
     for (const rabbitMQMsg of rabbitMQMsgs) {
         channel.ack(rabbitMQMsg);
     }
 }
 
-export async function onTasksFail(rabbitMQMsgs: ConsumeMessage[]): Promise<void> {
-    const channel = await tasksDownChannel();
+export async function onTasksFail(rabbitMQMsgs: ConsumeMessage[], channel: Channel): Promise<void> {
     for (const rabbitMQMsg of rabbitMQMsgs) {
         channel.nack(rabbitMQMsg, undefined, true);
     }

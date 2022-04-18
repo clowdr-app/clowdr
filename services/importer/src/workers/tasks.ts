@@ -1,21 +1,23 @@
-import type { ConsumeMessage } from "amqplib";
+import type { Channel, ConsumeMessage } from "amqplib";
+import * as R from "ramda";
 import { logger } from "../logger";
-import { onTask, onTasksComplete, onTasksFail } from "../rabbitmq/tasks";
+import { onTasksComplete, onTasksFail } from "../rabbitmq/tasks";
 import { applyTask } from "../tasks/apply";
 import { autoAssignRoomsTask } from "../tasks/autoAssignRooms";
 import { compileExhibition } from "../tasks/compileExhibition";
 import { compileSession } from "../tasks/compileSession";
-import { completeTask } from "../tasks/complete";
 import { initializeTask } from "../tasks/initialize";
+import { applyEntities } from "../tasks/lib/compile";
 import { queueExhibitions } from "../tasks/queueExhibitions";
 import { queueSessions } from "../tasks/queueSessions";
 import type { Task } from "../types/task";
 
-async function processTask(rabbitMQMsg: ConsumeMessage, task: Task) {
-    logger.info({ task }, "Executing task");
+export async function processTask(rabbitMQMsg: ConsumeMessage, task: Task, channel: Channel) {
+    logger.info({ task: { type: task.type, jobId: task.jobId } }, "Executing task");
 
     try {
         let ok = false;
+        let error: string | undefined;
         switch (task.type) {
             case "initialize":
                 ok = await initializeTask(task.jobId);
@@ -37,27 +39,24 @@ async function processTask(rabbitMQMsg: ConsumeMessage, task: Task) {
                 break;
             case "apply":
                 ok = await applyTask(task.jobId, task.data);
-                break;
-            case "complete":
-                ok = await completeTask(task.jobId);
+
+                if (ok && task.followOn) {
+                    const results = await applyEntities(task.followOn, task.jobId);
+                    ok = R.all((x) => x, results.results);
+                    error = "Failed to apply follow-on entities";
+                }
                 break;
         }
 
         if (ok) {
-            await onTasksComplete([rabbitMQMsg]);
+            await onTasksComplete([rabbitMQMsg], channel);
         } else {
-            logger.error({ task }, "Unknown failure processing task");
-            await onTasksFail([rabbitMQMsg]);
+            logger.error({ task }, error ?? "Unknown failure processing task");
+            await onTasksFail([rabbitMQMsg], channel);
         }
     } catch (error: any) {
         logger.error({ error, errorString: error?.toString(), task }, "Error processing task");
 
-        await onTasksFail([rabbitMQMsg]);
+        await onTasksFail([rabbitMQMsg], channel);
     }
 }
-
-async function Main() {
-    onTask(processTask);
-}
-
-Main();

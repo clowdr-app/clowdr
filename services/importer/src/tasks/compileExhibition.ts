@@ -1,8 +1,7 @@
 import { logger } from "../logger";
-import { publishTask } from "../rabbitmq/tasks";
 import type { Entity } from "./lib/compile";
 import { applyEntities, generateRootExhibitionEntities, mergeEntities, sortEntities } from "./lib/compile";
-import { appendJobErrors, completeJob, getJob, updateJob } from "./lib/job";
+import { appendJobErrors, getJob, increaseJobProgressAndProgressMaximum, updateJob } from "./lib/job";
 import { generateExhibitionRootOutputName } from "./lib/names";
 
 export async function compileExhibition(jobId: string, fileIndex: number, exhibitionIndex: number): Promise<boolean> {
@@ -12,10 +11,13 @@ export async function compileExhibition(jobId: string, fileIndex: number, exhibi
         return true;
     }
 
+    await updateJob(jobId, { status: "compile_exhibition" });
+
     let ok = false;
     let errorMsg = "";
 
     let sortedEntities: Entity[] = [];
+    let appliedCount = 0;
     try {
         const entities = generateRootExhibitionEntities(
             job.data[fileIndex].data.exhibitions[exhibitionIndex],
@@ -30,51 +32,29 @@ export async function compileExhibition(jobId: string, fileIndex: number, exhibi
         ).filter((x) => x.__typename);
         const mergedEntities: Entity[] = mergeEntities(entities);
         sortedEntities = sortEntities(mergedEntities);
-        await applyEntities(sortedEntities, job);
+        const results = await applyEntities(sortedEntities, jobId);
+        appliedCount = results.results.reduce((acc, x) => (x ? acc + 1 : acc), 0);
 
-        ok = true;
+        ok = appliedCount === results.expected;
+        errorMsg = !ok ? "Failed to publish apply tasks for one or more entities." : "";
     } catch (e: any) {
         ok = false;
         errorMsg = e.message ?? e.toString();
     }
 
-    ok = true;
+    await increaseJobProgressAndProgressMaximum(jobId, "compile_exhibition", 1, sortedEntities.length);
 
     if (!ok) {
-        logger.info({ jobId, fileIndex, exhibitionIndex: exhibitionIndex }, "Failed to compile exhibition");
+        logger.info({ jobId, fileIndex, exhibitionIndex }, "Failed to compile exhibition");
         await appendJobErrors(
             jobId,
             [
                 {
-                    message: `Failed to compile exhibition: File: ${fileIndex}, Exhibition: ${exhibitionIndex}\n\n${errorMsg}`,
+                    message: `Failed to compile exhibition: File: ${fileIndex}, Exhibition: ${exhibitionIndex}.\n\n${errorMsg}`,
                 },
             ],
             true
         );
-    } else {
-        const sessionCount = job.data.reduce((acc, file) => acc + file.data.sessions.length, 0);
-        const exhibitionCount = job.data.reduce((acc, file) => acc + file.data.exhibitions.length, 0);
-
-        await updateJob(jobId, {
-            progress: job.progress + 1,
-            progressMaximum: job.progressMaximum + sortedEntities.length,
-        });
-        if (job.progress + 1 >= sessionCount + exhibitionCount) {
-            const progressMaximum = job.progressMaximum + sortedEntities.length - (sessionCount + exhibitionCount);
-            if (progressMaximum === 0) {
-                await completeJob(jobId);
-            } else {
-                await publishTask({
-                    type: "complete",
-                    jobId,
-                });
-                await updateJob(jobId, {
-                    status: "apply_changes",
-                    progress: 0,
-                    progressMaximum,
-                });
-            }
-        }
     }
 
     return true;

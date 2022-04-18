@@ -649,15 +649,19 @@ function generateEventEntities(
     const eventIdOutputName = composeOutputNames(rootOutputName, "id");
 
     const eventMode = event.interactionMode ?? options.defaultEventMode;
-    const shufflePeriodIdOutputName =
-        eventMode === "networking" && context.createdBy
-            ? composeOutputNames(composeOutputNames(rootOutputName, "shuffle"), "id")
-            : undefined;
     const scheduledStartTime = event.start
         ? typeof event.start === "string"
             ? new Date(event.start)
             : event.start
         : null;
+    const shufflePeriodIdOutputName =
+        !sessionEventOutputName &&
+        scheduledStartTime &&
+        event.duration > 0 &&
+        eventMode === "networking" &&
+        context.createdBy
+            ? composeOutputNames(composeOutputNames(rootOutputName, "shuffle"), "id")
+            : undefined;
     return [
         {
             __outputs: [

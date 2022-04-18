@@ -13,7 +13,29 @@ import { queueSessions } from "../tasks/queueSessions";
 import type { Task } from "../types/task";
 
 export async function processTask(rabbitMQMsg: ConsumeMessage, task: Task, channel: Channel) {
-    logger.info({ task: { type: task.type, jobId: task.jobId } }, "Executing task");
+    logger.info(
+        {
+            task: {
+                type: task.type,
+                jobId: task.jobId,
+                apply:
+                    task.type === "apply"
+                        ? {
+                              type: task.data.type,
+                              outputs: task.data.outputs,
+                              remapColumns: task.data.remapColumns,
+                              value:
+                                  task.data.type === "Event"
+                                      ? {
+                                            sessionEventId: task.data.value.sessionEventId,
+                                        }
+                                      : "<Skipped>",
+                          }
+                        : null,
+            },
+        },
+        "Executing task"
+    );
 
     try {
         let ok = false;
@@ -41,6 +63,8 @@ export async function processTask(rabbitMQMsg: ConsumeMessage, task: Task, chann
                 ok = await applyTask(task.jobId, task.data);
 
                 if (ok && task.followOn) {
+                    await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
+
                     const results = await applyEntities(task.followOn, task.jobId);
                     ok = R.all((x) => x, results.results);
                     error = "Failed to apply follow-on entities";

@@ -89,18 +89,24 @@ export default function ManageShuffle(): JSX.Element {
 
     const now = useRealTime(60000);
     const pastQueues = useMemo(
-        () => shufflePeriodsQ.data?.room_ShufflePeriod.filter((period) => Date.parse(period.endAt) < now),
+        () =>
+            shufflePeriodsQ.data?.room_ShufflePeriod
+                .filter((period) => Date.parse(period.endAt) < now)
+                .sort((x, y) => Date.parse(x.startAt) - Date.parse(y.startAt)),
         [now, shufflePeriodsQ.data?.room_ShufflePeriod]
     );
     const ongoingQueues = useMemo(
         () =>
-            shufflePeriodsQ.data?.room_ShufflePeriod.filter(
-                (period) => Date.parse(period.startAt) <= now && Date.parse(period.endAt) >= now
-            ),
+            shufflePeriodsQ.data?.room_ShufflePeriod
+                .filter((period) => Date.parse(period.startAt) <= now && Date.parse(period.endAt) >= now)
+                .sort((x, y) => Date.parse(x.startAt) - Date.parse(y.startAt)),
         [now, shufflePeriodsQ.data?.room_ShufflePeriod]
     );
     const upcomingQueues = useMemo(
-        () => shufflePeriodsQ.data?.room_ShufflePeriod.filter((period) => Date.parse(period.startAt) > now),
+        () =>
+            shufflePeriodsQ.data?.room_ShufflePeriod
+                .filter((period) => Date.parse(period.startAt) > now)
+                .sort((x, y) => Date.parse(x.startAt) - Date.parse(y.startAt)),
         [now, shufflePeriodsQ.data?.room_ShufflePeriod]
     );
 

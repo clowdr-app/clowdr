@@ -186,15 +186,13 @@ export default function ManagerLandingPage(): JSX.Element {
                         description="Manage and prioritise rooms."
                         organizerRole
                     />
-                    {!subconferenceId ? (
-                        <RestrictedDashboardButton
-                            to="shuffle"
-                            name="Networking"
-                            icon="random"
-                            description="Manage randomised, time-limited networking, aka. shuffle periods."
-                            organizerRole
-                        />
-                    ) : undefined}
+                    <RestrictedDashboardButton
+                        to="shuffle"
+                        name="Networking"
+                        icon="random"
+                        description="Manage randomised, time-limited networking, aka. shuffle periods."
+                        organizerRole
+                    />
                     {!subconferenceId ? (
                         <RestrictedDashboardButton
                             to="chats/moderation"

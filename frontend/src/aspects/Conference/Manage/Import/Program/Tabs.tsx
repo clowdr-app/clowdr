@@ -144,7 +144,7 @@ export default function ImportProgramTabs({
                             <Text>
                                 Progress: {job?.progress ?? "Unknown"} / {job?.progressMaximum ?? "Unknown"}
                             </Text>
-                            <Text>Errors: {!job?.errors?.length ? "None" : ""}</Text>
+                            <Text>Errors: {!job?.errors?.length ? "None" : job.errors.length}</Text>
                             {!job?.errors?.length ? "" : <ErrorList errors={job.errors} />}
                         </>
                     )}
@@ -154,7 +154,7 @@ export default function ImportProgramTabs({
                     <Text>
                         Recorded progress: {job?.progress ?? "Unknown"} / {job?.progressMaximum ?? "Unknown"}
                     </Text>
-                    <Text>Errors: {!job?.errors?.length ? "None" : ""}</Text>
+                    <Text>Errors: {!job?.errors?.length ? "None" : job.errors.length}</Text>
                     {!job?.errors?.length ? "" : <ErrorList errors={job.errors} />}
                 </TabPanel>
             </TabPanels>

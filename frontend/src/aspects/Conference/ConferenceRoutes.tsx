@@ -288,11 +288,9 @@ function ManageConferenceRoutes(): JSX.Element {
                 <Route path={`${path}/rooms`}>
                     <ManageRooms />
                 </Route>
-                {!subconferenceId ? (
-                    <Route path={`${path}/shuffle`}>
-                        <ManageShuffle />
-                    </Route>
-                ) : undefined}
+                <Route path={`${path}/shuffle`}>
+                    <ManageShuffle />
+                </Route>
                 <Route path={`${path}/broadcasts`}>
                     <ManageBroadcast />
                 </Route>

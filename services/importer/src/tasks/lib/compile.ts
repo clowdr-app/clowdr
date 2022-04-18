@@ -173,9 +173,11 @@ export function generateSessionEntities(
     const sessionContentOutputName = composeOutputNames(rootOutputName, "content");
     const sessionEventOutputName = composeOutputNames(rootOutputName, "event");
 
-    const sessionHasExhibition = session.presentations.some(
-        (x) => (x.event.interactionMode ?? options.defaultEventMode) === "breakout video-chat"
-    );
+    const sessionHasExhibition =
+        (session.event.interactionMode ?? options.defaultEventMode) === "breakout video-chat" ||
+        session.presentations.some(
+            (x) => (x.event.interactionMode ?? options.defaultEventMode) === "breakout video-chat"
+        );
     const sessionExhibitionOutputName = sessionHasExhibition
         ? composeOutputNames(rootOutputName, "exhibition")
         : undefined;
@@ -200,10 +202,10 @@ export function generateSessionEntities(
     const sessionStart = typeof session.event.start === "string" ? new Date(session.event.start) : session.event.start;
     const sessionEnd = new Date(sessionStart.getTime() + session.event.duration * 60 * 1000);
     let presentationStartMs = sessionStart.getTime();
-    let presentationsWithTimes: PresentationWithAllocatedTime[] = [];
+    let presentations: PresentationWithAllocatedTime[] = [];
     for (const presentation of session.presentations) {
         if (presentation.event.duration > 0) {
-            presentationsWithTimes.push({
+            presentations.push({
                 ...presentation,
                 event: {
                     ...presentation.event,
@@ -212,7 +214,7 @@ export function generateSessionEntities(
             });
             presentationStartMs += presentation.event.duration * 60 * 1000;
         } else {
-            presentationsWithTimes.push({
+            presentations.push({
                 ...presentation,
                 event: {
                     ...presentation.event,
@@ -222,7 +224,7 @@ export function generateSessionEntities(
         }
     }
     // Drop presentations that were only for filling time (i.e. ones with no content type)
-    presentationsWithTimes = presentationsWithTimes.filter((x) => x.content.type);
+    presentations = presentations.filter((x) => x.content.type);
     if (presentationStartMs > sessionEnd.getTime()) {
         throw new Error(
             `Presentations scheduled back to back exceed specified session time (session title: ${
@@ -237,7 +239,7 @@ export function generateSessionEntities(
             ...generateExhibitionEntities(
                 session.content.title ?? "<No title>",
                 [
-                    ...presentationsWithTimes.map((_, presIdx) =>
+                    ...presentations.map((_, presIdx) =>
                         composeOutputNames(
                             composeOutputNames(rootOutputName, `presentations[${presIdx}]`),
                             composeOutputNames("content", "id")
@@ -253,7 +255,7 @@ export function generateSessionEntities(
     }
 
     result.push(
-        ...presentationsWithTimes.flatMap((presentation, idx) => {
+        ...presentations.flatMap((presentation, idx) => {
             const presentationOutputName = composeOutputNames(rootOutputName, `presentations[${idx}]`);
             const presentationContentOutputName = composeOutputNames(presentationOutputName, "content");
             return [

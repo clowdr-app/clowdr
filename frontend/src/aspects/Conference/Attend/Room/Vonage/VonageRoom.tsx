@@ -62,6 +62,7 @@ export function VonageRoom({
     onLeave,
     canControlRecordingAs,
     eventIsFuture,
+    extraLayoutButtons,
 }: {
     roomId: string | null;
     eventId: string | null;
@@ -78,6 +79,7 @@ export function VonageRoom({
     canControlRecordingAs: Set<RecordingControlReason>;
     layout?: VonageBroadcastLayout;
     eventIsFuture?: boolean;
+    extraLayoutButtons?: JSX.Element;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
 
@@ -156,6 +158,7 @@ export function VonageRoom({
             eventIsFuture={eventIsFuture}
             eventId={eventId ?? undefined}
             roomId={roomId ?? undefined}
+            extraLayoutButtons={extraLayoutButtons ?? undefined}
         >
             <ChatProfileModalProvider>
                 <VonageComputedStateProvider

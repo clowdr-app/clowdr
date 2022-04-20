@@ -91,6 +91,12 @@ gql`
         shufflePeriod {
             ...ShufflePeriodData
         }
+        autoPlayElement {
+            id
+            name
+            typeName
+            itemId
+        }
         item {
             id
             title

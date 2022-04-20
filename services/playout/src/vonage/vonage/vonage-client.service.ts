@@ -24,4 +24,9 @@ export class VonageClientService {
         const fn = promisify(this._vonage.createSession.bind(this._vonage));
         return await fn(options);
     }
+
+    public async sendSignal(sessionId: string, connectionId: string | null, data: OpenTok.SignalOptions) {
+        const fn = promisify(this._vonage.signal.bind(this._vonage));
+        return await fn(sessionId, connectionId, data);
+    }
 }

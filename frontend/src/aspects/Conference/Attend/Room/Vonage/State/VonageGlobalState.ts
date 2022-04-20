@@ -1,4 +1,5 @@
 import { assert } from "@midspace/assert";
+import { ImmediateSwitchExecutedSignal } from "@midspace/shared-types/video/immediateSwitchData";
 import type { VonageVideoPlaybackCommandSignal } from "@midspace/shared-types/video/vonage-video-playback-command";
 import { vonageVideoPlaybackCommandSignal } from "@midspace/shared-types/video/vonage-video-playback-command";
 import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
@@ -66,6 +67,7 @@ export interface Events {
     "recording-stopped": () => void;
     "recording-id-received": (recordingId: string) => void;
     "layout-signal-received": (layout: VonageSessionLayoutData) => void;
+    "immediate-switch-executed-signal-received": (data: ImmediateSwitchExecutedSignal) => void;
     "transcript-data-received": TranscriptData;
 }
 
@@ -235,6 +237,18 @@ export class VonageGlobalState extends EventEmitter<Events> {
                     );
                 } else {
                     console.warn("VonageGlobalState: received video playback signal from a peer (ignored)", event);
+                }
+            });
+            session.on("signal:immediate-switch-executed", (event: any) => {
+                if (event.from === null) {
+                    this.onImmediateSwitchExecutedSignalReceived(event.data).catch((e) =>
+                        console.error("VonageGlobalState: error handling immediate switch executed signal", e)
+                    );
+                } else {
+                    console.warn(
+                        "VonageGlobalState: received immediate switch executed signal from a peer (ignored)",
+                        event
+                    );
                 }
             });
             session.on("signal:transcript", (event: any) =>
@@ -981,6 +995,22 @@ export class VonageGlobalState extends EventEmitter<Events> {
             }
         } catch (e) {
             console.error("VonageGlobalState: onVideoPlaybackSignalReceived failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
+    private async onImmediateSwitchExecutedSignalReceived(data: unknown): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            const signal = ImmediateSwitchExecutedSignal.parse(data);
+
+            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
+                this.emit("immediate-switch-executed-signal-received", signal);
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onImmediateSwitchExecutedSignalReceived failure", e);
             throw e;
         } finally {
             release();

@@ -3,9 +3,8 @@ import { FollowPoint } from "@aws-sdk/client-medialive";
 import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { ImmediateSwitchData } from "@midspace/shared-types/video/immediateSwitchData";
-import { plainToClass } from "class-transformer";
-import { validate } from "class-validator";
 import { sub } from "date-fns";
+import { ZodError } from "zod";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Video_RtmpInput_Enum } from "../../generated/graphql";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
@@ -27,87 +26,81 @@ export class ImmediateSwitchService {
     }
     public async handleImmediateSwitch(data: unknown, id: string, eventId: string | null): Promise<void> {
         try {
-            const transformed = plainToClass(ImmediateSwitchData, { data });
-            const errors = await validate(transformed);
-            if (errors.length > 1) {
-                this.logger.error({ errors }, "Immediate switch data is invalid");
-                await this.immediateSwitchDataService.failImmediateSwitch(id, "Invalid request");
-                return;
-            } else {
-                this.logger.info({ request: transformed }, "Received valid immediate switch request");
+            const immediateSwitch = ImmediateSwitchData.parse(data);
+            this.logger.info({ request: immediateSwitch }, "Received valid immediate switch request");
 
-                if (eventId) {
-                    const event = await this.localScheduleService.getEvent(eventId);
-                    const now = Date.now();
+            if (eventId) {
+                const event = await this.localScheduleService.getEvent(eventId);
+                const now = Date.now();
 
-                    if (!event) {
-                        this.logger.warn(
-                            { eventId },
-                            "Event associated with immediate switch request does not exist, ignoring"
-                        );
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Event not found");
-                        return;
-                    }
-
-                    if (now <= event.scheduledStartTime) {
-                        this.logger.warn(
-                            { event, now },
-                            "Immediate switch request made before start of event, ignoring"
-                        );
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Event has not yet started");
-                        return;
-                    }
-
-                    if (now > sub(event.scheduledEndTime, { seconds: 20 }).getTime()) {
-                        this.logger.warn(
-                            { event, now },
-                            "Immediate switch request made too close to or after end of event, ignoring"
-                        );
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Too close to end of event");
-                        return;
-                    }
-
-                    if (!event.channelStack) {
-                        this.logger.warn(
-                            { event },
-                            "No channel stack exists for event, cannot perform immediate switch"
-                        );
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, "No stream exists");
-                        return;
-                    }
-
-                    const inputSwitchActions = await this.toInputSwitchActions(
-                        transformed,
-                        event.channelStack,
-                        event.eventRtmpInputName,
-                        id,
-                        event.conferenceId
-                    );
-
-                    if (typeof inputSwitchActions === "string") {
-                        this.logger.warn({ event, inputSwitchActions }, "Failed to generate immediate switch actions");
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, inputSwitchActions);
-                        return;
-                    }
-
-                    await this.mediaLiveService.updateSchedule(
-                        event.channelStack.mediaLiveChannelId,
-                        [],
-                        inputSwitchActions
-                    );
-
-                    await this.immediateSwitchDataService.completeImmediateSwitch(id);
-                } else {
+                if (!event) {
                     this.logger.warn(
-                        { request: transformed },
-                        "Immediate switches are not yet supported outside an event."
+                        { eventId },
+                        "Event associated with immediate switch request does not exist, ignoring"
                     );
-                    await this.immediateSwitchDataService.failImmediateSwitch(id, "Currently outside an event");
+                    await this.immediateSwitchDataService.failImmediateSwitch(id, "Event not found");
+                    return;
                 }
+
+                if (now <= event.scheduledStartTime) {
+                    this.logger.warn({ event, now }, "Immediate switch request made before start of event, ignoring");
+                    await this.immediateSwitchDataService.failImmediateSwitch(id, "Event has not yet started");
+                    return;
+                }
+
+                if (now > sub(event.scheduledEndTime, { seconds: 20 }).getTime()) {
+                    this.logger.warn(
+                        { event, now },
+                        "Immediate switch request made too close to or after end of event, ignoring"
+                    );
+                    await this.immediateSwitchDataService.failImmediateSwitch(id, "Too close to end of event");
+                    return;
+                }
+
+                if (!event.channelStack) {
+                    this.logger.warn({ event }, "No channel stack exists for event, cannot perform immediate switch");
+                    await this.immediateSwitchDataService.failImmediateSwitch(id, "No stream exists");
+                    return;
+                }
+
+                const inputSwitchActions = await this.toInputSwitchActions(
+                    immediateSwitch,
+                    event.channelStack,
+                    event.eventRtmpInputName,
+                    id,
+                    event.conferenceId
+                );
+
+                if (typeof inputSwitchActions === "string") {
+                    this.logger.warn({ event, inputSwitchActions }, "Failed to generate immediate switch actions");
+                    await this.immediateSwitchDataService.failImmediateSwitch(id, inputSwitchActions);
+                    return;
+                }
+
+                await this.mediaLiveService.updateSchedule(
+                    event.channelStack.mediaLiveChannelId,
+                    [],
+                    inputSwitchActions
+                );
+
+                await this.immediateSwitchDataService.completeImmediateSwitch(id);
+                await this.immediateSwitchDataService.notifyImmediateSwitchExecuted(id);
+            } else {
+                this.logger.warn(
+                    { request: immediateSwitch },
+                    "Immediate switches are not yet supported outside an event."
+                );
+                await this.immediateSwitchDataService.failImmediateSwitch(id, "Currently outside an event");
             }
         } catch (err) {
-            await this.immediateSwitchDataService.failImmediateSwitch(id, "Processing error");
-            throw err;
+            if (err instanceof ZodError) {
+                this.logger.error({ err }, "Immediate switch data is invalid");
+                await this.immediateSwitchDataService.failImmediateSwitch(id, "Invalid request");
+                throw err;
+            } else {
+                await this.immediateSwitchDataService.failImmediateSwitch(id, "Processing error");
+                throw err;
+            }
         }
     }
 
@@ -118,7 +111,7 @@ export class ImmediateSwitchService {
         immediateSwitchId: string,
         conferenceId: string
     ): Promise<ScheduleAction[] | string> {
-        switch (switchData.data.kind) {
+        switch (switchData.kind) {
             case "filler": {
                 const fillerVideoKey = (await this.channelStackDataService.getFillerVideoKey(conferenceId)) ?? "";
                 return [
@@ -137,7 +130,7 @@ export class ImmediateSwitchService {
                 ];
             }
             case "video": {
-                const element = await this.contentElementDataService.getElement(switchData.data.elementId);
+                const element = await this.contentElementDataService.getElement(switchData.elementId);
                 if (!element || element.conferenceId !== conferenceId) {
                     this.logger.warn(
                         { switchData, element, conferenceId },
@@ -203,7 +196,7 @@ export class ImmediateSwitchService {
                         ScheduleActionSettings: {
                             InputSwitchSettings: {
                                 InputAttachmentNameReference:
-                                    switchData.data.source === "rtmpRoom" && channelStack.rtmpRoomInputAttachmentName
+                                    switchData.source === "rtmpRoom" && channelStack.rtmpRoomInputAttachmentName
                                         ? channelStack.rtmpRoomInputAttachmentName
                                         : eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
                                         ? channelStack.rtmpBInputAttachmentName ?? channelStack.rtmpAInputAttachmentName

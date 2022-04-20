@@ -7,41 +7,41 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
     Button,
-    FormControl,
-    FormLabel,
-    HStack,
-    Select,
+    ListItem,
+    Popover,
+    PopoverAnchor,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    Text,
+    UnorderedList,
     useDisclosure,
     useToast,
-    VisuallyHidden,
 } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
-import type {
-    FillerImmediateSwitchData,
-    RtmpPushImmediateSwitchData,
-    VideoImmediateSwitchData,
-} from "@midspace/shared-types/video/immediateSwitchData";
-import type { FieldProps } from "formik";
-import { Field, Form, Formik } from "formik";
+import type { ImmediateSwitchData } from "@midspace/shared-types/video/immediateSwitchData";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
-import { useContextSelector } from "use-context-selector";
-import { validate } from "uuid";
 import type {
+    Event_EventVonageSessionFragment,
     LiveIndicator_GetLatestQuery,
     LiveIndicator_GetLatestQueryVariables,
+    Room_EventSummaryFragment,
 } from "../../../../../../generated/graphql";
 import {
     LiveIndicator_GetLatestDocument,
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
 } from "../../../../../../generated/graphql";
-import FAIcon from "../../../../../Chakra/FAIcon";
+import Card from "../../../../../Card";
+import extractActualError from "../../../../../GQL/ExtractActualError";
 import { makeContext } from "../../../../../GQL/make-context";
 import { useRealTime } from "../../../../../Hooks/useRealTime";
 import { useConference } from "../../../../useConference";
-import { BackstageContext } from "../BackstageContext";
+import { ControlBarButton } from "../../Vonage/ControlBar/ControlBarButton";
 
 gql`
     query ImmediateSwitch_GetElements($eventId: uuid!) @cached {
@@ -94,9 +94,12 @@ gql`
     }
 `;
 
-export function ImmediateSwitch(): JSX.Element {
+export function ImmediateSwitch({
+    event,
+}: {
+    event: Room_EventSummaryFragment & Event_EventVonageSessionFragment;
+}): JSX.Element {
     const toast = useToast();
-    const event = useContextSelector(BackstageContext, (state) => state.event);
 
     const scheduledStartTime = useMemo(() => Date.parse(event.scheduledStartTime), [event.scheduledStartTime]);
     const scheduledEndTime = useMemo(() => Date.parse(event.scheduledEndTime), [event.scheduledEndTime]);
@@ -121,152 +124,42 @@ export function ImmediateSwitch(): JSX.Element {
 
     const [, createImmediateSwitch] = useImmediateSwitch_CreateMutation();
 
-    const [lastSwitched, setLastSwitched] = useState<number>(0);
-    const enableSwitchButton = now - lastSwitched > 5000;
+    const [_lastSwitched, setLastSwitched] = useState<number>(0);
+    // const enableSwitchButton = now - lastSwitched > 5000;
     const conference = useConference();
-
-    const options = useMemo(
-        () => (
-            <>
-                <option key="rtmp_push_event" value="rtmp_push:rtmpEvent">
-                    Live backstage (default)
-                </option>
-                {elementsData?.schedule_Event_by_pk?.room?.rtmpInput?.id ? (
-                    <option key="rtmp_push_external" value="rtmp_push:rtmpRoom">
-                        Hybrid Room (External RTMP input)
-                    </option>
-                ) : undefined}
-                {R.sort(
-                    (a, b) => a.title.localeCompare(b.title),
-                    elementsData?.schedule_Event_by_pk?.item && elementsData?.schedule_Event_by_pk?.exhibition?.items
-                        ? [
-                              elementsData.schedule_Event_by_pk.item,
-                              ...elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item),
-                          ]
-                        : elementsData?.schedule_Event_by_pk?.item
-                        ? [elementsData.schedule_Event_by_pk.item]
-                        : elementsData?.schedule_Event_by_pk?.exhibition?.items
-                        ? [...elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item)]
-                        : []
-                ).flatMap((item) =>
-                    R.sort((a, b) => a.name.localeCompare(b.name), item.elements).map((element) => (
-                        <option key={element.id} value={element.id}>
-                            {item.title}: {element.name}
-                        </option>
-                    ))
-                )}
-            </>
-        ),
-        [
-            elementsData?.schedule_Event_by_pk?.room?.rtmpInput?.id,
-            elementsData?.schedule_Event_by_pk?.item,
-            elementsData?.schedule_Event_by_pk?.exhibition?.items,
-        ]
-    );
 
     const disable = useMemo(() => !live || secondsUntilOffAir < 20, [live, secondsUntilOffAir]);
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const popover = useDisclosure();
+    const confirmationDialog = useDisclosure();
 
     const client = useClient();
     const performSwitch = useCallback(
-        async (choice: string, source?: "rtmpEvent" | "rtmpRoom") => {
-            switch (choice) {
-                case "filler": {
-                    try {
-                        const data: FillerImmediateSwitchData = {
-                            kind: "filler",
-                        };
-                        await createImmediateSwitch({
-                            data,
-                            eventId: event.id,
-                            conferenceId: conference.id,
-                        });
-                        await client
-                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
-                                LiveIndicator_GetLatestDocument,
-                                {
-                                    eventId: event.id,
-                                }
-                            )
-                            .toPromise();
-                    } catch (err: any) {
-                        toast({
-                            status: "error",
-                            title: "Could not switch to filler video",
-                            description: err.message,
-                        });
-                        return;
-                    }
-                    break;
+        async (immediateSwitchData: ImmediateSwitchData) => {
+            try {
+                const result = await createImmediateSwitch({
+                    data: immediateSwitchData,
+                    eventId: event.id,
+                    conferenceId: conference.id,
+                });
+                if (result.error) {
+                    const error = extractActualError(result.error);
+                    throw new Error(error);
                 }
-                case "rtmp_push": {
-                    try {
-                        const data: RtmpPushImmediateSwitchData = {
-                            kind: "rtmp_push",
-                            source,
-                        };
-                        await createImmediateSwitch({
-                            data,
+                await client
+                    .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
+                        LiveIndicator_GetLatestDocument,
+                        {
                             eventId: event.id,
-                            conferenceId: conference.id,
-                        });
-                        await client
-                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
-                                LiveIndicator_GetLatestDocument,
-                                {
-                                    eventId: event.id,
-                                }
-                            )
-                            .toPromise();
-                    } catch (err: any) {
-                        toast({
-                            status: "error",
-                            title: "Could not switch to live presentation",
-                            description: err.message,
-                        });
-                        return;
-                    }
-                    break;
-                }
-                default: {
-                    try {
-                        const isValidUUID = validate(choice);
-                        if (!isValidUUID) {
-                            toast({
-                                status: "error",
-                                title: "Could not switch to chosen video",
-                                description: "Invalid ID",
-                            });
-                            return;
                         }
-                        const data: VideoImmediateSwitchData = {
-                            kind: "video",
-                            elementId: choice,
-                        };
-                        await createImmediateSwitch({
-                            data,
-                            eventId: event.id,
-                            conferenceId: conference.id,
-                        });
-                        await client
-                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
-                                LiveIndicator_GetLatestDocument,
-                                {
-                                    eventId: event.id,
-                                }
-                            )
-                            .toPromise();
-                    } catch (err: any) {
-                        toast({
-                            status: "error",
-                            title: "Could not switch to chosen video",
-                            description: err.message,
-                        });
-                        return;
-                    }
-                    break;
-                }
+                    )
+                    .toPromise();
+            } catch (err) {
+                toast({
+                    status: "error",
+                    title: "Could not switch livestream feed",
+                    description: err instanceof Error ? err.message : undefined,
+                });
             }
             setLastSwitched(now);
         },
@@ -274,104 +167,182 @@ export function ImmediateSwitch(): JSX.Element {
     );
 
     const cancelRef = useRef<HTMLButtonElement>(null);
-    const [switchAction, setSwitchAction] = useState<string | null>(null);
-    const [switchSource, setSwitchSource] = useState<"rtmpEvent" | "rtmpRoom" | null>(null);
-
-    const form = useMemo(
-        () => (
-            <>
-                <Formik<{ choice: string }>
-                    initialValues={{
-                        choice: "filler",
-                    }}
-                    onSubmit={async (values) => {
-                        const parts = values.choice.split(":");
-                        const choice = parts[0] ?? null;
-                        const source = parts[1] ?? null;
-                        setSwitchAction(choice);
-                        setSwitchSource(source as "rtmpEvent" | "rtmpRoom" | null);
-                        onOpen();
-                    }}
-                >
-                    {({ ...props }) => (
-                        <>
-                            <Form>
-                                <HStack>
-                                    <Field name="choice">
-                                        {({ field }: FieldProps<string>) => (
-                                            <FormControl>
-                                                <VisuallyHidden>
-                                                    <FormLabel htmlFor="choice">Livestream input</FormLabel>
-                                                </VisuallyHidden>
-                                                <Select
-                                                    {...{ ...field }}
-                                                    placeholder="Choose input"
-                                                    isRequired
-                                                    isDisabled={disable || !enableSwitchButton}
-                                                >
-                                                    {options}
-                                                </Select>
-                                            </FormControl>
-                                        )}
-                                    </Field>
-                                    <Button
-                                        mt={4}
-                                        colorScheme="PrimaryActionButton"
-                                        isLoading={props.isSubmitting || !enableSwitchButton}
-                                        type="submit"
-                                        isDisabled={!props.isValid || disable}
-                                        aria-label="Switch livestream input"
-                                        title="Switch livestream input"
-                                        size="sm"
-                                    >
-                                        <FAIcon icon="play-circle" iconStyle="s" />
-                                    </Button>
-                                </HStack>
-                            </Form>
-                        </>
-                    )}
-                </Formik>
-                <AlertDialog
-                    motionPreset="slideInBottom"
-                    leastDestructiveRef={cancelRef}
-                    onClose={onClose}
-                    isOpen={isOpen}
-                    isCentered
-                >
-                    <AlertDialogOverlay />
-
-                    <AlertDialogContent>
-                        <AlertDialogHeader>Switch livestream input</AlertDialogHeader>
-                        <AlertDialogCloseButton />
-                        <AlertDialogBody>
-                            Are you sure you want to change what is being streamed? The audience will see this change.
-                        </AlertDialogBody>
-                        <AlertDialogFooter>
-                            <Button ref={cancelRef} onClick={onClose}>
-                                No
-                            </Button>
-                            <Button
-                                colorScheme="ConfirmButton"
-                                ml={3}
-                                isLoading={!switchAction}
-                                onClick={async () => {
-                                    if (switchAction) {
-                                        setSwitchAction(null);
-                                        setSwitchSource(null);
-                                        await performSwitch(switchAction, switchSource ?? undefined);
-                                        onClose();
-                                    }
-                                }}
-                            >
-                                Yes
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </>
-        ),
-        [disable, enableSwitchButton, isOpen, onClose, onOpen, options, performSwitch, switchAction, switchSource]
+    const [switchData, setSwitchData] = useState<ImmediateSwitchData | null>(null);
+    const startSwitch = useCallback(
+        (immediateSwitchData: ImmediateSwitchData) => {
+            setSwitchData(immediateSwitchData);
+            confirmationDialog.onOpen();
+            popover.onClose();
+        },
+        [confirmationDialog, popover]
     );
 
-    return form;
+    return (
+        <>
+            <AlertDialog
+                motionPreset="slideInBottom"
+                leastDestructiveRef={cancelRef}
+                onClose={confirmationDialog.onClose}
+                isOpen={confirmationDialog.isOpen}
+                isCentered
+            >
+                <AlertDialogOverlay />
+
+                <AlertDialogContent>
+                    <AlertDialogHeader>Switch livestream input</AlertDialogHeader>
+                    <AlertDialogCloseButton />
+                    <AlertDialogBody>
+                        Are you sure you want to change what is being streamed? The audience will see this change.
+                    </AlertDialogBody>
+                    <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={confirmationDialog.onClose}>
+                            No
+                        </Button>
+                        <Button
+                            colorScheme="ConfirmButton"
+                            ml={3}
+                            isLoading={!switchData}
+                            onClick={async () => {
+                                if (switchData) {
+                                    setSwitchData(null);
+                                    await performSwitch(switchData);
+                                    confirmationDialog.onClose();
+                                }
+                            }}
+                        >
+                            Yes
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <Popover isOpen={popover.isOpen} onClose={popover.onClose} placement="top">
+                <PopoverAnchor>
+                    <ControlBarButton
+                        label="Change livestream source"
+                        icon="play-circle"
+                        isVisible={true}
+                        isActive={false}
+                        isEnabled={!disable}
+                        onClick={() => popover.onToggle()}
+                    />
+                </PopoverAnchor>
+                <PopoverContent>
+                    <PopoverHeader fontWeight="semibold">Change live-stream source</PopoverHeader>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverBody>
+                        <UnorderedList
+                            listStyleType="none"
+                            marginInlineStart={0}
+                            my={2}
+                            spacing={2}
+                            flex={1}
+                            overflowY="auto"
+                            maxH="50vh"
+                        >
+                            <ListItem key="rtmp_push_event">
+                                <Card
+                                    heading="Live backstage"
+                                    rightButton={{
+                                        icon: "play",
+                                        iconStyle: "s",
+                                        label: "Switch to live backstage",
+                                        colorScheme: "blue",
+                                        variant: "solid",
+                                        onClick: () => {
+                                            startSwitch({
+                                                kind: "rtmp_push",
+                                                source: "rtmpEvent",
+                                            });
+                                        },
+                                    }}
+                                >
+                                    <Text fontSize="sm">
+                                        The live backstage room that you are currently connected to.
+                                    </Text>
+                                </Card>
+                            </ListItem>
+                            <ListItem key="filler_video">
+                                <Card
+                                    heading="Filler video"
+                                    rightButton={{
+                                        icon: "play",
+                                        iconStyle: "s",
+                                        label: "Switch to filler video",
+                                        colorScheme: "blue",
+                                        variant: "solid",
+                                        onClick: () => {
+                                            startSwitch({
+                                                kind: "filler",
+                                            });
+                                        },
+                                    }}
+                                >
+                                    <Text fontSize="sm">A generic video to fill gaps in the live-stream.</Text>
+                                </Card>
+                            </ListItem>
+                            {elementsData?.schedule_Event_by_pk?.room?.rtmpInput?.id ? (
+                                <ListItem key="rtmp_push_external" value="rtmp_push:rtmpRoom">
+                                    <Card
+                                        heading="Hybrid Room (External RTMP input)"
+                                        rightButton={{
+                                            icon: "play",
+                                            iconStyle: "s",
+                                            label: "Switch to external RTMP input",
+                                            colorScheme: "blue",
+                                            variant: "solid",
+                                            onClick: () => {
+                                                startSwitch({
+                                                    kind: "rtmp_push",
+                                                    source: "rtmpRoom",
+                                                });
+                                            },
+                                        }}
+                                    >
+                                        <Text fontSize="sm">The room&apos;s external RTMP input.</Text>
+                                    </Card>
+                                </ListItem>
+                            ) : undefined}
+                            {R.sort(
+                                (a, b) => a.title.localeCompare(b.title),
+                                elementsData?.schedule_Event_by_pk?.item &&
+                                    elementsData?.schedule_Event_by_pk?.exhibition?.items
+                                    ? [
+                                          elementsData.schedule_Event_by_pk.item,
+                                          ...elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item),
+                                      ]
+                                    : elementsData?.schedule_Event_by_pk?.item
+                                    ? [elementsData.schedule_Event_by_pk.item]
+                                    : elementsData?.schedule_Event_by_pk?.exhibition?.items
+                                    ? [...elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item)]
+                                    : []
+                            ).flatMap((item) =>
+                                R.sort((a, b) => a.name.localeCompare(b.name), item.elements).map((element) => (
+                                    <ListItem key={element.id}>
+                                        <Card
+                                            subHeading={item.title}
+                                            heading={element.name}
+                                            rightButton={{
+                                                icon: "play",
+                                                iconStyle: "s",
+                                                label: `Switch to video '${item.title}: ${element.name}'`,
+                                                colorScheme: "blue",
+                                                variant: "solid",
+                                                onClick: () => {
+                                                    startSwitch({
+                                                        kind: "video",
+                                                        elementId: element.id,
+                                                    });
+                                                },
+                                            }}
+                                        />
+                                    </ListItem>
+                                ))
+                            )}
+                        </UnorderedList>
+                    </PopoverBody>
+                </PopoverContent>
+            </Popover>
+        </>
+    );
 }

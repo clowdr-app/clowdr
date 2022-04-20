@@ -1,15 +1,25 @@
 import { gql } from "@apollo/client/core";
 import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
+import { ImmediateSwitchData, ImmediateSwitchExecutedSignal } from "@midspace/shared-types/video/immediateSwitchData";
 import { Injectable } from "@nestjs/common";
-import { ImmediateSwitch_CompleteDocument, ImmediateSwitch_FailDocument } from "../../generated/graphql";
+import {
+    ImmediateSwitch_CompleteDocument,
+    ImmediateSwitch_FailDocument,
+    ImmediateSwitch_NotifyDetailsDocument,
+} from "../../generated/graphql";
+import { VonageClientService } from "../../vonage/vonage/vonage-client.service";
 import { GraphQlService } from "../graphql/graphql.service";
 
 @Injectable()
 export class ImmediateSwitchDataService {
     private logger: Bunyan;
 
-    constructor(@RootLogger() logger: Bunyan, private graphQlService: GraphQlService) {
+    constructor(
+        @RootLogger() logger: Bunyan,
+        private graphQlService: GraphQlService,
+        private vonageClientService: VonageClientService
+    ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
@@ -32,6 +42,47 @@ export class ImmediateSwitchDataService {
                 executedAt: new Date().toISOString(),
             },
         });
+    }
+
+    public async notifyImmediateSwitchExecuted(immediateSwitchId: string): Promise<void> {
+        gql`
+            query ImmediateSwitch_NotifyDetails($immediateSwitchId: uuid!) {
+                video_ImmediateSwitch_by_pk(id: $immediateSwitchId) {
+                    executedAt
+                    data
+                    event {
+                        eventVonageSession {
+                            id
+                            sessionId
+                        }
+                        id
+                    }
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: ImmediateSwitch_NotifyDetailsDocument,
+            variables: {
+                immediateSwitchId,
+            },
+        });
+
+        if (result.data.video_ImmediateSwitch_by_pk?.event?.eventVonageSession) {
+            const data: ImmediateSwitchExecutedSignal = {
+                executedAtMillis: Date.parse(result.data.video_ImmediateSwitch_by_pk.executedAt),
+                immediateSwitch: ImmediateSwitchData.parse(result.data.video_ImmediateSwitch_by_pk.data),
+            };
+
+            this.vonageClientService.sendSignal(
+                result.data.video_ImmediateSwitch_by_pk.event.eventVonageSession.sessionId,
+                null,
+                {
+                    data,
+                    type: "immediate-switch-executed",
+                }
+            );
+        }
     }
 
     public async failImmediateSwitch(immediateSwitchId: string, errorMessage: string): Promise<void> {

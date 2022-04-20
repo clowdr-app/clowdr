@@ -1,17 +1,33 @@
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, isElementDataBlob } from "@midspace/shared-types/content";
+import type { ImmediateSwitchExecutedSignal, RtmpSource } from "@midspace/shared-types/video/immediateSwitchData";
 import { ImmediateSwitchData } from "@midspace/shared-types/video/immediateSwitchData";
-import { plainToClass } from "class-transformer";
-import { validateSync } from "class-validator";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import type { PropsWithChildren } from "react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createContext } from "use-context-selector";
 import type { Event_EventVonageSessionFragment, Room_EventSummaryFragment } from "../../../../../generated/graphql";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../generated/graphql";
 import usePolling from "../../../../Hooks/usePolling";
 import { useRealTime } from "../../../../Hooks/useRealTime";
+import { useEvent } from "../../../../Utils/useEvent";
 import { useVonageGlobalState } from "../Vonage/State/VonageGlobalStateProvider";
+
+gql`
+    query LiveIndicator_GetLatest($eventId: uuid!) {
+        video_ImmediateSwitch(
+            order_by: { executedAt: desc_nulls_last }
+            where: { eventId: { _eq: $eventId }, executedAt: { _is_null: false } }
+            limit: 1
+        ) {
+            id
+            data
+            executedAt
+            eventId
+        }
+    }
+`;
 
 interface Props {
     hlsUri?: string;
@@ -52,32 +68,69 @@ function useValue({ hlsUri, event }: Props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isConnected]);
 
-    const latestSwitchData = useMemo(() => {
-        if (!latestImmediateSwitchData?.video_ImmediateSwitch?.length) {
+    const lastRetrievedSwitch = useMemo((): ImmediateSwitchExecutedSignal | null => {
+        if (
+            !latestImmediateSwitchData?.video_ImmediateSwitch?.length ||
+            !latestImmediateSwitchData.video_ImmediateSwitch[0].executedAt
+        ) {
             return null;
         }
 
-        const transformed = plainToClass(ImmediateSwitchData, {
-            type: "switch",
-            data: latestImmediateSwitchData.video_ImmediateSwitch[0].data,
-        });
+        const transformed = ImmediateSwitchData.safeParse(latestImmediateSwitchData.video_ImmediateSwitch[0].data);
 
-        const errors = validateSync(transformed);
-        if (errors.length) {
-            console.error("Invalid immediate switch", { errors, data: transformed });
+        if (!transformed.success) {
+            console.error("Invalid immediate switch", {
+                error: transformed.error,
+                data: latestImmediateSwitchData.video_ImmediateSwitch[0].data,
+            });
             return null;
         }
 
-        return transformed;
+        return {
+            immediateSwitch: transformed.data,
+            executedAtMillis: Date.parse(latestImmediateSwitchData?.video_ImmediateSwitch[0].executedAt),
+        };
     }, [latestImmediateSwitchData]);
+
+    const [lastReceivedSwitch, setLastReceivedSwitch] = useState<ImmediateSwitchExecutedSignal | null>(null);
+    const receivedSwitch = useCallback(
+        (data: ImmediateSwitchExecutedSignal) => {
+            console.log("Received immediate switch event", data);
+            if (!lastReceivedSwitch?.executedAtMillis || lastReceivedSwitch.executedAtMillis < data.executedAtMillis) {
+                setLastReceivedSwitch(data);
+            }
+        },
+        [lastReceivedSwitch?.executedAtMillis]
+    );
+    useEvent(vonageGlobalState, "immediate-switch-executed-signal-received", receivedSwitch);
+
+    const latestSwitch = useMemo((): ImmediateSwitchExecutedSignal | null => {
+        if (lastReceivedSwitch && lastRetrievedSwitch) {
+            if (lastReceivedSwitch.executedAtMillis > lastRetrievedSwitch.executedAtMillis) {
+                return lastReceivedSwitch;
+            } else {
+                return lastRetrievedSwitch;
+            }
+        } else if (lastReceivedSwitch) {
+            return lastReceivedSwitch;
+        } else if (lastRetrievedSwitch) {
+            return lastRetrievedSwitch;
+        }
+        return null;
+    }, [lastReceivedSwitch, lastRetrievedSwitch]);
 
     const [{ data: _currentElementData }] = useLiveIndicator_GetElementQuery({
         variables: {
-            elementId: latestSwitchData?.data.kind === "video" ? latestSwitchData.data.elementId : null,
+            elementId:
+                latestSwitch?.immediateSwitch?.kind === "video"
+                    ? latestSwitch.immediateSwitch.elementId
+                    : event?.autoPlayElement?.id
+                    ? event.autoPlayElement.id
+                    : null,
         },
-        pause: latestSwitchData?.data.kind !== "video",
+        pause: latestSwitch?.immediateSwitch?.kind !== "video",
     });
-    const currentElementData = latestSwitchData?.data.kind === "video" ? _currentElementData : undefined;
+    const currentElementData = latestSwitch?.immediateSwitch?.kind === "video" ? _currentElementData : undefined;
 
     const durationCurrentElement = useMemo((): number | null => {
         if (
@@ -107,15 +160,31 @@ function useValue({ hlsUri, event }: Props) {
         | "video_ending"
         | "video_unknown_duration"
         | null => {
-        if (!latestSwitchData) {
+        const eventStartMillis = Date.parse(event.scheduledStartTime);
+        if (!latestSwitch || latestSwitch.executedAtMillis < eventStartMillis) {
+            if (event.autoPlayElement) {
+                if (!durationCurrentElement) {
+                    return "video_unknown_duration";
+                }
+                if (now - eventStartMillis > durationCurrentElement * 1000) {
+                    return "filler";
+                } else if (now - eventStartMillis > (durationCurrentElement - 10) * 1000) {
+                    return "video_ending";
+                } else {
+                    return "video";
+                }
+            }
             return "rtmp_push:rtmpEvent";
         }
 
-        switch (latestSwitchData.data.kind) {
+        const lastSwitch = latestSwitch.immediateSwitch;
+        switch (lastSwitch.kind) {
             case "filler":
                 return "filler";
-            case "rtmp_push":
-                return `rtmp_push:${latestSwitchData.data.source ?? "rtmpEvent"}`;
+            case "rtmp_push": {
+                const source: RtmpSource = lastSwitch.source ?? "rtmpEvent";
+                return `rtmp_push:${source}`;
+            }
             case "video": {
                 if (!latestImmediateSwitchData?.video_ImmediateSwitch?.[0]?.executedAt) {
                     return null;
@@ -133,9 +202,14 @@ function useValue({ hlsUri, event }: Props) {
                 }
             }
         }
-
-        return null;
-    }, [durationCurrentElement, latestImmediateSwitchData?.video_ImmediateSwitch, latestSwitchData, now]);
+    }, [
+        latestSwitch,
+        event.autoPlayElement,
+        event.scheduledStartTime,
+        durationCurrentElement,
+        now,
+        latestImmediateSwitchData?.video_ImmediateSwitch,
+    ]);
 
     const liveOnAir = live && currentInput !== "video" && currentInput !== "filler";
 

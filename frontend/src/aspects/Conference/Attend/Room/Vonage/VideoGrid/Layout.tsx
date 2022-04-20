@@ -172,9 +172,11 @@ export default function Layout({
 
     return (
         <VStack justifyContent="center" alignItems="stretch" flexGrow={1}>
-            <Heading as="h3" size="sm" flexGrow={0} flexShrink={1} pt={2}>
-                Preview of {settings.isBackstageRoom ? "stream" : "recording"}
-            </Heading>
+            {!settings.isBackstageRoom && isRecordingActive ? (
+                <Heading as="h3" size="sm" flexGrow={0} flexShrink={1} pt={2}>
+                    Preview of recording
+                </Heading>
+            ) : undefined}
             <Box flexBasis={0} minH="10em" flexGrow={{ base: 1.5, md: 2.5, lg: 3 }} flexShrink={1} ref={layoutPanelRef}>
                 <Box w={`${width}px`} h={`${height}px`} mx="auto" flexGrow={1} flexShrink={1} overflowY="auto">
                     {layoutEl}

@@ -17,6 +17,7 @@ import { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
 import type { VonageRoom } from "../Vonage/VonageRoom";
 import { BackstageContext, BackstageProvider } from "./BackstageContext";
 import { BackstageControls } from "./Controls/BackstageControls";
+import { ImmediateSwitch } from "./Controls/ImmediateSwitch";
 
 gql`
     query VonageBackstage_GetVonageSession($eventId: uuid!) @cached {
@@ -140,6 +141,7 @@ export function VonageBackstageInner({
                         completeJoinRef={completeJoinRef}
                         onLeave={onLeave}
                         canControlRecordingAs={canControlRecordingAs}
+                        extraLayoutButtons={<ImmediateSwitch event={event} />}
                     />
                 ) : (
                     <>No room session available.</>

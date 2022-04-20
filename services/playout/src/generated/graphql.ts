@@ -11,6 +11,7 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
+    _uuid: any;
     bigint: any;
     float8: any;
     jsonb: any;
@@ -16135,6 +16136,10 @@ export type Mutation_Root = {
     notifyEventStarted: NotifyEventStarted;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
+    /** execute VOLATILE function "schedule.shiftPresentationTimes" which returns "schedule.Event" */
+    schedule_shiftPresentationTimes: Array<Schedule_Event>;
+    /** execute VOLATILE function "schedule.shiftTimes" which returns "schedule.Event" */
+    schedule_shiftTimes: Array<Schedule_Event>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
@@ -18829,6 +18834,26 @@ export type Mutation_RootNotifyEventStartedArgs = {
 export type Mutation_RootRefreshYouTubeDataArgs = {
     registrantGoogleAccountId: Scalars["uuid"];
     registrantId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftPresentationTimesArgs = {
+    args: Schedule_ShiftPresentationTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftTimesArgs = {
+    args: Schedule_ShiftTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** mutation root */
@@ -30808,6 +30833,16 @@ export type Schedule_SearchEvents_Args = {
     search?: InputMaybe<Scalars["String"]>;
 };
 
+export type Schedule_ShiftPresentationTimes_Args = {
+    minutes?: InputMaybe<Scalars["Int"]>;
+    sessionId?: InputMaybe<Scalars["uuid"]>;
+};
+
+export type Schedule_ShiftTimes_Args = {
+    eventIds?: InputMaybe<Scalars["_uuid"]>;
+    minutes?: InputMaybe<Scalars["Int"]>;
+};
+
 /** columns and relationships of "sponsor.Tier" */
 export type Sponsor_Tier = {
     __typename?: "sponsor_Tier";
@@ -39687,6 +39722,24 @@ export type ImmediateSwitch_CompleteMutation = {
     update_video_ImmediateSwitch_by_pk?: { __typename?: "video_ImmediateSwitch"; id: any } | null;
 };
 
+export type ImmediateSwitch_NotifyDetailsQueryVariables = Exact<{
+    immediateSwitchId: Scalars["uuid"];
+}>;
+
+export type ImmediateSwitch_NotifyDetailsQuery = {
+    __typename?: "query_root";
+    video_ImmediateSwitch_by_pk?: {
+        __typename?: "video_ImmediateSwitch";
+        executedAt?: any | null;
+        data: any;
+        event?: {
+            __typename?: "schedule_Event";
+            id: any;
+            eventVonageSession?: { __typename?: "video_EventVonageSession"; id: any; sessionId: string } | null;
+        } | null;
+    } | null;
+};
+
 export type ImmediateSwitch_FailMutationVariables = Exact<{
     immediateSwitchId: Scalars["uuid"];
     errorMessage: Scalars["String"];
@@ -43406,6 +43459,67 @@ export const ImmediateSwitch_CompleteDocument = {
         },
     ],
 } as unknown as DocumentNode<ImmediateSwitch_CompleteMutation, ImmediateSwitch_CompleteMutationVariables>;
+export const ImmediateSwitch_NotifyDetailsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "ImmediateSwitch_NotifyDetails" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "immediateSwitchId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "video_ImmediateSwitch_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "immediateSwitchId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "executedAt" } },
+                                { kind: "Field", name: { kind: "Name", value: "data" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "event" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "eventVonageSession" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "sessionId" } },
+                                                    ],
+                                                },
+                                            },
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<ImmediateSwitch_NotifyDetailsQuery, ImmediateSwitch_NotifyDetailsQueryVariables>;
 export const ImmediateSwitch_FailDocument = {
     kind: "Document",
     definitions: [

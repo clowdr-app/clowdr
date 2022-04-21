@@ -130,6 +130,14 @@ gql`
         }
         presentations {
             ...ScheduleEvent
+
+            eventPeople {
+                id
+                person {
+                    id
+                    registrantId
+                }
+            }
         }
     }
 
@@ -271,8 +279,12 @@ function RoomInner({
             currentRoomEvent.modeName === Schedule_Mode_Enum.Livestream &&
             currentRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id);
 
-        const isPresenterOfUpcomingSoonEvent = !!nonCurrentLiveEventsInNext20Mins?.some((event) =>
-            event?.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id)
+        const isPresenterOfUpcomingSoonEvent = !!nonCurrentLiveEventsInNext20Mins?.some(
+            (event) =>
+                event.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id) ||
+                event.presentations.some((presentation) =>
+                    presentation.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id)
+                )
         );
 
         return isPresenterOfCurrentEvent || !!isPresenterOfUpcomingSoonEvent;
@@ -438,8 +450,12 @@ function RoomInner({
 
     const roomEventsForCurrentRegistrant = useMemo(
         () =>
-            roomEvents.filter((event) =>
-                event.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id)
+            roomEvents.filter(
+                (event) =>
+                    event.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id) ||
+                    event.presentations.some((presentation) =>
+                        presentation.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id)
+                    )
             ),
         [currentRegistrant.id, roomEvents]
     );

@@ -57,9 +57,12 @@ gql`
     query RegistrantEventsWithBackstages($registrantId: uuid!) {
         schedule_Event(
             where: {
-                eventPeople: { person: { registrantId: { _eq: $registrantId } } }
                 modeName: { _eq: LIVESTREAM }
                 room: {}
+                _or: [
+                    { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }
+                    { presentations: { eventPeople: { person: { registrantId: { _eq: $registrantId } } } } }
+                ]
             }
         ) {
             ...MyBackstages_Event

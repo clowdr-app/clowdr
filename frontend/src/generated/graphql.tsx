@@ -41348,6 +41348,15 @@ export type Room_GetEventsQuery = {
             readonly roomId: any;
             readonly modeName?: Schedule_Mode_Enum | null;
             readonly sessionEventId?: any | null;
+            readonly eventPeople: ReadonlyArray<{
+                readonly __typename?: "schedule_EventProgramPerson";
+                readonly id: any;
+                readonly person: {
+                    readonly __typename?: "collection_ProgramPerson";
+                    readonly id: any;
+                    readonly registrantId?: any | null;
+                };
+            }>;
             readonly item?: {
                 readonly __typename?: "content_Item";
                 readonly id: any;
@@ -41483,6 +41492,15 @@ export type Room_EventSummaryFragment = {
         readonly roomId: any;
         readonly modeName?: Schedule_Mode_Enum | null;
         readonly sessionEventId?: any | null;
+        readonly eventPeople: ReadonlyArray<{
+            readonly __typename?: "schedule_EventProgramPerson";
+            readonly id: any;
+            readonly person: {
+                readonly __typename?: "collection_ProgramPerson";
+                readonly id: any;
+                readonly registrantId?: any | null;
+            };
+        }>;
         readonly item?: {
             readonly __typename?: "content_Item";
             readonly id: any;
@@ -49467,6 +49485,15 @@ export type RaiseHandPanel_GetEventDetailsQuery = {
             readonly roomId: any;
             readonly modeName?: Schedule_Mode_Enum | null;
             readonly sessionEventId?: any | null;
+            readonly eventPeople: ReadonlyArray<{
+                readonly __typename?: "schedule_EventProgramPerson";
+                readonly id: any;
+                readonly person: {
+                    readonly __typename?: "collection_ProgramPerson";
+                    readonly id: any;
+                    readonly registrantId?: any | null;
+                };
+            }>;
             readonly item?: {
                 readonly __typename?: "content_Item";
                 readonly id: any;
@@ -50922,6 +50949,13 @@ export const Room_EventSummaryFragmentDoc = gql`
         }
         presentations {
             ...ScheduleEvent
+            eventPeople {
+                id
+                person {
+                    id
+                    registrantId
+                }
+            }
         }
     }
     ${ShufflePeriodDataFragmentDoc}
@@ -52868,9 +52902,12 @@ export const RegistrantEventsWithBackstagesDocument = gql`
     query RegistrantEventsWithBackstages($registrantId: uuid!) {
         schedule_Event(
             where: {
-                eventPeople: { person: { registrantId: { _eq: $registrantId } } }
                 modeName: { _eq: LIVESTREAM }
                 room: {}
+                _or: [
+                    { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }
+                    { presentations: { eventPeople: { person: { registrantId: { _eq: $registrantId } } } } }
+                ]
             }
         ) {
             ...MyBackstages_Event

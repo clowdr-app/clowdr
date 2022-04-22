@@ -24739,6 +24739,8 @@ export type Registrant_Registrant = {
     readonly invitationStatus?: Maybe<Scalars["jsonb"]>;
     /** A computed field, executes function "registrant.HasBeenInvited" */
     readonly inviteSent?: Maybe<Scalars["Boolean"]>;
+    /** A computed field, executes function "registrant.isProgramPerson" */
+    readonly isProgramPerson?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
     readonly profile?: Maybe<Registrant_Profile>;
     /** An array relationship */
@@ -25010,6 +25012,7 @@ export type Registrant_Registrant_Bool_Exp = {
     readonly invitation?: InputMaybe<Registrant_Invitation_Bool_Exp>;
     readonly invitationStatus?: InputMaybe<Jsonb_Comparison_Exp>;
     readonly inviteSent?: InputMaybe<Boolean_Comparison_Exp>;
+    readonly isProgramPerson?: InputMaybe<Boolean_Comparison_Exp>;
     readonly profile?: InputMaybe<Registrant_Profile_Bool_Exp>;
     readonly programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
     readonly subconferenceMemberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
@@ -25123,6 +25126,7 @@ export type Registrant_Registrant_Order_By = {
     readonly invitation?: InputMaybe<Registrant_Invitation_Order_By>;
     readonly invitationStatus?: InputMaybe<Order_By>;
     readonly inviteSent?: InputMaybe<Order_By>;
+    readonly isProgramPerson?: InputMaybe<Order_By>;
     readonly profile?: InputMaybe<Registrant_Profile_Order_By>;
     readonly programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     readonly subconferenceMemberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
@@ -45709,6 +45713,7 @@ export type RegistrantPartsFragment = {
     readonly createdAt: any;
     readonly displayName: string;
     readonly invitationStatus?: any | null;
+    readonly isProgramPerson?: boolean | null;
     readonly invitation?: {
         readonly __typename?: "registrant_Invitation";
         readonly registrantId: any;
@@ -45778,6 +45783,7 @@ export type SelectAllRegistrantsQuery = {
         readonly createdAt: any;
         readonly displayName: string;
         readonly invitationStatus?: any | null;
+        readonly isProgramPerson?: boolean | null;
         readonly invitation?: {
             readonly __typename?: "registrant_Invitation";
             readonly registrantId: any;
@@ -45855,6 +45861,7 @@ export type InsertRegistrantMutation = {
         readonly createdAt: any;
         readonly displayName: string;
         readonly invitationStatus?: any | null;
+        readonly isProgramPerson?: boolean | null;
         readonly invitation?: {
             readonly __typename?: "registrant_Invitation";
             readonly registrantId: any;
@@ -45909,6 +45916,7 @@ export type InsertRegistrantWithoutInviteMutation = {
         readonly createdAt: any;
         readonly displayName: string;
         readonly invitationStatus?: any | null;
+        readonly isProgramPerson?: boolean | null;
         readonly invitation?: {
             readonly __typename?: "registrant_Invitation";
             readonly registrantId: any;
@@ -45971,6 +45979,7 @@ export type UpdateRegistrantMutation = {
         readonly createdAt: any;
         readonly displayName: string;
         readonly invitationStatus?: any | null;
+        readonly isProgramPerson?: boolean | null;
         readonly invitation?: {
             readonly __typename?: "registrant_Invitation";
             readonly registrantId: any;
@@ -51635,6 +51644,7 @@ export const RegistrantPartsFragmentDoc = gql`
         createdAt
         displayName
         invitationStatus
+        isProgramPerson
     }
     ${InvitationPartsFragmentDoc}
 `;
@@ -75001,6 +75011,11 @@ export type GraphCacheResolvers = {
             Scalars["jsonb"] | string
         >;
         inviteSent?: GraphCacheResolver<
+            WithTypename<Registrant_Registrant>,
+            Record<string, never>,
+            Scalars["Boolean"] | string
+        >;
+        isProgramPerson?: GraphCacheResolver<
             WithTypename<Registrant_Registrant>,
             Record<string, never>,
             Scalars["Boolean"] | string

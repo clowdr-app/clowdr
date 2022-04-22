@@ -111,6 +111,7 @@ gql`
         createdAt
         displayName
         invitationStatus
+        isProgramPerson
     }
 
     fragment ManageRegistrants_Profile on registrant_Profile {
@@ -704,6 +705,44 @@ export default function ManageRegistrants(): JSX.Element {
                 },
             },
             {
+                id: "isProgramPerson",
+                header: function IsProgramPersonHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Button size="xs" onClick={onClick}>
+                                Is program person?{sortDir !== null ? ` ${sortDir}` : undefined}
+                            </Button>
+                        );
+                    }
+                },
+                get: (data) => data.isProgramPerson,
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
+                    return rows.filter((row) => row.isProgramPerson === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function InviteSentCell({
+                    isInCreate,
+                    value,
+                }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Center>
+                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
+                            </Center>
+                        );
+                    }
+                },
+            },
+            {
                 id: "role",
                 header: function RoleHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
                     return isInCreate ? (
@@ -1223,6 +1262,13 @@ export default function ManageRegistrants(): JSX.Element {
                                     >
                                         All registrants
                                     </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            doExport(data.filter((a) => !!a.isProgramPerson));
+                                        }}
+                                    >
+                                        Only program people
+                                    </MenuItem>
                                     {allGroups?.registrant_Group.length ? (
                                         <MenuGroup title="Groups">
                                             {allGroups.registrant_Group.map((group) => (
@@ -1296,41 +1342,95 @@ export default function ManageRegistrants(): JSX.Element {
                                 <MenuList>
                                     <MenuItem
                                         onClick={async () => {
-                                            const result = await insertInvitationEmailJobsMutation(
-                                                {
-                                                    registrantIds: data.map((a) => a.id),
-                                                    conferenceId: conference.id,
-                                                    sendRepeat: false,
-                                                },
-                                                {
-                                                    fetchOptions: {
-                                                        headers: {
-                                                            [AuthHeader.Role]: subconferenceId
-                                                                ? HasuraRoleName.SubconferenceOrganizer
-                                                                : HasuraRoleName.ConferenceOrganizer,
-                                                        },
+                                            const registrantIds = data.map((a) => a.id);
+                                            if (
+                                                confirm(
+                                                    `Are you sure? This will send up to ${registrantIds.length} invitations`
+                                                )
+                                            ) {
+                                                const result = await insertInvitationEmailJobsMutation(
+                                                    {
+                                                        registrantIds,
+                                                        conferenceId: conference.id,
+                                                        sendRepeat: false,
                                                     },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
+                                                if (result.error) {
+                                                    toast({
+                                                        title: "Failed to send invitation emails",
+                                                        description: result.error.message,
+                                                        isClosable: true,
+                                                        status: "error",
+                                                    });
+                                                } else {
+                                                    toast({
+                                                        title: "Invitation emails sent",
+                                                        duration: 8000,
+                                                        status: "success",
+                                                    });
                                                 }
-                                            );
-                                            if (result.error) {
-                                                toast({
-                                                    title: "Failed to send invitation emails",
-                                                    description: result.error.message,
-                                                    isClosable: true,
-                                                    status: "error",
-                                                });
-                                            } else {
-                                                toast({
-                                                    title: "Invitation emails sent",
-                                                    duration: 8000,
-                                                    status: "success",
-                                                });
-                                            }
 
-                                            refetchAllRegistrants();
+                                                refetchAllRegistrants();
+                                            }
                                         }}
                                     >
                                         All registrants
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={async () => {
+                                            const registrantIds = data
+                                                .filter((a) => a.isProgramPerson)
+                                                .map((a) => a.id);
+                                            if (
+                                                confirm(
+                                                    `Are you sure? This will send up to ${registrantIds.length} invitations`
+                                                )
+                                            ) {
+                                                const result = await insertInvitationEmailJobsMutation(
+                                                    {
+                                                        registrantIds,
+                                                        conferenceId: conference.id,
+                                                        sendRepeat: false,
+                                                    },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
+                                                if (result.error) {
+                                                    toast({
+                                                        title: "Failed to send invitation emails",
+                                                        description: result.error.message,
+                                                        isClosable: true,
+                                                        status: "error",
+                                                    });
+                                                } else {
+                                                    toast({
+                                                        title: "Invitation emails sent",
+                                                        duration: 8000,
+                                                        status: "success",
+                                                    });
+                                                }
+
+                                                refetchAllRegistrants();
+                                            }
+                                        }}
+                                    >
+                                        Only program people
                                     </MenuItem>
                                     {allGroups?.registrant_Group.length ? (
                                         <MenuGroup title="Groups">
@@ -1338,44 +1438,49 @@ export default function ManageRegistrants(): JSX.Element {
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={async () => {
-                                                        const result = await insertInvitationEmailJobsMutation(
-                                                            {
-                                                                registrantIds: data
-                                                                    .filter((a) =>
-                                                                        a.groupRegistrants.some(
-                                                                            (ga) => ga.groupId === group.id
-                                                                        )
-                                                                    )
-                                                                    .map((a) => a.id),
-                                                                conferenceId: conference.id,
-                                                                sendRepeat: false,
-                                                            },
-                                                            {
-                                                                fetchOptions: {
-                                                                    headers: {
-                                                                        [AuthHeader.Role]: subconferenceId
-                                                                            ? HasuraRoleName.SubconferenceOrganizer
-                                                                            : HasuraRoleName.ConferenceOrganizer,
-                                                                    },
+                                                        const registrantIds = data
+                                                            .filter((a) =>
+                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
+                                                            )
+                                                            .map((a) => a.id);
+                                                        if (
+                                                            confirm(
+                                                                `Are you sure? This will send up to ${registrantIds.length} invitations`
+                                                            )
+                                                        ) {
+                                                            const result = await insertInvitationEmailJobsMutation(
+                                                                {
+                                                                    registrantIds,
+                                                                    conferenceId: conference.id,
+                                                                    sendRepeat: false,
                                                                 },
+                                                                {
+                                                                    fetchOptions: {
+                                                                        headers: {
+                                                                            [AuthHeader.Role]: subconferenceId
+                                                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                                                : HasuraRoleName.ConferenceOrganizer,
+                                                                        },
+                                                                    },
+                                                                }
+                                                            );
+                                                            if (result.error) {
+                                                                toast({
+                                                                    title: "Failed to send invitation emails",
+                                                                    description: result.error.message,
+                                                                    isClosable: true,
+                                                                    status: "error",
+                                                                });
+                                                            } else {
+                                                                toast({
+                                                                    title: "Invitation emails sent",
+                                                                    duration: 8000,
+                                                                    status: "success",
+                                                                });
                                                             }
-                                                        );
-                                                        if (result.error) {
-                                                            toast({
-                                                                title: "Failed to send invitation emails",
-                                                                description: result.error.message,
-                                                                isClosable: true,
-                                                                status: "error",
-                                                            });
-                                                        } else {
-                                                            toast({
-                                                                title: "Invitation emails sent",
-                                                                duration: 8000,
-                                                                status: "success",
-                                                            });
-                                                        }
 
-                                                        refetchAllRegistrants();
+                                                            refetchAllRegistrants();
+                                                        }
                                                     }}
                                                 >
                                                     {group.name}
@@ -1389,45 +1494,51 @@ export default function ManageRegistrants(): JSX.Element {
                                                 <MenuItem
                                                     key={subconference.id}
                                                     onClick={async () => {
-                                                        const result = await insertInvitationEmailJobsMutation(
-                                                            {
-                                                                registrantIds: data
-                                                                    .filter((a) =>
-                                                                        a.subconferenceMemberships.some(
-                                                                            (ga) =>
-                                                                                ga.subconferenceId === subconference.id
-                                                                        )
-                                                                    )
-                                                                    .map((a) => a.id),
-                                                                conferenceId: conference.id,
-                                                                sendRepeat: false,
-                                                            },
-                                                            {
-                                                                fetchOptions: {
-                                                                    headers: {
-                                                                        [AuthHeader.Role]: subconferenceId
-                                                                            ? HasuraRoleName.SubconferenceOrganizer
-                                                                            : HasuraRoleName.ConferenceOrganizer,
-                                                                    },
+                                                        const registrantIds = data
+                                                            .filter((a) =>
+                                                                a.subconferenceMemberships.some(
+                                                                    (ga) => ga.subconferenceId === subconference.id
+                                                                )
+                                                            )
+                                                            .map((a) => a.id);
+                                                        if (
+                                                            confirm(
+                                                                `Are you sure? This will send up to ${registrantIds.length} invitations`
+                                                            )
+                                                        ) {
+                                                            const result = await insertInvitationEmailJobsMutation(
+                                                                {
+                                                                    registrantIds,
+                                                                    conferenceId: conference.id,
+                                                                    sendRepeat: false,
                                                                 },
+                                                                {
+                                                                    fetchOptions: {
+                                                                        headers: {
+                                                                            [AuthHeader.Role]: subconferenceId
+                                                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                                                : HasuraRoleName.ConferenceOrganizer,
+                                                                        },
+                                                                    },
+                                                                }
+                                                            );
+                                                            if (result.error) {
+                                                                toast({
+                                                                    title: "Failed to send invitation emails",
+                                                                    description: result.error.message,
+                                                                    isClosable: true,
+                                                                    status: "error",
+                                                                });
+                                                            } else {
+                                                                toast({
+                                                                    title: "Invitation emails sent",
+                                                                    duration: 8000,
+                                                                    status: "success",
+                                                                });
                                                             }
-                                                        );
-                                                        if (result.error) {
-                                                            toast({
-                                                                title: "Failed to send invitation emails",
-                                                                description: result.error.message,
-                                                                isClosable: true,
-                                                                status: "error",
-                                                            });
-                                                        } else {
-                                                            toast({
-                                                                title: "Invitation emails sent",
-                                                                duration: 8000,
-                                                                status: "success",
-                                                            });
-                                                        }
 
-                                                        refetchAllRegistrants();
+                                                            refetchAllRegistrants();
+                                                        }
                                                     }}
                                                 >
                                                     {subconference.shortName}
@@ -1447,38 +1558,45 @@ export default function ManageRegistrants(): JSX.Element {
                                         isDisabled={selectedData.length === 0}
                                         isLoading={insertInvitationEmailJobsLoading}
                                         onClick={async () => {
-                                            const result = await insertInvitationEmailJobsMutation(
-                                                {
-                                                    registrantIds: selectedData.map((x) => x.id),
-                                                    conferenceId: conference.id,
-                                                    sendRepeat: false,
-                                                },
-                                                {
-                                                    fetchOptions: {
-                                                        headers: {
-                                                            [AuthHeader.Role]: subconferenceId
-                                                                ? HasuraRoleName.SubconferenceOrganizer
-                                                                : HasuraRoleName.ConferenceOrganizer,
-                                                        },
+                                            const registrantIds = selectedData.map((x) => x.id);
+                                            if (
+                                                confirm(
+                                                    `Are you sure? This will send up to ${registrantIds.length} invitations`
+                                                )
+                                            ) {
+                                                const result = await insertInvitationEmailJobsMutation(
+                                                    {
+                                                        registrantIds,
+                                                        conferenceId: conference.id,
+                                                        sendRepeat: false,
                                                     },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
+                                                if (result.error) {
+                                                    toast({
+                                                        title: "Failed to send invitation emails",
+                                                        description: result.error.message,
+                                                        isClosable: true,
+                                                        status: "error",
+                                                    });
+                                                } else {
+                                                    toast({
+                                                        title: "Invitation emails sent",
+                                                        duration: 8000,
+                                                        status: "success",
+                                                    });
                                                 }
-                                            );
-                                            if (result.error) {
-                                                toast({
-                                                    title: "Failed to send invitation emails",
-                                                    description: result.error.message,
-                                                    isClosable: true,
-                                                    status: "error",
-                                                });
-                                            } else {
-                                                toast({
-                                                    title: "Invitation emails sent",
-                                                    duration: 8000,
-                                                    status: "success",
-                                                });
-                                            }
 
-                                            refetchAllRegistrants();
+                                                refetchAllRegistrants();
+                                            }
                                         }}
                                     >
                                         Send initial invitations
@@ -1503,41 +1621,95 @@ export default function ManageRegistrants(): JSX.Element {
                                 <MenuList>
                                     <MenuItem
                                         onClick={async () => {
-                                            const result = await insertInvitationEmailJobsMutation(
-                                                {
-                                                    registrantIds: data.map((a) => a.id),
-                                                    conferenceId: conference.id,
-                                                    sendRepeat: true,
-                                                },
-                                                {
-                                                    fetchOptions: {
-                                                        headers: {
-                                                            [AuthHeader.Role]: subconferenceId
-                                                                ? HasuraRoleName.SubconferenceOrganizer
-                                                                : HasuraRoleName.ConferenceOrganizer,
-                                                        },
+                                            const registrantIds = data.map((a) => a.id);
+                                            if (
+                                                confirm(
+                                                    `Are you sure? This will send up to ${registrantIds.length} repeat invitations`
+                                                )
+                                            ) {
+                                                const result = await insertInvitationEmailJobsMutation(
+                                                    {
+                                                        registrantIds,
+                                                        conferenceId: conference.id,
+                                                        sendRepeat: true,
                                                     },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
+                                                if (result.error) {
+                                                    toast({
+                                                        title: "Failed to send invitation emails",
+                                                        description: result.error.message,
+                                                        isClosable: true,
+                                                        status: "error",
+                                                    });
+                                                } else {
+                                                    toast({
+                                                        title: "Invitation emails sent",
+                                                        duration: 8000,
+                                                        status: "success",
+                                                    });
                                                 }
-                                            );
-                                            if (result.error) {
-                                                toast({
-                                                    title: "Failed to send invitation emails",
-                                                    description: result.error.message,
-                                                    isClosable: true,
-                                                    status: "error",
-                                                });
-                                            } else {
-                                                toast({
-                                                    title: "Invitation emails sent",
-                                                    duration: 8000,
-                                                    status: "success",
-                                                });
-                                            }
 
-                                            refetchAllRegistrants();
+                                                refetchAllRegistrants();
+                                            }
                                         }}
                                     >
                                         All registrants
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={async () => {
+                                            const registrantIds = data
+                                                .filter((a) => a.isProgramPerson)
+                                                .map((a) => a.id);
+                                            if (
+                                                confirm(
+                                                    `Are you sure? This will send up to ${registrantIds.length} repeat invitations`
+                                                )
+                                            ) {
+                                                const result = await insertInvitationEmailJobsMutation(
+                                                    {
+                                                        registrantIds,
+                                                        conferenceId: conference.id,
+                                                        sendRepeat: true,
+                                                    },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
+                                                if (result.error) {
+                                                    toast({
+                                                        title: "Failed to send invitation emails",
+                                                        description: result.error.message,
+                                                        isClosable: true,
+                                                        status: "error",
+                                                    });
+                                                } else {
+                                                    toast({
+                                                        title: "Invitation emails sent",
+                                                        duration: 8000,
+                                                        status: "success",
+                                                    });
+                                                }
+
+                                                refetchAllRegistrants();
+                                            }
+                                        }}
+                                    >
+                                        Only program people
                                     </MenuItem>
                                     {allGroups?.registrant_Group.length ? (
                                         <MenuGroup title="Groups">
@@ -1545,44 +1717,49 @@ export default function ManageRegistrants(): JSX.Element {
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={async () => {
-                                                        const result = await insertInvitationEmailJobsMutation(
-                                                            {
-                                                                registrantIds: data
-                                                                    .filter((a) =>
-                                                                        a.groupRegistrants.some(
-                                                                            (ga) => ga.groupId === group.id
-                                                                        )
-                                                                    )
-                                                                    .map((a) => a.id),
-                                                                conferenceId: conference.id,
-                                                                sendRepeat: true,
-                                                            },
-                                                            {
-                                                                fetchOptions: {
-                                                                    headers: {
-                                                                        [AuthHeader.Role]: subconferenceId
-                                                                            ? HasuraRoleName.SubconferenceOrganizer
-                                                                            : HasuraRoleName.ConferenceOrganizer,
-                                                                    },
+                                                        const registrantIds = data
+                                                            .filter((a) =>
+                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
+                                                            )
+                                                            .map((a) => a.id);
+                                                        if (
+                                                            confirm(
+                                                                `Are you sure? This will send up to ${registrantIds.length} repeat invitations`
+                                                            )
+                                                        ) {
+                                                            const result = await insertInvitationEmailJobsMutation(
+                                                                {
+                                                                    registrantIds,
+                                                                    conferenceId: conference.id,
+                                                                    sendRepeat: true,
                                                                 },
+                                                                {
+                                                                    fetchOptions: {
+                                                                        headers: {
+                                                                            [AuthHeader.Role]: subconferenceId
+                                                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                                                : HasuraRoleName.ConferenceOrganizer,
+                                                                        },
+                                                                    },
+                                                                }
+                                                            );
+                                                            if (result.error) {
+                                                                toast({
+                                                                    title: "Failed to send invitation emails",
+                                                                    description: result.error.message,
+                                                                    isClosable: true,
+                                                                    status: "error",
+                                                                });
+                                                            } else {
+                                                                toast({
+                                                                    title: "Invitation emails sent",
+                                                                    duration: 8000,
+                                                                    status: "success",
+                                                                });
                                                             }
-                                                        );
-                                                        if (result.error) {
-                                                            toast({
-                                                                title: "Failed to send invitation emails",
-                                                                description: result.error.message,
-                                                                isClosable: true,
-                                                                status: "error",
-                                                            });
-                                                        } else {
-                                                            toast({
-                                                                title: "Invitation emails sent",
-                                                                duration: 8000,
-                                                                status: "success",
-                                                            });
-                                                        }
 
-                                                        refetchAllRegistrants();
+                                                            refetchAllRegistrants();
+                                                        }
                                                     }}
                                                 >
                                                     {group.name}
@@ -1596,45 +1773,51 @@ export default function ManageRegistrants(): JSX.Element {
                                                 <MenuItem
                                                     key={subconference.id}
                                                     onClick={async () => {
-                                                        const result = await insertInvitationEmailJobsMutation(
-                                                            {
-                                                                registrantIds: data
-                                                                    .filter((a) =>
-                                                                        a.subconferenceMemberships.some(
-                                                                            (ga) =>
-                                                                                ga.subconferenceId === subconference.id
-                                                                        )
-                                                                    )
-                                                                    .map((a) => a.id),
-                                                                conferenceId: conference.id,
-                                                                sendRepeat: true,
-                                                            },
-                                                            {
-                                                                fetchOptions: {
-                                                                    headers: {
-                                                                        [AuthHeader.Role]: subconferenceId
-                                                                            ? HasuraRoleName.SubconferenceOrganizer
-                                                                            : HasuraRoleName.ConferenceOrganizer,
-                                                                    },
+                                                        const registrantIds = data
+                                                            .filter((a) =>
+                                                                a.subconferenceMemberships.some(
+                                                                    (ga) => ga.subconferenceId === subconference.id
+                                                                )
+                                                            )
+                                                            .map((a) => a.id);
+                                                        if (
+                                                            confirm(
+                                                                `Are you sure? This will send up to ${registrantIds.length} repeat invitations`
+                                                            )
+                                                        ) {
+                                                            const result = await insertInvitationEmailJobsMutation(
+                                                                {
+                                                                    registrantIds,
+                                                                    conferenceId: conference.id,
+                                                                    sendRepeat: true,
                                                                 },
+                                                                {
+                                                                    fetchOptions: {
+                                                                        headers: {
+                                                                            [AuthHeader.Role]: subconferenceId
+                                                                                ? HasuraRoleName.SubconferenceOrganizer
+                                                                                : HasuraRoleName.ConferenceOrganizer,
+                                                                        },
+                                                                    },
+                                                                }
+                                                            );
+                                                            if (result.error) {
+                                                                toast({
+                                                                    title: "Failed to send invitation emails",
+                                                                    description: result.error.message,
+                                                                    isClosable: true,
+                                                                    status: "error",
+                                                                });
+                                                            } else {
+                                                                toast({
+                                                                    title: "Invitation emails sent",
+                                                                    duration: 8000,
+                                                                    status: "success",
+                                                                });
                                                             }
-                                                        );
-                                                        if (result.error) {
-                                                            toast({
-                                                                title: "Failed to send invitation emails",
-                                                                description: result.error.message,
-                                                                isClosable: true,
-                                                                status: "error",
-                                                            });
-                                                        } else {
-                                                            toast({
-                                                                title: "Invitation emails sent",
-                                                                duration: 8000,
-                                                                status: "success",
-                                                            });
-                                                        }
 
-                                                        refetchAllRegistrants();
+                                                            refetchAllRegistrants();
+                                                        }
                                                     }}
                                                 >
                                                     {subconference.shortName}
@@ -1654,38 +1837,45 @@ export default function ManageRegistrants(): JSX.Element {
                                         isDisabled={selectedData.length === 0}
                                         isLoading={insertInvitationEmailJobsLoading}
                                         onClick={async () => {
-                                            const result = await insertInvitationEmailJobsMutation(
-                                                {
-                                                    registrantIds: selectedData.map((x) => x.id),
-                                                    conferenceId: conference.id,
-                                                    sendRepeat: true,
-                                                },
-                                                {
-                                                    fetchOptions: {
-                                                        headers: {
-                                                            [AuthHeader.Role]: subconferenceId
-                                                                ? HasuraRoleName.SubconferenceOrganizer
-                                                                : HasuraRoleName.ConferenceOrganizer,
-                                                        },
+                                            const registrantIds = selectedData.map((x) => x.id);
+                                            if (
+                                                confirm(
+                                                    `Are you sure? This will send up to ${registrantIds.length} repeat invitations`
+                                                )
+                                            ) {
+                                                const result = await insertInvitationEmailJobsMutation(
+                                                    {
+                                                        registrantIds,
+                                                        conferenceId: conference.id,
+                                                        sendRepeat: true,
                                                     },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                [AuthHeader.Role]: subconferenceId
+                                                                    ? HasuraRoleName.SubconferenceOrganizer
+                                                                    : HasuraRoleName.ConferenceOrganizer,
+                                                            },
+                                                        },
+                                                    }
+                                                );
+                                                if (result.error) {
+                                                    toast({
+                                                        title: "Failed to send invitation emails",
+                                                        description: result.error.message,
+                                                        isClosable: true,
+                                                        status: "error",
+                                                    });
+                                                } else {
+                                                    toast({
+                                                        title: "Invitation emails sent",
+                                                        duration: 8000,
+                                                        status: "success",
+                                                    });
                                                 }
-                                            );
-                                            if (result.error) {
-                                                toast({
-                                                    title: "Failed to send invitation emails",
-                                                    description: result.error.message,
-                                                    isClosable: true,
-                                                    status: "error",
-                                                });
-                                            } else {
-                                                toast({
-                                                    title: "Invitation emails sent",
-                                                    duration: 8000,
-                                                    status: "success",
-                                                });
-                                            }
 
-                                            refetchAllRegistrants();
+                                                refetchAllRegistrants();
+                                            }
                                         }}
                                     >
                                         Send repeat invitations
@@ -1715,6 +1905,14 @@ export default function ManageRegistrants(): JSX.Element {
                                         }}
                                     >
                                         All registrants
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            setSendCustomEmailRegistrants(data.filter((x) => x.isProgramPerson));
+                                            sendCustomEmailModal.onOpen();
+                                        }}
+                                    >
+                                        Only program people
                                     </MenuItem>
                                     {allGroups?.registrant_Group.length ? (
                                         <MenuGroup title="Groups">

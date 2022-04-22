@@ -74,6 +74,11 @@ computed_fields:
       name: HasBeenInvited
       schema: registrant
   name: inviteSent
+- definition:
+    function:
+      name: isProgramPerson
+      schema: registrant
+  name: isProgramPerson
 insert_permissions:
 - permission:
     backend_only: false
@@ -116,6 +121,7 @@ select_permissions:
     computed_fields:
     - invitationStatus
     - inviteSent
+    - isProgramPerson
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids
@@ -132,6 +138,7 @@ select_permissions:
     computed_fields:
     - invitationStatus
     - inviteSent
+    - isProgramPerson
     filter:
       conferenceId:
         _in: X-Hasura-Conference-Ids

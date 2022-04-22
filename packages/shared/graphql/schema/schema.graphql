@@ -36412,6 +36412,10 @@ type registrant_Registrant {
     """
     inviteSent: Boolean
     """
+    A computed field, executes function "registrant.isProgramPerson"
+    """
+    isProgramPerson: Boolean
+    """
     An object relationship
     """
     profile: registrant_Profile
@@ -36739,6 +36743,7 @@ input registrant_Registrant_bool_exp {
     invitation: registrant_Invitation_bool_exp
     invitationStatus: jsonb_comparison_exp
     inviteSent: Boolean_comparison_exp
+    isProgramPerson: Boolean_comparison_exp
     profile: registrant_Profile_bool_exp
     programPeople: collection_ProgramPerson_bool_exp
     subconferenceMemberships: registrant_SubconferenceMembership_bool_exp
@@ -36879,6 +36884,7 @@ input registrant_Registrant_order_by {
     invitation: registrant_Invitation_order_by
     invitationStatus: order_by
     inviteSent: order_by
+    isProgramPerson: order_by
     profile: registrant_Profile_order_by
     programPeople_aggregate: collection_ProgramPerson_aggregate_order_by
     subconferenceMemberships_aggregate: registrant_SubconferenceMembership_aggregate_order_by

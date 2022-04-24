@@ -1529,8 +1529,8 @@ function PaginationControls({
     sessionsResponse: UseQueryState<ManageSchedule_GetSessionsPageQuery, object>;
 }) {
     return (
-        <VStack py={4} spacing={4}>
-            <HStack spacing={4} py={4} w="100%" justifyContent="center" maxW="800px">
+        <VStack py={4} spacing={4} w="100%" justifyContent="center" maxW="800px">
+            <HStack spacing={4} py={4} w="100%" justifyContent="center">
                 <IconButton
                     aria-label="Previous page"
                     icon={<ChevronLeftIcon />}
@@ -1595,7 +1595,7 @@ function PaginationControls({
                     }
                 />
             </HStack>
-            <HStack spacing={4} py={4} w="100%" justifyContent="center" maxW="800px">
+            <HStack spacing={4} py={4} w="100%" justifyContent="center">
                 <Select
                     value={limit}
                     onChange={(ev) => {
@@ -1603,6 +1603,7 @@ function PaginationControls({
                         setSelectedSessions(new Set());
                     }}
                     size="sm"
+                    w="max-content"
                 >
                     <option value="10">10 per page</option>
                     <option value="20">20 per page</option>

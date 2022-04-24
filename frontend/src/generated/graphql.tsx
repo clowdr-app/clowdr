@@ -41301,6 +41301,13 @@ export type Room_GetEventsQuery = {
                 } | null;
             }>;
         } | null;
+        readonly autoPlayElement?: {
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly name: string;
+            readonly typeName: Content_ElementType_Enum;
+            readonly itemId: any;
+        } | null;
         readonly item?: {
             readonly __typename?: "content_Item";
             readonly id: any;
@@ -41345,6 +41352,15 @@ export type Room_GetEventsQuery = {
             readonly roomId: any;
             readonly modeName?: Schedule_Mode_Enum | null;
             readonly sessionEventId?: any | null;
+            readonly eventPeople: ReadonlyArray<{
+                readonly __typename?: "schedule_EventProgramPerson";
+                readonly id: any;
+                readonly person: {
+                    readonly __typename?: "collection_ProgramPerson";
+                    readonly id: any;
+                    readonly registrantId?: any | null;
+                };
+            }>;
             readonly item?: {
                 readonly __typename?: "content_Item";
                 readonly id: any;
@@ -41429,6 +41445,13 @@ export type Room_EventSummaryFragment = {
             } | null;
         }>;
     } | null;
+    readonly autoPlayElement?: {
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly name: string;
+        readonly typeName: Content_ElementType_Enum;
+        readonly itemId: any;
+    } | null;
     readonly item?: {
         readonly __typename?: "content_Item";
         readonly id: any;
@@ -41473,6 +41496,15 @@ export type Room_EventSummaryFragment = {
         readonly roomId: any;
         readonly modeName?: Schedule_Mode_Enum | null;
         readonly sessionEventId?: any | null;
+        readonly eventPeople: ReadonlyArray<{
+            readonly __typename?: "schedule_EventProgramPerson";
+            readonly id: any;
+            readonly person: {
+                readonly __typename?: "collection_ProgramPerson";
+                readonly id: any;
+                readonly registrantId?: any | null;
+            };
+        }>;
         readonly item?: {
             readonly __typename?: "content_Item";
             readonly id: any;
@@ -41714,6 +41746,21 @@ export type RoomSponsorContent_ElementDataFragment = {
     readonly itemId: any;
 };
 
+export type LiveIndicator_GetLatestQueryVariables = Exact<{
+    eventId: Scalars["uuid"];
+}>;
+
+export type LiveIndicator_GetLatestQuery = {
+    readonly __typename?: "query_root";
+    readonly video_ImmediateSwitch: ReadonlyArray<{
+        readonly __typename?: "video_ImmediateSwitch";
+        readonly id: any;
+        readonly data: any;
+        readonly executedAt?: any | null;
+        readonly eventId?: any | null;
+    }>;
+};
+
 export type GetVonageParticipantStreamsSubscriptionVariables = Exact<{
     eventId: Scalars["uuid"];
 }>;
@@ -41820,21 +41867,6 @@ export type ImmediateSwitch_CreateMutation = {
         readonly __typename?: "video_ImmediateSwitch";
         readonly id: any;
     } | null;
-};
-
-export type LiveIndicator_GetLatestQueryVariables = Exact<{
-    eventId: Scalars["uuid"];
-}>;
-
-export type LiveIndicator_GetLatestQuery = {
-    readonly __typename?: "query_root";
-    readonly video_ImmediateSwitch: ReadonlyArray<{
-        readonly __typename?: "video_ImmediateSwitch";
-        readonly id: any;
-        readonly data: any;
-        readonly executedAt?: any | null;
-        readonly eventId?: any | null;
-    }>;
 };
 
 export type LiveIndicator_GetElementQueryVariables = Exact<{
@@ -49411,6 +49443,13 @@ export type RaiseHandPanel_GetEventDetailsQuery = {
                 } | null;
             }>;
         } | null;
+        readonly autoPlayElement?: {
+            readonly __typename?: "content_Element";
+            readonly id: any;
+            readonly name: string;
+            readonly typeName: Content_ElementType_Enum;
+            readonly itemId: any;
+        } | null;
         readonly item?: {
             readonly __typename?: "content_Item";
             readonly id: any;
@@ -49455,6 +49494,15 @@ export type RaiseHandPanel_GetEventDetailsQuery = {
             readonly roomId: any;
             readonly modeName?: Schedule_Mode_Enum | null;
             readonly sessionEventId?: any | null;
+            readonly eventPeople: ReadonlyArray<{
+                readonly __typename?: "schedule_EventProgramPerson";
+                readonly id: any;
+                readonly person: {
+                    readonly __typename?: "collection_ProgramPerson";
+                    readonly id: any;
+                    readonly registrantId?: any | null;
+                };
+            }>;
             readonly item?: {
                 readonly __typename?: "content_Item";
                 readonly id: any;
@@ -50871,6 +50919,12 @@ export const Room_EventSummaryFragmentDoc = gql`
         shufflePeriod {
             ...ShufflePeriodData
         }
+        autoPlayElement {
+            id
+            name
+            typeName
+            itemId
+        }
         item {
             id
             title
@@ -50904,6 +50958,13 @@ export const Room_EventSummaryFragmentDoc = gql`
         }
         presentations {
             ...ScheduleEvent
+            eventPeople {
+                id
+                person {
+                    id
+                    registrantId
+                }
+            }
         }
     }
     ${ShufflePeriodDataFragmentDoc}
@@ -52851,9 +52912,12 @@ export const RegistrantEventsWithBackstagesDocument = gql`
     query RegistrantEventsWithBackstages($registrantId: uuid!) {
         schedule_Event(
             where: {
-                eventPeople: { person: { registrantId: { _eq: $registrantId } } }
                 modeName: { _eq: LIVESTREAM }
                 room: {}
+                _or: [
+                    { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }
+                    { presentations: { eventPeople: { person: { registrantId: { _eq: $registrantId } } } } }
+                ]
             }
         ) {
             ...MyBackstages_Event
@@ -53102,6 +53166,26 @@ export function useRoomSponsorContent_GetElementsQuery(
         ...options,
     });
 }
+export const LiveIndicator_GetLatestDocument = gql`
+    query LiveIndicator_GetLatest($eventId: uuid!) {
+        video_ImmediateSwitch(
+            order_by: { executedAt: desc_nulls_last }
+            where: { eventId: { _eq: $eventId }, executedAt: { _is_null: false } }
+            limit: 1
+        ) {
+            id
+            data
+            executedAt
+            eventId
+        }
+    }
+`;
+
+export function useLiveIndicator_GetLatestQuery(
+    options: Omit<Urql.UseQueryArgs<LiveIndicator_GetLatestQueryVariables>, "query">
+) {
+    return Urql.useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
+}
 export const GetVonageParticipantStreamsDocument = gql`
     subscription GetVonageParticipantStreams($eventId: uuid!) {
         video_VonageParticipantStream(
@@ -53185,26 +53269,6 @@ export function useImmediateSwitch_CreateMutation() {
     return Urql.useMutation<ImmediateSwitch_CreateMutation, ImmediateSwitch_CreateMutationVariables>(
         ImmediateSwitch_CreateDocument
     );
-}
-export const LiveIndicator_GetLatestDocument = gql`
-    query LiveIndicator_GetLatest($eventId: uuid!) {
-        video_ImmediateSwitch(
-            order_by: { executedAt: desc_nulls_last }
-            where: { eventId: { _eq: $eventId }, executedAt: { _is_null: false } }
-            limit: 1
-        ) {
-            id
-            data
-            executedAt
-            eventId
-        }
-    }
-`;
-
-export function useLiveIndicator_GetLatestQuery(
-    options: Omit<Urql.UseQueryArgs<LiveIndicator_GetLatestQueryVariables>, "query">
-) {
-    return Urql.useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
 }
 export const LiveIndicator_GetElementDocument = gql`
     query LiveIndicator_GetElement($elementId: uuid!) @cached {

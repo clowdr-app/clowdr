@@ -575,6 +575,11 @@ export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: 
                 </ControlBarButtonGroup>
                 {vonage.state.type === StateType.Connected &&
                 settings.canControlRecordingAs.size &&
+                settings.isBackstageRoom
+                    ? settings.extraLayoutButtons
+                    : undefined}
+                {vonage.state.type === StateType.Connected &&
+                settings.canControlRecordingAs.size &&
                 !settings.isBackstageRoom ? (
                     <PlayVideoMenuButton roomId={settings.roomId} eventId={settings.eventId} />
                 ) : undefined}

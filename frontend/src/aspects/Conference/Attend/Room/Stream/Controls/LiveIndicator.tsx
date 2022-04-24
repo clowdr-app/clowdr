@@ -25,19 +25,6 @@ import { formatRemainingTime } from "../../formatRemainingTime";
 import { BackstageContext } from "../BackstageContext";
 
 gql`
-    query LiveIndicator_GetLatest($eventId: uuid!) {
-        video_ImmediateSwitch(
-            order_by: { executedAt: desc_nulls_last }
-            where: { eventId: { _eq: $eventId }, executedAt: { _is_null: false } }
-            limit: 1
-        ) {
-            id
-            data
-            executedAt
-            eventId
-        }
-    }
-
     query LiveIndicator_GetElement($elementId: uuid!) @cached {
         content_Element_by_pk(id: $elementId) {
             id
@@ -168,7 +155,7 @@ export function LiveIndicator(): JSX.Element {
         ),
         [onClose, shouldModalBeOpen]
     );
-    const liveIndicactor = useMemo(
+    const liveIndicator = useMemo(
         () =>
             live ? (
                 <>
@@ -303,7 +290,7 @@ export function LiveIndicator(): JSX.Element {
                 gridRowGap={2}
                 mx={0}
             >
-                {liveIndicactor}
+                {liveIndicator}
                 {infoModal}
             </HStack>
         </HStack>

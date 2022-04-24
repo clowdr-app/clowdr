@@ -1,7 +1,6 @@
 import { Wrap, WrapItem } from "@chakra-ui/react";
 import React from "react";
 import { gql } from "urql";
-import { ImmediateSwitch } from "./ImmediateSwitch";
 import { LiveIndicator } from "./LiveIndicator";
 import StreamPreview from "./StreamPreview";
 
@@ -36,9 +35,6 @@ export function BackstageControls(): JSX.Element {
             </WrapItem>
             <WrapItem>
                 <LiveIndicator />
-            </WrapItem>
-            <WrapItem maxW="25ch">
-                <ImmediateSwitch />
             </WrapItem>
         </Wrap>
     );

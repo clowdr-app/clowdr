@@ -20,6 +20,7 @@ import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useCreateConferencePrepareJobMutation, useGetConferencePrepareJobsQuery } from "../../../../generated/graphql";
+import extractActualError from "../../../GQL/ExtractActualError";
 import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
@@ -54,15 +55,18 @@ gql`
 `;
 
 export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Element {
+    const conference = useConference();
     const context = useMemo(
         () =>
             makeContext(
                 {
                     [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                    [AuthHeader.ConferenceId]: conference.id,
+                    [AuthHeader.SubconferenceId]: undefined,
                 },
                 ["job_queues_PrepareJob"]
             ),
-        []
+        [conference.id]
     );
     const [jobs, getJobs] = useGetConferencePrepareJobsQuery({
         variables: { conferenceId },
@@ -72,7 +76,6 @@ export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX
 
     const [createJobResult, createJob] = useCreateConferencePrepareJobMutation();
     useQueryErrorToast(createJobResult.error, false);
-    const conference = useConference();
     const toast = useToast();
 
     return (
@@ -84,7 +87,7 @@ export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX
                     isLoading={createJobResult.fetching}
                     onClick={async () => {
                         try {
-                            await createJob(
+                            const result = await createJob(
                                 {
                                     conferenceId: conference.id,
                                 },
@@ -92,10 +95,15 @@ export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX
                                     fetchOptions: {
                                         headers: {
                                             [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-                                        },
+                                            [AuthHeader.ConferenceId]: conference.id,
+                                            [AuthHeader.SubconferenceId]: undefined,
+                                        } as any,
                                     },
                                 }
                             );
+                            if (result.error) {
+                                throw new Error(extractActualError(result.error));
+                            }
                             getJobs();
                             toast({
                                 status: "success",

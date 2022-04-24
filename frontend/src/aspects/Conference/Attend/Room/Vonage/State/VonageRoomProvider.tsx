@@ -140,6 +140,7 @@ export interface VonageRoomSettings {
     eventIsFuture: boolean;
     roomId?: string;
     eventId?: string;
+    extraLayoutButtons?: JSX.Element;
 }
 
 interface VonageRoomContext {
@@ -161,6 +162,7 @@ const defaultVonageRoomSettings: VonageRoomSettings = {
     requireMicrophoneOrCamera: false,
     eventIsFuture: false,
     completeGetAccessToken: null,
+    extraLayoutButtons: undefined,
 };
 
 export const VonageRoomContext = React.createContext<VonageRoomContext>({
@@ -266,6 +268,7 @@ export function VonageRoomProvider({
     eventIsFuture,
     eventId,
     roomId,
+    extraLayoutButtons,
     children,
 }: {
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
@@ -278,6 +281,7 @@ export function VonageRoomProvider({
     eventIsFuture?: boolean;
     eventId?: string;
     roomId?: string;
+    extraLayoutButtons?: JSX.Element;
     children: JSX.Element;
 }): JSX.Element {
     const [preferredCamera, setPreferredCamera] = useRestorableState<string | null>(
@@ -546,10 +550,12 @@ export function VonageRoomProvider({
                     eventIsFuture,
                     eventId,
                     roomId,
+                    extraLayoutButtons,
                 }
             ),
         [
             canControlRecordingAs,
+            extraLayoutButtons,
             isBackstageRoom,
             onPermissionsProblem,
             joinRoomButtonText,

@@ -1,56 +1,54 @@
-import { Type } from "class-transformer";
-import {
-    Equals,
-    IsEnum,
-    IsNotEmpty,
-    IsNotEmptyObject,
-    IsOptional,
-    IsString,
-    IsUUID,
-    ValidateNested,
-} from "class-validator";
+import { z } from "zod";
 
-export class BaseImmediateSwitchData {
-    @IsNotEmpty()
-    kind: "filler" | "video" | "rtmp_push";
-}
+const immediateSwitchKind = {
+    Filler: "filler",
+    Video: "video",
+    RtmpPush: "rtmp_push",
+} as const;
 
-export class FillerImmediateSwitchData extends BaseImmediateSwitchData {
-    @IsNotEmpty()
-    kind: "filler";
-}
+const ImmediateSwitchKind = z.nativeEnum(immediateSwitchKind);
+export type ImmediateSwitchKind = z.infer<typeof ImmediateSwitchKind>;
 
-export class VideoImmediateSwitchData extends BaseImmediateSwitchData {
-    @IsNotEmpty()
-    kind: "video";
-    @IsString()
-    @IsUUID()
-    elementId: string;
-}
+const BaseImmediateSwitchData = z.object({
+    kind: ImmediateSwitchKind,
+});
+export type BaseImmediateSwitchData = z.infer<typeof BaseImmediateSwitchData>;
 
-export class RtmpPushImmediateSwitchData extends BaseImmediateSwitchData {
-    @IsNotEmpty()
-    kind: "rtmp_push";
-    @IsOptional()
-    @IsEnum(["rtmpEvent", "rtmpRoom"])
-    source?: "rtmpEvent" | "rtmpRoom";
-}
+const FillerImmediateSwitchData = BaseImmediateSwitchData.extend({
+    kind: z.literal("filler"),
+}).strict();
+export type FillerImmediateSwitchData = z.infer<typeof FillerImmediateSwitchData>;
 
-export class ImmediateSwitchData {
-    @Equals("switch")
-    type: "switch";
-    @ValidateNested()
-    @Type(() => BaseImmediateSwitchData, {
-        keepDiscriminatorProperty: true,
-        discriminator: {
-            property: "kind",
-            subTypes: [
-                { value: FillerImmediateSwitchData, name: "filler" },
-                { value: VideoImmediateSwitchData, name: "video" },
-                { value: RtmpPushImmediateSwitchData, name: "rtmp_push" },
-            ],
-        },
-    })
-    @IsNotEmptyObject()
-    data: FillerImmediateSwitchData | VideoImmediateSwitchData | RtmpPushImmediateSwitchData;
-}
+const VideoImmediateSwitchData = BaseImmediateSwitchData.extend({
+    kind: z.literal("video"),
+    elementId: z.string().uuid(),
+}).strict();
+export type VideoImmediateSwitchData = z.infer<typeof VideoImmediateSwitchData>;
+
+const rtmpSources = {
+    RtmpEvent: "rtmpEvent",
+    RtmpRoom: "rtmpRoom",
+} as const;
+
+const RtmpSource = z.nativeEnum(rtmpSources);
+export type RtmpSource = z.infer<typeof RtmpSource>;
+
+const RtmpPushImmediateSwitchData = BaseImmediateSwitchData.extend({
+    kind: z.literal("rtmp_push"),
+    source: z.optional(RtmpSource),
+}).strict();
+export type RtmpPushImmediateSwitchData = z.infer<typeof RtmpPushImmediateSwitchData>;
+
+export const ImmediateSwitchData = z.union([
+    FillerImmediateSwitchData,
+    VideoImmediateSwitchData,
+    RtmpPushImmediateSwitchData,
+]);
+export type ImmediateSwitchData = z.infer<typeof ImmediateSwitchData>;
+
+export const ImmediateSwitchExecutedSignal = z.object({
+    immediateSwitch: ImmediateSwitchData,
+    executedAtMillis: z.number(),
+});
+
+export type ImmediateSwitchExecutedSignal = z.infer<typeof ImmediateSwitchExecutedSignal>;

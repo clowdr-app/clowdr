@@ -3,11 +3,23 @@ import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useRoomSponsorContent_GetElementsQuery } from "../../../../../generated/graphql";
 import ElementsGridLayout from "../../Content/Element/ElementsGridLayout";
+import { ItemEvents } from "../../Content/ItemEvents";
 
 gql`
-    query RoomSponsorContent_GetElements($itemId: uuid!) @cached {
+    query RoomSponsorContent_GetElements($itemId: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!)
+    @cached {
         content_Item(where: { id: { _eq: $itemId }, typeName: { _eq: SPONSOR } }) {
             ...RoomSponsorContent_ItemData
+        }
+        sessions: schedule_Event(
+            where: { _and: [{ itemId: { _eq: $itemId } }, { sessionEventId: { _is_null: true } }] }
+        ) {
+            ...ScheduleEvent
+        }
+        presentations: schedule_Event(
+            where: { _and: [{ itemId: { _eq: $itemId } }, { sessionEventId: { _is_null: false } }] }
+        ) {
+            ...ItemPresentation
         }
     }
 
@@ -30,10 +42,18 @@ gql`
     }
 `;
 
-export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element {
+export function RoomSponsorContent({
+    itemId,
+    anyCurrentOrNextEvent,
+}: {
+    itemId: string;
+    anyCurrentOrNextEvent: boolean;
+}): JSX.Element {
     const [{ data, error, fetching: loading }] = useRoomSponsorContent_GetElementsQuery({
         variables: {
             itemId,
+            includeAbstract: false,
+            includeItemEvents: false,
         },
     });
 
@@ -45,6 +65,9 @@ export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element 
         <>
             {loading ? <Spinner /> : error ? <>An error occurred loading in data.</> : undefined}
             <ElementsGridLayout elements={elements} />
+            {!anyCurrentOrNextEvent ? (
+                <ItemEvents sessions={data?.sessions ?? []} presentations={data?.presentations ?? []} />
+            ) : undefined}
         </>
     );
 }

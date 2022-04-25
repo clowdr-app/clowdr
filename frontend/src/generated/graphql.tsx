@@ -41698,6 +41698,8 @@ export type GetEventVonageDetailsQuery = {
 
 export type RoomSponsorContent_GetElementsQueryVariables = Exact<{
     itemId: Scalars["uuid"];
+    includeAbstract: Scalars["Boolean"];
+    includeItemEvents: Scalars["Boolean"];
 }>;
 
 export type RoomSponsorContent_GetElementsQuery = {
@@ -41716,6 +41718,114 @@ export type RoomSponsorContent_GetElementsQuery = {
             readonly layoutData?: any | null;
             readonly itemId: any;
         }>;
+    }>;
+    readonly sessions: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly name: string;
+        readonly roomId: any;
+        readonly modeName?: Schedule_Mode_Enum | null;
+        readonly sessionEventId?: any | null;
+        readonly item?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
+            readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly itemId: any;
+                readonly tagId: any;
+            }>;
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly itemId: any;
+                readonly personId: any;
+                readonly roleName: string;
+            }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+            }>;
+            readonly events?: ReadonlyArray<{
+                readonly __typename?: "schedule_Event";
+                readonly id: any;
+                readonly session?: {
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly item?: {
+                        readonly __typename?: "content_Item";
+                        readonly id: any;
+                        readonly title: string;
+                    } | null;
+                } | null;
+            }>;
+        } | null;
+    }>;
+    readonly presentations: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly session?: {
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
+            readonly name: string;
+            readonly roomId: any;
+            readonly modeName?: Schedule_Mode_Enum | null;
+            readonly sessionEventId?: any | null;
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly conferenceId: any;
+                readonly subconferenceId?: any | null;
+                readonly title: string;
+                readonly typeName: Content_ItemType_Enum;
+                readonly itemTags: ReadonlyArray<{
+                    readonly __typename?: "content_ItemTag";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly tagId: any;
+                }>;
+                readonly itemPeople: ReadonlyArray<{
+                    readonly __typename?: "content_ItemProgramPerson";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly personId: any;
+                    readonly roleName: string;
+                }>;
+                readonly abstract: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly data: any;
+                }>;
+                readonly events?: ReadonlyArray<{
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly session?: {
+                        readonly __typename?: "schedule_Event";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly item?: {
+                            readonly __typename?: "content_Item";
+                            readonly id: any;
+                            readonly title: string;
+                        } | null;
+                    } | null;
+                }>;
+            } | null;
+        } | null;
     }>;
 };
 
@@ -53151,12 +53261,25 @@ export function useGetEventVonageDetailsQuery(
     return Urql.useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
 }
 export const RoomSponsorContent_GetElementsDocument = gql`
-    query RoomSponsorContent_GetElements($itemId: uuid!) @cached {
+    query RoomSponsorContent_GetElements($itemId: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!)
+    @cached {
         content_Item(where: { id: { _eq: $itemId }, typeName: { _eq: SPONSOR } }) {
             ...RoomSponsorContent_ItemData
         }
+        sessions: schedule_Event(
+            where: { _and: [{ itemId: { _eq: $itemId } }, { sessionEventId: { _is_null: true } }] }
+        ) {
+            ...ScheduleEvent
+        }
+        presentations: schedule_Event(
+            where: { _and: [{ itemId: { _eq: $itemId } }, { sessionEventId: { _is_null: false } }] }
+        ) {
+            ...ItemPresentation
+        }
     }
     ${RoomSponsorContent_ItemDataFragmentDoc}
+    ${ScheduleEventFragmentDoc}
+    ${ItemPresentationFragmentDoc}
 `;
 
 export function useRoomSponsorContent_GetElementsQuery(

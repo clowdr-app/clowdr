@@ -67,6 +67,7 @@ export function CreateRoomButton({
                 title: "Failed to create room.",
                 description: e?.message,
             });
+        } finally {
             setCreatingVideoChat(false);
         }
     }, [conference.id, createVideoChatMutation, groupId, refetch, subconferenceId, toast]);

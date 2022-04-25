@@ -204,7 +204,10 @@ export function RoomContent({
             )}
 
             {roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor ? (
-                <RoomSponsorContent itemId={roomDetails.item.id} />
+                <RoomSponsorContent
+                    itemId={roomDetails.item.id}
+                    anyCurrentOrNextEvent={Boolean(currentRoomEvent || nextRoomEvent)}
+                />
             ) : (
                 <></>
             )}

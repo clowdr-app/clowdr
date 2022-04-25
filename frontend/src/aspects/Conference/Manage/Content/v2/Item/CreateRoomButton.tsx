@@ -42,6 +42,7 @@ export function CreateRoomButton({
             const { data } = await createVideoChatMutation(
                 {
                     conferenceId: conference.id,
+                    subconferenceId,
                     itemId: groupId,
                 },
                 {

@@ -87,8 +87,11 @@ gql`
         }
     }
 
-    query ManageProgramPeople_SelectAllRegistrants($conferenceId: uuid!) {
-        registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageProgramPeople_SelectAllRegistrants(
+        $conferenceId: uuid!
+        $subconferenceCond: registrant_Registrant_bool_exp!
+    ) {
+        registrant_Registrant(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, $subconferenceCond] }) {
             ...ManageProgramPeople_Registrant
         }
     }
@@ -144,6 +147,15 @@ export default function ManageProgramPeople(): JSX.Element {
     const [{ data: registrantsData }] = useManageProgramPeople_SelectAllRegistrantsQuery({
         variables: {
             conferenceId: conference.id,
+            subconferenceCond: subconferenceId
+                ? {
+                      subconferenceMemberships: {
+                          subconferenceId: {
+                              _eq: subconferenceId,
+                          },
+                      },
+                  }
+                : {},
         },
         context,
     });

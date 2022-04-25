@@ -383,6 +383,7 @@ function SessionSettingsPanel({
                             updateRecord((old) => ({
                                 ...old,
                                 modeName: ev.target.value as Schedule_Mode_Enum,
+                                roomId: undefined,
                             }));
                         }}
                     >

@@ -40,6 +40,7 @@ export default function EventCard({
     includeTypeName,
     autoExpandPresentations,
     includeAbstract = false,
+    onlyLinkToRoom,
     limitAbstractLengthTo = 3,
 }: {
     event: ScheduleEventFragment;
@@ -47,6 +48,7 @@ export default function EventCard({
     includeTypeName?: boolean;
     autoExpandPresentations?: boolean;
     includeAbstract?: boolean;
+    onlyLinkToRoom?: boolean;
     limitAbstractLengthTo?: number;
 }) {
     const { conferencePath } = useAuthParameters();
@@ -127,7 +129,7 @@ export default function EventCard({
                         : undefined
                 }
                 to={
-                    isLive || isStartingSoon || !event.item?.id
+                    isLive || isStartingSoon || !event.item?.id || onlyLinkToRoom
                         ? `${conferencePath}/room/${event.roomId}`
                         : `${conferencePath}/item/${event.item.id}`
                 }

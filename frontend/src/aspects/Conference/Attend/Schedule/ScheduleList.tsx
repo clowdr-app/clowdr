@@ -10,12 +10,14 @@ export default function ScheduleList({
     autoExpandPresentations,
     includeTypeName,
     includeAbstract,
+    onlyLinkToRoom,
 }: {
     events: readonly ScheduleEventFragment[];
     noDayHeadings?: boolean;
     includeTypeName?: boolean;
     autoExpandPresentations?: boolean;
     includeAbstract?: boolean;
+    onlyLinkToRoom?: boolean;
 }): JSX.Element {
     return (
         <VStack spacing={4} alignItems="stretch" justifyContent="flex-start">
@@ -39,6 +41,7 @@ export default function ScheduleList({
                         includeTypeName={includeTypeName}
                         autoExpandPresentations={autoExpandPresentations}
                         includeAbstract={includeAbstract}
+                        onlyLinkToRoom={onlyLinkToRoom}
                     />
                 );
                 return dateChanged && !noDayHeadings ? (

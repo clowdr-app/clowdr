@@ -197,7 +197,7 @@ export async function computeAuthHeaders(
             [AuthSessionVariables.InviteCode]: "00000000-0000-0000-0000-000000000000",
         };
 
-        if (unverifiedParams.conferenceId) {
+        if (unverifiedParams.conferenceId && unverifiedParams.conferenceId !== "NONE") {
             const conference = await new ConferenceCache(logger).getEntity(unverifiedParams.conferenceId);
 
             if (conference) {
@@ -218,7 +218,7 @@ export async function computeAuthHeaders(
             result[AuthSessionVariables.UserId] = user.id;
             allowedRoles.push(HasuraRoleName.User);
 
-            if (unverifiedParams.conferenceId) {
+            if (unverifiedParams.conferenceId && unverifiedParams.conferenceId !== "NONE") {
                 const registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
                 if (registrantId) {
                     const registrant = await new RegistrantCache(logger).getEntity(registrantId.id);

@@ -76,6 +76,10 @@ export class ConferenceCache {
         this.logger,
         "Conference",
         async (id) => {
+            if (id === "NONE" || id === "") {
+                return undefined;
+            }
+
             const response = await gqlClient
                 ?.query<GetConferenceQuery, GetConferenceQueryVariables>(GetConferenceDocument, {
                     id,

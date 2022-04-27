@@ -155,7 +155,7 @@ export async function computeAuthHeaders(
         includeRoomIds: boolean;
     }>
 ): Promise<false | Partial<Record<AuthSessionVariables, string>>> {
-    logger.info({ verifiedParams, unverifiedParams }, "Computing auth headers");
+    logger.trace({ verifiedParams, unverifiedParams }, "Computing auth headers");
 
     // TODO: Do we want to cache the outcome of this logic?
     //          And if so, what is the invalidation strategy?

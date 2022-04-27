@@ -87,7 +87,7 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
                 includeRoomIds: includeRoomIds?.toLowerCase() === "true",
             }
         );
-        req.log.info({ result }, "Handled webhook");
+        req.log.trace({ result }, "Handled webhook");
         if (result !== false) {
             res.status(200).json(result);
         } else {

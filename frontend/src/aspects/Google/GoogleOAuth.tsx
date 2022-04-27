@@ -1,8 +1,10 @@
 import { Spinner, useToast } from "@chakra-ui/react";
+import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { gql } from "urql";
 import { useGoogleOAuth_SubmitGoogleOAuthCodeMutation } from "../../generated/graphql";
+import { useAuthParameters } from "../GQL/AuthParameters";
 import { useGoogleOAuthRedirectPath } from "./useGoogleOAuthRedirectUrl";
 
 gql`
@@ -45,6 +47,7 @@ export function GoogleOAuthRedirect(): JSX.Element {
 
 export function GoogleOAuth(): JSX.Element {
     const location = useLocation();
+    const { subconferenceId } = useAuthParameters();
 
     const [_submitResponse, submit] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation();
     const [message, setMessage] = useState<string | null>(null);
@@ -58,10 +61,21 @@ export function GoogleOAuth(): JSX.Element {
                 const registrantId = searchParams.get("registrantId");
 
                 if (code && registrantId) {
-                    const result = await submit({
-                        code,
-                        state: registrantId,
-                    });
+                    const result = await submit(
+                        {
+                            code,
+                            state: registrantId,
+                        },
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    [AuthHeader.Role]: subconferenceId
+                                        ? HasuraRoleName.SubconferenceOrganizer
+                                        : HasuraRoleName.ConferenceOrganizer,
+                                },
+                            },
+                        }
+                    );
 
                     if (!result.data?.submitGoogleOAuthCode?.success) {
                         throw new Error("Failure during authorisation code exchange");

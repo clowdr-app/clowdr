@@ -92,9 +92,11 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
             res.status(200).json(result);
         } else {
             res.status(401).json("Unauthorized");
+
+            req.log.info({ req, result }, "Unauthorizing request");
         }
     } catch (err) {
-        req.log.error({ err }, "Failure while handling Hasura Auth webhook");
+        req.log.error({ err }, "Failure/error while handling Hasura Auth webhook");
         res.status(500).json("Failure while handling Hasura Auth webhook");
         return;
     }

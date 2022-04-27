@@ -398,54 +398,58 @@ function SessionSettingsPanel({
                     </Explanation>
                 </FormControl>
             ) : undefined}
-            <FormControl id="editor-session-room">
-                <FormLabel>Room</FormLabel>
-                <Select
-                    value={record.roomId ?? ""}
-                    onChange={(ev) => {
-                        onAnyChange();
-                        updateRecord((old) => ({
-                            ...old,
-                            roomId: ev.target.value === "" ? undefined : ev.target.value,
-                        }));
-                        setRoomWasAutoSet(ev.target.value === "");
-                    }}
-                >
-                    <option value="">Select a room</option>
-                    <optgroup label="Suggested rooms">
-                        {suitableRoomsResponse.data?.suggestedRooms.map((room) => (
-                            <option key={room.id} value={room.id}>
-                                {room.name}
-                            </option>
-                        ))}
-                    </optgroup>
-                    <optgroup label="Other rooms">
-                        {suitableRoomsResponse.data?.otherRooms
-                            .filter((x) => !suitableRoomsResponse.data?.suggestedRooms.some((y) => y.id === x.id))
-                            .map((room) => (
+            {!record.roomId ||
+            suitableRoomsResponse.data?.suggestedRooms.some((x) => x.id === record.roomId) ||
+            suitableRoomsResponse.data?.otherRooms.some((x) => x.id === record.roomId) ? (
+                <FormControl id="editor-session-room">
+                    <FormLabel>Room</FormLabel>
+                    <Select
+                        value={record.roomId ?? ""}
+                        onChange={(ev) => {
+                            onAnyChange();
+                            updateRecord((old) => ({
+                                ...old,
+                                roomId: ev.target.value === "" ? undefined : ev.target.value,
+                            }));
+                            setRoomWasAutoSet(ev.target.value === "");
+                        }}
+                    >
+                        <option value="">Select a room</option>
+                        <optgroup label="Suggested rooms">
+                            {suitableRoomsResponse.data?.suggestedRooms.map((room) => (
                                 <option key={room.id} value={room.id}>
                                     {room.name}
                                 </option>
                             ))}
-                    </optgroup>
-                </Select>
-                <Explanation>
-                    <Text>
-                        Sessions are scheduled in rooms, much like they would be in a physical venue. Rooms are flexible
-                        spaces with persistent chats. The session defines the mode of interaction within the room during
-                        the session.
-                    </Text>
-                    <Text>
-                        There is a conference-wide limit on the number of rooms with events scheduled in them (similar
-                        to the fact that a conference venue only has a finite number of rooms). Rooms should be re-used,
-                        for example by assigning all events for a single track to the same room.
-                    </Text>
-                    <Text>
-                        Midspace will attempt to automatically select a room for you but you may need to set this
-                        manually for complex schedules or special events (e.g. sessions in sponsor&lsquo;s booths).
-                    </Text>
-                </Explanation>
-            </FormControl>
+                        </optgroup>
+                        <optgroup label="Other rooms">
+                            {suitableRoomsResponse.data?.otherRooms
+                                .filter((x) => !suitableRoomsResponse.data?.suggestedRooms.some((y) => y.id === x.id))
+                                .map((room) => (
+                                    <option key={room.id} value={room.id}>
+                                        {room.name}
+                                    </option>
+                                ))}
+                        </optgroup>
+                    </Select>
+                    <Explanation>
+                        <Text>
+                            Sessions are scheduled in rooms, much like they would be in a physical venue. Rooms are
+                            flexible spaces with persistent chats. The session defines the mode of interaction within
+                            the room during the session.
+                        </Text>
+                        <Text>
+                            There is a conference-wide limit on the number of rooms with events scheduled in them
+                            (similar to the fact that a conference venue only has a finite number of rooms). Rooms
+                            should be re-used, for example by assigning all events for a single track to the same room.
+                        </Text>
+                        <Text>
+                            Midspace will attempt to automatically select a room for you but you may need to set this
+                            manually for complex schedules or special events (e.g. sessions in sponsor&lsquo;s booths).
+                        </Text>
+                    </Explanation>
+                </FormControl>
+            ) : undefined}
             {record.modeName === Schedule_Mode_Enum.Livestream ? (
                 <FormControl id="editor-session-auto-play-video">
                     <FormLabel>Auto-play video</FormLabel>

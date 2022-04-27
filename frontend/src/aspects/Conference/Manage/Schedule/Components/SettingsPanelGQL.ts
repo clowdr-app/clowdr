@@ -15,11 +15,15 @@ gql`
             where: {
                 conferenceId: { _eq: $conferenceId }
                 subconferenceId: $subconferenceCond
-                itemId: { _is_null: true }
                 managementModeName: { _in: [PUBLIC, PRIVATE] }
-                _or: [
-                    { events: { modeName: { _in: $modes } } }
-                    { isProgramRoom: { _eq: false }, name: { _ilike: $namePattern } }
+                _and: [
+                    { _or: [{ itemId: { _is_null: true } }, { item: { typeName: { _eq: SPONSOR } } }] }
+                    {
+                        _or: [
+                            { events: { modeName: { _in: $modes } } }
+                            { isProgramRoom: { _eq: false }, name: { _ilike: $namePattern } }
+                        ]
+                    }
                 ]
             }
             order_by: [{ name: asc }]

@@ -183,8 +183,7 @@ actions:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
   permissions:
-  - role: conference-organizer
-  - role: subconference-organizer
+  - role: user
 - name: submitUploadableElement
   definition:
     kind: synchronous

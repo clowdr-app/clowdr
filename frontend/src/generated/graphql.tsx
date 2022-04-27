@@ -56877,6 +56877,7 @@ export const ManageSchedule_ListSuitableRoomsDocument = gql`
                 conferenceId: { _eq: $conferenceId }
                 subconferenceId: $subconferenceCond
                 itemId: { _is_null: true }
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
                 _or: [
                     { events: { modeName: { _in: $modes } } }
                     { isProgramRoom: { _eq: false }, name: { _ilike: $namePattern } }
@@ -56892,6 +56893,7 @@ export const ManageSchedule_ListSuitableRoomsDocument = gql`
                 conferenceId: { _eq: $conferenceId }
                 subconferenceId: $subconferenceCond
                 isProgramRoom: { _eq: false }
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
                 _or: [{ itemId: { _is_null: true } }, { item: { typeName: { _eq: SPONSOR } } }]
             }
             order_by: [{ name: asc }]
@@ -56924,6 +56926,7 @@ export const ManageSchedule_FindSuitableRoomsDocument = gql`
                 conferenceId: { _eq: $conferenceId }
                 subconferenceId: $subconferenceCond
                 itemId: { _is_null: true }
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
                 _and: [
                     { events: { modeName: { _in: $modes } } }
                     {
@@ -56945,6 +56948,7 @@ export const ManageSchedule_FindSuitableRoomsDocument = gql`
                 isProgramRoom: { _eq: false }
                 itemId: { _is_null: true }
                 name: { _ilike: $namePattern }
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: [{ name: asc }]
             limit: 1

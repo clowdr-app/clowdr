@@ -14,7 +14,7 @@ export default function ContentPage({ overrideSelectedTag }: { overrideSelectedT
             <Heading as="h1" id="page-heading" mt={[2, 2, 4]} px={[2, 2, 4]} alignSelf="flex-start">
                 Content
             </Heading>
-            <ItemList defaultSelectedTag={overrideSelectedTag} />
+            <ItemList defaultSelectedTag={overrideSelectedTag} selectAsDropdown />
         </>
     );
 }

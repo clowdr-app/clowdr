@@ -292,6 +292,19 @@ export default function ItemList({
         return undefined;
     }, [data?.collection_Tag]);
 
+    const sortedKeys = useMemo(() => {
+        return (
+            sortedGroupedTags &&
+            R.sortBy(
+                (y) =>
+                    y === "none"
+                        ? "Main conference"
+                        : conference.subconferences.find((x) => x.id === y)?.shortName ?? "Unknown subconference",
+                Object.keys(sortedGroupedTags)
+            )
+        );
+    }, [conference.subconferences, sortedGroupedTags]);
+
     if (loading && !sortedGroupedTags) {
         return (
             <div>
@@ -307,18 +320,18 @@ export default function ItemList({
     return (
         <VStack px={4} spacing={4} alignItems="flex-start" w="100%" minW="min(100vw, 35em)">
             <Text>Select a tag to browse papers, posters, keynotes, and more.</Text>
-            {sortedGroupedTags ? (
+            {sortedGroupedTags && sortedKeys ? (
                 !selectAsDropdown ? (
-                    Object.keys(sortedGroupedTags).map((subconferenceId) => {
+                    sortedKeys.map((subconferenceId) => {
                         const sortedTags = sortedGroupedTags[subconferenceId];
                         return (
                             <Fragment key={"tag-buttons-" + subconferenceId}>
-                                {subconferenceId !== "none" ? (
-                                    <Heading as="h3" fontSize="md" textAlign="left">
-                                        {conference.subconferences.find((x) => x.id === subconferenceId)?.shortName ??
-                                            "Unknown subconference"}
-                                    </Heading>
-                                ) : undefined}
+                                <Heading as="h3" fontSize="md" textAlign="left">
+                                    {subconferenceId === "none"
+                                        ? "Main conference"
+                                        : conference.subconferences.find((x) => x.id === subconferenceId)?.shortName ??
+                                          "Unknown subconference"}
+                                </Heading>
                                 <Flex maxW={1024} flexDir="row" flexWrap="wrap">
                                     {sortedTags.map((tag) => (
                                         <TagButton
@@ -338,7 +351,7 @@ export default function ItemList({
                         onChange={(ev) => setOpenId(ev.target.value.length > 0 ? ev.target.value : null)}
                     >
                         <option value="">Select a tag</option>
-                        {Object.keys(sortedGroupedTags).map((subconferenceId) => {
+                        {sortedKeys.map((subconferenceId) => {
                             const sortedTags = sortedGroupedTags[subconferenceId];
                             return (
                                 <optgroup

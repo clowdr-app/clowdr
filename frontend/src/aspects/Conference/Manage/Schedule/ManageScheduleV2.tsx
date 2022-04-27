@@ -548,8 +548,24 @@ export default function ManageScheduleV2(): JSX.Element {
 
             const item = itemResponse.data?.content_Item_by_pk;
             setCurrentRecord({
-                name: item?.title,
-                item,
+                name: item ? item.title + " - Sponsored session" : undefined,
+                item:
+                    item?.typeName === Content_ItemType_Enum.Sponsor
+                        ? item
+                            ? {
+                                  title: item.title + " - Sponsored session",
+                                  typeName: Content_ItemType_Enum.Session,
+                                  itemPeople: item.itemPeople.map((person) => ({
+                                      personId: person.personId,
+                                      priority: person.priority,
+                                      roleName: person.roleName,
+                                  })),
+                                  itemTags: item.itemTags.map((tag) => ({
+                                      tagId: tag.tagId,
+                                  })),
+                              }
+                            : undefined
+                        : item,
                 sessionEventId: session?.id,
                 roomId:
                     session?.roomId ?? (item?.typeName === Content_ItemType_Enum.Sponsor ? item.room?.id : undefined),

@@ -174,10 +174,12 @@ function Panel({
     tag,
     isExpanded,
     noHeading,
+    noTopPadding,
 }: {
     tag: ItemList_TagInfoFragment;
     isExpanded: boolean;
     noHeading?: boolean;
+    noTopPadding?: boolean;
 }): JSX.Element {
     const client = useClient();
     const [content, setContent] = useState<ItemList_ItemTagDataFragment[] | null>(null);
@@ -222,7 +224,7 @@ function Panel({
             flexDir="column"
             alignItems="stretch"
             justifyContent="stretch"
-            p={2}
+            p={noTopPadding ? 0 : 2}
         >
             {!noHeading ? (
                 <Heading as="h3" fontSize="1.4rem" marginBottom="0.5rem" mb={4} textAlign="left" w="100%">
@@ -374,28 +376,31 @@ export default function ItemList({
                     </Select>
                 )
             ) : undefined}
-            {sortedGroupedTags &&
-                Object.keys(sortedGroupedTags).map((subconferenceId) => {
-                    const sortedTags = sortedGroupedTags[subconferenceId];
-                    return (
-                        <Box
-                            key={"tag-panel-" + subconferenceId}
-                            overflow="hidden"
-                            pt={selectAsDropdown ? 0 : 6}
-                            justifyContent="flex-start"
-                            w="100%"
-                        >
-                            {sortedTags.map((tag) => (
-                                <Panel
-                                    key={tag.id}
-                                    tag={tag}
-                                    isExpanded={openPanelId === tag.id}
-                                    noHeading={selectAsDropdown}
-                                />
-                            ))}
-                        </Box>
-                    );
-                })}
+            <VStack spacing={0} alignItems="flex-start">
+                {sortedGroupedTags &&
+                    Object.keys(sortedGroupedTags).map((subconferenceId) => {
+                        const sortedTags = sortedGroupedTags[subconferenceId];
+                        return (
+                            <Box
+                                key={"tag-panel-" + subconferenceId}
+                                overflow="hidden"
+                                pt={selectAsDropdown ? 0 : 6}
+                                justifyContent="flex-start"
+                                w="100%"
+                            >
+                                {sortedTags.map((tag) => (
+                                    <Panel
+                                        key={tag.id}
+                                        tag={tag}
+                                        isExpanded={openPanelId === tag.id}
+                                        noHeading={selectAsDropdown}
+                                        noTopPadding={selectAsDropdown}
+                                    />
+                                ))}
+                            </Box>
+                        );
+                    })}
+            </VStack>
         </VStack>
     );
 }

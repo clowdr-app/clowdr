@@ -89,7 +89,8 @@ gql`
 
     query SelectMySchedulePage(
         $where: schedule_Event_bool_exp!
-        $ordering: [schedule_StarredEvent_order_by!]!
+        $starredOrdering: [schedule_StarredEvent_order_by!]!
+        $peopleOrdering: [schedule_EventProgramPerson_order_by!]!
         $limit: Int!
         $includeAbstract: Boolean!
         $includeItemEvents: Boolean!
@@ -97,7 +98,16 @@ gql`
     ) @cached {
         schedule_StarredEvent(
             where: { registrantId: { _eq: $registrantId }, event: $where }
-            order_by: $ordering
+            order_by: $starredOrdering
+            limit: $limit
+        ) {
+            event {
+                ...ScheduleEvent
+            }
+        }
+        schedule_EventProgramPerson(
+            where: { person: { registrantId: { _eq: $registrantId } }, event: $where }
+            order_by: $peopleOrdering
             limit: $limit
         ) {
             event {
@@ -166,7 +176,11 @@ export default function ContinuousSchedule({
                                             ).toISOString(),
                                         },
                                     },
-                                    ordering: [
+                                    starredOrdering: [
+                                        { event: { scheduledStartTime: Order_By.Desc } },
+                                        { event: { scheduledEndTime: Order_By.Desc } },
+                                    ],
+                                    peopleOrdering: [
                                         { event: { scheduledStartTime: Order_By.Desc } },
                                         { event: { scheduledEndTime: Order_By.Desc } },
                                     ],
@@ -178,7 +192,16 @@ export default function ContinuousSchedule({
                             )
                             .toPromise();
 
-                        earlierEvents = response.data?.schedule_StarredEvent.map((x) => x.event);
+                        earlierEvents = R.sortWith(
+                            [
+                                (x, y) => Date.parse(y.scheduledStartTime) - Date.parse(x.scheduledStartTime),
+                                (x, y) => Date.parse(y.scheduledEndTime) - Date.parse(x.scheduledEndTime),
+                            ],
+                            [
+                                ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
+                                ...(response.data?.schedule_EventProgramPerson.map((x) => x.event) ?? []),
+                            ]
+                        );
                     } else {
                         const response = await client
                             .query<SelectSchedulePageQuery, SelectSchedulePageQueryVariables>(
@@ -280,7 +303,11 @@ export default function ContinuousSchedule({
                                             },
                                         ],
                                     },
-                                    ordering: [
+                                    starredOrdering: [
+                                        { event: { scheduledStartTime: Order_By.Asc } },
+                                        { event: { scheduledEndTime: Order_By.Asc } },
+                                    ],
+                                    peopleOrdering: [
                                         { event: { scheduledStartTime: Order_By.Asc } },
                                         { event: { scheduledEndTime: Order_By.Asc } },
                                     ],
@@ -292,7 +319,16 @@ export default function ContinuousSchedule({
                             )
                             .toPromise();
 
-                        laterEvents = response.data?.schedule_StarredEvent.map((x) => x.event);
+                        laterEvents = R.sortWith(
+                            [
+                                (x, y) => Date.parse(x.scheduledStartTime) - Date.parse(y.scheduledStartTime),
+                                (x, y) => Date.parse(x.scheduledEndTime) - Date.parse(y.scheduledEndTime),
+                            ],
+                            [
+                                ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
+                                ...(response.data?.schedule_EventProgramPerson.map((x) => x.event) ?? []),
+                            ]
+                        );
                     } else {
                         const response = await client
                             .query<SelectSchedulePageQuery, SelectSchedulePageQueryVariables>(

@@ -42655,7 +42655,8 @@ export type SelectSchedulePageQuery = {
 
 export type SelectMySchedulePageQueryVariables = Exact<{
     where: Schedule_Event_Bool_Exp;
-    ordering: ReadonlyArray<Schedule_StarredEvent_Order_By> | Schedule_StarredEvent_Order_By;
+    starredOrdering: ReadonlyArray<Schedule_StarredEvent_Order_By> | Schedule_StarredEvent_Order_By;
+    peopleOrdering: ReadonlyArray<Schedule_EventProgramPerson_Order_By> | Schedule_EventProgramPerson_Order_By;
     limit: Scalars["Int"];
     includeAbstract: Scalars["Boolean"];
     includeItemEvents: Scalars["Boolean"];
@@ -42666,6 +42667,61 @@ export type SelectMySchedulePageQuery = {
     readonly __typename?: "query_root";
     readonly schedule_StarredEvent: ReadonlyArray<{
         readonly __typename?: "schedule_StarredEvent";
+        readonly event: {
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly conferenceId: any;
+            readonly subconferenceId?: any | null;
+            readonly scheduledStartTime?: any | null;
+            readonly scheduledEndTime?: any | null;
+            readonly name: string;
+            readonly roomId: any;
+            readonly modeName?: Schedule_Mode_Enum | null;
+            readonly sessionEventId?: any | null;
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly conferenceId: any;
+                readonly subconferenceId?: any | null;
+                readonly title: string;
+                readonly typeName: Content_ItemType_Enum;
+                readonly itemTags: ReadonlyArray<{
+                    readonly __typename?: "content_ItemTag";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly tagId: any;
+                }>;
+                readonly itemPeople: ReadonlyArray<{
+                    readonly __typename?: "content_ItemProgramPerson";
+                    readonly id: any;
+                    readonly itemId: any;
+                    readonly personId: any;
+                    readonly roleName: string;
+                }>;
+                readonly abstract: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly data: any;
+                }>;
+                readonly events?: ReadonlyArray<{
+                    readonly __typename?: "schedule_Event";
+                    readonly id: any;
+                    readonly session?: {
+                        readonly __typename?: "schedule_Event";
+                        readonly id: any;
+                        readonly name: string;
+                        readonly item?: {
+                            readonly __typename?: "content_Item";
+                            readonly id: any;
+                            readonly title: string;
+                        } | null;
+                    } | null;
+                }>;
+            } | null;
+        };
+    }>;
+    readonly schedule_EventProgramPerson: ReadonlyArray<{
+        readonly __typename?: "schedule_EventProgramPerson";
         readonly event: {
             readonly __typename?: "schedule_Event";
             readonly id: any;
@@ -53849,7 +53905,8 @@ export function useSelectSchedulePageQuery(
 export const SelectMySchedulePageDocument = gql`
     query SelectMySchedulePage(
         $where: schedule_Event_bool_exp!
-        $ordering: [schedule_StarredEvent_order_by!]!
+        $starredOrdering: [schedule_StarredEvent_order_by!]!
+        $peopleOrdering: [schedule_EventProgramPerson_order_by!]!
         $limit: Int!
         $includeAbstract: Boolean!
         $includeItemEvents: Boolean!
@@ -53857,7 +53914,16 @@ export const SelectMySchedulePageDocument = gql`
     ) @cached {
         schedule_StarredEvent(
             where: { registrantId: { _eq: $registrantId }, event: $where }
-            order_by: $ordering
+            order_by: $starredOrdering
+            limit: $limit
+        ) {
+            event {
+                ...ScheduleEvent
+            }
+        }
+        schedule_EventProgramPerson(
+            where: { person: { registrantId: { _eq: $registrantId } }, event: $where }
+            order_by: $peopleOrdering
             limit: $limit
         ) {
             event {

@@ -41698,6 +41698,7 @@ export type GetEventVonageDetailsQuery = {
 
 export type RoomSponsorContent_GetElementsQueryVariables = Exact<{
     itemId: Scalars["uuid"];
+    roomId: Scalars["uuid"];
     includeAbstract: Scalars["Boolean"];
     includeItemEvents: Scalars["Boolean"];
 }>;
@@ -53261,18 +53262,32 @@ export function useGetEventVonageDetailsQuery(
     return Urql.useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
 }
 export const RoomSponsorContent_GetElementsDocument = gql`
-    query RoomSponsorContent_GetElements($itemId: uuid!, $includeAbstract: Boolean!, $includeItemEvents: Boolean!)
-    @cached {
+    query RoomSponsorContent_GetElements(
+        $itemId: uuid!
+        $roomId: uuid!
+        $includeAbstract: Boolean!
+        $includeItemEvents: Boolean!
+    ) @cached {
         content_Item(where: { id: { _eq: $itemId }, typeName: { _eq: SPONSOR } }) {
             ...RoomSponsorContent_ItemData
         }
         sessions: schedule_Event(
-            where: { _and: [{ itemId: { _eq: $itemId } }, { sessionEventId: { _is_null: true } }] }
+            where: {
+                _and: [
+                    { _or: [{ roomId: { _eq: $roomId } }, { itemId: { _eq: $itemId } }] }
+                    { sessionEventId: { _is_null: true } }
+                ]
+            }
         ) {
             ...ScheduleEvent
         }
         presentations: schedule_Event(
-            where: { _and: [{ itemId: { _eq: $itemId } }, { sessionEventId: { _is_null: false } }] }
+            where: {
+                _and: [
+                    { _or: [{ roomId: { _eq: $roomId } }, { itemId: { _eq: $itemId } }] }
+                    { sessionEventId: { _is_null: false } }
+                ]
+            }
         ) {
             ...ItemPresentation
         }

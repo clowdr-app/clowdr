@@ -154,7 +154,7 @@ export async function computeAuthHeaders(
         role: string;
         includeRoomIds: boolean;
     }>
-): Promise<false | Partial<Record<AuthSessionVariables, string>>> {
+): Promise<string | Partial<Record<AuthSessionVariables, string>>> {
     logger.trace({ verifiedParams, unverifiedParams }, "Computing auth headers");
 
     // TODO: Do we want to cache the outcome of this logic?
@@ -171,7 +171,7 @@ export async function computeAuthHeaders(
                 [AuthSessionVariables.Role]: HasuraRoleName.Superuser,
             };
         } else {
-            return false;
+            return "Superuser requested but no user id present.";
         }
     }
 
@@ -309,9 +309,6 @@ export async function computeAuthHeaders(
                                             result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
                                             allowedRoles.push(HasuraRoleName.RoomAdmin);
                                             allowedRoles.push(HasuraRoleName.RoomMember);
-                                        } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
-                                            result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
-                                            allowedRoles.push(HasuraRoleName.RoomMember);
                                         } else {
                                             const role = await roomMembershipsCache(logger).getField(
                                                 room.id,
@@ -326,15 +323,22 @@ export async function computeAuthHeaders(
                                                 if (role === Room_PersonRole_Enum.Admin) {
                                                     allowedRoles.push(HasuraRoleName.RoomAdmin);
                                                 }
+                                            } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
+                                                result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
+                                                    room.id
+                                                );
+                                                allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else {
-                                                return false;
+                                                return "Access to requested room denied - registrant is not a member of the room.";
                                             }
                                         }
                                     } else {
-                                        return false;
+                                        return room.conferenceId !== conference.id
+                                            ? "Access to requested room denied - room belongs to a different conference."
+                                            : "Access to requested room denied - registrant is not a member of the room's subconference.";
                                     }
                                 } else {
-                                    return false;
+                                    return "Access to room denied - room not found.";
                                 }
                             } else if (unverifiedParams.includeRoomIds) {
                                 allowedRoles.push(HasuraRoleName.RoomMember);
@@ -387,7 +391,7 @@ export async function computeAuthHeaders(
                                             result[AuthSessionVariables.RoomIds] =
                                                 formatArrayForHasuraHeader(availableRoomIds);
                                         } else {
-                                            return false;
+                                            return `Access to conference denied - ${requestedRole} role requested but registrant is not a conference organizer.`;
                                         }
                                     } else {
                                         const availableRoomIds: string[] = [];
@@ -419,7 +423,7 @@ export async function computeAuthHeaders(
                                             formatArrayForHasuraHeader(availableRoomIds);
                                     }
                                 } else {
-                                    return false;
+                                    return "Unable to include room ids in the response - allRooms was undefined.";
                                 }
                             } else {
                                 result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader([]);
@@ -488,14 +492,16 @@ export async function computeAuthHeaders(
                                                     );
                                                     allowedRoles.push(HasuraRoleName.RoomMember);
                                                 } else {
-                                                    return false;
+                                                    return "Access to requested room denied - [subconference room] registrant is not a member of the room.";
                                                 }
                                             }
                                         } else {
-                                            return false;
+                                            return room.conferenceId !== conference.id
+                                                ? "Access to requested room denied - [subconference room] room belongs to a different conference."
+                                                : "Access to requested room denied - [subconference room] registrant is not a member of the room's subconference.";
                                         }
                                     } else {
-                                        return false;
+                                        return "Access to room denied - [subconference room] room not found.";
                                     }
                                 } else if (unverifiedParams.includeRoomIds) {
                                     allowedRoles.push(HasuraRoleName.RoomMember);
@@ -538,7 +544,7 @@ export async function computeAuthHeaders(
                                                 result[AuthSessionVariables.RoomIds] =
                                                     formatArrayForHasuraHeader(availableRoomIds);
                                             } else {
-                                                return false;
+                                                return `Access to conference denied - ${requestedRole} role requested but registrant is not a conference organizer nor a subconference organizer.`;
                                             }
                                         } else {
                                             const availableRoomIds: string[] = [];
@@ -567,17 +573,21 @@ export async function computeAuthHeaders(
                                                 formatArrayForHasuraHeader(availableRoomIds);
                                         }
                                     } else {
-                                        return false;
+                                        return "Unable to include room ids in the response - [subconference] allRooms was undefined.";
                                     }
                                 } else {
                                     result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader([]);
                                 }
                             } else {
-                                return false;
+                                return "Unable to include room ids in the response - [subconference] allRooms was undefined.";
                             }
                         }
                     } else {
-                        return false;
+                        return !registrant
+                            ? "Access to conference denied - registrant not found."
+                            : !conference
+                            ? "Access to conference denied - conference not found."
+                            : `Access to conference denied - registrant does not have access at the moment. Registrant role: ${registrant.conferenceRole}, Lowest role with access: ${conference.lowestRoleWithAccess}`;
                     }
                 } else {
                     const conference = await new ConferenceCache(logger).getEntity(unverifiedParams.conferenceId);
@@ -594,11 +604,11 @@ export async function computeAuthHeaders(
                                 allowedRoles.push(HasuraRoleName.Unauthenticated);
                                 requestedRole = HasuraRoleName.Unauthenticated;
                             } else {
-                                return false;
+                                return "Access to conference denied - no registrant specified, the user is not the conference creator and unauthenticated access is not permitted for this conference.";
                             }
                         }
                     } else {
-                        return false;
+                        return "Access to conference denied - conference not found.";
                     }
                 }
             } else {
@@ -614,13 +624,17 @@ export async function computeAuthHeaders(
         if (allowedRoles.includes(requestedRole)) {
             result[AuthSessionVariables.Role] = requestedRole;
         } else {
-            return false;
+            return `Access denied - requested role (${requestedRole}) not in the set of allowed roles (${JSON.stringify(
+                allowedRoles,
+                null,
+                2
+            )})`;
         }
 
         return result;
     }
 
-    return false;
+    return "Access denied - fell through all cases.";
 }
 async function evaluateUnauthenticatedConference(
     logger: P.Logger,

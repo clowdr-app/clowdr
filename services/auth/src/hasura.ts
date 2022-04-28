@@ -88,12 +88,27 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
             }
         );
         req.log.trace({ result }, "Handled webhook");
-        if (result !== false) {
+        if (typeof result !== "string") {
             res.status(200).json(result);
         } else {
             res.status(401).json("Unauthorized");
 
-            req.log.info({ req, result }, "Unauthorizing request");
+            req.log.info(
+                {
+                    headers: req.headers,
+                    userId,
+                    conferenceId,
+                    subconferenceId,
+                    roomId,
+                    magicToken,
+                    inviteCode,
+                    role,
+                    includeRoomIds,
+                    jwtPresent: Boolean(encodedToken),
+                    reason: result,
+                },
+                "Unauthorizing request"
+            );
         }
     } catch (err) {
         req.log.error({ err }, "Failure/error while handling Hasura Auth webhook");

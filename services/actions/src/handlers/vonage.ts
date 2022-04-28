@@ -766,6 +766,7 @@ gql`
     query FindRoomByVonageSessionId($vonageSessionId: String!, $now: timestamptz!, $userId: String!) {
         room_Room(where: { publicVonageSessionId: { _eq: $vonageSessionId } }) {
             id
+            subconferenceId
             events(where: { scheduledStartTime: { _lte: $now }, scheduledEndTime: { _gte: $now } }) {
                 id
                 eventPeople(
@@ -780,6 +781,12 @@ gql`
             conference {
                 registrants(where: { userId: { _eq: $userId } }) {
                     id
+                    conferenceRole
+                    subconferenceMemberships {
+                        id
+                        subconferenceId
+                        role
+                    }
                 }
             }
         }
@@ -824,7 +831,18 @@ export async function handleToggleVonageRecordingState(
             };
         }
 
-        const canToggle = room.events.length === 0 || room.events.some((event) => event.eventPeople.length > 0);
+        const canToggle =
+            room.events.length === 0 ||
+            room.events.some((event) => event.eventPeople.length > 0) ||
+            room.conference.registrants[0]?.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+            Boolean(
+                room.subconferenceId &&
+                    room.conference.registrants[0]?.subconferenceMemberships.some(
+                        (x) =>
+                            x.subconferenceId === room.subconferenceId &&
+                            x.role === Registrant_RegistrantRole_Enum.Organizer
+                    )
+            );
         if (!canToggle) {
             return {
                 allowed: false,

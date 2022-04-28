@@ -11,6 +11,7 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
+    _uuid: any;
     bigint: any;
     float8: any;
     jsonb: any;
@@ -5912,9 +5913,11 @@ export type Collection_Exhibition_Bool_Exp = {
 /** unique or primary key constraints on table "collection.Exhibition" */
 export enum Collection_Exhibition_Constraint {
     /** unique or primary key constraint */
-    ExhibitionNameConferenceIdFkey = "Exhibition_name_conferenceId_fkey",
-    /** unique or primary key constraint */
     ExhibitionPkey = "Exhibition_pkey",
+    /** unique or primary key constraint */
+    CollectionExhibitionNameConferenceId = "collection_Exhibition_name_conferenceId",
+    /** unique or primary key constraint */
+    CollectionExhibitionNameSubconferenceId = "collection_Exhibition_name_subconferenceId",
 }
 
 /** input type for incrementing numeric columns in table "collection.Exhibition" */
@@ -6336,13 +6339,17 @@ export type Collection_ProgramPerson_Bool_Exp = {
 /** unique or primary key constraints on table "collection.ProgramPerson" */
 export enum Collection_ProgramPerson_Constraint {
     /** unique or primary key constraint */
-    ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
-    /** unique or primary key constraint */
-    ProgramPersonConferenceIdNameKey = "ProgramPerson_conferenceId_name_key",
-    /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
     /** unique or primary key constraint */
     CollectionProgramPersonAccessToken = "collection_ProgramPerson_accessToken",
+    /** unique or primary key constraint */
+    CollectionProgramPersonConferenceIdName = "collection_ProgramPerson_conferenceId_name",
+    /** unique or primary key constraint */
+    CollectionProgramPersonConferenceIdNameAffiliation = "collection_ProgramPerson_conferenceId_name_affiliation",
+    /** unique or primary key constraint */
+    CollectionProgramPersonSubconferenceIdName = "collection_ProgramPerson_subconferenceId_name",
+    /** unique or primary key constraint */
+    CollectionProgramPersonSubconferenceIdNameAffiliation = "collection_ProgramPerson_subconferenceId_name_affiliation",
 }
 
 /** input type for incrementing numeric columns in table "collection.ProgramPerson" */
@@ -6983,6 +6990,7 @@ export type Collection_Tag_Variance_Order_By = {
 export type Collection_SearchProgramPerson_Args = {
     conferenceid?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+    subconferenceid?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -16128,6 +16136,10 @@ export type Mutation_Root = {
     notifyEventStarted: NotifyEventStarted;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
+    /** execute VOLATILE function "schedule.shiftPresentationTimes" which returns "schedule.Event" */
+    schedule_shiftPresentationTimes: Array<Schedule_Event>;
+    /** execute VOLATILE function "schedule.shiftTimes" which returns "schedule.Event" */
+    schedule_shiftTimes: Array<Schedule_Event>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
@@ -18822,6 +18834,26 @@ export type Mutation_RootNotifyEventStartedArgs = {
 export type Mutation_RootRefreshYouTubeDataArgs = {
     registrantGoogleAccountId: Scalars["uuid"];
     registrantId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftPresentationTimesArgs = {
+    args: Schedule_ShiftPresentationTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftTimesArgs = {
+    args: Schedule_ShiftTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** mutation root */
@@ -23748,9 +23780,11 @@ export type Registrant_Group_Bool_Exp = {
 /** unique or primary key constraints on table "registrant.Group" */
 export enum Registrant_Group_Constraint {
     /** unique or primary key constraint */
-    GroupConferenceIdNameKey = "Group_conferenceId_name_key",
-    /** unique or primary key constraint */
     GroupPkey = "Group_pkey",
+    /** unique or primary key constraint */
+    RegistrantGroupConferenceIdName = "registrant_Group_conferenceId_name",
+    /** unique or primary key constraint */
+    RegistrantGroupSubconferenceIdName = "registrant_Group_subconferenceId_name",
 }
 
 /** input type for inserting data into table "registrant.Group" */
@@ -24696,6 +24730,8 @@ export type Registrant_Registrant = {
     invitationStatus?: Maybe<Scalars["jsonb"]>;
     /** A computed field, executes function "registrant.HasBeenInvited" */
     inviteSent?: Maybe<Scalars["Boolean"]>;
+    /** A computed field, executes function "registrant.isProgramPerson" */
+    isProgramPerson?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
     profile?: Maybe<Registrant_Profile>;
     /** An array relationship */
@@ -24967,6 +25003,7 @@ export type Registrant_Registrant_Bool_Exp = {
     invitation?: InputMaybe<Registrant_Invitation_Bool_Exp>;
     invitationStatus?: InputMaybe<Jsonb_Comparison_Exp>;
     inviteSent?: InputMaybe<Boolean_Comparison_Exp>;
+    isProgramPerson?: InputMaybe<Boolean_Comparison_Exp>;
     profile?: InputMaybe<Registrant_Profile_Bool_Exp>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
     subconferenceMemberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
@@ -25080,6 +25117,7 @@ export type Registrant_Registrant_Order_By = {
     invitation?: InputMaybe<Registrant_Invitation_Order_By>;
     invitationStatus?: InputMaybe<Order_By>;
     inviteSent?: InputMaybe<Order_By>;
+    isProgramPerson?: InputMaybe<Order_By>;
     profile?: InputMaybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     subconferenceMemberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
@@ -29552,6 +29590,10 @@ export type Schedule_Event = {
     mode?: Maybe<Schedule_Mode>;
     modeName?: Maybe<Schedule_Mode_Enum>;
     name: Scalars["String"];
+    /** An array relationship */
+    presentations: Array<Schedule_Event>;
+    /** An aggregate relationship */
+    presentations_aggregate: Schedule_Event_Aggregate;
     /** An object relationship */
     room: Room_Room;
     roomId: Scalars["uuid"];
@@ -29559,6 +29601,8 @@ export type Schedule_Event = {
     roomName?: Maybe<Scalars["String"]>;
     scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
     scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    /** An object relationship */
+    session?: Maybe<Schedule_Event>;
     sessionEventId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     shufflePeriod?: Maybe<Room_ShufflePeriod>;
@@ -29606,6 +29650,24 @@ export type Schedule_EventEventPeople_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Schedule_EventProgramPerson_Order_By>>;
     where?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventPresentationsArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventPresentations_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** columns and relationships of "schedule.EventProgramPerson" */
@@ -30031,11 +30093,13 @@ export type Schedule_Event_Bool_Exp = {
     mode?: InputMaybe<Schedule_Mode_Bool_Exp>;
     modeName?: InputMaybe<Schedule_Mode_Enum_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
+    presentations?: InputMaybe<Schedule_Event_Bool_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     roomId?: InputMaybe<Uuid_Comparison_Exp>;
     roomName?: InputMaybe<String_Comparison_Exp>;
     scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    session?: InputMaybe<Schedule_Event_Bool_Exp>;
     sessionEventId?: InputMaybe<Uuid_Comparison_Exp>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -30073,10 +30137,12 @@ export type Schedule_Event_Insert_Input = {
     mode?: InputMaybe<Schedule_Mode_Obj_Rel_Insert_Input>;
     modeName?: InputMaybe<Schedule_Mode_Enum>;
     name?: InputMaybe<Scalars["String"]>;
+    presentations?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: InputMaybe<Scalars["uuid"]>;
     scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
     scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    session?: InputMaybe<Schedule_Event_Obj_Rel_Insert_Input>;
     sessionEventId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
@@ -30213,11 +30279,13 @@ export type Schedule_Event_Order_By = {
     mode?: InputMaybe<Schedule_Mode_Order_By>;
     modeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
+    presentations_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     roomId?: InputMaybe<Order_By>;
     roomName?: InputMaybe<Order_By>;
     scheduledEndTime?: InputMaybe<Order_By>;
     scheduledStartTime?: InputMaybe<Order_By>;
+    session?: InputMaybe<Schedule_Event_Order_By>;
     sessionEventId?: InputMaybe<Order_By>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
@@ -30767,6 +30835,16 @@ export enum Schedule_StarredEvent_Update_Column {
 export type Schedule_SearchEvents_Args = {
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+};
+
+export type Schedule_ShiftPresentationTimes_Args = {
+    minutes?: InputMaybe<Scalars["Int"]>;
+    sessionId?: InputMaybe<Scalars["uuid"]>;
+};
+
+export type Schedule_ShiftTimes_Args = {
+    eventIds?: InputMaybe<Scalars["_uuid"]>;
+    minutes?: InputMaybe<Scalars["Int"]>;
 };
 
 /** columns and relationships of "sponsor.Tier" */
@@ -40859,6 +40937,7 @@ export type FindRoomByVonageSessionIdQuery = {
     room_Room: Array<{
         __typename?: "room_Room";
         id: any;
+        subconferenceId?: any | null;
         events: Array<{
             __typename?: "schedule_Event";
             id: any;
@@ -40866,7 +40945,17 @@ export type FindRoomByVonageSessionIdQuery = {
         }>;
         conference: {
             __typename?: "conference_Conference";
-            registrants: Array<{ __typename?: "registrant_Registrant"; id: any }>;
+            registrants: Array<{
+                __typename?: "registrant_Registrant";
+                id: any;
+                conferenceRole: Registrant_RegistrantRole_Enum;
+                subconferenceMemberships: Array<{
+                    __typename?: "registrant_SubconferenceMembership";
+                    id: any;
+                    subconferenceId: any;
+                    role: Registrant_RegistrantRole_Enum;
+                }>;
+            }>;
         };
     }>;
 };
@@ -52625,6 +52714,7 @@ export const FindRoomByVonageSessionIdDocument = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
                                 {
                                     kind: "Field",
                                     name: { kind: "Name", value: "events" },
@@ -52818,6 +52908,34 @@ export const FindRoomByVonageSessionIdDocument = {
                                                     kind: "SelectionSet",
                                                     selections: [
                                                         { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        {
+                                                            kind: "Field",
+                                                            name: { kind: "Name", value: "conferenceRole" },
+                                                        },
+                                                        {
+                                                            kind: "Field",
+                                                            name: { kind: "Name", value: "subconferenceMemberships" },
+                                                            selectionSet: {
+                                                                kind: "SelectionSet",
+                                                                selections: [
+                                                                    {
+                                                                        kind: "Field",
+                                                                        name: { kind: "Name", value: "id" },
+                                                                    },
+                                                                    {
+                                                                        kind: "Field",
+                                                                        name: {
+                                                                            kind: "Name",
+                                                                            value: "subconferenceId",
+                                                                        },
+                                                                    },
+                                                                    {
+                                                                        kind: "Field",
+                                                                        name: { kind: "Name", value: "role" },
+                                                                    },
+                                                                ],
+                                                            },
+                                                        },
                                                     ],
                                                 },
                                             },

@@ -93,13 +93,8 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
         } else {
             res.status(401).json("Unauthorized");
 
-            const loggableHeaders = { ...req.headers };
-            delete loggableHeaders.authorization;
-            delete loggableHeaders.Authorization;
-            delete loggableHeaders.AUTHORIZATION;
             req.log.info(
                 {
-                    headers: loggableHeaders,
                     userId,
                     conferenceId,
                     subconferenceId,

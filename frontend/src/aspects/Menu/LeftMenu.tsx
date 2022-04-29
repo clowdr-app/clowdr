@@ -88,8 +88,8 @@ export default function LeftMenu({
     );
 
     const { liveEvents, upcomingEvents } = useLiveEvents();
-    const liveEventCount = liveEvents.length + upcomingEvents.length;
-    const showLive = liveEventCount > 0;
+    const liveEventCount = liveEvents.length;
+    const showLive = liveEvents.length + upcomingEvents.length > 0;
 
     const bgColor = useColorModeValue("LeftMenu.500", "LeftMenu.200");
     const triangleBgColor = useColorModeValue("gray.50", "gray.700");

@@ -25,10 +25,22 @@ gql`
         schedule_Event_by_pk(id: $eventId) {
             id
             itemId
+            presentations {
+                item {
+                    id
+                    title
+                    elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
+                        id
+                        name
+                        itemId
+                        typeName
+                    }
+                }
+            }
             item {
                 id
                 title
-                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }) {
+                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
                     id
                     name
                     itemId
@@ -45,9 +57,7 @@ gql`
                     item {
                         id
                         title
-                        elements(
-                            where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }
-                        ) {
+                        elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
                             id
                             name
                             itemId
@@ -104,27 +114,41 @@ export default function PlayVideoMenuButton({
     });
 
     const eventMenuItems = useMemo(() => {
-        const item = eventResponse.data?.schedule_Event_by_pk?.item;
-
-        return (
-            item?.elements.map((element) => (
-                <MenuItem
-                    key={element.id}
-                    onClick={() => {
-                        sendCommand({
-                            type: "video",
-                            currentTimeSeconds: 0,
-                            elementId: element.id,
-                            playing: true,
-                            volume: 1,
-                        });
-                    }}
-                >
-                    {item.title}: {element.name}
-                </MenuItem>
-            )) ?? []
+        const items = R.uniqBy(
+            (x) => x.id,
+            [
+                ...(eventResponse.data?.schedule_Event_by_pk?.item
+                    ? [eventResponse.data.schedule_Event_by_pk.item]
+                    : []),
+                ...(eventResponse.data?.schedule_Event_by_pk?.presentations?.flatMap((x) => (x.item ? [x.item] : [])) ??
+                    []),
+            ]
         );
-    }, [eventResponse.data?.schedule_Event_by_pk?.item, sendCommand]);
+
+        return items.flatMap(
+            (item) =>
+                item?.elements.map((element) => (
+                    <MenuItem
+                        key={element.id}
+                        onClick={() => {
+                            sendCommand({
+                                type: "video",
+                                currentTimeSeconds: 0,
+                                elementId: element.id,
+                                playing: true,
+                                volume: 1,
+                            });
+                        }}
+                    >
+                        {item.title}: {element.name}
+                    </MenuItem>
+                )) ?? []
+        );
+    }, [
+        eventResponse.data?.schedule_Event_by_pk?.item,
+        eventResponse.data?.schedule_Event_by_pk?.presentations,
+        sendCommand,
+    ]);
 
     const exhibitionMenuItems = useMemo(() => {
         const exhibitionItems = R.sort(

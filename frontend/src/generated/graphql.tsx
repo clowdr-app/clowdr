@@ -42104,6 +42104,21 @@ export type GetEventVideosQuery = {
         readonly __typename?: "schedule_Event";
         readonly id: any;
         readonly itemId?: any | null;
+        readonly presentations: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly title: string;
+                readonly elements: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly itemId: any;
+                    readonly typeName: Content_ElementType_Enum;
+                }>;
+            } | null;
+        }>;
         readonly item?: {
             readonly __typename?: "content_Item";
             readonly id: any;
@@ -53581,10 +53596,22 @@ export const GetEventVideosDocument = gql`
         schedule_Event_by_pk(id: $eventId) {
             id
             itemId
+            presentations {
+                item {
+                    id
+                    title
+                    elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
+                        id
+                        name
+                        itemId
+                        typeName
+                    }
+                }
+            }
             item {
                 id
                 title
-                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }) {
+                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
                     id
                     name
                     itemId
@@ -53601,9 +53628,7 @@ export const GetEventVideosDocument = gql`
                     item {
                         id
                         title
-                        elements(
-                            where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }
-                        ) {
+                        elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
                             id
                             name
                             itemId

@@ -104,6 +104,9 @@ export function AddContentMenu({
                                         },
                                     }
                                 );
+                                if (result.error) {
+                                    throw new Error(result.error.message);
+                                }
                                 if (result.data?.insert_content_Element_one?.id) {
                                     onCreate(result.data?.insert_content_Element_one?.id);
                                 }

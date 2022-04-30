@@ -42,6 +42,3 @@ BEGIN
     RETURN NEW;
 END
 $BODY$;
-
-ALTER FUNCTION content."checkInsertElement"()
-    OWNER TO postgres;

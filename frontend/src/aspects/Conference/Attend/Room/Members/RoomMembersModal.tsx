@@ -106,8 +106,8 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
     const removeRegistrantsContext = useMemo(
         () =>
             makeContext({
-                [AuthHeader.Role]: canAddMembersAs,
                 [AuthHeader.RoomId]: roomDetails.id,
+                [AuthHeader.Role]: "room-admin",
             }),
         [canAddMembersAs, roomDetails.id]
     );

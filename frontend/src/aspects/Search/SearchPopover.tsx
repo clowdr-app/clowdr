@@ -13,8 +13,9 @@ import {
     Spinner,
     useColorModeValue,
     useDisclosure,
+    useOutsideClick,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import FAIcon from "../Chakra/FAIcon";
 import { LinkButton } from "../Chakra/LinkButton";
@@ -78,6 +79,25 @@ export default function SearchPopover({
         setIsActive(false);
     }, [location, setIsActive]);
 
+    const onCloseWrapped = useCallback(
+        (ev: Event | React.MouseEvent<HTMLButtonElement>) => {
+            if (isActive) {
+                const t = ev.target as HTMLElement;
+                if (!t.closest(".chakra-input__group[data-id=header-bar-search-box]")) {
+                    onClose();
+                    setIsActive(false);
+                }
+            }
+        },
+        [isActive, onClose, setIsActive]
+    );
+
+    const ref = useRef<HTMLDivElement>(null);
+    useOutsideClick({
+        ref,
+        handler: onCloseWrapped,
+    });
+
     return (
         <Popover
             isLazy
@@ -90,7 +110,7 @@ export default function SearchPopover({
         >
             <PopoverTrigger>
                 {isActive ? (
-                    <InputGroup ml="auto" mr={2} maxW="30em">
+                    <InputGroup ml="auto" mr={2} maxW="30em" data-id="header-bar-search-box">
                         <Input
                             w="100%"
                             autoFocus
@@ -169,6 +189,7 @@ export default function SearchPopover({
                 maxH="min(500px, calc(100vh - 6ex - 6px - 9px))"
                 h="100%"
                 w="inherit"
+                ref={ref}
             >
                 <PopoverHeader bgColor={bgColor} color={textColor} flex="0 0 auto">
                     {numResults !== null ? `${numResults} results` : "Searching…"}

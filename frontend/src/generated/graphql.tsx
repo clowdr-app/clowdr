@@ -42676,6 +42676,7 @@ export type SelectMySchedulePageQueryVariables = Exact<{
     includeAbstract: Scalars["Boolean"];
     includeItemEvents: Scalars["Boolean"];
     registrantId: Scalars["uuid"];
+    shouldRefreshCache: Scalars["Boolean"];
 }>;
 
 export type SelectMySchedulePageQuery = {
@@ -53936,7 +53937,8 @@ export const SelectMySchedulePageDocument = gql`
         $includeAbstract: Boolean!
         $includeItemEvents: Boolean!
         $registrantId: uuid!
-    ) @cached {
+        $shouldRefreshCache: Boolean!
+    ) @cached(refresh: $shouldRefreshCache) {
         schedule_StarredEvent(
             where: { registrantId: { _eq: $registrantId }, event: $where }
             order_by: $starredOrdering

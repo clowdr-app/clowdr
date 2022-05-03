@@ -13,6 +13,8 @@ import type {
 } from "../../../../generated/graphql";
 import { Order_By, SelectMySchedulePageDocument, SelectSchedulePageDocument } from "../../../../generated/graphql";
 import FAIcon from "../../../Chakra/FAIcon";
+import { useRestorableState } from "../../../Hooks/useRestorableState";
+import { useMaybeConference } from "../../useConference";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import ScheduleList from "./ScheduleList";
 import type { ScheduleProps } from "./ScheduleProps";
@@ -95,7 +97,8 @@ gql`
         $includeAbstract: Boolean!
         $includeItemEvents: Boolean!
         $registrantId: uuid!
-    ) @cached {
+        $shouldRefreshCache: Boolean!
+    ) @cached(refresh: $shouldRefreshCache) {
         schedule_StarredEvent(
             where: { registrantId: { _eq: $registrantId }, event: $where }
             order_by: $starredOrdering
@@ -116,6 +119,16 @@ gql`
         }
     }
 `;
+
+export function useMyScheduleCacheControl() {
+    const conference = useMaybeConference();
+    return useRestorableState<boolean>(
+        "MyScheduleCacheControl-Refresh-" + (conference?.id ?? "NONE"),
+        false,
+        (x) => (x ? "true" : "false"),
+        (x) => x === "true"
+    );
+}
 
 export default function ContinuousSchedule({
     conferenceId,
@@ -143,6 +156,8 @@ export default function ContinuousSchedule({
     const loadingLaterRef = useRef<boolean>(false);
 
     const client = useClient();
+
+    const [shouldRefreshCache, setShouldRefreshCache] = useMyScheduleCacheControl();
 
     const loadEarlierEvents = useCallback(
         async (ignoreExisting?: boolean) => {
@@ -188,9 +203,11 @@ export default function ContinuousSchedule({
                                     includeAbstract,
                                     includeItemEvents: false,
                                     registrantId: maybeRegistrant.id,
+                                    shouldRefreshCache,
                                 }
                             )
                             .toPromise();
+                        setShouldRefreshCache(false);
 
                         earlierEvents = R.sortWith(
                             [
@@ -266,6 +283,8 @@ export default function ContinuousSchedule({
             startAtMs,
             eventsPerPage,
             includeAbstract,
+            shouldRefreshCache,
+            setShouldRefreshCache,
         ]
     );
 
@@ -318,9 +337,11 @@ export default function ContinuousSchedule({
                                     includeAbstract,
                                     includeItemEvents: false,
                                     registrantId: maybeRegistrant.id,
+                                    shouldRefreshCache,
                                 }
                             )
                             .toPromise();
+                        setShouldRefreshCache(false);
 
                         laterEvents = R.sortWith(
                             [
@@ -401,6 +422,8 @@ export default function ContinuousSchedule({
             myEventsOnly,
             startAtMs,
             subconferenceId,
+            shouldRefreshCache,
+            setShouldRefreshCache,
         ]
     );
 

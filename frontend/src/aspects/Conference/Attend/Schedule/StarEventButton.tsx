@@ -11,6 +11,7 @@ import {
 import FAIcon from "../../../Chakra/FAIcon";
 import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import { useMyScheduleCacheControl } from "./ContinuousSchedule";
 
 gql`
     fragment StarredEvent on schedule_StarredEvent {
@@ -114,6 +115,8 @@ function StarEventButtonInner({
     const [insertStarsResponse, insertStars] = useStarEventButton_InsertStarsMutation();
     const [deleteStarsResponse, deleteStars] = useStarEventButton_DeleteStarsMutation();
 
+    const [_, setShouldRefreshCache] = useMyScheduleCacheControl();
+
     if (starsResponse.fetching) {
         return (
             <Box display="inline-flex" justifyContent="center" alignItems="center" verticalAlign="middle" w="1.19em">
@@ -150,6 +153,7 @@ function StarEventButtonInner({
                             },
                             getStarsContext
                         );
+                        setShouldRefreshCache(true);
                     }
                 }}
                 variant="ghost"
@@ -189,6 +193,7 @@ function StarEventButtonInner({
                         },
                         getStarsContext
                     );
+                    setShouldRefreshCache(true);
                 }}
                 variant="ghost"
                 size="md"

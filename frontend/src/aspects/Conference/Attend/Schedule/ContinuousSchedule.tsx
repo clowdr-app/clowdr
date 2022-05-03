@@ -197,10 +197,13 @@ export default function ContinuousSchedule({
                                 (x, y) => Date.parse(y.scheduledStartTime) - Date.parse(x.scheduledStartTime),
                                 (x, y) => Date.parse(y.scheduledEndTime) - Date.parse(x.scheduledEndTime),
                             ],
-                            [
-                                ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
-                                ...(response.data?.schedule_EventProgramPerson.map((x) => x.event) ?? []),
-                            ]
+                            R.uniqBy(
+                                (x) => x.id,
+                                [
+                                    ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
+                                    ...(response.data?.schedule_EventProgramPerson.map((x) => x.event) ?? []),
+                                ]
+                            )
                         );
                     } else {
                         const response = await client
@@ -324,10 +327,13 @@ export default function ContinuousSchedule({
                                 (x, y) => Date.parse(x.scheduledStartTime) - Date.parse(y.scheduledStartTime),
                                 (x, y) => Date.parse(x.scheduledEndTime) - Date.parse(y.scheduledEndTime),
                             ],
-                            [
-                                ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
-                                ...(response.data?.schedule_EventProgramPerson.map((x) => x.event) ?? []),
-                            ]
+                            R.uniqBy(
+                                (x) => x.id,
+                                [
+                                    ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
+                                    ...(response.data?.schedule_EventProgramPerson.map((x) => x.event) ?? []),
+                                ]
+                            )
                         );
                     } else {
                         const response = await client

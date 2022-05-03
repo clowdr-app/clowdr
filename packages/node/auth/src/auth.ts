@@ -303,7 +303,6 @@ export async function computeAuthHeaders(
                                     ) {
                                         if (
                                             allowedRoles.includes(HasuraRoleName.Moderator) ||
-                                            allowedRoles.includes(HasuraRoleName.SubconferenceOrganizer) ||
                                             allowedRoles.includes(HasuraRoleName.ConferenceOrganizer)
                                         ) {
                                             result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(room.id);
@@ -323,13 +322,29 @@ export async function computeAuthHeaders(
                                                 if (role === Room_PersonRole_Enum.Admin) {
                                                     allowedRoles.push(HasuraRoleName.RoomAdmin);
                                                 }
+                                            } else if (
+                                                room.subconferenceId &&
+                                                registrant.subconferenceMemberships.some(
+                                                    (x) =>
+                                                        x.subconferenceId === room.subconferenceId &&
+                                                        [
+                                                            Registrant_RegistrantRole_Enum.Moderator,
+                                                            Registrant_RegistrantRole_Enum.Organizer,
+                                                        ].includes(x.role)
+                                                )
+                                            ) {
+                                                result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
+                                                    room.id
+                                                );
+                                                allowedRoles.push(HasuraRoleName.RoomAdmin);
+                                                allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else if (room.managementModeName === Room_ManagementMode_Enum.Public) {
                                                 result[AuthSessionVariables.RoomIds] = formatArrayForHasuraHeader(
                                                     room.id
                                                 );
                                                 allowedRoles.push(HasuraRoleName.RoomMember);
                                             } else {
-                                                return "Access to requested room denied - registrant is not a member of the room.";
+                                                return "Access to requested room denied - registrant is not a member of the room or organizer of the subconference.";
                                             }
                                         }
                                     } else {

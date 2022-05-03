@@ -41219,6 +41219,7 @@ export type GetRoomMembersQuery = {
     readonly room_Room_by_pk?: {
         readonly __typename?: "room_Room";
         readonly id: any;
+        readonly subconferenceId?: any | null;
         readonly managementModeName: Room_ManagementMode_Enum;
         readonly roomMemberships: ReadonlyArray<{
             readonly __typename?: "room_RoomMembership";
@@ -53218,6 +53219,7 @@ export const GetRoomMembersDocument = gql`
     query GetRoomMembers($roomId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             id
+            subconferenceId
             managementModeName
             roomMemberships {
                 ...RoomMember

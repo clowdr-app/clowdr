@@ -16,6 +16,7 @@ gql`
     query GetRoomMembers($roomId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             id
+            subconferenceId
             managementModeName
             roomMemberships {
                 ...RoomMember
@@ -67,6 +68,12 @@ function useValue(props: Props): Result {
             ? HasuraRoleName.RoomAdmin
             : currentRegistrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer
             ? HasuraRoleName.ConferenceOrganizer
+            : currentRegistrant.subconferenceMemberships.find(
+                  (x) =>
+                      x.subconferenceId === data?.room_Room_by_pk?.subconferenceId &&
+                      x.role === Registrant_RegistrantRole_Enum.Organizer
+              )
+            ? HasuraRoleName.SubconferenceOrganizer
             : undefined;
 
     return {

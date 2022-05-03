@@ -1,6 +1,7 @@
 import { Box, Divider, HStack, Image, List, ListItem, Text, VStack } from "@chakra-ui/react";
 import { formatRelative } from "date-fns/esm";
-import React, { Fragment, useEffect, useState } from "react";
+import * as R from "ramda";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import type { OperationResult } from "urql";
 import { gql, useClient } from "urql";
 import type { SearchAllQuery, SearchAllQueryVariables } from "../../generated/graphql";
@@ -169,15 +170,31 @@ export default function SearchResults({
     const data = searchResponse?.data;
     const error = searchResponse?.error;
 
+    const events = useMemo(() => data?.schedule_searchEvents ?? [], [data?.schedule_searchEvents]);
+    const items = useMemo(() => data?.content_searchItems ?? [], [data?.content_searchItems]);
+    const people = useMemo(() => {
+        const input = data?.collection_searchProgramPerson ?? [];
+        return R.sortBy(
+            (x) => input.indexOf(x),
+            [
+                ...input.filter((x) => !x.registrant),
+                ...R.uniqBy(
+                    (x) => x.registrant?.id,
+                    input.filter((x) => !!x.registrant)
+                ),
+            ]
+        );
+    }, [data?.collection_searchProgramPerson]);
+    const registrants = useMemo(() => {
+        const input = data?.registrant_searchRegistrants ?? [];
+        return input.filter((x) => !people.some((y) => x.id === y.registrant?.id));
+    }, [data?.registrant_searchRegistrants, people]);
+
     useEffect(() => {
         setNumberOfResults(
-            error || fetching || !data
-                ? null
-                : data.collection_searchProgramPerson.length +
-                      data.content_searchItems.length +
-                      data.schedule_searchEvents.length
+            error || fetching || !data ? null : events.length + items.length + people.length + registrants.length
         );
-    }, [data, error, fetching, setNumberOfResults]);
+    }, [data, error, events.length, fetching, items.length, people.length, registrants.length, setNumberOfResults]);
 
     // TODO: Display tags on stuff
     // TODO: Filter by tags
@@ -188,7 +205,7 @@ export default function SearchResults({
         <Box>Sorry, an error has occurred. Please try again later.</Box>
     ) : (
         <List spacing={0}>
-            {data?.schedule_searchEvents.map((event) => {
+            {events.map((event) => {
                 const now = Date.now();
                 const start = event.scheduledStartTime ? Date.parse(event.scheduledStartTime) : undefined;
                 const end = event.scheduledEndTime ? Date.parse(event.scheduledEndTime) : undefined;
@@ -234,7 +251,7 @@ export default function SearchResults({
                     </Fragment>
                 );
             })}
-            {data?.content_searchItems.map((item) => (
+            {items.map((item) => (
                 <Fragment key={item.id}>
                     <ListItem p="3px">
                         <LinkButton
@@ -262,12 +279,12 @@ export default function SearchResults({
                     <Divider />
                 </Fragment>
             ))}
-            {data?.collection_searchProgramPerson.map((person) => (
+            {people.map((person) => (
                 <ListItem key={person.id}>
                     <Fragment key={person.id}>
                         <ListItem p="3px">
                             <LinkButton
-                                to={`${conferencePath}/profile/view/${person.registrant?.id}`}
+                                to={person.registrant ? `${conferencePath}/profile/view/${person.registrant?.id}` : ""}
                                 px={2}
                                 py={2}
                                 h="auto"
@@ -311,55 +328,53 @@ export default function SearchResults({
                     </Fragment>
                 </ListItem>
             ))}
-            {data?.registrant_searchRegistrants
-                .filter((x) => !data?.collection_searchProgramPerson.some((y) => x.id === y.registrant?.id))
-                .map((registrant) => (
-                    <ListItem key={registrant.id}>
-                        <Fragment key={registrant.id}>
-                            <ListItem p="3px">
-                                <LinkButton
-                                    to={`${conferencePath}/profile/view/${registrant.id}`}
-                                    px={2}
-                                    py={2}
-                                    h="auto"
-                                    maxH="auto"
-                                    minH={0}
-                                    fontWeight="normal"
-                                    w="100%"
-                                    variant="ghost"
-                                    linkProps={{ w: "100%" }}
-                                >
-                                    <HStack alignItems="flex-start" spacing={3} w="100%">
-                                        {registrant?.profile?.photoURL_50x50 ? (
-                                            <Image
-                                                title="Profile photo"
-                                                src={registrant.profile.photoURL_50x50}
-                                                w="50px"
-                                                h="50px"
-                                                borderRadius="2xl"
-                                            />
-                                        ) : undefined}
-                                        <VStack alignItems="flex-start" spacing={1} w="100%" pt={1}>
-                                            <Text fontSize="lg" whiteSpace="normal">
-                                                {registrant.displayName}
-                                            </Text>
-                                            {registrant.profile?.affiliation?.length ? (
-                                                <Text fontSize="sm" whiteSpace="normal">
-                                                    {registrant.profile.affiliation}
-                                                </Text>
-                                            ) : undefined}
-                                        </VStack>
-                                        <CreateDMButton
-                                            registrantId={registrant.id}
-                                            onCreate={() => setIsActive?.(false)}
+            {registrants.map((registrant) => (
+                <ListItem key={registrant.id}>
+                    <Fragment key={registrant.id}>
+                        <ListItem p="3px">
+                            <LinkButton
+                                to={`${conferencePath}/profile/view/${registrant.id}`}
+                                px={2}
+                                py={2}
+                                h="auto"
+                                maxH="auto"
+                                minH={0}
+                                fontWeight="normal"
+                                w="100%"
+                                variant="ghost"
+                                linkProps={{ w: "100%" }}
+                            >
+                                <HStack alignItems="flex-start" spacing={3} w="100%">
+                                    {registrant?.profile?.photoURL_50x50 ? (
+                                        <Image
+                                            title="Profile photo"
+                                            src={registrant.profile.photoURL_50x50}
+                                            w="50px"
+                                            h="50px"
+                                            borderRadius="2xl"
                                         />
-                                    </HStack>
-                                </LinkButton>
-                            </ListItem>
-                            <Divider />
-                        </Fragment>
-                    </ListItem>
-                ))}
+                                    ) : undefined}
+                                    <VStack alignItems="flex-start" spacing={1} w="100%" pt={1}>
+                                        <Text fontSize="lg" whiteSpace="normal">
+                                            {registrant.displayName}
+                                        </Text>
+                                        {registrant.profile?.affiliation?.length ? (
+                                            <Text fontSize="sm" whiteSpace="normal">
+                                                {registrant.profile.affiliation}
+                                            </Text>
+                                        ) : undefined}
+                                    </VStack>
+                                    <CreateDMButton
+                                        registrantId={registrant.id}
+                                        onCreate={() => setIsActive?.(false)}
+                                    />
+                                </HStack>
+                            </LinkButton>
+                        </ListItem>
+                        <Divider />
+                    </Fragment>
+                </ListItem>
+            ))}
         </List>
     );
 }

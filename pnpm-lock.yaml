@@ -457,13 +457,13 @@ importers:
       cors: ^2.8.5
       cpy-cli: ^3.1.1
       express: ^4.17.1
-      express-jwt: ^6.1.0
+      express-jwt: ^7.6.2
       generic-pool: ^3.8.2
       graphql: ^15.7.2
       graphql-tag: ^2.12.6
       jsonwebtoken: ^8.5.1
       jwk-to-pem: ^2.0.5
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       node-env-run: ^4.0.2
       node-fetch: ^2.6.7
       pino: ^7.6.4
@@ -504,13 +504,13 @@ importers:
       cors: 2.8.5
       cpy-cli: 3.1.1
       express: 4.17.1
-      express-jwt: 6.1.0
+      express-jwt: 7.6.2
       generic-pool: 3.8.2
       graphql: 15.7.2
       graphql-tag: 2.12.6_graphql@15.7.2
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.5
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       node-env-run: 4.0.2
       node-fetch: 2.6.7
       pino: 7.6.4
@@ -566,7 +566,7 @@ importers:
       graphql-tag: ^2.12.6
       jsonwebtoken: ^8.5.1
       jwk-to-pem: ^2.0.5
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       node-env-run: ^4.0.2
       node-fetch: ^2.6.7
       pino: ^7.6.4
@@ -608,7 +608,7 @@ importers:
       graphql-tag: 2.12.6_graphql@15.7.2
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.5
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       node-env-run: 4.0.2
       node-fetch: 2.6.7
       pino: 7.6.4
@@ -655,7 +655,7 @@ importers:
       graphql: ^15.7.2
       jsonwebtoken: ^8.5.1
       jwk-to-pem: ^2.0.5
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       node-env-run: ^4.0.2
       node-fetch: ^2.6.7
       redis: ^3.1.2
@@ -692,7 +692,7 @@ importers:
       graphql: 15.7.2
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.5
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       node-env-run: 4.0.2
       node-fetch: 2.6.7
       redis: 3.1.2
@@ -874,7 +874,8 @@ importers:
       '@aws-sdk/client-transcribe': ^3.45.0
       '@aws-sdk/credential-provider-env': ^3.40.0
       '@aws-sdk/credential-providers': ^3.46.0
-      '@aws-sdk/property-provider': ^3.40.0
+      '@aws-sdk/property-provider': ^3.46.0
+      '@aws-sdk/types': ^3.46.0
       '@aws-sdk/url-parser-node': ^3.1.0
       '@graphql-codegen/cli': ^2.5.0
       '@graphql-codegen/typed-document-node': ^2.2.3
@@ -889,6 +890,7 @@ importers:
       '@midspace/shared-types': workspace:*
       '@sendgrid/eventwebhook': ^7.4.5
       '@sendgrid/mail': ^7.6.0
+      '@types/body-parser': ^1.19.2
       '@types/cors': ^2.8.12
       '@types/d3-format': ^2.0.0
       '@types/express': ^4.17.13
@@ -905,7 +907,7 @@ importers:
       amazon-s3-uri: ^0.1.1
       axios: ^0.24.0
       axios-better-stacktrace: ^2.1.1
-      body-parser: ^1.19.1
+      body-parser: ^1.20.0
       class-transformer: ^0.5.1
       class-validator: ^0.13.2
       cors: ^2.8.5
@@ -923,7 +925,7 @@ importers:
       handlebars: ^4.7.7
       html-to-text: ^8.1.0
       jest: ^27.5.1
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       jwt-decode: ^3.1.2
       markdown-it: ^12.2.0
       nanoid: ^3.1.30
@@ -965,7 +967,8 @@ importers:
       '@aws-sdk/client-transcribe': 3.45.0
       '@aws-sdk/credential-provider-env': 3.40.0
       '@aws-sdk/credential-providers': 3.46.0
-      '@aws-sdk/property-provider': 3.40.0
+      '@aws-sdk/property-provider': 3.46.0
+      '@aws-sdk/types': 3.50.0
       '@aws-sdk/url-parser-node': 3.1.0
       '@graphql-typed-document-node/core': 3.1.1_graphql@15.7.2
       '@midspace/auth': link:../../packages/node/auth
@@ -976,6 +979,7 @@ importers:
       '@midspace/shared-types': link:../../packages/shared/shared-types
       '@sendgrid/eventwebhook': 7.4.5
       '@sendgrid/mail': 7.6.0
+      '@types/body-parser': 1.19.2
       '@types/cors': 2.8.12
       '@types/d3-format': 2.0.2
       '@types/express': 4.17.13
@@ -991,7 +995,7 @@ importers:
       amazon-s3-uri: 0.1.1
       axios: 0.24.0
       axios-better-stacktrace: 2.1.1_axios@0.24.0
-      body-parser: 1.19.1
+      body-parser: 1.20.0
       class-transformer: 0.5.1
       class-validator: 0.13.2
       cors: 2.8.5
@@ -1008,7 +1012,7 @@ importers:
       handlebars: 4.7.7
       html-to-text: 8.1.0
       jest: 27.5.1
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       jwt-decode: 3.1.2
       markdown-it: 12.2.0
       nanoid: 3.1.30
@@ -1048,6 +1052,7 @@ importers:
       '@midspace/server-utils': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.2
+      '@types/body-parser': ^1.19.2
       '@types/cors': ^2.8.12
       '@types/express': ^4.17.13
       '@types/generic-pool': ^3.1.10
@@ -1064,7 +1069,7 @@ importers:
       '@urql/exchange-retry': ^0.3.2
       amqplib: ^0.8.0
       assert: ^2.0.0
-      body-parser: ^1.19.1
+      body-parser: ^1.20.0
       bufferutil: ^4.0.6
       cors: ^2.8.5
       cpy-cli: ^3.1.1
@@ -1074,7 +1079,7 @@ importers:
       graphql: ^15.7.2
       jsonwebtoken: ^8.5.1
       jwk-to-pem: ^2.0.5
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       node-env-run: ^4.0.2
       node-fetch: ^2.6.7
       pino: ^7.6.4
@@ -1094,6 +1099,7 @@ importers:
       '@midspace/server-utils': link:../../packages/node/server-utils
       '@socket.io/redis-emitter': 4.1.0
       '@types/amqplib': 0.8.2
+      '@types/body-parser': 1.19.2
       '@types/cors': 2.8.12
       '@types/express': 4.17.13
       '@types/generic-pool': 3.1.10
@@ -1110,7 +1116,7 @@ importers:
       '@urql/exchange-retry': 0.3.2_graphql@15.7.2
       amqplib: 0.8.0
       assert: 2.0.0
-      body-parser: 1.19.1
+      body-parser: 1.20.0
       bufferutil: 4.0.6
       cors: 2.8.5
       cpy-cli: 3.1.1
@@ -1119,7 +1125,7 @@ importers:
       graphql: 15.7.2
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.5
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       node-env-run: 4.0.2
       node-fetch: 2.6.7
       pino: 7.6.4
@@ -1144,6 +1150,7 @@ importers:
       '@midspace/server-utils': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.2
+      '@types/body-parser': ^1.19.2
       '@types/cors': ^2.8.12
       '@types/express': ^4.17.13
       '@types/generic-pool': ^3.1.10
@@ -1159,7 +1166,7 @@ importers:
       '@urql/exchange-retry': ^0.3.2
       amqplib: ^0.8.0
       assert: ^2.0.0
-      body-parser: ^1.19.1
+      body-parser: ^1.20.0
       bufferutil: ^4.0.6
       cors: ^2.8.5
       cpy-cli: ^3.1.1
@@ -1169,7 +1176,7 @@ importers:
       graphql: ^15.7.2
       jsonwebtoken: ^8.5.1
       jwk-to-pem: ^2.0.5
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       node-env-run: ^4.0.2
       node-fetch: ^2.6.7
       pino: ^7.6.4
@@ -1190,6 +1197,7 @@ importers:
       '@midspace/server-utils': link:../../packages/node/server-utils
       '@socket.io/redis-emitter': 4.1.0
       '@types/amqplib': 0.8.2
+      '@types/body-parser': 1.19.2
       '@types/cors': 2.8.12
       '@types/express': 4.17.13
       '@types/generic-pool': 3.1.10
@@ -1205,7 +1213,7 @@ importers:
       '@urql/exchange-retry': 0.3.2_graphql@15.7.2
       amqplib: 0.8.0
       assert: 2.0.0
-      body-parser: 1.19.1
+      body-parser: 1.20.0
       bufferutil: 4.0.6
       cors: 2.8.5
       cpy-cli: 3.1.1
@@ -1214,7 +1222,7 @@ importers:
       graphql: 15.7.2
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.5
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       node-env-run: 4.0.2
       node-fetch: 2.6.7
       pino: 7.6.4
@@ -1270,6 +1278,7 @@ importers:
       '@midspace/shared-types': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.2
+      '@types/body-parser': ^1.19.2
       '@types/cors': ^2.8.12
       '@types/express': ^4.17.13
       '@types/generic-pool': ^3.1.10
@@ -1287,7 +1296,7 @@ importers:
       amqplib: ^0.8.0
       assert: ^2.0.0
       async-mutex: ^0.3.2
-      body-parser: ^1.19.1
+      body-parser: ^1.20.0
       bufferutil: ^4.0.6
       concurrently: ^6.4.0
       cors: ^2.8.5
@@ -1299,7 +1308,7 @@ importers:
       graphql-tag: ^2.12.6
       jsonwebtoken: ^8.5.1
       jwk-to-pem: ^2.0.5
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       node-env-run: ^4.0.2
       node-fetch: ^2.6.7
       pino: ^7.6.4
@@ -1322,6 +1331,7 @@ importers:
       '@midspace/shared-types': link:../../packages/shared/shared-types
       '@socket.io/redis-emitter': 4.1.0
       '@types/amqplib': 0.8.2
+      '@types/body-parser': 1.19.2
       '@types/cors': 2.8.12
       '@types/express': 4.17.13
       '@types/generic-pool': 3.1.10
@@ -1339,7 +1349,7 @@ importers:
       amqplib: 0.8.0
       assert: 2.0.0
       async-mutex: 0.3.2
-      body-parser: 1.19.1
+      body-parser: 1.20.0
       bufferutil: 4.0.6
       cors: 2.8.5
       cpy-cli: 3.1.1
@@ -1349,7 +1359,7 @@ importers:
       graphql-tag: 2.12.6_graphql@15.7.2
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.5
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       node-env-run: 4.0.2
       node-fetch: 2.6.7
       pino: 7.6.4
@@ -1432,7 +1442,7 @@ importers:
       express: ^4.17.1
       graphql: ^15.7.2
       jest: ^27.5.1
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       nanoid: ^3.1.30
       node-env-run: ^4.0.2
       node-fetch: ^2.6.7
@@ -1503,7 +1513,7 @@ importers:
       express: 4.17.1
       graphql: 15.7.2
       jest: 27.5.1_ts-node@10.4.0
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       nanoid: 3.1.30
       node-fetch: 2.6.7
       opentok: 2.12.1
@@ -1545,6 +1555,8 @@ importers:
       '@midspace/graphql': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.2
+      '@types/body-parser': ^1.19.2
+      '@types/cors': ^2.8.12
       '@types/express': ^4.17.13
       '@types/jsonwebtoken': ^8.5.6
       '@types/jwk-to-pem': ^2.0.1
@@ -1561,7 +1573,7 @@ importers:
       amqplib: ^0.8.0
       assert: ^2.0.0
       async-mutex: ^0.3.2
-      body-parser: ^1.19.1
+      body-parser: ^1.20.0
       bufferutil: ^4.0.6
       concurrently: ^6.4.0
       cors: ^2.8.5
@@ -1573,7 +1585,7 @@ importers:
       graphql-tag: ^2.12.6
       jsonwebtoken: ^8.5.1
       jwk-to-pem: ^2.0.5
-      jwks-rsa: ^2.0.5
+      jwks-rsa: ^2.1.0
       node-env-run: ^4.0.2
       node-fetch: ^2.6.7
       pino: ^7.6.4
@@ -1597,6 +1609,8 @@ importers:
       '@midspace/graphql': link:../../packages/shared/graphql
       '@socket.io/redis-emitter': 4.1.0
       '@types/amqplib': 0.8.2
+      '@types/body-parser': 1.19.2
+      '@types/cors': 2.8.12
       '@types/express': 4.17.13
       '@types/jsonwebtoken': 8.5.6
       '@types/jwk-to-pem': 2.0.1
@@ -1613,7 +1627,7 @@ importers:
       amqplib: 0.8.0
       assert: 2.0.0
       async-mutex: 0.3.2
-      body-parser: 1.19.1
+      body-parser: 1.20.0
       bufferutil: 4.0.6
       cors: 2.8.5
       cpy-cli: 3.1.1
@@ -1624,7 +1638,7 @@ importers:
       graphql-tag: 2.12.6_graphql@15.7.2
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.5
-      jwks-rsa: 2.0.5
+      jwks-rsa: 2.1.0
       node-env-run: 4.0.2
       node-fetch: 2.6.7
       pino: 7.6.4
@@ -4531,7 +4545,7 @@ packages:
     resolution: {integrity: sha512-TvE1r2CUueyXOuHdEigYjIZVesInd9KN+K/TFFNfkkxRThiNxO6i4ZqqAVMoEjAamZZ1AA8WXJkjCz7YShHPQA==}
     dependencies:
       '@aws-crypto/util': 2.0.0
-      '@aws-sdk/types': 3.49.0
+      '@aws-sdk/types': 3.50.0
       tslib: 1.14.1
     dev: false
 
@@ -4548,7 +4562,7 @@ packages:
       '@aws-crypto/sha256-js': 2.0.0
       '@aws-crypto/supports-web-crypto': 2.0.0
       '@aws-crypto/util': 2.0.0
-      '@aws-sdk/types': 3.46.0
+      '@aws-sdk/types': 3.50.0
       '@aws-sdk/util-locate-window': 3.37.0
       '@aws-sdk/util-utf8-browser': 3.46.0
       tslib: 1.14.1
@@ -4558,7 +4572,7 @@ packages:
     resolution: {integrity: sha512-VZY+mCY4Nmrs5WGfitmNqXzaE873fcIZDu54cbaDaaamsaTOP1DBImV9F4pICc3EHjQXujyE8jig+PFCaew9ig==}
     dependencies:
       '@aws-crypto/util': 2.0.0
-      '@aws-sdk/types': 3.46.0
+      '@aws-sdk/types': 3.50.0
       tslib: 1.14.1
     dev: false
 
@@ -4571,7 +4585,7 @@ packages:
   /@aws-crypto/util/2.0.0:
     resolution: {integrity: sha512-YDooyH83m2P5A3h6lNH7hm6mIP93sU/dtzRmXIgtO4BCB7SvtX8ysVKQAE8tVky2DQ3HHxPCjNTuUe7YoAMrNQ==}
     dependencies:
-      '@aws-sdk/types': 3.49.0
+      '@aws-sdk/types': 3.50.0
       '@aws-sdk/util-utf8-browser': 3.46.0
       tslib: 1.14.1
     dev: false
@@ -6344,11 +6358,6 @@ packages:
     engines: {node: '>= 12.0.0'}
     dev: false
 
-  /@aws-sdk/types/3.49.0:
-    resolution: {integrity: sha512-8bCqEpquTlPN6xkjaJ+s+RoEFIu5r4G8oXOsQ5HYBvBdpx62HnCqzHLFNHycL2b8sE+VysQgNvmdQYR98vdMGQ==}
-    engines: {node: '>= 12.0.0'}
-    dev: false
-
   /@aws-sdk/types/3.50.0:
     resolution: {integrity: sha512-ANj9L+lR4NWWSLPkr5tRdFaw0kW0BjlDgnyNWyFrGVOHqT0MYjhCjPsH2y45G59z+b2qe+v/VsKuTyNmSvoZCA==}
     engines: {node: '>= 12.0.0'}
@@ -6705,7 +6714,7 @@ packages:
       '@babel/traverse': 7.17.0
       '@babel/types': 7.17.0
       convert-source-map: 1.8.0
-      debug: 4.3.3
+      debug: 4.3.4
       gensync: 1.0.0-beta.2
       json5: 2.2.0
       semver: 6.3.0
@@ -9173,7 +9182,7 @@ packages:
       '@babel/helper-split-export-declaration': 7.16.7
       '@babel/parser': 7.17.10
       '@babel/types': 7.17.10
-      debug: 4.3.3
+      debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -9190,7 +9199,7 @@ packages:
       '@babel/helper-split-export-declaration': 7.16.7
       '@babel/parser': 7.17.10
       '@babel/types': 7.17.10
-      debug: 4.3.3_supports-color@5.5.0
+      debug: 4.3.4_supports-color@5.5.0
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -9208,7 +9217,7 @@ packages:
       '@babel/helper-split-export-declaration': 7.16.7
       '@babel/parser': 7.17.0
       '@babel/types': 7.17.0
-      debug: 4.3.3
+      debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -9225,7 +9234,7 @@ packages:
       '@babel/helper-split-export-declaration': 7.16.7
       '@babel/parser': 7.17.10
       '@babel/types': 7.17.10
-      debug: 4.3.3
+      debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -14289,8 +14298,8 @@ packages:
     resolution: {integrity: sha512-HBNx4lhkxN7bx6P0++W8E289foSu8kO8GCk2unhuVggO+cE7rh9DhZUyPhUxNRG9m+5B5BTKxZQ5ZP92x/mx9Q==}
     dev: false
 
-  /@types/body-parser/1.19.1:
-    resolution: {integrity: sha512-a6bTJ21vFOGIkwM0kzh9Yr89ziVxq4vYH2fQ6N8AeipEzai/cFK6aGMArIkUeIdRIgpwQa+2bXiLuUJCpSf2Cg==}
+  /@types/body-parser/1.19.2:
+    resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
       '@types/node': 17.0.16
@@ -14419,7 +14428,7 @@ packages:
   /@types/express/4.17.13:
     resolution: {integrity: sha512-6bSZTPaTIACxn48l50SR+axgrqm6qXFIxrdAKaG6PaJk3+zuUr35hBlgT7vOmJcum+OEaIBLtHV/qloEAFITeA==}
     dependencies:
-      '@types/body-parser': 1.19.1
+      '@types/body-parser': 1.19.2
       '@types/express-serve-static-core': 4.17.24
       '@types/qs': 6.9.7
       '@types/serve-static': 1.13.10
@@ -14581,7 +14590,7 @@ packages:
   /@types/multipipe/3.0.0:
     resolution: {integrity: sha512-CbhyiQkqlGTacMjyw64y1/jIFBJr0TKPefLyUyXmIhabNv5rA8X1+60ss3TjlLoM3JsK288HVyPwTnO0nHawJA==}
     dependencies:
-      '@types/node': 16.11.1
+      '@types/node': 17.0.16
     dev: false
 
   /@types/mustache/4.1.2:
@@ -15734,7 +15743,7 @@ packages:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -16211,10 +16220,6 @@ packages:
     resolution: {integrity: sha512-HuTK7E7MT7jZEh1P9GtRW9+aTWiDWWi9InbZ5hjxrnRa39KS4BW04+xLBhYNS2aXhHUIKZSw3gj4Pn1pj+qGAA==}
     dependencies:
       tslib: 2.3.1
-    dev: false
-
-  /async/1.5.2:
-    resolution: {integrity: sha1-7GphrlZIDAw8skHJVhjiCJL5Zyo=}
     dev: false
 
   /async/3.2.2:
@@ -16865,20 +16870,22 @@ packages:
       raw-body: 2.4.0
       type-is: 1.6.18
 
-  /body-parser/1.19.1:
-    resolution: {integrity: sha512-8ljfQi5eBk8EJfECMrgqNGWPEY5jWP+1IzkzkGdFFEwFQZZyaZ21UqdaHktgiMlH0xLHqIFtE/u2OYE5dOtViA==}
-    engines: {node: '>= 0.8'}
+  /body-parser/1.20.0:
+    resolution: {integrity: sha512-DfJ+q6EPcGKZD1QWUjSpqp+Q7bDQTsQIF4zfUAtZ6qk+H/3/QRhg9CEp39ss+/T2vw0+HaidC0ecJj/DRLIaKg==}
+    engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
     dependencies:
-      bytes: 3.1.1
+      bytes: 3.1.2
       content-type: 1.0.4
       debug: 2.6.9
-      depd: 1.1.2
-      http-errors: 1.8.1
+      depd: 2.0.0
+      destroy: 1.2.0
+      http-errors: 2.0.0
       iconv-lite: 0.4.24
-      on-finished: 2.3.0
-      qs: 6.9.6
-      raw-body: 2.4.2
+      on-finished: 2.4.1
+      qs: 6.10.3
+      raw-body: 2.5.1
       type-is: 1.6.18
+      unpipe: 1.0.0
     dev: false
 
   /boolbase/1.0.0:
@@ -17107,8 +17114,8 @@ packages:
     resolution: {integrity: sha512-zauLjrfCG+xvoyaqLoV8bLVXXNGC4JqlxFCutSDWA6fJrTo2ZuvLYTqZ7aHBLZSMOopbzwv8f+wZcVzfVTI2Dg==}
     engines: {node: '>= 0.8'}
 
-  /bytes/3.1.1:
-    resolution: {integrity: sha512-dWe4nWO/ruEOY7HkUJ5gFt1DCFV9zPRoJr8pV0/ASQermOZjtq8jMjOprC0Kd10GLN+l7xaUPvxzJFWtxGu8Fg==}
+  /bytes/3.1.2:
+    resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
     dev: false
 
@@ -18555,19 +18562,6 @@ packages:
     dependencies:
       ms: 2.1.2
 
-  /debug/4.3.3_supports-color@5.5.0:
-    resolution: {integrity: sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-    dependencies:
-      ms: 2.1.2
-      supports-color: 5.5.0
-    dev: false
-
   /debug/4.3.3_supports-color@9.2.1:
     resolution: {integrity: sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==}
     engines: {node: '>=6.0'}
@@ -18580,6 +18574,30 @@ packages:
       ms: 2.1.2
       supports-color: 9.2.1
     dev: true
+
+  /debug/4.3.4:
+    resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.1.2
+
+  /debug/4.3.4_supports-color@5.5.0:
+    resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.1.2
+      supports-color: 5.5.0
+    dev: false
 
   /decamelize-keys/1.1.0:
     resolution: {integrity: sha1-0XGoeTMlKAfrPLYdwcFEXQeN8tk=}
@@ -18734,6 +18752,11 @@ packages:
 
   /destroy/1.0.4:
     resolution: {integrity: sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=}
+
+  /destroy/1.2.0:
+    resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
+    engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
+    dev: false
 
   /detab/2.0.4:
     resolution: {integrity: sha512-8zdsQA5bIkoRECvCrNKPla84lyoR7DSAyf7p0YgXzBO9PDJx8KntPUay7NS6yp+KdxdVtiE5SpHKtbp2ZQyA9g==}
@@ -19166,7 +19189,7 @@ packages:
       base64id: 2.0.0
       cookie: 0.4.1
       cors: 2.8.5
-      debug: 4.3.2
+      debug: 4.3.4
       engine.io-parser: 4.0.3
       ws: 7.4.6_x777ijy3rhlcr2bth2wybu6y5a
     transitivePeerDependencies:
@@ -20083,14 +20106,12 @@ packages:
       debug: 2.6.9
     dev: false
 
-  /express-jwt/6.1.0:
-    resolution: {integrity: sha512-mmSR52Ps1FMeGwchroHzEJONWhsobd5KHVVKBffYiUEpZh9iK9wI9ZWkmzY5ROwWQtJLNGHV/VUMLh2M208s4Q==}
+  /express-jwt/7.6.2:
+    resolution: {integrity: sha512-qvsvbr4oMhBAuSq/0I/CVzQWcXGuGZAxBGEI++kq4PaxEMgYCjYfHhUFtJQQlekiAL9CJtGgMFTEVIZegaKgEA==}
     engines: {node: '>= 8.0.0'}
     dependencies:
-      async: 1.5.2
       express-unless: 1.0.0
       jsonwebtoken: 8.5.1
-      lodash.set: 4.3.2
     dev: false
 
   /express-prom-bundle/6.3.0_prom-client@12.0.0:
@@ -20099,7 +20120,7 @@ packages:
     peerDependencies:
       prom-client: ^12.0.0
     dependencies:
-      on-finished: 2.3.0
+      on-finished: 2.4.1
       prom-client: 12.0.0
       url-value-parser: 2.0.3
     dev: false
@@ -21193,7 +21214,7 @@ packages:
       extend: 3.0.2
       gaxios: 4.3.2
       google-auth-library: 7.11.0
-      qs: 6.10.1
+      qs: 6.10.3
       url-template: 2.0.8
       uuid: 8.3.2
     transitivePeerDependencies:
@@ -21239,7 +21260,7 @@ packages:
     resolution: {integrity: sha512-QGPjCYDrBnb/OIiTRxbK3TnNOE6Ycgfc/GcgPzI4vyNIr+b7yisEexYp7VM74zj6bxr+mDTzfGONRLzzsVPJIA==}
     engines: {node: '>=4.0.0'}
     dependencies:
-      qs: 6.10.1
+      qs: 6.10.3
       request-compose: 1.2.3
       request-oauth: 0.0.3
     dev: false
@@ -21828,14 +21849,14 @@ packages:
       statuses: 1.5.0
       toidentifier: 1.0.0
 
-  /http-errors/1.8.1:
-    resolution: {integrity: sha512-Kpk9Sm7NmI+RHhnj6OIWDI1d6fIoFAtFt9RLaTMRlg/8w49juAStsrBgp0Dp4OdxdVbRIeKhtCUvoi/RuAhO4g==}
-    engines: {node: '>= 0.6'}
+  /http-errors/2.0.0:
+    resolution: {integrity: sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ==}
+    engines: {node: '>= 0.8'}
     dependencies:
-      depd: 1.1.2
+      depd: 2.0.0
       inherits: 2.0.4
       setprototypeof: 1.2.0
-      statuses: 1.5.0
+      statuses: 2.0.1
       toidentifier: 1.0.1
     dev: false
 
@@ -21845,7 +21866,7 @@ packages:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.3.3
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -21855,7 +21876,7 @@ packages:
     dependencies:
       '@tootallnate/once': 2.0.0
       agent-base: 6.0.2
-      debug: 4.3.2
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -21895,7 +21916,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.3
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -22606,7 +22627,7 @@ packages:
     resolution: {integrity: sha512-n3s8EwkdFIJCG3BPKBYvskgXGoy88ARzvegkitk60NxRdwltLOTaH7CUiMRXvwYorl0Q712iEjcWB+fK/MrWVw==}
     engines: {node: '>=10'}
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.4
       istanbul-lib-coverage: 3.2.0
       source-map: 0.6.1
     transitivePeerDependencies:
@@ -23528,12 +23549,12 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /jwks-rsa/2.0.5:
-    resolution: {integrity: sha512-fliHfsiBRzEU0nXzSvwnh0hynzGB0WihF+CinKbSRlaqRxbqqKf2xbBPgwc8mzf18/WgwlG8e5eTpfSTBcU4DQ==}
+  /jwks-rsa/2.1.0:
+    resolution: {integrity: sha512-GKOSDBWWBCiQTzawei6mEdRQvji5gecj8F9JwMt0ZOPnBPSmTjo5CKFvvbhE7jGPkU159Cpi0+OTLuABFcNOQQ==}
     engines: {node: '>=10 < 13 || >=14'}
     dependencies:
       '@types/express-jwt': 0.0.42
-      debug: 4.3.3
+      debug: 4.3.4
       jose: 2.0.5
       limiter: 1.1.5
       lru-memoizer: 2.1.4
@@ -25392,6 +25413,13 @@ packages:
     dependencies:
       ee-first: 1.1.1
 
+  /on-finished/2.4.1:
+    resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      ee-first: 1.1.1
+    dev: false
+
   /on-headers/1.0.2:
     resolution: {integrity: sha512-pZAE+FJLoyITytdqK0U5s+FIpjN0JP3OzFi/u8Rx+EV5/W+JTWGXG8xFzevE7AjBfDqHv/8vL8qQsIhHnqRkrA==}
     engines: {node: '>= 0.8'}
@@ -26458,6 +26486,13 @@ packages:
     dependencies:
       side-channel: 1.0.4
 
+  /qs/6.10.3:
+    resolution: {integrity: sha512-wr7M2E0OFRfIfJZjKGieI8lBKb7fRCH4Fv5KNPEs7gJ8jadvotdsS08PzOKR7opXhZ/Xkjtt3WF9g38drmyRqQ==}
+    engines: {node: '>=0.6'}
+    dependencies:
+      side-channel: 1.0.4
+    dev: false
+
   /qs/6.5.2:
     resolution: {integrity: sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==}
     engines: {node: '>=0.6'}
@@ -26466,11 +26501,6 @@ packages:
   /qs/6.7.0:
     resolution: {integrity: sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==}
     engines: {node: '>=0.6'}
-
-  /qs/6.9.6:
-    resolution: {integrity: sha512-TIRk4aqYLNoJUbd+g2lEdz5kLWIuTMRagAXxl78Q0RiVjAOugHmeKNGdd3cwo/ktpf9aL9epCfFqWDEKysUlLQ==}
-    engines: {node: '>=0.6'}
-    dev: false
 
   /query-string/7.0.1:
     resolution: {integrity: sha512-uIw3iRvHnk9to1blJCG3BTc+Ro56CBowJXKmNNAm3RulvPBzWLRqKSiiDk+IplJhsydwtuNMHi8UGQFcCLVfkA==}
@@ -26568,12 +26598,12 @@ packages:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
-  /raw-body/2.4.2:
-    resolution: {integrity: sha512-RPMAFUJP19WIet/99ngh6Iv8fzAbqum4Li7AD6DtGaW2RpMB/11xDoalPiJMTbu6I3hkbMVkATvZrqb9EEqeeQ==}
+  /raw-body/2.5.1:
+    resolution: {integrity: sha512-qqJBtEyVgS0ZmPGdCFPWJ3FreoqvG4MVQln/kCgF7Olq95IbOp0/BWyMwbdtn4VTvkM8Y7khCQ2Xgk/tcrCXig==}
     engines: {node: '>= 0.8'}
     dependencies:
-      bytes: 3.1.1
-      http-errors: 1.8.1
+      bytes: 3.1.2
+      http-errors: 2.0.0
       iconv-lite: 0.4.24
       unpipe: 1.0.0
     dev: false
@@ -27573,7 +27603,7 @@ packages:
     engines: {node: '>=4.0.0'}
     dependencies:
       oauth-sign: 0.8.2
-      qs: 6.10.1
+      qs: 6.10.3
       uuid: 3.3.2
     dev: false
 
@@ -28217,7 +28247,7 @@ packages:
     dependencies:
       '@types/component-emitter': 1.2.11
       component-emitter: 1.3.0
-      debug: 4.3.2
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -28227,7 +28257,7 @@ packages:
     engines: {node: '>=10.0.0'}
     dependencies:
       '@socket.io/component-emitter': 3.0.0
-      debug: 4.3.3
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -28505,6 +28535,11 @@ packages:
   /statuses/1.5.0:
     resolution: {integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=}
     engines: {node: '>= 0.6'}
+
+  /statuses/2.0.1:
+    resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
+    engines: {node: '>= 0.8'}
+    dev: false
 
   /store2/2.13.1:
     resolution: {integrity: sha512-iJtHSGmNgAUx0b/MCS6ASGxb//hGrHHRgzvN+K5bvkBTN7A9RTpPSf1WSp+nPGvWCJ1jRnvY7MKnuqfoi3OEqg==}
@@ -28885,13 +28920,13 @@ packages:
     dependencies:
       component-emitter: 1.3.0
       cookiejar: 2.1.3
-      debug: 4.3.2
+      debug: 4.3.4
       fast-safe-stringify: 2.1.1
       form-data: 3.0.1
       formidable: 1.2.2
       methods: 1.1.2
       mime: 2.5.2
-      qs: 6.10.1
+      qs: 6.10.3
       readable-stream: 3.6.0
       semver: 7.3.5
     transitivePeerDependencies:

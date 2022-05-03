@@ -46,7 +46,7 @@
         "graphql": "^15.7.2",
         "jsonwebtoken": "^8.5.1",
         "jwk-to-pem": "^2.0.5",
-        "jwks-rsa": "^2.0.5",
+        "jwks-rsa": "^2.1.0",
         "node-env-run": "^4.0.2",
         "node-fetch": "^2.6.7",
         "redis": "^3.1.2",

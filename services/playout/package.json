@@ -69,7 +69,7 @@
         "express": "^4.17.1",
         "graphql": "^15.7.2",
         "jest": "^27.5.1",
-        "jwks-rsa": "^2.0.5",
+        "jwks-rsa": "^2.1.0",
         "nanoid": "^3.1.30",
         "node-fetch": "^2.6.7",
         "opentok": "^2.12.1",

@@ -4,7 +4,7 @@ to = "/index.html"
 status = 200
 
 [build]
-command = "cd ./frontend && npx pnpm i --store=node_modules/.pnpm-store && npx pnpm build"
+command = "corepack enable && cd ./frontend && pnpm i --store=node_modules/.pnpm-store && pnpm build"
 publish = "frontend/dist"
 
 [build.environment]

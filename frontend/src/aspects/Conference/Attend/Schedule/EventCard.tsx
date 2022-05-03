@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Tag, Text, useDisclosure, Wrap, WrapItem } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import type { ScheduleEventFragment } from "../../../../generated/graphql";
 import { useSelectSchedulePeopleQuery, useSelectScheduleTagsQuery } from "../../../../generated/graphql";
@@ -42,6 +43,7 @@ export default function EventCard({
     includeAbstract = false,
     onlyLinkToRoom,
     limitAbstractLengthTo = 3,
+    promptMoveOnLiveEvent,
 }: {
     event: ScheduleEventFragment;
     includePresentations?: boolean;
@@ -50,6 +52,7 @@ export default function EventCard({
     includeAbstract?: boolean;
     onlyLinkToRoom?: boolean;
     limitAbstractLengthTo?: number;
+    promptMoveOnLiveEvent?: boolean;
 }) {
     const { conferencePath } = useAuthParameters();
     const conference = useConference();
@@ -69,6 +72,21 @@ export default function EventCard({
     const now = useRealTime(60000);
     const isLive = start && end && now >= start.getTime() && now <= end.getTime();
     const isStartingSoon = start && end && now + 10 * 60 * 1000 >= start.getTime() && now <= end.getTime();
+
+    const history = useHistory();
+    useEffect(() => {
+        if ((isStartingSoon || isLive) && promptMoveOnLiveEvent) {
+            if (
+                confirm(
+                    `A session for this content is ${
+                        isLive ? "happening now" : "starting soon"
+                    }, would you like to go to the room where the session is taking place?`
+                )
+            ) {
+                history.push(`${conferencePath}/room/${event.roomId}`);
+            }
+        }
+    }, [conferencePath, event.roomId, history, isLive, isStartingSoon, promptMoveOnLiveEvent]);
 
     const peopleIds = useMemo(() => event.item?.itemPeople.map((x) => x.personId), [event.item?.itemPeople]);
     const [peopleResponse] = useSelectSchedulePeopleQuery({

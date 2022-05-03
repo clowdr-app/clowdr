@@ -83,7 +83,11 @@ export function RoomSponsorContent({
             {loading ? <Spinner /> : error ? <>An error occurred loading in data.</> : undefined}
             <ElementsGridLayout elements={elements} />
             {!anyCurrentOrNextEvent ? (
-                <ItemEvents sessions={data?.sessions ?? []} presentations={data?.presentations ?? []} />
+                <ItemEvents
+                    sessions={data?.sessions ?? []}
+                    presentations={data?.presentations ?? []}
+                    currentRoomId={roomId}
+                />
             ) : undefined}
         </>
     );

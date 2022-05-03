@@ -7,10 +7,12 @@ export function ItemEvents({
     sessions,
     presentations,
     autoExpandPresentations = true,
+    currentRoomId,
 }: {
     sessions: readonly ScheduleEventFragment[];
     presentations: readonly ItemPresentationFragment[];
     autoExpandPresentations?: boolean;
+    currentRoomId?: string;
 }): JSX.Element {
     const allSessions = useMemo(
         () =>
@@ -27,6 +29,8 @@ export function ItemEvents({
             includeTypeName
             autoExpandPresentations={autoExpandPresentations}
             includeAbstract={false}
+            currentRoomId={currentRoomId}
+            promptMoveOnLiveEvent={true}
         />
     ) : (
         <></>

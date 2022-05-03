@@ -51,7 +51,7 @@ export function CreateRoomModal({
     const toast = useToast();
 
     return (
-        <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale">
+        <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" id="create-room-modal">
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader pb={0}>Create new room</ModalHeader>

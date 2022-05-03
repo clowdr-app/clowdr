@@ -26,10 +26,8 @@ export default function Pullout({
 
     const onCloseWrapped = useCallback(
         (ev: Event | React.MouseEvent<HTMLButtonElement>) => {
-            if (
-                (ev.target as HTMLElement).id !== menuButtonId &&
-                (ev.target as HTMLElement).offsetParent?.id !== menuButtonId
-            ) {
+            const t = ev.target as HTMLElement;
+            if (t.id !== menuButtonId && t.offsetParent?.id !== menuButtonId && !t.closest(".chakra-portal")) {
                 onClose();
             }
         },

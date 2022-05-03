@@ -320,7 +320,7 @@ function RoomInner({
                 ((!currentRoomEvent &&
                     (!nextRoomEvent ||
                         nextRoomEvent.modeName !== Schedule_Mode_Enum.External ||
-                        zoomEventStartsAt - now30s > 10 * 60 * 1000)) ||
+                        zoomEventStartsAt - now30s > 20 * 60 * 1000)) ||
                     currentRoomEvent?.modeName === Schedule_Mode_Enum.VideoChat ||
                     (!currentRoomEvent && roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor))),
         [
@@ -629,7 +629,7 @@ function RoomInner({
     //       have an upcoming broadcast or Zoom event. Thus it's possible
     //       for the video chat to be closing even when there is no ongoing
     //       breakout event.
-    const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt - 10 * 60 * 1000);
+    const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt - 20 * 60 * 1000);
     // const currentRoomEventEndTime = useMemo(
     //     () => (currentRoomEvent ? Date.parse(currentRoomEvent.scheduledEndTime) : undefined),
     //     [currentRoomEvent]
@@ -808,7 +808,8 @@ function RoomInner({
                                 <JoinZoomButton zoomUrl={maybeZoomUrl} />
                             ) : maybeZoomUrl &&
                               nextRoomEvent?.modeName === Schedule_Mode_Enum.External &&
-                              zoomEventStartsAt - now5s < 10 * 60 * 1000 ? (
+                              zoomEventStartsAt - now5s < 20 * 60 * 1000 &&
+                              !currentRoomEvent ? (
                                 <JoinZoomButton zoomUrl={maybeZoomUrl} scheduledStartTime={zoomEventStartsAt} />
                             ) : undefined}
 

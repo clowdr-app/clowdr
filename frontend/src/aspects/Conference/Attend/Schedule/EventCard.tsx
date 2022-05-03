@@ -71,7 +71,7 @@ export default function EventCard({
     );
     const now = useRealTime(60000);
     const isLive = start && end && now >= start.getTime() && now <= end.getTime();
-    const isStartingSoon = start && end && now + 10 * 60 * 1000 >= start.getTime() && now <= end.getTime();
+    const isStartingSoon = start && end && now + 20 * 60 * 1000 >= start.getTime() && now <= end.getTime();
 
     const history = useHistory();
     useEffect(() => {

@@ -20,7 +20,7 @@
     },
     "homepage": "https://github.com/clowdr-app/clowdr#readme",
     "engines": {
-        "node": ">=17.x"
+        "node": "18.x"
     },
     "dependencies": {
         "ts-patch": "^2.0.1",

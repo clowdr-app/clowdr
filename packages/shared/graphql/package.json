@@ -33,7 +33,7 @@
         "graphql": "^15.7.2"
     },
     "engines": {
-        "node": ">=17.x"
+        "node": "18.x"
     },
     "exports": {
         "./schema.graphql": "./schema/schema.graphql",

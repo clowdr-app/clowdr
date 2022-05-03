@@ -100,7 +100,7 @@
         "ts-node": "^10.4.0"
     },
     "engines": {
-        "node": ">=17.x"
+        "node": "18.x"
     },
     "jest": {
         "moduleFileExtensions": [

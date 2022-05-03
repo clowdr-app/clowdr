@@ -76,7 +76,7 @@
         "@graphql-codegen/typescript-urql": "^3.5.1"
     },
     "engines": {
-        "node": ">=17.x"
+        "node": "18.x"
     },
     "exports": {
         "./*": {

@@ -44,7 +44,7 @@
     },
     "packageManager": "pnpm@7.0.0",
     "engines": {
-        "node": ">=17.x",
+        "node": "18.x",
         "pnpm": "^7.x.x"
     }
 }

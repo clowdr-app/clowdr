@@ -26,6 +26,6 @@
         "pino-pretty": "^7.2.0"
     },
     "engines": {
-        "node": ">=17.x"
+        "node": "18.x"
     }
 }

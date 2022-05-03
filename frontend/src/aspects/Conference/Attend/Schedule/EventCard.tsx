@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Tag, Text, useDisclosure, Wrap, WrapItem } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { gql } from "urql";
 import type { ScheduleEventFragment } from "../../../../generated/graphql";
 import { useSelectSchedulePeopleQuery, useSelectScheduleTagsQuery } from "../../../../generated/graphql";
@@ -100,6 +100,7 @@ export default function EventCard({
     const presentationsDisclosure = useDisclosure({
         defaultIsOpen: autoExpandPresentations,
     });
+    const [hasAnyPresentations, setHasAnyPresentations] = useState<boolean>(true);
 
     return (
         <>
@@ -165,7 +166,7 @@ export default function EventCard({
                     <StarEventButton key="star-event-button" eventIds={[event.id]} />,
                 ]}
                 bottomButton={
-                    includePresentations
+                    includePresentations && hasAnyPresentations
                         ? {
                               label: "Presentations",
                               colorScheme: "blue",
@@ -206,8 +207,12 @@ export default function EventCard({
                     </Wrap>
                 ) : undefined}
             </Card>
-            {includePresentations && presentationsDisclosure.isOpen ? (
-                <PresentationsList sessionId={event.id} includeAbstract={includeAbstract} />
+            {includePresentations && hasAnyPresentations && presentationsDisclosure.isOpen ? (
+                <PresentationsList
+                    sessionId={event.id}
+                    includeAbstract={includeAbstract}
+                    setHasAnyPresentations={setHasAnyPresentations}
+                />
             ) : undefined}
         </>
     );

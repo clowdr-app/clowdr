@@ -10,13 +10,14 @@ import {
     MenuItem,
     MenuList,
     Portal,
+    Stack,
     Text,
     useColorMode,
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Link as ReactLink } from "react-router-dom";
+import { Link as ReactLink, useHistory } from "react-router-dom";
 import { LogoutButton } from "../Auth";
 import FAIcon from "../Chakra/FAIcon";
 import { defaultOutline_AsBoxShadow } from "../Chakra/Outline";
@@ -57,6 +58,7 @@ export default function ProfileMenu(): JSX.Element {
     const { toggleColorMode, colorMode } = useColorMode();
 
     const narrowView = useIsNarrowView();
+    const history = useHistory();
 
     return (
         <Menu placement="bottom-start" offset={[-10, 5]}>
@@ -140,12 +142,12 @@ export default function ProfileMenu(): JSX.Element {
                         Conferences
                     </MenuItem>
                     <MenuDivider m={0} />
-                    <HStack w="100%" spacing={0}>
+                    <Stack w="100%" spacing={0} direction={["column", "row"]}>
                         <MenuItem
                             onClick={() => {
                                 toggleColorMode();
                             }}
-                            flex="0 0 50%"
+                            flex={["", "0 0 30%"]}
                             whiteSpace="pre"
                             p={3}
                             overflow="hidden"
@@ -155,8 +157,20 @@ export default function ProfileMenu(): JSX.Element {
                                 {colorMode === "dark" ? "Light mode" : "Dark mode"}
                             </chakra.span>
                         </MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                history.push("/user/pushNotifications");
+                            }}
+                            flex={["", "1 0 40%"]}
+                            whiteSpace="pre"
+                            p={3}
+                            overflow="hidden"
+                        >
+                            <FAIcon iconStyle="s" icon="envelope" mr={2} />
+                            <chakra.span verticalAlign="middle">Push notifications</chakra.span>
+                        </MenuItem>
                         <LogoutButton asMenuItem />
-                    </HStack>
+                    </Stack>
                 </MenuList>
             </Portal>
         </Menu>

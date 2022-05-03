@@ -56,9 +56,10 @@ export default function LogoutButton({
             w="auto"
             p={3}
             overflow="hidden"
-            flex="0 0 50%"
-            justifyContent="flex-end"
+            flex={["", "0 0 28%"]}
+            justifyContent={["", "flex-end"]}
             textAlign="right"
+            whiteSpace="pre"
         >
             <FAIcon iconStyle="s" icon="sign-out-alt" mr={2} aria-hidden={true} /> Log Out
         </MenuItem>

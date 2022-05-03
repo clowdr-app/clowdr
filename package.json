@@ -42,9 +42,9 @@
         "*.js": "eslint --cache --fix",
         "*.{js,jsx,ts,tsx,css,json,md}": "prettier --write"
     },
-    "packageManager": "pnpm@6.30.0",
+    "packageManager": "pnpm@7.0.0",
     "engines": {
         "node": ">=17.x",
-        "pnpm": "^6.30.x"
+        "pnpm": "^7.x.x"
     }
 }

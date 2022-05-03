@@ -72,6 +72,7 @@ async function addToPresenceList(listId: string, userId: string) {
 
     try {
         const addedCount = await redisClientP.zadd(redisClient)(listKey, Date.now(), userId);
+        await redisClientP.expire(redisClient)(listKey, 60 * 60 * 1000);
         if (addedCount > 0) {
             const chan = presenceChannelName(listId);
             socketServer.in(chan).emit("entered", { listId, userId });

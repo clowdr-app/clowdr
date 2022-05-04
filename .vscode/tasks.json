@@ -82,7 +82,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["codegen", "-r", "--filter \"...^@midspace/graphql\""]
+            "args": ["-r", "--filter \"...^@midspace/graphql\"", "codegen"]
         },
         {
             "label": "Single -- GraphQL Codegen",
@@ -95,7 +95,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["codegen", "--filter", "${input:package-name}"]
+            "args": ["--filter", "@midspace/${input:package-name}", "codegen"]
         },
         {
             "label": "Actions Service -- Local Development",
@@ -306,7 +306,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["build", "--filter", "${input:package-name}..."]
+            "args": ["--filter", "${input:package-name}...", "build"]
         },
         {
             "label": "Packetriot",

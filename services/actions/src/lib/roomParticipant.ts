@@ -56,6 +56,8 @@ export async function addRoomParticipant(
                 "Registrant is already connected to the room, kicking from previous session"
             );
             await kickRegistrantFromRoom(logger, roomId, registrantId, identifier, true);
+        } else {
+            await redisClientP.expire(redisClient)(`RoomParticipants:${roomId}`, 2 * 60 * 60);
         }
     } finally {
         await redisClientPool.release("lib/vonage/sessionMonitoring", redisClient);

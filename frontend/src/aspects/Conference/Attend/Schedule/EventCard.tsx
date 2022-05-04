@@ -44,6 +44,7 @@ export default function EventCard({
     onlyLinkToRoom,
     limitAbstractLengthTo = 3,
     promptMoveOnLiveEvent,
+    noLink,
 }: {
     event: ScheduleEventFragment;
     includePresentations?: boolean;
@@ -53,6 +54,7 @@ export default function EventCard({
     onlyLinkToRoom?: boolean;
     limitAbstractLengthTo?: number;
     promptMoveOnLiveEvent?: boolean;
+    noLink?: boolean;
 }) {
     const { conferencePath } = useAuthParameters();
     const conference = useConference();
@@ -148,7 +150,9 @@ export default function EventCard({
                         : undefined
                 }
                 to={
-                    isLive || isStartingSoon || !event.item?.id || onlyLinkToRoom
+                    noLink
+                        ? undefined
+                        : isLive || isStartingSoon || !event.item?.id || onlyLinkToRoom
                         ? `${conferencePath}/room/${event.roomId}`
                         : `${conferencePath}/item/${event.item.id}`
                 }
@@ -230,6 +234,7 @@ export default function EventCard({
                     sessionId={event.id}
                     includeAbstract={includeAbstract}
                     setHasAnyPresentations={setHasAnyPresentations}
+                    noLinks={noLink}
                 />
             ) : undefined}
         </>

@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import { Content_ItemType_Enum, Schedule_Mode_Enum } from "../../../../generated/graphql";
 import Card from "../../../Card";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useRealTime } from "../../../Hooks/useRealTime";
 import { ShufflePeriodBox } from "../../../ShuffleRooms/WaitingPage";
@@ -84,7 +85,6 @@ export function RoomContent({
                         subHeading={
                             currentRoomEvent.item ? typeNameToDisplayName(currentRoomEvent.item.typeName) : undefined
                         }
-                        to={currentRoomEvent.item ? `${conferencePath}/item/${currentRoomEvent.item.id}` : undefined}
                         w="100%"
                         topLeftButton={{
                             colorScheme: "LiveActionButton",
@@ -130,6 +130,14 @@ export function RoomContent({
                         {currentRoomEvent.modeName !== Schedule_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
                             <ItemElementsWrapper itemId={currentRoomEvent.itemId} noHeading />
                         ) : undefined}
+                        {currentRoomEvent.item ? (
+                            <LinkButton
+                                linkProps={{ target: "_blank" }}
+                                to={`${conferencePath}/item/${currentRoomEvent.item.id}`}
+                            >
+                                Find out more
+                            </LinkButton>
+                        ) : undefined}
                         {currentRoomEvent.exhibitionId ? (
                             <ExhibitionLayoutWrapper exhibitionId={currentRoomEvent.exhibitionId} hideLiveViewButton />
                         ) : (
@@ -145,6 +153,7 @@ export function RoomContent({
                                 includePresentations={false}
                                 includeTypeName={true}
                                 limitAbstractLengthTo={-1}
+                                noLink
                             />
                         ))}
                     </VStack>
@@ -156,7 +165,6 @@ export function RoomContent({
                 <Card
                     heading={nextRoomEvent.item?.title ?? nextRoomEvent.name}
                     subHeading={nextRoomEvent.item ? typeNameToDisplayName(nextRoomEvent.item.typeName) : undefined}
-                    to={nextRoomEvent.item ? `${conferencePath}/item/${nextRoomEvent.item.id}` : undefined}
                     w="100%"
                     topLeftButton={{
                         colorScheme: "blue",
@@ -176,6 +184,14 @@ export function RoomContent({
                     }
                 >
                     {nextRoomEvent?.itemId ? <ItemElementsWrapper itemId={nextRoomEvent.itemId} noHeading /> : <></>}
+                    {nextRoomEvent.item ? (
+                        <LinkButton
+                            linkProps={{ target: "_blank" }}
+                            to={`${conferencePath}/item/${nextRoomEvent.item.id}`}
+                        >
+                            Find out more
+                        </LinkButton>
+                    ) : undefined}
                 </Card>
             ) : (
                 <></>

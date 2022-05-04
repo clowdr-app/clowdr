@@ -19,10 +19,12 @@ export default function PresentationsList({
     sessionId,
     includeAbstract,
     setHasAnyPresentations,
+    noLinks,
 }: {
     sessionId: string;
     includeAbstract: boolean;
     setHasAnyPresentations: (value: boolean) => void;
+    noLinks?: boolean;
 }): JSX.Element {
     const [presentationsResponse] = useSchedule_GetPresentationsQuery({
         variables: {
@@ -52,7 +54,13 @@ export default function PresentationsList({
                 <Text>No presentations found - proceedings may be ad-hoc or unscheduled.</Text>
             ) : (
                 presentations.map((presentation, idx) => (
-                    <EventCard key={idx} event={presentation} includeTypeName includeAbstract={includeAbstract} />
+                    <EventCard
+                        key={idx}
+                        event={presentation}
+                        includeTypeName
+                        includeAbstract={includeAbstract}
+                        noLink={noLinks}
+                    />
                 ))
             )}
             <Box h={4}>&nbsp;</Box>

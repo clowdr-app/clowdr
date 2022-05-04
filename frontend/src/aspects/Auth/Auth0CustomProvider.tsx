@@ -16,7 +16,7 @@ export default function Auth0CustomProvider({ children }: { children: JSX.Elemen
     const history = useHistory();
 
     const onRedirectCallback = useCallback(
-        (appState: Auth0State) => {
+        (appState?: Auth0State) => {
             if (appState?.returnTo) {
                 window.location.replace(appState?.returnTo);
             } else {

@@ -165,7 +165,7 @@ export function Markdown(elProps?: {
                     );
                 },
                 del({ node: _node, ...props }) {
-                    return <Text as="del" whiteSpace="normal" wordBreak="break-word" {...props} />;
+                    return <Text as="del" whiteSpace="normal" wordBreak="break-word" {...(props as any)} />;
                 },
                 em({ node: _node, ...props }) {
                     return <Text as="em" whiteSpace="normal" wordBreak="break-word" {...props} />;

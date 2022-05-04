@@ -5,7 +5,7 @@ import type { RoomOrEventId, VonageBroadcastLayout } from "./useVonageBroadcastL
 import { useVonageBroadcastLayout } from "./useVonageBroadcastLayout";
 import type { VonageDisplay } from "./useVonageDisplay";
 import { useVonageDisplay } from "./useVonageDisplay";
-import type { RecordingControlReason } from "./VonageRoomProvider";
+import type { RecordingControlRoles } from "./VonageRoomProvider";
 
 gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
@@ -21,9 +21,19 @@ gql`
         }
     }
 
-    mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
+    mutation InsertVonageSessionLayout(
+        $vonageSessionId: String!
+        $conferenceId: uuid!
+        $layoutData: jsonb!
+        $subconferenceId: uuid
+    ) {
         insert_video_VonageSessionLayout(
-            objects: { vonageSessionId: $vonageSessionId, conferenceId: $conferenceId, layoutData: $layoutData }
+            objects: {
+                vonageSessionId: $vonageSessionId
+                conferenceId: $conferenceId
+                layoutData: $layoutData
+                subconferenceId: $subconferenceId
+            }
         ) {
             affected_rows
         }
@@ -38,7 +48,7 @@ export interface VonageLayout {
 export interface Props {
     vonageSessionId: string;
     type: RoomOrEventId | null;
-    canControlRecordingAs: Set<RecordingControlReason>;
+    canControlRecordingAs: RecordingControlRoles;
 }
 
 export const VonageLayoutContext = React.createContext<VonageLayout | undefined>(undefined);

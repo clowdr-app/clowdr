@@ -12,7 +12,7 @@ import { GetRoomVonageSessionIdDocument } from "../../../../../generated/graphql
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import { useRealTime } from "../../../../Hooks/useRealTime";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
-import type { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
+import type { RecordingControlRoles } from "../Vonage/State/VonageRoomProvider";
 import { useGetAccessToken } from "../Vonage/useGetAccessToken";
 import type { VonageRoom } from "../Vonage/VonageRoom";
 
@@ -36,7 +36,7 @@ export function VideoChatVonage({
     eventId: string | undefined;
     enable: boolean;
     eventIsFuture: boolean;
-    canControlRecordingAs: Set<RecordingControlReason>;
+    canControlRecordingAs: RecordingControlRoles;
 }): JSX.Element {
     const sharedRoomContext = useContext(SharedRoomContext);
 

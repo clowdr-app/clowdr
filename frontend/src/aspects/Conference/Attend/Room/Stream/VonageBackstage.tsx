@@ -13,7 +13,8 @@ import {
 import extractActualError from "../../../../GQL/ExtractActualError";
 import { SharedRoomContext } from "../../../../Room/SharedRoomContextProvider";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
-import { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
+import type { RecordingControlRoles } from "../Vonage/State/VonageRoomProvider";
+import { RecordingControlRole } from "../Vonage/State/VonageRoomProvider";
 import type { VonageRoom } from "../Vonage/VonageRoom";
 import { BackstageContext, BackstageProvider } from "./BackstageContext";
 import { BackstageControls } from "./Controls/BackstageControls";
@@ -107,9 +108,9 @@ export function VonageBackstageInner({
     }, [getEventVonageToken, event.id, registrant.id]);
 
     const canControlRecordingAs = useMemo(() => {
-        const reasons: Set<RecordingControlReason> = new Set();
+        const reasons: RecordingControlRoles = [];
         if (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
-            reasons.add(RecordingControlReason.ConferenceOrganizer);
+            reasons.push({ role: RecordingControlRole.ConferenceOrganizer });
         }
         if (
             event.eventPeople.some(
@@ -118,7 +119,7 @@ export function VonageBackstageInner({
                     person.roleName !== Schedule_EventProgramPersonRole_Enum.Participant
             )
         ) {
-            reasons.add(RecordingControlReason.EventPerson);
+            reasons.push({ role: RecordingControlRole.EventPerson });
         }
         return reasons;
     }, [event.eventPeople, registrant.conferenceRole, registrant.id]);

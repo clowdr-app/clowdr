@@ -13,7 +13,8 @@ import {
 import { makeContext } from "../../../../../GQL/make-context";
 import { useConference } from "../../../../useConference";
 import { VonageComputedStateContext } from "./VonageComputedStateContext";
-import { RecordingControlReason } from "./VonageRoomProvider";
+import type { RecordingControlRoles } from "./VonageRoomProvider";
+import { RecordingControlRole } from "./VonageRoomProvider";
 
 export interface AvailableStream {
     streamId?: string;
@@ -51,7 +52,7 @@ export type RoomOrEventId =
 export function useVonageBroadcastLayout(
     vonageSessionId: string,
     roomOrEventId: RoomOrEventId | null,
-    canControlRecordingAs: Set<RecordingControlReason>
+    canControlRecordingAs: RecordingControlRoles
 ): VonageBroadcastLayout {
     const [result, refetchLayout] = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
         variables: {
@@ -97,44 +98,74 @@ export function useVonageBroadcastLayout(
 
     const [availableStreams, setAvailableStreams] = useState<AvailableStream[]>([]);
 
-    const saveContext = useMemo(() => {
+    const [saveContext, subconferenceId] = useMemo((): [ReturnType<typeof makeContext> | undefined, string | null] => {
         if (!roomOrEventId) {
-            return undefined;
+            return [undefined, null];
         }
-        if (canControlRecordingAs.has(RecordingControlReason.ConferenceOrganizer)) {
-            return makeContext({
-                [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
-            });
+        if (canControlRecordingAs.some((x) => x.role === RecordingControlRole.ConferenceOrganizer)) {
+            return [
+                makeContext({
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                }),
+                null,
+            ];
         }
-        if (canControlRecordingAs.has(RecordingControlReason.RoomAdmin)) {
+        if (canControlRecordingAs.some((x) => x.role === RecordingControlRole.SubconferenceOrganizer)) {
+            const role = canControlRecordingAs.find((x) => x.role === RecordingControlRole.SubconferenceOrganizer);
+            if (role?.role === RecordingControlRole.SubconferenceOrganizer) {
+                return [
+                    makeContext({
+                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                        [AuthHeader.SubconferenceId]: role.subconferenceId,
+                    }),
+                    role.subconferenceId,
+                ];
+            }
+        }
+        if (canControlRecordingAs.some((x) => x.role === RecordingControlRole.RoomAdmin)) {
             switch (roomOrEventId.type) {
                 case "room":
-                    return makeContext({
-                        [AuthHeader.Role]: HasuraRoleName.RoomAdmin,
-                        [AuthHeader.RoomId]: roomOrEventId.id,
-                    });
+                    return [
+                        makeContext({
+                            [AuthHeader.Role]: HasuraRoleName.RoomAdmin,
+                            [AuthHeader.RoomId]: roomOrEventId.id,
+                        }),
+                        null,
+                    ];
                 case "room-with-event":
-                    return makeContext({
-                        [AuthHeader.Role]: HasuraRoleName.RoomAdmin,
-                        [AuthHeader.RoomId]: roomOrEventId.roomId,
-                    });
+                    return [
+                        makeContext({
+                            [AuthHeader.Role]: HasuraRoleName.RoomAdmin,
+                            [AuthHeader.RoomId]: roomOrEventId.roomId,
+                        }),
+                        null,
+                    ];
             }
         }
         switch (roomOrEventId.type) {
             case "room":
-                return makeContext({
-                    [AuthHeader.Role]: HasuraRoleName.RoomMember,
-                    [AuthHeader.RoomId]: roomOrEventId.id,
-                });
+                return [
+                    makeContext({
+                        [AuthHeader.Role]: HasuraRoleName.RoomMember,
+                        [AuthHeader.RoomId]: roomOrEventId.id,
+                    }),
+                    null,
+                ];
             case "room-with-event":
-                return makeContext({
-                    [AuthHeader.Role]: HasuraRoleName.RoomMember,
-                    [AuthHeader.RoomId]: roomOrEventId.roomId,
-                });
+                return [
+                    makeContext({
+                        [AuthHeader.Role]: HasuraRoleName.RoomMember,
+                        [AuthHeader.RoomId]: roomOrEventId.roomId,
+                    }),
+                    null,
+                ];
             case "event":
-                return makeContext({
-                    [AuthHeader.Role]: HasuraRoleName.Attendee,
-                });
+                return [
+                    makeContext({
+                        [AuthHeader.Role]: HasuraRoleName.Attendee,
+                    }),
+                    null,
+                ];
         }
     }, [canControlRecordingAs, roomOrEventId]);
 
@@ -227,6 +258,7 @@ export function useVonageBroadcastLayout(
                     const result = await insertLayout(
                         {
                             conferenceId,
+                            subconferenceId,
                             vonageSessionId,
                             layoutData: data,
                         },
@@ -252,6 +284,7 @@ export function useVonageBroadcastLayout(
             availableStreams,
             insertLayout,
             conferenceId,
+            subconferenceId,
             saveContext,
             toast,
         ]

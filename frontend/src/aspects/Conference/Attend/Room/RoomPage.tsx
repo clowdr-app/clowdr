@@ -20,6 +20,7 @@ gql`
 
     fragment RoomPage_RoomDetails on room_Room {
         id
+        subconferenceId
         name
         isProgramRoom
         isStreamingProgramRoom

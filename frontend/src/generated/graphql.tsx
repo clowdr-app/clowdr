@@ -41356,6 +41356,7 @@ export type Room_GetEventsQuery = {
             readonly eventPeople: ReadonlyArray<{
                 readonly __typename?: "schedule_EventProgramPerson";
                 readonly id: any;
+                readonly roleName: Schedule_EventProgramPersonRole_Enum;
                 readonly person: {
                     readonly __typename?: "collection_ProgramPerson";
                     readonly id: any;
@@ -41500,6 +41501,7 @@ export type Room_EventSummaryFragment = {
         readonly eventPeople: ReadonlyArray<{
             readonly __typename?: "schedule_EventProgramPerson";
             readonly id: any;
+            readonly roleName: Schedule_EventProgramPersonRole_Enum;
             readonly person: {
                 readonly __typename?: "collection_ProgramPerson";
                 readonly id: any;
@@ -41566,6 +41568,7 @@ export type RoomPage_GetRoomDetailsQuery = {
     readonly room_Room_by_pk?: {
         readonly __typename?: "room_Room";
         readonly id: any;
+        readonly subconferenceId?: any | null;
         readonly name: string;
         readonly isProgramRoom?: boolean | null;
         readonly isStreamingProgramRoom?: boolean | null;
@@ -41613,6 +41616,7 @@ export type RoomPage_GetRoomDetailsQuery = {
 export type RoomPage_RoomDetailsFragment = {
     readonly __typename?: "room_Room";
     readonly id: any;
+    readonly subconferenceId?: any | null;
     readonly name: string;
     readonly isProgramRoom?: boolean | null;
     readonly isStreamingProgramRoom?: boolean | null;
@@ -42213,6 +42217,7 @@ export type InsertVonageSessionLayoutMutationVariables = Exact<{
     vonageSessionId: Scalars["String"];
     conferenceId: Scalars["uuid"];
     layoutData: Scalars["jsonb"];
+    subconferenceId?: InputMaybe<Scalars["uuid"]>;
 }>;
 
 export type InsertVonageSessionLayoutMutation = {
@@ -49682,6 +49687,7 @@ export type RaiseHandPanel_GetEventDetailsQuery = {
             readonly eventPeople: ReadonlyArray<{
                 readonly __typename?: "schedule_EventProgramPerson";
                 readonly id: any;
+                readonly roleName: Schedule_EventProgramPersonRole_Enum;
                 readonly person: {
                     readonly __typename?: "collection_ProgramPerson";
                     readonly id: any;
@@ -51149,6 +51155,7 @@ export const Room_EventSummaryFragmentDoc = gql`
                     id
                     registrantId
                 }
+                roleName
             }
         }
     }
@@ -51158,6 +51165,7 @@ export const Room_EventSummaryFragmentDoc = gql`
 export const RoomPage_RoomDetailsFragmentDoc = gql`
     fragment RoomPage_RoomDetails on room_Room {
         id
+        subconferenceId
         name
         isProgramRoom
         isStreamingProgramRoom
@@ -53708,9 +53716,19 @@ export function useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery(
     });
 }
 export const InsertVonageSessionLayoutDocument = gql`
-    mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
+    mutation InsertVonageSessionLayout(
+        $vonageSessionId: String!
+        $conferenceId: uuid!
+        $layoutData: jsonb!
+        $subconferenceId: uuid
+    ) {
         insert_video_VonageSessionLayout(
-            objects: { vonageSessionId: $vonageSessionId, conferenceId: $conferenceId, layoutData: $layoutData }
+            objects: {
+                vonageSessionId: $vonageSessionId
+                conferenceId: $conferenceId
+                layoutData: $layoutData
+                subconferenceId: $subconferenceId
+            }
         ) {
             affected_rows
         }

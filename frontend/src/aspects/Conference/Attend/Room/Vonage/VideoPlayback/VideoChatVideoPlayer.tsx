@@ -161,7 +161,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                 {videoEl}
                             </Skeleton>
                             <HStack p={2} position="absolute" bottom="0px" left="0px" width="100%" alignItems="stretch">
-                                {videoPlayback.canControlPlaybackAs.size ? (
+                                {videoPlayback.canControlPlaybackAs.length ? (
                                     <>
                                         <Tooltip label={playing ? "Pause" : "Play"}>
                                             <IconButton
@@ -288,7 +288,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                         />
                                     </Tooltip>
                                 ) : undefined}
-                                {videoPlayback.canControlPlaybackAs.size ? (
+                                {videoPlayback.canControlPlaybackAs.length ? (
                                     <Tooltip label="Close video">
                                         <IconButton
                                             ml="auto"

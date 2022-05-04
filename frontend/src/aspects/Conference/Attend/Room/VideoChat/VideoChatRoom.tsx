@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
-import type { RecordingControlReason } from "../Vonage/State/VonageRoomProvider";
+import type { RecordingControlRoles } from "../Vonage/State/VonageRoomProvider";
 import { VideoChatChime } from "./VideoChatChime";
 import { VideoChatVonage } from "./VideoChatVonage";
 
@@ -21,7 +21,7 @@ export function VideoChatRoom({
     enable: boolean;
     eventId: string | undefined;
     eventIsFuture: boolean;
-    canControlRecordingAs: Set<RecordingControlReason>;
+    canControlRecordingAs: RecordingControlRoles;
 }): JSX.Element {
     const backend = useMemo(() => {
         switch (roomDetails.backendName) {

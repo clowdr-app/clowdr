@@ -121,8 +121,28 @@ const initialComputedState: VonageRoomComputedState = {
     audioTrack: null,
 };
 
-export const enum RecordingControlReason {
+export type RecordingControlRoles = (
+    | {
+          role: RecordingControlRole.ConferenceOrganizer;
+      }
+    | {
+          role: RecordingControlRole.SubconferenceOrganizer;
+          subconferenceId: string;
+      }
+    | {
+          role: RecordingControlRole.EventPerson;
+      }
+    | {
+          role: RecordingControlRole.ItemPerson;
+      }
+    | {
+          role: RecordingControlRole.RoomAdmin;
+      }
+)[];
+
+export const enum RecordingControlRole {
     ConferenceOrganizer = "CONFERENCE_ORGANIZER",
+    SubconferenceOrganizer = "SUBCONFERENCE_ORGANIZER",
     EventPerson = "EVENT_PERSON",
     ItemPerson = "ITEM_PERSON",
     RoomAdmin = "ROOM_ADMIN",
@@ -131,7 +151,7 @@ export const enum RecordingControlReason {
 export interface VonageRoomSettings {
     maximumSimultaneousScreenShares: number;
     isBackstageRoom: boolean;
-    canControlRecordingAs: Set<RecordingControlReason>;
+    canControlRecordingAs: RecordingControlRoles;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
@@ -153,7 +173,7 @@ interface VonageRoomContext {
 const defaultVonageRoomSettings: VonageRoomSettings = {
     maximumSimultaneousScreenShares: 1,
     isBackstageRoom: false,
-    canControlRecordingAs: new Set(),
+    canControlRecordingAs: [],
     onPermissionsProblem: () => {
         //
     },
@@ -273,7 +293,7 @@ export function VonageRoomProvider({
 }: {
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     isBackstageRoom: boolean;
-    canControlRecordingAs: Set<RecordingControlReason>;
+    canControlRecordingAs: RecordingControlRoles;
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
     requireMicrophoneOrCamera: boolean;

@@ -26,7 +26,8 @@ import {
 } from "../../../Content/Element/useMediaElement";
 import { VonageComputedStateContext } from "../State/VonageComputedStateContext";
 import { useVonageGlobalState } from "../State/VonageGlobalStateProvider";
-import type { RecordingControlReason } from "../State/VonageRoomProvider";
+import type { RecordingControlRoles } from "../State/VonageRoomProvider";
+import { RecordingControlRole } from "../State/VonageRoomProvider";
 
 gql`
     mutation VonageVideoPlaybackContext_InsertCommand($object: video_VonageVideoPlaybackCommand_insert_input!) {
@@ -51,7 +52,7 @@ gql`
 
 type Props = {
     vonageSessionId: string;
-    canControlPlaybackAs: Set<RecordingControlReason>;
+    canControlPlaybackAs: RecordingControlRoles;
 };
 
 function parseStoredCommand(
@@ -75,13 +76,34 @@ function parseStoredCommand(
 function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
-    const context = useMemo(
-        () =>
+    const [context, subconferenceId] = useMemo(() => {
+        if (canControlPlaybackAs.some((x) => x.role === RecordingControlRole.ConferenceOrganizer)) {
+            return [
+                makeContext({
+                    [AuthHeader.Role]: HasuraRoleName.ConferenceOrganizer,
+                }),
+                null,
+            ];
+        }
+        if (canControlPlaybackAs.some((x) => x.role === RecordingControlRole.SubconferenceOrganizer)) {
+            const role = canControlPlaybackAs.find((x) => x.role === RecordingControlRole.SubconferenceOrganizer);
+            if (role?.role === RecordingControlRole.SubconferenceOrganizer) {
+                return [
+                    makeContext({
+                        [AuthHeader.Role]: HasuraRoleName.SubconferenceOrganizer,
+                        [AuthHeader.SubconferenceId]: role.subconferenceId,
+                    }),
+                    role.subconferenceId,
+                ];
+            }
+        }
+        return [
             makeContext({
                 [AuthHeader.Role]: HasuraRoleName.Attendee,
             }),
-        []
-    );
+            null,
+        ];
+    }, [canControlPlaybackAs]);
 
     const [, insertCommand] = useVonageVideoPlaybackContext_InsertCommandMutation();
 
@@ -93,14 +115,14 @@ function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
                         command: command,
                         createdByRegistrantId: registrant.id,
                         conferenceId: conference.id,
-                        subconferenceId: null,
+                        subconferenceId,
                         vonageSessionId,
                     },
                 },
                 context
             );
         },
-        [conference.id, context, insertCommand, registrant.id, vonageSessionId]
+        [conference.id, context, insertCommand, registrant.id, subconferenceId, vonageSessionId]
     );
 
     const { connected } = useContext(VonageComputedStateContext);

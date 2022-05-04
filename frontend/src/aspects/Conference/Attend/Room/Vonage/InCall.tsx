@@ -337,7 +337,7 @@ export function InCall(): JSX.Element {
                 return (
                     <Layout
                         viewports={viewports}
-                        allowedToControlLayout={Boolean(settings.canControlRecordingAs.size)}
+                        allowedToControlLayout={Boolean(settings.canControlRecordingAs.length)}
                     />
                 );
         }

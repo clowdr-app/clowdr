@@ -12,7 +12,7 @@ import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructio
 import type { RoomOrEventId, VonageBroadcastLayout } from "./State/useVonageBroadcastLayout";
 import { VonageComputedStateProvider } from "./State/VonageComputedStateContext";
 import { VonageLayoutProvider } from "./State/VonageLayoutProvider";
-import type { RecordingControlReason } from "./State/VonageRoomProvider";
+import type { RecordingControlRoles } from "./State/VonageRoomProvider";
 import { VonageRoomProvider } from "./State/VonageRoomProvider";
 import type { CompleteGetAccessToken } from "./useGetAccessToken";
 import { AutoplayProvider } from "./VideoPlayback/AutoplayContext";
@@ -76,7 +76,7 @@ export function VonageRoom({
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     completeGetAccessToken?: CompleteGetAccessToken | null;
     onLeave?: () => void;
-    canControlRecordingAs: Set<RecordingControlReason>;
+    canControlRecordingAs: RecordingControlRoles;
     layout?: VonageBroadcastLayout;
     eventIsFuture?: boolean;
     extraLayoutButtons?: JSX.Element;

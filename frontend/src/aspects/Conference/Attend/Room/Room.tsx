@@ -51,7 +51,8 @@ import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
 import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
 import { useVonageGlobalState } from "./Vonage/State/VonageGlobalStateProvider";
-import { RecordingControlReason } from "./Vonage/State/VonageRoomProvider";
+import type { RecordingControlRoles } from "./Vonage/State/VonageRoomProvider";
+import { RecordingControlRole } from "./Vonage/State/VonageRoomProvider";
 
 const Backstages = React.lazy(() => import("./Stream/Backstages"));
 const VideoPlayer = React.lazy(() => import("./Video/VideoPlayerEventPlayer"));
@@ -137,6 +138,7 @@ gql`
                     id
                     registrantId
                 }
+                roleName
             }
         }
     }
@@ -735,14 +737,24 @@ function RoomInner({
     ]);
 
     const canControlRecordingAs = useMemo(() => {
-        const reasons: Set<RecordingControlReason> = new Set();
+        const reasons: RecordingControlRoles = [];
         if (currentRegistrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) {
-            reasons.add(RecordingControlReason.ConferenceOrganizer);
+            reasons.push({ role: RecordingControlRole.ConferenceOrganizer });
+        }
+        const subconferenceMemberships = currentRegistrant.subconferenceMemberships.filter(
+            (x) =>
+                x.subconferenceId === roomDetails.subconferenceId && x.role === Registrant_RegistrantRole_Enum.Organizer
+        );
+        if (roomDetails.subconferenceId && subconferenceMemberships.length) {
+            reasons.push({
+                role: RecordingControlRole.SubconferenceOrganizer,
+                subconferenceId: subconferenceMemberships[0].subconferenceId,
+            });
         }
         if (
             roomDetails.roomMemberships.some((membership) => membership.personRoleName === Room_PersonRole_Enum.Admin)
         ) {
-            reasons.add(RecordingControlReason.RoomAdmin);
+            reasons.push({ role: RecordingControlRole.RoomAdmin });
         }
         if (currentRoomEvent) {
             if (
@@ -750,9 +762,16 @@ function RoomInner({
                     (person) =>
                         person.person?.registrantId === currentRegistrant.id &&
                         person.roleName !== Schedule_EventProgramPersonRole_Enum.Participant
+                ) ||
+                currentRoomEvent.presentations.some((x) =>
+                    x.eventPeople.some(
+                        (person) =>
+                            person.person?.registrantId === currentRegistrant.id &&
+                            person.roleName !== Schedule_EventProgramPersonRole_Enum.Participant
+                    )
                 )
             ) {
-                reasons.add(RecordingControlReason.EventPerson);
+                reasons.push({ role: RecordingControlRole.EventPerson });
             }
         } else if (
             roomDetails.item?.selfPeople.some(
@@ -764,15 +783,17 @@ function RoomInner({
                     itemPerson.roleName.toUpperCase() === "ORGANIZER"
             )
         ) {
-            reasons.add(RecordingControlReason.ItemPerson);
+            reasons.push({ role: RecordingControlRole.ItemPerson });
         }
         return reasons;
     }, [
         currentRegistrant.conferenceRole,
         currentRegistrant.id,
+        currentRegistrant.subconferenceMemberships,
         currentRoomEvent,
         roomDetails.item?.selfPeople,
         roomDetails.roomMemberships,
+        roomDetails.subconferenceId,
     ]);
 
     const vonage = useVonageGlobalState();

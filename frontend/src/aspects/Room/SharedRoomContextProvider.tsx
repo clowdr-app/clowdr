@@ -46,7 +46,7 @@ export function SharedRoomContextProvider({ children }: { children: JSX.Element 
                         requireMicrophoneOrCamera={false}
                         completeJoinRef={undefined}
                         completeGetAccessToken={undefined}
-                        canControlRecordingAs={new Set()}
+                        canControlRecordingAs={[]}
                         layout={undefined}
                     />
                 </portals.InPortal>

@@ -69,7 +69,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["codegen", "-r"]
+            "args": ["-r", "codegen"]
         },
         {
             "label": "Offline -- GraphQL Codegen",
@@ -280,7 +280,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["build", "-r"]
+            "args": ["-r", "build"]
         },
         {
             "label": "All -- Clean",
@@ -293,7 +293,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["clean", "-r"]
+            "args": ["-r", "clean"]
         },
         {
             "label": "Single -- Build",

@@ -58316,7 +58316,7 @@ export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomCha
     return Urql.useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
 }
 export const GetVapidPublicKeyDocument = gql`
-    query GetVAPIDPublicKey @cached {
+    query GetVAPIDPublicKey {
         vapidPublicKey {
             key
         }
@@ -58881,9 +58881,7 @@ export function useSelectRegistrationQuery(
 ) {
     return Urql.useQuery<SelectRegistrationQuery>({ query: SelectRegistrationDocument, ...options });
 }
-export type WithTypename<T extends { __typename?: any }> = { [K in Exclude<keyof T, "__typename">]?: T[K] } & {
-    __typename: NonNullable<T["__typename"]>;
-};
+export type WithTypename<T extends { __typename?: any }> = T & { __typename: NonNullable<T["__typename"]> };
 
 export type GraphCacheKeysConfig = {
     ConfirmInvitationOutput?: (data: WithTypename<ConfirmInvitationOutput>) => null | string;

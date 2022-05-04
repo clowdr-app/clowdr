@@ -53603,7 +53603,9 @@ export const GetEventVideosDocument = gql`
                 item {
                     id
                     title
-                    elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
+                    elements(
+                        where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }
+                    ) {
                         id
                         name
                         itemId
@@ -53614,7 +53616,7 @@ export const GetEventVideosDocument = gql`
             item {
                 id
                 title
-                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
+                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }) {
                     id
                     name
                     itemId
@@ -53631,7 +53633,9 @@ export const GetEventVideosDocument = gql`
                     item {
                         id
                         title
-                        elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }) {
+                        elements(
+                            where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }
+                        ) {
                             id
                             name
                             itemId

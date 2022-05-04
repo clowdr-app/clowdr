@@ -34,7 +34,7 @@ import { apolloClient } from "../graphqlClient";
 import { getRegistrantDetails } from "../lib/authorisation";
 import { BadRequestError, ForbiddenError, NotFoundError, ServerError } from "../lib/errors";
 import { getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
-import { getIsRoomParticipant, getRoomParticipantsCount } from "../lib/roomParticipant";
+import { getRoomParticipantsCount } from "../lib/roomParticipant";
 import {
     addAndRemoveRoomParticipants,
     addAndRemoveVonageParticipantStreams,
@@ -497,15 +497,15 @@ export async function handleJoinEvent(
         });
     }
 
-    const isAlreadyParticipant = await getIsRoomParticipant(
-        result.data.schedule_Event_by_pk.room.id,
-        payload.registrantId
-    );
-    if (isAlreadyParticipant) {
-        throw new Error(
-            "You are already connected to this room, possibly from a different tab or device. If you recently left the room, please wait a minute before trying to rejoin."
-        );
-    }
+    // const isAlreadyParticipant = await getIsRoomParticipant(
+    //     result.data.schedule_Event_by_pk.room.id,
+    //     payload.registrantId
+    // );
+    // if (isAlreadyParticipant) {
+    //     throw new Error(
+    //         "You are already connected to this room, possibly from a different tab or device. If you recently left the room, please wait a minute before trying to rejoin."
+    //     );
+    // }
 
     if (Date.parse(result.data.schedule_Event_by_pk.scheduledStartTime) - 10 * 60 * 1000 > Date.now()) {
         const remainingQuota = await getVideoChatNonEventRemainingQuota(registrant.conferenceId);
@@ -630,12 +630,12 @@ export async function handleJoinRoom(
         });
     }
 
-    const isAlreadyParticipant = await getIsRoomParticipant(payload.roomId, payload.registrantId);
-    if (isAlreadyParticipant) {
-        throw new Error(
-            "You are already connected to this room, possibly from a different tab or device. If you recently left the room, please wait a minute before trying to rejoin."
-        );
-    }
+    // const isAlreadyParticipant = await getIsRoomParticipant(payload.roomId, payload.registrantId);
+    // if (isAlreadyParticipant) {
+    //     throw new Error(
+    //         "You are already connected to this room, possibly from a different tab or device. If you recently left the room, please wait a minute before trying to rejoin."
+    //     );
+    // }
 
     const remainingQuota = await getVideoChatNonEventRemainingQuota(registrant.conferenceId);
     if (remainingQuota <= 0) {

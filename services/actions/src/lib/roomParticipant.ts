@@ -5,7 +5,6 @@ import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import type { P } from "pino";
 import { InsertVonageSessionLayoutDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { kickRegistrantFromRoom } from "./vonage/vonageTools";
 
 export async function getRoomParticipantsCount(roomId: string): Promise<number> {
     const redisClient = await redisClientPool.acquire("lib/vonage/getRoomParticipantsCount");
@@ -48,14 +47,22 @@ export async function addRoomParticipant(
         }
 
         if (alreadyExisted) {
-            logger.info(
+            // logger.info(
+            //     {
+            //         roomId,
+            //         registrantId,
+            //     },
+            //     "Registrant is already connected to the room, kicking from previous session"
+            // );
+            // await kickRegistrantFromRoom(logger, roomId, registrantId, identifier, true);
+
+            logger.warn(
                 {
                     roomId,
                     registrantId,
                 },
-                "Registrant is already connected to the room, kicking from previous session"
+                "Registrant is already connected to the room? Not kicking as that used to cause issues. Looks like Vonage probably failed to deliver a session monitoring call."
             );
-            await kickRegistrantFromRoom(logger, roomId, registrantId, identifier, true);
         } else {
             await redisClientP.expire(redisClient)(`RoomParticipants:${roomId}`, 2 * 60 * 60);
         }

@@ -1,6 +1,6 @@
-import { Request, RequestHandler } from "express";
+import type { Request, RequestHandler } from "express";
 import { expressjwt as jwt } from "express-jwt";
-import { Jwt, Secret } from "jsonwebtoken";
+import type { Jwt, Secret } from "jsonwebtoken";
 import jwksRsa from "jwks-rsa";
 
 // Authorization middleware. When used, the

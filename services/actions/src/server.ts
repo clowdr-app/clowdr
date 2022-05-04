@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
+import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
 import type { invitationConfirmCurrentArgs } from "@midspace/hasura/action-types";
 import { requestId } from "@midspace/server-utils/middlewares/request-id";
 import assert from "assert";
@@ -134,18 +135,27 @@ app.use(checkEventSecret);
 
 const jsonParser = json();
 
-app.post("/invitation/confirm/current", jsonParser, checkJwt, async (req: Request, res: Response) => {
-    const params: invitationConfirmCurrentArgs = req.body.input;
-    req.log.info({ params }, "Invitation/confirm/current");
-    try {
-        const result = await invitationConfirmCurrentHandler(req.log, params, (req as any).user.sub);
-        return res.json(result);
-    } catch (e: any) {
-        req.log.error({ err: e }, "Failure while processing /invitation/confirm/current");
-        res.status(500).json("Failure");
-        return;
+app.post(
+    "/invitation/confirm/current",
+    jsonParser,
+    checkJwt,
+    parseSessionVariables,
+    async (req: Request, res: Response) => {
+        const params: invitationConfirmCurrentArgs = req.body.input;
+        req.log.info({ params }, "Invitation/confirm/current");
+        try {
+            if (!req.userId) {
+                throw new Error("Missing userId");
+            }
+            const result = await invitationConfirmCurrentHandler(req.log, params, req.userId);
+            return res.json(result);
+        } catch (e: any) {
+            req.log.error({ err: e }, "Failure while processing /invitation/confirm/current");
+            res.status(500).json("Failure");
+            return;
+        }
     }
-});
+);
 
 app.use(errorHandler);
 

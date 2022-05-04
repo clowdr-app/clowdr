@@ -69,9 +69,9 @@ app.use(
         serializers: {
             req: pino.stdSerializers.wrapRequestSerializer((r) => {
                 const headers = { ...r.headers };
-                delete headers["authorization"];
-                delete headers["x-hasura-admin-secret"];
-                delete headers["x-hasura-event-secret"];
+                headers["authorization"] = Boolean(headers["authorization"]).toString();
+                headers["x-hasura-admin-secret"] = Boolean(headers["x-hasura-admin-secret"]).toString();
+                headers["x-hasura-event-secret"] = Boolean(headers["x-hasura-event-secret"]).toString();
                 const s = {
                     ...r,
                     headers,

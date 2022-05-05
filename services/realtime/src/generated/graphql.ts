@@ -24731,6 +24731,8 @@ export type Registrant_Registrant = {
     invitationStatus?: Maybe<Scalars["jsonb"]>;
     /** A computed field, executes function "registrant.HasBeenInvited" */
     inviteSent?: Maybe<Scalars["Boolean"]>;
+    /** A computed field, executes function "registrant.isProgramPerson" */
+    isProgramPerson?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
     profile?: Maybe<Registrant_Profile>;
     /** An array relationship */
@@ -25002,6 +25004,7 @@ export type Registrant_Registrant_Bool_Exp = {
     invitation?: InputMaybe<Registrant_Invitation_Bool_Exp>;
     invitationStatus?: InputMaybe<Jsonb_Comparison_Exp>;
     inviteSent?: InputMaybe<Boolean_Comparison_Exp>;
+    isProgramPerson?: InputMaybe<Boolean_Comparison_Exp>;
     profile?: InputMaybe<Registrant_Profile_Bool_Exp>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
     subconferenceMemberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
@@ -25115,6 +25118,7 @@ export type Registrant_Registrant_Order_By = {
     invitation?: InputMaybe<Registrant_Invitation_Order_By>;
     invitationStatus?: InputMaybe<Order_By>;
     inviteSent?: InputMaybe<Order_By>;
+    isProgramPerson?: InputMaybe<Order_By>;
     profile?: InputMaybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     subconferenceMemberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
@@ -39590,7 +39594,12 @@ export type RegistrantIdsFromChatsAndUsersQueryVariables = Exact<{
 
 export type RegistrantIdsFromChatsAndUsersQuery = {
     __typename?: "query_root";
-    registrant_Registrant: Array<{ __typename?: "registrant_Registrant"; id: any; userId?: string | null }>;
+    registrant_Registrant: Array<{
+        __typename?: "registrant_Registrant";
+        id: any;
+        userId?: string | null;
+        conference: { __typename?: "conference_Conference"; chats: Array<{ __typename?: "chat_Chat"; id: any }> };
+    }>;
 };
 
 export type InsertReadUpToIndexMutationVariables = Exact<{
@@ -42136,6 +42145,56 @@ export const RegistrantIdsFromChatsAndUsersDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "userId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "conference" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "chats" },
+                                                arguments: [
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "where" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "id" },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_in" },
+                                                                                value: {
+                                                                                    kind: "Variable",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "chatIds",
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
                             ],
                         },
                     },

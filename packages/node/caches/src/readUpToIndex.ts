@@ -146,7 +146,7 @@ export class ReadUpToIndexCache {
         try {
             const redisClient = await redisClientPool.acquire("caches/readUpToIndex.setField");
             try {
-                redisClientP.sadd(redisClient)(this.modifiedSetKey, `${id}¦${field}¦${value}`);
+                await redisClientP.sadd(redisClient)(this.modifiedSetKey, `${id}¦${field}`);
             } finally {
                 redisClientPool.release("caches/readUpToIndex.setField", redisClient);
             }
@@ -190,14 +190,25 @@ export class ReadUpToIndexCache {
                 multi = multi.del(this.modifiedSetKey);
                 const results: any[] = await promisify((cb: Callback<any[]>) => multi.exec(cb))();
                 if (results && results[0] && results[0] instanceof Array) {
-                    return results[0].map((x: string) => {
-                        const parts = x.split("¦");
-                        return {
-                            chatId: parts[0],
-                            userId: parts[1],
-                            messageSId: parts[2],
-                        };
-                    });
+                    const output = await Promise.all(
+                        results[0].map(async (x: string) => {
+                            const parts = x.split("¦");
+                            const chatId = parts[0];
+                            const userId = parts[1];
+                            const cacheKey = this.cache.generateEntityKey(chatId);
+                            const messageSId = await redisClientP.hget(redisClient)(cacheKey, userId);
+                            if (messageSId) {
+                                return {
+                                    chatId,
+                                    userId,
+                                    messageSId,
+                                };
+                            }
+                            return null;
+                        })
+                    );
+                    const finalOutput = output.filter((x) => !!x) as NonNullable<typeof output[0]>[];
+                    return finalOutput;
                 }
             } finally {
                 redisClientPool.release("caches/readUpToIndex.getAndClearModified", redisClient);

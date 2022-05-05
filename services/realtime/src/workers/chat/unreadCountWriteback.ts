@@ -18,6 +18,11 @@ gql`
         registrant_Registrant(where: { userId: { _in: $userIds }, conference: { chats: { id: { _in: $chatIds } } } }) {
             id
             userId
+            conference {
+                chats(where: { id: { _in: $chatIds } }) {
+                    id
+                }
+            }
         }
     }
 
@@ -59,7 +64,9 @@ async function Main(continueExecuting = false) {
                     .mutation(InsertReadUpToIndexDocument, {
                         objects: indicesToWriteBack
                             .map((x) => {
-                                const registrantId = data.registrant_Registrant.find((y) => y.userId === x.userId)?.id;
+                                const registrantId = data.registrant_Registrant.find(
+                                    (y) => y.userId === x.userId && y.conference.chats.some((z) => z.id === x.chatId)
+                                )?.id;
                                 if (registrantId) {
                                     const r: Chat_ReadUpToIndex_Insert_Input = {
                                         registrantId,

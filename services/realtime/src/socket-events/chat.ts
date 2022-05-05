@@ -12,9 +12,9 @@ import { onRequestUnreadCount, onSetReadUpToIndex } from "../socket-handlers/cha
 
 export function onConnect(socket: Socket, userId: string): void {
     const socketId = socket.id;
-    redisClientPool.acquire("socket-events/chat/onConnect").then((redisClient) => {
+    redisClientPool.acquire("socket-events/chat/onConnect").then(async (redisClient) => {
         try {
-            redisClientP.setForever(redisClient)(socketUserKeyName(socketId), userId);
+            await redisClientP.setForever(redisClient)(socketUserKeyName(socketId), userId);
         } finally {
             redisClientPool.release("socket-events/chat/onConnect", redisClient);
         }

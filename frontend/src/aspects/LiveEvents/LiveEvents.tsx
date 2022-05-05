@@ -25,6 +25,26 @@ const refetchEventsInterval = 30 * 60 * 1000;
 export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
     const { conferenceId } = useAuthParameters();
 
+    if (conferenceId && conferenceId !== "NONE") {
+        return <LiveEventsProviderInner>{children}</LiveEventsProviderInner>;
+    }
+    return <LiveEventsProviderNoConfInner>{children}</LiveEventsProviderNoConfInner>;
+}
+
+function LiveEventsProviderNoConfInner({ children }: React.PropsWithChildren<any>): JSX.Element {
+    const ctx = useMemo<LiveEventsContext>(
+        () => ({
+            liveEvents: [],
+            upcomingEvents: [],
+        }),
+        []
+    );
+    return <context.Provider value={ctx}>{children}</context.Provider>;
+}
+
+function LiveEventsProviderInner({ children }: React.PropsWithChildren<any>): JSX.Element {
+    const { conferenceId } = useAuthParameters();
+
     const nowSlow = useRealTime(refetchEventsInterval);
     // Load events from the nearest N-minute boundary onwards
     // Note: Rounding is necessary to ensure a consistent time string is sent to the Query hook

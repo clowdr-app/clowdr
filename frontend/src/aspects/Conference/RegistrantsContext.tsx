@@ -189,7 +189,7 @@ export default function RegistrantsContextProvider({
     }, [conferenceId]);
 
     useEffect(() => {
-        if (!currentUser.user || !conferenceId) {
+        if (!currentUser.user || !conferenceId || conferenceId === "NONE") {
             return;
         }
 

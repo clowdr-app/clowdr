@@ -122,9 +122,8 @@ export function Markdown(elProps?: {
 }): JSX.Element {
     const source = useMemo(() => {
         const linkified = elProps?.autoLinkify ? autoLinkify(elProps?.children ?? "") : elProps?.children ?? "";
-        const cleanLines = linkified.replace(/\r/g, "").replace(/\n\n+/g, "\n");
-        const relined = cleanLines.replace(/\n/g, "\n\n");
-        return relined;
+        const cleanLines = linkified.replace(/\r/g, "");
+        return cleanLines;
     }, [elProps?.autoLinkify, elProps?.children]);
     return (
         <ReactMarkdown
@@ -255,7 +254,7 @@ export function Markdown(elProps?: {
                     const youtubeVideoId = parseYouTubeURL(props.src ?? "");
                     if (youtubeVideoId) {
                         return (
-                            <AspectRatio w="min(100%, 90vh * (16 / 9))" maxW="100%" ratio={16 / 9}>
+                            <AspectRatio my={6} w="min(100%, 90vh * (16 / 9))" maxW="100%" ratio={16 / 9}>
                                 <ReactPlayer
                                     className="video-player"
                                     width=""
@@ -276,14 +275,14 @@ export function Markdown(elProps?: {
                     return <ListItem {...props} />;
                 },
                 ol({ node: _node, ...props }) {
-                    return <OrderedList pl={4} mb={2} {...props} />;
+                    return <OrderedList pl={4} my={2} {...props} />;
                 },
                 p({ node: _node, ...props }) {
-                    return <Text mb={2} whiteSpace="normal" wordBreak="break-word" w="100%" {...props} />;
+                    return <Text my={2} whiteSpace="normal" wordBreak="break-word" w="100%" {...props} />;
                 },
 
                 ul({ node: _node, ...props }) {
-                    return <UnorderedList pl={4} mb={2} {...props} />;
+                    return <UnorderedList pl={4} my={2} {...props} />;
                 },
             }}
         >

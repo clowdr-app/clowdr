@@ -431,7 +431,7 @@ function PeopleEditor({
                         .map(
                             (x) =>
                                 x.eventPerson ?? {
-                                    personId: x.itemPerson.id,
+                                    personId: x.itemPerson.personId,
                                     roleName:
                                         mapItemPersonRoleToEventPersonRole(x.itemPerson.roleName) ??
                                         mapItemPersonRoleToEventPersonRole(defaultRole) ??
@@ -549,7 +549,10 @@ function PeopleEditor({
                 {mergedPeople.map((person, idx) => (
                     <ListItem
                         key={
-                            "person-" + idx + "-" + (person.eventPerson?.personId ?? person.itemPerson?.id ?? "unknown")
+                            "person-" +
+                            idx +
+                            "-" +
+                            (person.eventPerson?.personId ?? person.itemPerson?.personId ?? "unknown")
                         }
                     >
                         <Flex w="100%">

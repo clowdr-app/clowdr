@@ -10,7 +10,8 @@ import type { ScheduleEditorRecord } from "./ScheduleEditorRecord";
 
 export default function HeaderControls(
     onCreateSession: (initial?: DeepPartial<ScheduleEditorRecord>) => void,
-    onCreateSessionForExistingContent: (typeDisplayName: string, typeNames: Content_ItemType_Enum[]) => void
+    onCreateSessionForExistingContent: (typeDisplayName: string, typeNames: Content_ItemType_Enum[]) => void,
+    onCreateSessionForExistingExhibition: (typeDisplayName: string) => void
 ): React.ReactChild[] {
     const history = useHistory();
     const { conferencePath } = useAuthParameters();
@@ -94,6 +95,13 @@ export default function HeaderControls(
                         }}
                     >
                         Add session for existing content
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            onCreateSessionForExistingExhibition("Existing exhibition");
+                        }}
+                    >
+                        Add session for existing exhibition
                     </MenuItem>
                     <MenuItem
                         onClick={() => {

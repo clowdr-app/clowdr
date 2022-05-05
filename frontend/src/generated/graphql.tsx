@@ -46771,6 +46771,20 @@ export type ManageSchedule_ListAllItemTitlesQuery = {
     }>;
 };
 
+export type ManageSchedule_ListAllExhibitionTitlesQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+}>;
+
+export type ManageSchedule_ListAllExhibitionTitlesQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_Exhibition: ReadonlyArray<{
+        readonly __typename?: "collection_Exhibition";
+        readonly id: any;
+        readonly name: string;
+    }>;
+};
+
 export type ManageSchedule_PersonFragment = {
     readonly __typename?: "collection_ProgramPerson";
     readonly id: any;
@@ -48756,6 +48770,65 @@ export type ManageSchedule_GetExistingItemQuery = {
                 readonly count: number;
             } | null;
         };
+    } | null;
+};
+
+export type ManageSchedule_GetExistingExhibitionQueryVariables = Exact<{
+    id: Scalars["uuid"];
+}>;
+
+export type ManageSchedule_GetExistingExhibitionQuery = {
+    readonly __typename?: "query_root";
+    readonly collection_Exhibition_by_pk?: {
+        readonly __typename?: "collection_Exhibition";
+        readonly id: any;
+        readonly name: string;
+        readonly descriptiveItem?: {
+            readonly __typename?: "content_Item";
+            readonly id: any;
+            readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
+            readonly room?: { readonly __typename?: "room_Room"; readonly id: any } | null;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
+                readonly id: any;
+                readonly tagId: any;
+            }>;
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly personId: any;
+                readonly roleName: string;
+                readonly priority?: number | null;
+            }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly name: string;
+                readonly data: any;
+                readonly layoutData?: any | null;
+                readonly typeName: Content_ElementType_Enum;
+                readonly uploadsRemaining?: number | null;
+                readonly isHidden: boolean;
+            }>;
+            readonly externalEventLink: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly name: string;
+                readonly data: any;
+                readonly layoutData?: any | null;
+                readonly typeName: Content_ElementType_Enum;
+                readonly uploadsRemaining?: number | null;
+                readonly isHidden: boolean;
+            }>;
+            readonly elements_aggregate: {
+                readonly __typename?: "content_Element_aggregate";
+                readonly aggregate?: {
+                    readonly __typename?: "content_Element_aggregate_fields";
+                    readonly count: number;
+                } | null;
+            };
+        } | null;
     } | null;
 };
 
@@ -56942,6 +57015,23 @@ export function useManageSchedule_ListAllItemTitlesQuery(
         ...options,
     });
 }
+export const ManageSchedule_ListAllExhibitionTitlesDocument = gql`
+    query ManageSchedule_ListAllExhibitionTitles($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }) {
+            id
+            name
+        }
+    }
+`;
+
+export function useManageSchedule_ListAllExhibitionTitlesQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_ListAllExhibitionTitlesQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_ListAllExhibitionTitlesQuery>({
+        query: ManageSchedule_ListAllExhibitionTitlesDocument,
+        ...options,
+    });
+}
 export const ManageSchedule_SearchPeopleDocument = gql`
     query ManageSchedule_SearchPeople($conferenceId: uuid!, $subconferenceId: uuid, $search: String!) {
         registrant_searchRegistrants(args: { conferenceid: $conferenceId, search: $search }, limit: 10) {
@@ -57892,6 +57982,30 @@ export function useManageSchedule_GetExistingItemQuery(
 ) {
     return Urql.useQuery<ManageSchedule_GetExistingItemQuery>({
         query: ManageSchedule_GetExistingItemDocument,
+        ...options,
+    });
+}
+export const ManageSchedule_GetExistingExhibitionDocument = gql`
+    query ManageSchedule_GetExistingExhibition($id: uuid!) {
+        collection_Exhibition_by_pk(id: $id) {
+            id
+            name
+            descriptiveItem {
+                ...ManageSchedule_EventContent
+                room {
+                    id
+                }
+            }
+        }
+    }
+    ${ManageSchedule_EventContentFragmentDoc}
+`;
+
+export function useManageSchedule_GetExistingExhibitionQuery(
+    options: Omit<Urql.UseQueryArgs<ManageSchedule_GetExistingExhibitionQueryVariables>, "query">
+) {
+    return Urql.useQuery<ManageSchedule_GetExistingExhibitionQuery>({
+        query: ManageSchedule_GetExistingExhibitionDocument,
         ...options,
     });
 }

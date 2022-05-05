@@ -28,6 +28,8 @@ import type {
     ManageSchedule_ElementFragment,
     ManageSchedule_GetAllSessionIdsQuery,
     ManageSchedule_GetAllSessionIdsQueryVariables,
+    ManageSchedule_GetExistingExhibitionQuery,
+    ManageSchedule_GetExistingExhibitionQueryVariables,
     ManageSchedule_GetExistingItemQuery,
     ManageSchedule_GetExistingItemQueryVariables,
     ManageSchedule_GetPotentiallyOverlappingEventsQuery,
@@ -51,6 +53,7 @@ import {
     Content_ElementType_Enum,
     Content_ItemType_Enum,
     ManageSchedule_GetAllSessionIdsDocument,
+    ManageSchedule_GetExistingExhibitionDocument,
     ManageSchedule_GetExistingItemDocument,
     ManageSchedule_GetPotentiallyOverlappingEventsDocument,
     ManageSchedule_InsertEventDocument,
@@ -75,6 +78,7 @@ import ContentPanel from "./Components/ContentPanel";
 import DeleteModal from "./Components/DeleteModal";
 import DetailsPanel from "./Components/DetailsPanel";
 import FindExistingContentModal from "./Components/FindExistingContentModal";
+import FindExistingExhibitionModal from "./Components/FindExistingExhibitionModal";
 import HeaderControls from "./Components/HeaderControls";
 import PeoplePanel, { mapItemPersonRoleToEventPersonRole } from "./Components/PeoplePanel";
 import type { ScheduleEditorRecord } from "./Components/ScheduleEditorRecord";
@@ -467,6 +471,19 @@ gql`
             }
         }
     }
+
+    query ManageSchedule_GetExistingExhibition($id: uuid!) {
+        collection_Exhibition_by_pk(id: $id) {
+            id
+            name
+            descriptiveItem {
+                ...ManageSchedule_EventContent
+                room {
+                    id
+                }
+            }
+        }
+    }
 `;
 
 export default function ManageScheduleV2(): JSX.Element {
@@ -475,16 +492,22 @@ export default function ManageScheduleV2(): JSX.Element {
     const deleteEventsDisclosure = useDisclosure();
     const shiftEventsDisclosure = useDisclosure();
     const addSessionForContentDisclosure = useDisclosure();
+    const addSessionForExhibitionDisclosure = useDisclosure();
 
     const [deleteEventIds, setDeleteEventIds] = useState<string[]>([]);
     const [deleteEventType, setDeleteEventType] = useState<"session" | "presentation">("session");
 
     const [shiftEventIds, setShiftEventIds] = useState<string[]>([]);
 
+    const [addSessionOrPresentation, setAddSessionOrPresentation] = useState<"session" | "presentation">("session");
+
     const [addSessionForContentTypeDisplayName, setAddSessionForContentTypeDisplayName] = useState<string>("");
     const [addSessionForContentTypeNames, setAddSessionForContentTypeNames] = useState<Content_ItemType_Enum[]>([]);
-    const [addSessionOrPresentation, setAddSessionOrPresentation] = useState<"session" | "presentation">("session");
     const [addForExistingContentSession, setAddForExistingContentSession] =
+        useState<ManageSchedule_SessionFragment | null>(null);
+
+    const [addSessionForExhibitionTypeDisplayName, setAddSessionForExhibitionTypeDisplayName] = useState<string>("");
+    const [addForExistingExhibitionSession, setAddForExistingExhibitionSession] =
         useState<ManageSchedule_SessionFragment | null>(null);
 
     const [initialStepIdx, setInitialStepIdx] = useState<number>(0);
@@ -548,7 +571,76 @@ export default function ManageScheduleV2(): JSX.Element {
 
             const item = itemResponse.data?.content_Item_by_pk;
             setCurrentRecord({
-                name: item ? item.title + " - Sponsored session" : undefined,
+                name: item
+                    ? item.typeName === Content_ItemType_Enum.Sponsor
+                        ? item.title + " - Sponsored session"
+                        : item.title
+                    : undefined,
+                item:
+                    item?.typeName === Content_ItemType_Enum.Sponsor
+                        ? item
+                            ? {
+                                  title: item.title + " - Sponsored session",
+                                  typeName: Content_ItemType_Enum.Session,
+                                  itemPeople: item.itemPeople.map((person) => ({
+                                      personId: person.personId,
+                                      priority: person.priority,
+                                      roleName: person.roleName,
+                                  })),
+                                  itemTags: item.itemTags.map((tag) => ({
+                                      tagId: tag.tagId,
+                                  })),
+                              }
+                            : undefined
+                        : item,
+                sessionEventId: session?.id,
+                roomId:
+                    session?.roomId ?? (item?.typeName === Content_ItemType_Enum.Sponsor ? item.room?.id : undefined),
+                eventPeople: item
+                    ? item.itemPeople.map((x) => ({
+                          personId: x.personId,
+                          roleName: mapItemPersonRoleToEventPersonRole(x.roleName),
+                      }))
+                    : [],
+            });
+            setInitialStepIdx(0);
+            setEditorIsCreate(true);
+            setTimeout(() => {
+                editorDisclosure.onOpen();
+            }, 50);
+        },
+        [client, context, editorDisclosure]
+    );
+    const onBeginCreateSessionForExistingExhibition = useCallback(
+        (typeDisplayName: string) => {
+            setAddSessionForExhibitionTypeDisplayName(typeDisplayName);
+            setAddSessionOrPresentation("session");
+            setAddForExistingExhibitionSession(null);
+            addSessionForExhibitionDisclosure.onOpen();
+        },
+        [addSessionForExhibitionDisclosure]
+    );
+    const onDoCreateSessionForExistingExhibition = useCallback(
+        async (exhibitionId: string, session: ManageSchedule_SessionFragment | null) => {
+            const itemResponse = await client
+                .query<ManageSchedule_GetExistingExhibitionQuery, ManageSchedule_GetExistingExhibitionQueryVariables>(
+                    ManageSchedule_GetExistingExhibitionDocument,
+                    {
+                        id: exhibitionId,
+                    },
+                    context
+                )
+                .toPromise();
+
+            const exhibition = itemResponse.data?.collection_Exhibition_by_pk;
+            const item = exhibition?.descriptiveItem;
+            setCurrentRecord({
+                exhibitionId,
+                name: item
+                    ? item?.typeName === Content_ItemType_Enum.Sponsor
+                        ? item.title + " - Sponsored session"
+                        : item.title
+                    : undefined,
                 item:
                     item?.typeName === Content_ItemType_Enum.Sponsor
                         ? item
@@ -613,7 +705,11 @@ export default function ManageScheduleV2(): JSX.Element {
     const onExportSessions = useCallback((_ids: string[]) => {
         // TODO:
     }, []);
-    const headerControls = HeaderControls(onCreateSession, onBeginCreateSessionForExistingContent);
+    const headerControls = HeaderControls(
+        onCreateSession,
+        onBeginCreateSessionForExistingContent,
+        onBeginCreateSessionForExistingExhibition
+    );
 
     const onCreatePresentation = useCallback(
         (session: ManageSchedule_SessionFragment) => {
@@ -1520,6 +1616,17 @@ ${elementStates.map((st, idx) => `[${idx}] ${st === "no error" ? "No error" : st
                 sessionOrPresentation={addSessionOrPresentation}
                 typeDisplayName={addSessionForContentTypeDisplayName}
                 typeNames={addSessionForContentTypeNames}
+            />
+            <FindExistingExhibitionModal
+                isOpen={addSessionForExhibitionDisclosure.isOpen}
+                onClose={(id) => {
+                    if (id) {
+                        onDoCreateSessionForExistingExhibition(id, addForExistingExhibitionSession);
+                    }
+                    addSessionForExhibitionDisclosure.onClose();
+                }}
+                sessionOrPresentation={addSessionOrPresentation}
+                typeDisplayName={addSessionForExhibitionTypeDisplayName}
             />
         </DashboardPage>
     );

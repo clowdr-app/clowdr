@@ -130,7 +130,14 @@ export function RoomContent({
                         {currentRoomEvent.modeName !== Schedule_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
                             <ItemElementsWrapper itemId={currentRoomEvent.itemId} noHeading />
                         ) : undefined}
-                        {currentRoomEvent.item ? (
+                        {currentRoomEvent.exhibitionId ? (
+                            <LinkButton
+                                linkProps={{ target: "_blank" }}
+                                to={`${conferencePath}/exhibition/${currentRoomEvent.exhibitionId}`}
+                            >
+                                Find out more
+                            </LinkButton>
+                        ) : currentRoomEvent.item ? (
                             <LinkButton
                                 linkProps={{ target: "_blank" }}
                                 to={`${conferencePath}/item/${currentRoomEvent.item.id}`}
@@ -183,8 +190,15 @@ export function RoomContent({
                             : []
                     }
                 >
-                    {nextRoomEvent?.itemId ? <ItemElementsWrapper itemId={nextRoomEvent.itemId} noHeading /> : <></>}
-                    {nextRoomEvent.item ? (
+                    {nextRoomEvent.itemId ? <ItemElementsWrapper itemId={nextRoomEvent.itemId} noHeading /> : <></>}
+                    {nextRoomEvent.exhibitionId ? (
+                        <LinkButton
+                            linkProps={{ target: "_blank" }}
+                            to={`${conferencePath}/exhibition/${nextRoomEvent.exhibitionId}`}
+                        >
+                            Find out more
+                        </LinkButton>
+                    ) : nextRoomEvent.item ? (
                         <LinkButton
                             linkProps={{ target: "_blank" }}
                             to={`${conferencePath}/item/${nextRoomEvent.item.id}`}

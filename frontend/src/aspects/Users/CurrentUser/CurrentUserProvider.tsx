@@ -36,7 +36,7 @@ gql`
         acceptedPrivacyPolicyAt
     }
 
-    query SelectCurrentUser($userId: String!) @cached {
+    query SelectCurrentUser($userId: String!, $refresh: Boolean!) @cached(refresh: $refresh) {
         User_by_pk(id: $userId) {
             ...UserInfo
         }
@@ -123,18 +123,23 @@ function CurrentUserProvider_IsAuthenticated({
             }),
         []
     );
+    const [refreshCurrentUser, setRefreshCurrentUser] = useState<boolean>(false);
     const [{ fetching: loading, error, data }, refreshSelectCurrentUser] = useSelectCurrentUserQuery({
         variables: {
             userId,
+            refresh: refreshCurrentUser,
         },
         context,
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
     // TODO: remove this hack once the cache is fixed to immediately reflect result of the `AgreeToTerms` mutation.
     const forceRefresh = useCallback(() => {
-        refreshSelectCurrentUser({
-            requestPolicy: "network-only",
-        });
+        setRefreshCurrentUser(true);
+        setTimeout(() => {
+            refreshSelectCurrentUser({
+                requestPolicy: "network-only",
+            });
+        }, 10);
     }, [refreshSelectCurrentUser]);
 
     const [{ fetching: termsLoading, data: termsData }] = useTermsConfigsQuery();

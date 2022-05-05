@@ -50533,6 +50533,7 @@ export type UserInfoFragment = {
 
 export type SelectCurrentUserQueryVariables = Exact<{
     userId: Scalars["String"];
+    refresh: Scalars["Boolean"];
 }>;
 
 export type SelectCurrentUserQuery = {
@@ -58915,7 +58916,7 @@ export function useDeleteSystemConfigurationsMutation() {
     );
 }
 export const SelectCurrentUserDocument = gql`
-    query SelectCurrentUser($userId: String!) @cached {
+    query SelectCurrentUser($userId: String!, $refresh: Boolean!) @cached(refresh: $refresh) {
         User_by_pk(id: $userId) {
             ...UserInfo
         }

@@ -278,16 +278,18 @@ ${((presentationStartMs - sessionStart.getTime()) / (60 * 1000)).toFixed(1)} min
                           context
                       )
                     : []),
-                ...generateEventEntities(
-                    presentation.event,
-                    composeOutputNames(presentationOutputName, "event"),
-                    presentationContentOutputName,
-                    sessionExhibitionOutputName,
-                    sessionEventOutputName,
-                    roomOutputName,
-                    options,
-                    context
-                ),
+                ...((session.event.interactionMode ?? options.defaultEventMode) !== "breakout video-chat"
+                    ? generateEventEntities(
+                          presentation.event,
+                          composeOutputNames(presentationOutputName, "event"),
+                          presentationContentOutputName,
+                          sessionExhibitionOutputName,
+                          sessionEventOutputName,
+                          roomOutputName,
+                          options,
+                          context
+                      )
+                    : []),
             ];
         })
     );

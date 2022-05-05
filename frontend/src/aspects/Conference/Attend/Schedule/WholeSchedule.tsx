@@ -1,4 +1,4 @@
-import { Heading, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from "@chakra-ui/react";
+import { Heading, Tab, TabList, TabPanel, TabPanels, Tabs, Text, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { useRestorableState } from "../../../Hooks/useRestorableState";
@@ -41,6 +41,7 @@ export default function WholeSchedule(): JSX.Element {
         <VStack spacing={4} w="100%" alignItems="flex-start" p={[0, 2, 4]}>
             {title}
             <Heading as="h2">Schedule</Heading>
+            <Text>The schedule is in your local timezone according to your computer&apos;s settings.</Text>
             {sortedSubconferences.length > 0 ? (
                 <Tabs
                     isLazy

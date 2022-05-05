@@ -1,4 +1,4 @@
-import { Box, Flex, useColorModeValue, useDisclosure, useToken } from "@chakra-ui/react";
+import { Box, Flex, Text, useColorModeValue, useDisclosure, useToken } from "@chakra-ui/react";
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -160,6 +160,9 @@ export default function LeftMenu({
                     noOverflowY
                     noPadding
                 >
+                    <Text p={2}>
+                        The schedule is in your local timezone according to your computer&apos;s settings.
+                    </Text>
                     <Schedule />
                 </Pullout>
                 <Pullout

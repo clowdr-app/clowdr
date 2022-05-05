@@ -36,6 +36,7 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import type { ThemeTypings } from "@chakra-ui/react";
 import {
     AspectRatio,
+    chakra,
     Code,
     Divider,
     Heading,
@@ -149,18 +150,18 @@ export function Markdown(elProps?: {
                     );
                 },
                 blockquote({ node: _node, ...props }) {
-                    return <Code p={2} {...props} />;
+                    return <Code my={4} p={2} {...props} />;
                 },
                 code({ node: _node, ...props }) {
                     // TODO: add code highlighting
                     // const { language, value } = props;
                     // const className = language && `language-${language}`;
                     return (
-                        <pre {...getCoreProps(props)}>
+                        <chakra.pre py={4} {...getCoreProps(props)}>
                             <Code p={2} {...props} /*className={className || null}*/>
                                 {props.children}
                             </Code>
-                        </pre>
+                        </chakra.pre>
                     );
                 },
                 del({ node: _node, ...props }) {
@@ -172,7 +173,8 @@ export function Markdown(elProps?: {
                 h1({ node: _node, ...props }) {
                     return (
                         <Heading
-                            my={4}
+                            pt={6}
+                            pb={4}
                             textAlign="left"
                             as="h1"
                             size={getHeadingSize(1, Boolean(elProps?.restrictHeadingSize))}
@@ -185,7 +187,8 @@ export function Markdown(elProps?: {
                 h2({ node: _node, ...props }) {
                     return (
                         <Heading
-                            my={4}
+                            pt={6}
+                            pb={4}
                             textAlign="left"
                             as="h2"
                             size={getHeadingSize(2, Boolean(elProps?.restrictHeadingSize))}
@@ -198,7 +201,8 @@ export function Markdown(elProps?: {
                 h3({ node: _node, ...props }) {
                     return (
                         <Heading
-                            my={4}
+                            pt={6}
+                            pb={4}
                             textAlign="left"
                             as="h3"
                             size={getHeadingSize(3, Boolean(elProps?.restrictHeadingSize))}
@@ -211,7 +215,8 @@ export function Markdown(elProps?: {
                 h4({ node: _node, ...props }) {
                     return (
                         <Heading
-                            my={4}
+                            pt={6}
+                            pb={4}
                             textAlign="left"
                             as="h4"
                             size={getHeadingSize(4, Boolean(elProps?.restrictHeadingSize))}
@@ -224,7 +229,8 @@ export function Markdown(elProps?: {
                 h5({ node: _node, ...props }) {
                     return (
                         <Heading
-                            my={4}
+                            pt={6}
+                            pb={4}
                             textAlign="left"
                             as="h5"
                             size={getHeadingSize(5, Boolean(elProps?.restrictHeadingSize))}
@@ -237,7 +243,8 @@ export function Markdown(elProps?: {
                 h6({ node: _node, ...props }) {
                     return (
                         <Heading
-                            my={4}
+                            pt={6}
+                            pb={4}
                             textAlign="left"
                             as="h6"
                             size={getHeadingSize(6, Boolean(elProps?.restrictHeadingSize))}
@@ -248,13 +255,13 @@ export function Markdown(elProps?: {
                     );
                 },
                 hr({ node: _node, ...props }) {
-                    return <Divider borderColor="gray.400" variant="dashed" {...props} />;
+                    return <Divider my={2} borderColor="gray.400" variant="dashed" {...props} />;
                 },
                 img({ node: _node, children: _children, ...props }) {
                     const youtubeVideoId = parseYouTubeURL(props.src ?? "");
                     if (youtubeVideoId) {
                         return (
-                            <AspectRatio my={6} w="min(100%, 90vh * (16 / 9))" maxW="100%" ratio={16 / 9}>
+                            <AspectRatio py={6} w="min(100%, 90vh * (16 / 9))" maxW="100%" ratio={16 / 9}>
                                 <ReactPlayer
                                     className="video-player"
                                     width=""
@@ -275,14 +282,14 @@ export function Markdown(elProps?: {
                     return <ListItem {...props} />;
                 },
                 ol({ node: _node, ...props }) {
-                    return <OrderedList pl={4} my={2} {...props} />;
+                    return <OrderedList pl={4} py={2} {...props} />;
                 },
                 p({ node: _node, ...props }) {
-                    return <Text my={2} whiteSpace="normal" wordBreak="break-word" w="100%" {...props} />;
+                    return <Text py={2} whiteSpace="normal" wordBreak="break-word" w="100%" {...props} />;
                 },
 
                 ul({ node: _node, ...props }) {
-                    return <UnorderedList pl={4} my={2} {...props} />;
+                    return <UnorderedList pl={4} py={2} {...props} />;
                 },
             }}
         >

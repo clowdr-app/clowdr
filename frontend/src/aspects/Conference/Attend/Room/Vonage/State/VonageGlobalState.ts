@@ -54,7 +54,7 @@ export interface TranscriptData {
 }
 
 export interface Events {
-    "video-playback-signal-received": VonageVideoPlaybackCommandSignal;
+    "video-playback-signal-received": (signal: VonageVideoPlaybackCommandSignal, sessionId: string) => void;
     "streams-changed": (streams: OT.Stream[]) => void;
     "connections-changed": (connections: OT.Connection[]) => void;
     "session-connected": (isConnected: boolean) => void;
@@ -990,8 +990,10 @@ export class VonageGlobalState extends EventEmitter<Events> {
         try {
             const signal = vonageVideoPlaybackCommandSignal.parse(data);
 
-            if (this.state.type === StateType.Initialised || this.state.type === StateType.Connected) {
-                this.emit("video-playback-signal-received", signal);
+            if (this.state.type === StateType.Initialised) {
+                this.emit("video-playback-signal-received", signal, this.state.sessionId);
+            } else if (this.state.type === StateType.Connected) {
+                this.emit("video-playback-signal-received", signal, this.state.session.sessionId);
             }
         } catch (e) {
             console.error("VonageGlobalState: onVideoPlaybackSignalReceived failure", e);

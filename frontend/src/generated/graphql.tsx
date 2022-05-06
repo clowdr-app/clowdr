@@ -42266,6 +42266,7 @@ export type VonageVideoPlaybackContext_GetLatestCommandQuery = {
         readonly command: any;
         readonly createdByRegistrantId?: any | null;
         readonly createdAt: any;
+        readonly vonageSessionId: string;
     }>;
 };
 
@@ -53860,6 +53861,7 @@ export const VonageVideoPlaybackContext_GetLatestCommandDocument = gql`
             command
             createdByRegistrantId
             createdAt
+            vonageSessionId
         }
     }
 `;

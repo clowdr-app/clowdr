@@ -46,6 +46,7 @@ gql`
             command
             createdByRegistrantId
             createdAt
+            vonageSessionId
         }
     }
 `;
@@ -57,7 +58,7 @@ type Props = {
 
 function parseStoredCommand(
     result: VonageVideoPlaybackContext_GetLatestCommandQuery
-): VonageVideoPlaybackCommandSignal | undefined {
+): [signal: VonageVideoPlaybackCommandSignal, vonageSessionId: string] | undefined {
     const latestStored = R.last(result.video_VonageVideoPlaybackCommand);
     if (!latestStored) {
         return undefined;
@@ -66,11 +67,14 @@ function parseStoredCommand(
     if (!command.success) {
         return undefined;
     }
-    return {
-        command: command.data,
-        createdAtMillis: Date.parse(latestStored.createdAt),
-        createdByRegistrantId: latestStored.createdByRegistrantId,
-    };
+    return [
+        {
+            command: command.data,
+            createdAtMillis: Date.parse(latestStored.createdAt),
+            createdByRegistrantId: latestStored.createdByRegistrantId,
+        },
+        latestStored.vonageSessionId,
+    ];
 }
 
 function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
@@ -134,27 +138,38 @@ function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
         requestPolicy: "network-only",
     });
 
-    const [latestCommand, setLatestCommand] = useState<VonageVideoPlaybackCommandSignal>();
+    const [latestCommandData, setLatestCommandData] = useState<
+        [signal: VonageVideoPlaybackCommandSignal, vonageSessionId: string] | null
+    >(null);
     useEffect(() => {
-        if (!latestCommandResult.data) {
+        setLatestCommandData(null);
+    }, [vonageSessionId]);
+    useEffect(() => {
+        if (!connected || !latestCommandResult.data) {
             return;
         }
         const storedCommand = parseStoredCommand(latestCommandResult.data);
         if (!storedCommand) {
             return;
         }
-        if (!latestCommand || storedCommand.createdAtMillis > latestCommand.createdAtMillis) {
-            setLatestCommand(storedCommand);
+        if (
+            vonageSessionId === storedCommand[1] &&
+            (!latestCommandData || storedCommand[0].createdAtMillis > latestCommandData[0].createdAtMillis)
+        ) {
+            setLatestCommandData(storedCommand);
         }
-    }, [latestCommand, latestCommandResult.data]);
+    }, [connected, latestCommandData, latestCommandResult.data, vonageSessionId]);
 
     const receivedCommand = useCallback(
-        (command: VonageVideoPlaybackCommandSignal) => {
-            if (!latestCommand || command.createdAtMillis > latestCommand.createdAtMillis) {
-                setLatestCommand(command);
+        (command: VonageVideoPlaybackCommandSignal, commandVonageSessionId: string) => {
+            if (
+                vonageSessionId === commandVonageSessionId &&
+                (!latestCommandData || command.createdAtMillis > latestCommandData[0]?.createdAtMillis)
+            ) {
+                setLatestCommandData([command, vonageSessionId]);
             }
         },
-        [latestCommand]
+        [latestCommandData, vonageSessionId]
     );
 
     const vonage = useVonageGlobalState();
@@ -171,9 +186,10 @@ function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
 
     const [{ data, error: queryError }] = useVonageVideoPlaybackContext_GetElementQuery({
         variables: {
-            elementId: latestCommand?.command?.type === "video" ? latestCommand.command.elementId : null,
+            elementId:
+                latestCommandData?.[0]?.command?.type === "video" ? latestCommandData[0].command.elementId : null,
         },
-        pause: latestCommand?.command?.type !== "video",
+        pause: latestCommandData?.[0]?.command?.type !== "video",
     });
 
     const { mediaElementBlob, error: parseBlobError } = parseMediaElement(data?.content_Element_by_pk ?? undefined);
@@ -199,6 +215,8 @@ function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
         }),
         [parseBlobError, queryError, subtitles?.error, video?.error]
     );
+
+    const latestCommand = useMemo(() => latestCommandData?.[0] ?? null, [latestCommandData]);
 
     return {
         receivedCommand,

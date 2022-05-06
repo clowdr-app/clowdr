@@ -85,7 +85,7 @@ function ElementInner({
                 );
             case Content_ElementType_Enum.Text:
                 return (
-                    <Container width="100%" maxW="50em" mx={0}>
+                    <Container width="100%" maxW="100%" mx={0}>
                         <Markdown>{latestVersion.data.text}</Markdown>
                     </Container>
                 );

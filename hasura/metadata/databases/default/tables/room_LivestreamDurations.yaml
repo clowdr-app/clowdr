@@ -1,53 +1,53 @@
 table:
-  name: LivestreamDurations
   schema: room
+  name: LivestreamDurations
 object_relationships:
-- name: conference
-  using:
-    manual_configuration:
-      column_mapping:
-        conferenceId: id
-      insertion_order: null
-      remote_table:
-        name: Conference
-        schema: conference
-- name: room
-  using:
-    manual_configuration:
-      column_mapping:
-        roomId: id
-      insertion_order: null
-      remote_table:
-        name: Room
-        schema: room
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        insertion_order: null
+        column_mapping:
+          conferenceId: id
+  - name: room
+    using:
+      manual_configuration:
+        remote_table:
+          schema: room
+          name: Room
+        insertion_order: null
+        column_mapping:
+          roomId: id
 select_permissions:
-- permission:
-    columns:
-    - conferenceId
-    - roomId
-    - sum
-    - subconferenceId
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - roomId
-    - sum
-    - subconferenceId
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - roomId
+        - sum
+        - subconferenceId
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - roomId
+        - sum
+        - subconferenceId
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids

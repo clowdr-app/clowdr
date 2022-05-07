@@ -1,97 +1,102 @@
 table:
-  name: PublishVideoJob
   schema: job_queues
-configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
-  custom_root_fields: {}
-object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: element
-  using:
-    foreign_key_constraint_on: elementId
-insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-    columns:
-    - conferenceId
-    - elementId
-    - subconferenceId
-  role: conference-organizer
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-    columns:
-    - conferenceId
-    - elementId
-    - conferenceId
-  role: subconference-organizer
-select_permissions:
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - elementId
-    - id
-    - jobStatusName
-    - subconferenceId
-    - updated_at
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - elementId
-    - id
-    - jobStatusName
-    - subconferenceId
-    - updated_at
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-event_triggers:
-- definition:
-    enable_manual: true
-    insert:
-      columns: "*"
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
   name: PublishVideoJob
-  retry_conf:
-    interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
-  webhook: "{{ACTION_BASE_URL}}/publishVideoJob/created"
+configuration:
+  custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
+object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: element
+    using:
+      foreign_key_constraint_on: elementId
+insert_permissions:
+  - role: conference-organizer
+    permission:
+      check:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+      columns:
+        - conferenceId
+        - elementId
+        - subconferenceId
+      backend_only: false
+  - role: subconference-organizer
+    permission:
+      check:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      columns:
+        - conferenceId
+        - elementId
+        - conferenceId
+      backend_only: false
+select_permissions:
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - elementId
+        - id
+        - jobStatusName
+        - subconferenceId
+        - updated_at
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - elementId
+        - id
+        - jobStatusName
+        - subconferenceId
+        - updated_at
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+event_triggers:
+  - name: PublishVideoJob
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/publishVideoJob/created'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET

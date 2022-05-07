@@ -1,81 +1,86 @@
 table:
-  name: VonageParticipantStream
   schema: video
+  name: VonageParticipantStream
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: eventVonageSession
-  using:
-    manual_configuration:
-      column_mapping:
-        vonageSessionId: sessionId
-      insertion_order: null
-      remote_table:
-        name: EventVonageSession
-        schema: video
-- name: registrant
-  using:
-    foreign_key_constraint_on: registrantId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: eventVonageSession
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: EventVonageSession
+        insertion_order: null
+        column_mapping:
+          vonageSessionId: sessionId
+  - name: registrant
+    using:
+      foreign_key_constraint_on: registrantId
 computed_fields:
-- definition:
-    function:
-      name: VonageParticipantStream_durationSeconds
-      schema: video
-  name: durationSeconds
+  - name: durationSeconds
+    definition:
+      function:
+        schema: video
+        name: VonageParticipantStream_durationSeconds
 select_permissions:
-- permission:
-    columns:
-    - conferenceId
-    - id
-    - registrantId
-    - updated_at
-    - vonageConnectionId
-    - vonageSessionId
-    - vonageStreamId
-    - vonageStreamType
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: attendee
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - id
-    - registrantId
-    - stopped_at
-    - updated_at
-    - vonageConnectionId
-    - vonageSessionId
-    - vonageStreamId
-    - vonageStreamType
-    computed_fields:
-    - durationSeconds
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - id
-    - registrantId
-    - stopped_at
-    - updated_at
-    - vonageConnectionId
-    - vonageSessionId
-    - vonageStreamId
-    - vonageStreamType
-    computed_fields:
-    - durationSeconds
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: subconference-organizer
+  - role: attendee
+    permission:
+      columns:
+        - conferenceId
+        - id
+        - registrantId
+        - updated_at
+        - vonageConnectionId
+        - vonageSessionId
+        - vonageStreamId
+        - vonageStreamType
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - id
+        - registrantId
+        - stopped_at
+        - updated_at
+        - vonageConnectionId
+        - vonageSessionId
+        - vonageStreamId
+        - vonageStreamType
+      computed_fields:
+        - durationSeconds
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - id
+        - registrantId
+        - stopped_at
+        - updated_at
+        - vonageConnectionId
+        - vonageSessionId
+        - vonageStreamId
+        - vonageStreamType
+      computed_fields:
+        - durationSeconds
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids

@@ -1,59 +1,59 @@
 table:
-  name: RtmpInput
   schema: video
+  name: RtmpInput
 is_enum: true
 select_permissions:
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: attendee
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: conference-organizer
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: room-admin
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: room-member
-- permission:
-    columns:
-    - name
-    - description
-    filter: {}
-  role: subconference-organizer
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: submitter
-- permission:
-    columns:
-    - name
-    - description
-    filter: {}
-  role: superuser
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: unauthenticated
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: user
+  - role: attendee
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: conference-organizer
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: room-admin
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: room-member
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: subconference-organizer
+    permission:
+      columns:
+        - name
+        - description
+      filter: {}
+  - role: submitter
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: superuser
+    permission:
+      columns:
+        - name
+        - description
+      filter: {}
+  - role: unauthenticated
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: user
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}

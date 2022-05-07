@@ -1,211 +1,216 @@
 table:
-  name: Tag
   schema: collection
+  name: Tag
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
 array_relationships:
-- name: itemTags
-  using:
-    foreign_key_constraint_on:
-      column: tagId
-      table:
-        name: ItemTag
-        schema: content
+  - name: itemTags
+    using:
+      foreign_key_constraint_on:
+        column: tagId
+        table:
+          schema: content
+          name: ItemTag
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-    columns:
-    - colour
-    - conferenceId
-    - id
-    - name
-    - priority
-    - subconferenceId
-    - visibilityLevel
-  role: conference-organizer
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-    columns:
-    - colour
-    - conferenceId
-    - id
-    - name
-    - priority
-    - subconferenceId
-    - visibilityLevel
-  role: subconference-organizer
-select_permissions:
-- permission:
-    columns:
-    - colour
-    - conferenceId
-    - created_at
-    - id
-    - name
-    - priority
-    - subconferenceId
-    - updated_at
-    - visibilityLevel
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - _or:
-        - subconferenceId:
-            _is_null: true
-        - _and:
-          - subconferenceId:
-              _is_null: false
-          - _or:
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-            - visibilityLevel:
-                _in:
-                - PUBLIC
-                - EXTERNAL
-  role: attendee
-- permission:
-    columns:
-    - priority
-    - colour
-    - name
-    - visibilityLevel
-    - created_at
-    - updated_at
-    - conferenceId
-    - id
-    - subconferenceId
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    columns:
-    - priority
-    - colour
-    - name
-    - visibilityLevel
-    - created_at
-    - updated_at
-    - conferenceId
-    - id
-    - subconferenceId
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - colour
-    - conferenceId
-    - created_at
-    - id
-    - name
-    - priority
-    - subconferenceId
-    - updated_at
-    filter:
-      _and:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - _or:
-          - subconferenceId:
-              _is_null: true
+  - role: conference-organizer
+    permission:
+      check:
+        _or:
           - _and:
-            - subconferenceId:
-                _is_null: false
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-      - visibilityLevel:
-          _eq: PUBLIC
-  role: unauthenticated
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+      columns:
+        - colour
+        - conferenceId
+        - id
+        - name
+        - priority
+        - subconferenceId
+        - visibilityLevel
+      backend_only: false
+  - role: subconference-organizer
+    permission:
+      check:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      columns:
+        - colour
+        - conferenceId
+        - id
+        - name
+        - priority
+        - subconferenceId
+        - visibilityLevel
+      backend_only: false
+select_permissions:
+  - role: attendee
+    permission:
+      columns:
+        - colour
+        - conferenceId
+        - created_at
+        - id
+        - name
+        - priority
+        - subconferenceId
+        - updated_at
+        - visibilityLevel
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - _or:
+              - subconferenceId:
+                  _is_null: true
+              - _and:
+                  - subconferenceId:
+                      _is_null: false
+                  - _or:
+                      - subconferenceId:
+                          _in: X-Hasura-Subconference-Ids
+                      - visibilityLevel:
+                          _in:
+                            - PUBLIC
+                            - EXTERNAL
+  - role: conference-organizer
+    permission:
+      columns:
+        - priority
+        - colour
+        - name
+        - visibilityLevel
+        - created_at
+        - updated_at
+        - conferenceId
+        - id
+        - subconferenceId
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+  - role: subconference-organizer
+    permission:
+      columns:
+        - priority
+        - colour
+        - name
+        - visibilityLevel
+        - created_at
+        - updated_at
+        - conferenceId
+        - id
+        - subconferenceId
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+  - role: unauthenticated
+    permission:
+      columns:
+        - colour
+        - conferenceId
+        - created_at
+        - id
+        - name
+        - priority
+        - subconferenceId
+        - updated_at
+      filter:
+        _and:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - _or:
+                  - subconferenceId:
+                      _is_null: true
+                  - _and:
+                      - subconferenceId:
+                          _is_null: false
+                      - subconferenceId:
+                          _in: X-Hasura-Subconference-Ids
+          - visibilityLevel:
+              _eq: PUBLIC
 update_permissions:
-- permission:
-    check: null
-    columns:
-    - colour
-    - name
-    - priority
-    - subconferenceId
-    - visibilityLevel
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - colour
-    - name
-    - priority
-    - subconferenceId
-    - visibilityLevel
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - colour
+        - name
+        - priority
+        - subconferenceId
+        - visibilityLevel
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+      check: null
+  - role: subconference-organizer
+    permission:
+      columns:
+        - colour
+        - name
+        - priority
+        - subconferenceId
+        - visibilityLevel
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      check: null
 delete_permissions:
-- permission:
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+  - role: subconference-organizer
+    permission:
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids

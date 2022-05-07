@@ -105,6 +105,10 @@ export type UpdateProfilePhotoResponse = {
     photoURL_50x50?: Maybe<string>;
 };
 
+export type MigrateProfilePhotoResponse = {
+    ok: boolean;
+};
+
 export type CreateRoomDmOutput = {
     roomId?: Maybe<uuid>;
     chatId?: Maybe<uuid>;
@@ -295,6 +299,10 @@ export type submitGoogleOAuthCodeArgs = {
 export type updateProfilePhotoArgs = {
     registrantId: uuid;
     s3URL?: Maybe<string>;
+};
+
+export type migrateProfilePhotoArgs = {
+    registrantId: uuid;
 };
 
 export type updateSubtitlesArgs = {

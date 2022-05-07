@@ -4,7 +4,12 @@ import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
 import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
 import type { ActionPayload } from "@midspace/hasura/action";
-import type { updateProfilePhotoArgs, UpdateProfilePhotoResponse } from "@midspace/hasura/action-types";
+import type {
+    migrateProfilePhotoArgs,
+    MigrateProfilePhotoResponse,
+    updateProfilePhotoArgs,
+    UpdateProfilePhotoResponse,
+} from "@midspace/hasura/action-types";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { json } from "body-parser";
@@ -14,7 +19,7 @@ import express from "express";
 import pMemoize from "p-memoize";
 import { assertType, TypeGuardError } from "typescript-is";
 import type { Maybe } from "../generated/graphql";
-import { UpdateProfilePhotoDocument } from "../generated/graphql";
+import { MigrateProfilePhoto_GetRegistrantDocument, UpdateProfilePhotoDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3, SecretsManager } from "../lib/aws/awsClient";
 import { BadRequestError, UnexpectedServerError } from "../lib/errors";
@@ -57,6 +62,17 @@ gql`
             }
         ) {
             affected_rows
+        }
+    }
+
+    query MigrateProfilePhoto_GetRegistrant($registrantId: uuid!) {
+        registrant_Profile_by_pk(registrantId: $registrantId) {
+            photoS3BucketName
+            photoS3BucketRegion
+            photoS3ObjectName
+            registrant {
+                userId
+            }
         }
     }
 `;
@@ -136,48 +152,104 @@ async function handleUpdateProfilePhoto(
 
         assert(process.env.AWS_CONTENT_BUCKET_ID);
 
-        assert(
-            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
-            "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided."
-        );
-        assert(process.env.AWS_IMAGES_SECRET_ARN, "AWS_IMAGES_SECRET_ARN not provided.");
-
-        const secret = await getImagesSecretValueMemoized();
-        photoURL_350x350 = generateSignedImageURL(
-            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
-            secret,
-            process.env.AWS_CONTENT_BUCKET_ID,
+        ({ photoURL_350x350, photoURL_50x50 } = await updateProfilePhoto(
             validatedS3URL.key,
-            350,
-            350
-        );
-        photoURL_50x50 = generateSignedImageURL(
-            process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
-            secret,
-            process.env.AWS_CONTENT_BUCKET_ID,
-            validatedS3URL.key,
-            50,
-            50
-        );
-
-        await apolloClient.mutate({
-            mutation: UpdateProfilePhotoDocument,
-            variables: {
-                registrantId,
-                userId,
-                bucket: process.env.AWS_CONTENT_BUCKET_ID,
-                objectName: validatedS3URL.key,
-                region: process.env.AWS_REGION,
-                photoURL_350x350,
-                photoURL_50x50,
-            },
-        });
+            registrantId,
+            userId,
+            process.env.AWS_CONTENT_BUCKET_ID
+        ));
     }
 
     return {
         ok: true,
         photoURL_350x350,
         photoURL_50x50,
+    };
+}
+
+async function updateProfilePhoto(key: string, registrantId: string, userId: string, bucketId: string) {
+    assert(
+        process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+        "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided."
+    );
+    assert(process.env.AWS_IMAGES_SECRET_ARN, "AWS_IMAGES_SECRET_ARN not provided.");
+
+    const secret = await getImagesSecretValueMemoized();
+    const photoURL_350x350 = generateSignedImageURL(
+        process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+        secret,
+        bucketId,
+        key,
+        350,
+        350
+    );
+    const photoURL_50x50 = generateSignedImageURL(
+        process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+        secret,
+        bucketId,
+        key,
+        50,
+        50
+    );
+
+    await apolloClient.mutate({
+        mutation: UpdateProfilePhotoDocument,
+        variables: {
+            registrantId,
+            userId,
+            bucket: process.env.AWS_CONTENT_BUCKET_ID,
+            objectName: key,
+            region: process.env.AWS_REGION,
+            photoURL_350x350,
+            photoURL_50x50,
+        },
+    });
+    return { photoURL_350x350, photoURL_50x50 };
+}
+
+async function handleMigrateProfilePhoto(registrantId: string): Promise<MigrateProfilePhotoResponse> {
+    const result = await apolloClient.query({
+        query: MigrateProfilePhoto_GetRegistrantDocument,
+        variables: {
+            registrantId,
+        },
+    });
+    if (
+        result.data.registrant_Profile_by_pk &&
+        result.data.registrant_Profile_by_pk.registrant.userId &&
+        result.data.registrant_Profile_by_pk.photoS3BucketName &&
+        result.data.registrant_Profile_by_pk.photoS3BucketRegion &&
+        result.data.registrant_Profile_by_pk.photoS3ObjectName
+    ) {
+        if (
+            !result.data.registrant_Profile_by_pk.photoS3ObjectName.startsWith(
+                result.data.registrant_Profile_by_pk.registrant.userId
+            )
+        ) {
+            const key =
+                result.data.registrant_Profile_by_pk.registrant.userId +
+                "/" +
+                result.data.registrant_Profile_by_pk.photoS3ObjectName;
+            await S3.copyObject({
+                Bucket: result.data.registrant_Profile_by_pk.photoS3BucketName,
+                CopySource: result.data.registrant_Profile_by_pk.photoS3ObjectName,
+                Key: key,
+            });
+            await updateProfilePhoto(
+                key,
+                registrantId,
+                result.data.registrant_Profile_by_pk.registrant.userId,
+                result.data.registrant_Profile_by_pk.photoS3BucketName
+            );
+            await S3.deleteObject({
+                Bucket: result.data.registrant_Profile_by_pk.photoS3BucketName,
+                Key: result.data.registrant_Profile_by_pk.photoS3ObjectName,
+            });
+        }
+    }
+
+    return {
+        ok: true,
     };
 }
 
@@ -191,6 +263,26 @@ router.post(
                 throw new BadRequestError("Invalid request", { privateMessage: "No User ID available" });
             }
             const result = await handleUpdateProfilePhoto(req.userId, body.input.registrantId, body.input.s3URL);
+            res.status(200).json(result);
+        } catch (err: unknown) {
+            if (err instanceof TypeGuardError) {
+                next(new BadRequestError("Invalid request", { originalError: err }));
+            } else if (err instanceof Error) {
+                next(err);
+            } else {
+                next(new UnexpectedServerError("Server error", undefined, err));
+            }
+        }
+    }
+);
+
+router.post(
+    "/photo/migrate",
+    parseSessionVariables,
+    async (req: Request, res: Response<MigrateProfilePhotoResponse>, next: NextFunction) => {
+        try {
+            const body = assertType<ActionPayload<migrateProfilePhotoArgs>>(req.body);
+            const result = await handleMigrateProfilePhoto(body.input.registrantId);
             res.status(200).json(result);
         } catch (err: unknown) {
             if (err instanceof TypeGuardError) {

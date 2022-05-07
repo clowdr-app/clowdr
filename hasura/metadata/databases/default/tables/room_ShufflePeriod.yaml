@@ -1,227 +1,227 @@
 table:
-  name: ShufflePeriod
   schema: room
+  name: ShufflePeriod
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: organiser
-  using:
-    foreign_key_constraint_on: organiserId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: organiser
+    using:
+      foreign_key_constraint_on: organiserId
 array_relationships:
-- name: events
-  using:
-    manual_configuration:
-      column_mapping:
-        id: shufflePeriodId
-      insertion_order: null
-      remote_table:
-        name: Event
-        schema: schedule
-- name: queueEntries
-  using:
-    foreign_key_constraint_on:
-      column: shufflePeriodId
-      table:
-        name: ShuffleQueueEntry
-        schema: room
-- name: shuffleRooms
-  using:
-    foreign_key_constraint_on:
-      column: shufflePeriodId
-      table:
-        name: ShuffleRoom
-        schema: room
+  - name: events
+    using:
+      manual_configuration:
+        remote_table:
+          schema: schedule
+          name: Event
+        insertion_order: null
+        column_mapping:
+          id: shufflePeriodId
+  - name: queueEntries
+    using:
+      foreign_key_constraint_on:
+        column: shufflePeriodId
+        table:
+          schema: room
+          name: ShuffleQueueEntry
+  - name: shuffleRooms
+    using:
+      foreign_key_constraint_on:
+        column: shufflePeriodId
+        table:
+          schema: room
+          name: ShuffleRoom
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-    columns:
-    - algorithm
-    - conferenceId
-    - endAt
-    - id
-    - maxRegistrantsPerRoom
-    - name
-    - organiserId
-    - roomDurationMinutes
-    - startAt
-    - subconferenceId
-    - targetRegistrantsPerRoom
-    - waitRoomMaxDurationSeconds
-  role: conference-organizer
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-    columns:
-    - algorithm
-    - conferenceId
-    - endAt
-    - id
-    - maxRegistrantsPerRoom
-    - name
-    - organiserId
-    - roomDurationMinutes
-    - startAt
-    - subconferenceId
-    - targetRegistrantsPerRoom
-    - waitRoomMaxDurationSeconds
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      check:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+      columns:
+        - algorithm
+        - conferenceId
+        - endAt
+        - id
+        - maxRegistrantsPerRoom
+        - name
+        - organiserId
+        - roomDurationMinutes
+        - startAt
+        - subconferenceId
+        - targetRegistrantsPerRoom
+        - waitRoomMaxDurationSeconds
+      backend_only: false
+  - role: subconference-organizer
+    permission:
+      check:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      columns:
+        - algorithm
+        - conferenceId
+        - endAt
+        - id
+        - maxRegistrantsPerRoom
+        - name
+        - organiserId
+        - roomDurationMinutes
+        - startAt
+        - subconferenceId
+        - targetRegistrantsPerRoom
+        - waitRoomMaxDurationSeconds
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - maxRegistrantsPerRoom
-    - roomDurationMinutes
-    - targetRegistrantsPerRoom
-    - waitRoomMaxDurationSeconds
-    - algorithm
-    - name
-    - created_at
-    - endAt
-    - startAt
-    - updated_at
-    - conferenceId
-    - id
-    - organiserId
-    - subconferenceId
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - _or:
-        - subconferenceId:
-            _is_null: true
-        - _and:
-          - subconferenceId:
-              _is_null: false
-          - subconferenceId:
-              _in: X-Hasura-Subconference-Ids
-  role: attendee
-- permission:
-    columns:
-    - maxRegistrantsPerRoom
-    - roomDurationMinutes
-    - targetRegistrantsPerRoom
-    - waitRoomMaxDurationSeconds
-    - algorithm
-    - name
-    - created_at
-    - endAt
-    - startAt
-    - updated_at
-    - conferenceId
-    - id
-    - organiserId
-    - subconferenceId
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    columns:
-    - maxRegistrantsPerRoom
-    - roomDurationMinutes
-    - targetRegistrantsPerRoom
-    - waitRoomMaxDurationSeconds
-    - algorithm
-    - name
-    - created_at
-    - endAt
-    - startAt
-    - updated_at
-    - conferenceId
-    - id
-    - organiserId
-    - subconferenceId
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: attendee
+    permission:
+      columns:
+        - maxRegistrantsPerRoom
+        - roomDurationMinutes
+        - targetRegistrantsPerRoom
+        - waitRoomMaxDurationSeconds
+        - algorithm
+        - name
+        - created_at
+        - endAt
+        - startAt
+        - updated_at
+        - conferenceId
+        - id
+        - organiserId
+        - subconferenceId
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - _or:
+              - subconferenceId:
+                  _is_null: true
+              - _and:
+                  - subconferenceId:
+                      _is_null: false
+                  - subconferenceId:
+                      _in: X-Hasura-Subconference-Ids
+  - role: conference-organizer
+    permission:
+      columns:
+        - maxRegistrantsPerRoom
+        - roomDurationMinutes
+        - targetRegistrantsPerRoom
+        - waitRoomMaxDurationSeconds
+        - algorithm
+        - name
+        - created_at
+        - endAt
+        - startAt
+        - updated_at
+        - conferenceId
+        - id
+        - organiserId
+        - subconferenceId
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+  - role: subconference-organizer
+    permission:
+      columns:
+        - maxRegistrantsPerRoom
+        - roomDurationMinutes
+        - targetRegistrantsPerRoom
+        - waitRoomMaxDurationSeconds
+        - algorithm
+        - name
+        - created_at
+        - endAt
+        - startAt
+        - updated_at
+        - conferenceId
+        - id
+        - organiserId
+        - subconferenceId
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
 update_permissions:
-- permission:
-    check: null
-    columns:
-    - algorithm
-    - endAt
-    - maxRegistrantsPerRoom
-    - name
-    - organiserId
-    - roomDurationMinutes
-    - startAt
-    - targetRegistrantsPerRoom
-    - waitRoomMaxDurationSeconds
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - algorithm
-    - endAt
-    - maxRegistrantsPerRoom
-    - name
-    - organiserId
-    - roomDurationMinutes
-    - startAt
-    - targetRegistrantsPerRoom
-    - waitRoomMaxDurationSeconds
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - algorithm
+        - endAt
+        - maxRegistrantsPerRoom
+        - name
+        - organiserId
+        - roomDurationMinutes
+        - startAt
+        - targetRegistrantsPerRoom
+        - waitRoomMaxDurationSeconds
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+      check: null
+  - role: subconference-organizer
+    permission:
+      columns:
+        - algorithm
+        - endAt
+        - maxRegistrantsPerRoom
+        - name
+        - organiserId
+        - roomDurationMinutes
+        - startAt
+        - targetRegistrantsPerRoom
+        - waitRoomMaxDurationSeconds
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      check: null
 delete_permissions:
-- permission:
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+  - role: subconference-organizer
+    permission:
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids

@@ -1,72 +1,72 @@
 table:
-  name: PushNotificationSubscription
   schema: public
+  name: PushNotificationSubscription
 object_relationships:
-- name: user
-  using:
-    foreign_key_constraint_on: userId
+  - name: user
+    using:
+      foreign_key_constraint_on: userId
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      userId:
-        _eq: X-Hasura-User-Id
-    columns:
-    - auth
-    - endpoint
-    - p256dh
-    set:
-      userId: x-hasura-User-Id
-  role: user
-select_permissions:
-- permission:
-    columns:
-    - auth
-    - endpoint
-    - p256dh
-    - userId
-    - created_at
-    - updated_at
-    filter:
-      userId:
-        _eq: X-Hasura-User-Id
-  role: user
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - auth
-    - endpoint
-    - p256dh
-    filter:
-      userId:
-        _eq: X-Hasura-User-Id
-  role: user
-delete_permissions:
-- permission:
-    filter:
-      userId:
-        _eq: X-Hasura-User-Id
-  role: user
-event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: true
-    insert:
-      columns: "*"
-    update:
+  - role: user
+    permission:
+      check:
+        userId:
+          _eq: X-Hasura-User-Id
+      set:
+        userId: x-hasura-User-Id
       columns:
-      - auth
-      - endpoint
-      - p256dh
-      - userId
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: Cache_PushNotificationSubscription
-  retry_conf:
-    interval_sec: 10
-    num_retries: 3
-    timeout_sec: 10
-  webhook: "{{CACHES_BASE_URL}}/cache/update/pushNotificationSubscription"
+        - auth
+        - endpoint
+        - p256dh
+      backend_only: false
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - auth
+        - endpoint
+        - p256dh
+        - userId
+        - created_at
+        - updated_at
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - auth
+        - endpoint
+        - p256dh
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+      check: null
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+event_triggers:
+  - name: Cache_PushNotificationSubscription
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+      update:
+        columns:
+          - auth
+          - endpoint
+          - p256dh
+          - userId
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 10
+    webhook: '{{CACHES_BASE_URL}}/cache/update/pushNotificationSubscription'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET

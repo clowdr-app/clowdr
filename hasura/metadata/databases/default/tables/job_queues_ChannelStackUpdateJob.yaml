@@ -1,45 +1,45 @@
 table:
-  name: ChannelStackUpdateJob
   schema: job_queues
+  name: ChannelStackUpdateJob
 object_relationships:
-- name: channelStack
-  using:
-    foreign_key_constraint_on: channelStackId
+  - name: channelStack
+    using:
+      foreign_key_constraint_on: channelStackId
 select_permissions:
-- permission:
-    columns:
-    - channelStackId
-    - created_at
-    - id
-    - jobStatusName
-    - message
-    - updated_at
-    filter:
-      channelStack:
-        _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - room:
-            subconferenceId:
-              _is_null: true
-  role: conference-organizer
-- permission:
-    columns:
-    - channelStackId
-    - created_at
-    - id
-    - jobStatusName
-    - message
-    - updated_at
-    filter:
-      channelStack:
-        _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - room:
-            _and:
-            - subconferenceId:
-                _is_null: false
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - channelStackId
+        - created_at
+        - id
+        - jobStatusName
+        - message
+        - updated_at
+      filter:
+        channelStack:
+          _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - room:
+                subconferenceId:
+                  _is_null: true
+  - role: subconference-organizer
+    permission:
+      columns:
+        - channelStackId
+        - created_at
+        - id
+        - jobStatusName
+        - message
+        - updated_at
+      filter:
+        channelStack:
+          _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - room:
+                _and:
+                  - subconferenceId:
+                      _is_null: false
+                  - subconferenceId:
+                      _in: X-Hasura-Subconference-Ids

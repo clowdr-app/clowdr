@@ -1,46 +1,51 @@
 table:
-  name: MediaLiveChannelStatus
   schema: video
+  name: MediaLiveChannelStatus
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: channelStack
-  using:
-    foreign_key_constraint_on: channelStackId
-- name: conference
-  using:
-    manual_configuration:
-      column_mapping:
-        conferenceId: id
-      insertion_order: null
-      remote_table:
-        name: Conference
-        schema: conference
+  - name: channelStack
+    using:
+      foreign_key_constraint_on: channelStackId
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        insertion_order: null
+        column_mapping:
+          conferenceId: id
 select_permissions:
-- permission:
-    columns:
-    - channelStackId
-    - conferenceId
-    - created_at
-    - id
-    - state
-    - updated_at
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - channelStackId
-    - conferenceId
-    - created_at
-    - id
-    - state
-    - updated_at
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - channelStackId
+        - conferenceId
+        - created_at
+        - id
+        - state
+        - updated_at
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - channelStackId
+        - conferenceId
+        - created_at
+        - id
+        - state
+        - updated_at
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids

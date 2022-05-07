@@ -1,173 +1,173 @@
 table:
-  name: Subconference
   schema: conference
+  name: Subconference
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
 array_relationships:
-- name: memberships
-  using:
-    foreign_key_constraint_on:
-      column: subconferenceId
-      table:
-        name: SubconferenceMembership
-        schema: registrant
-- name: sponsorshipTiers
-  using:
-    manual_configuration:
-      column_mapping:
-        id: subconferenceId
-      insertion_order: null
-      remote_table:
-        name: Tier
-        schema: sponsor
+  - name: memberships
+    using:
+      foreign_key_constraint_on:
+        column: subconferenceId
+        table:
+          schema: registrant
+          name: SubconferenceMembership
+  - name: sponsorshipTiers
+    using:
+      manual_configuration:
+        remote_table:
+          schema: sponsor
+          name: Tier
+        insertion_order: null
+        column_mapping:
+          id: subconferenceId
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-    columns:
-    - id
-    - created_at
-    - updated_at
-    - name
-    - shortName
-    - conferenceId
-    - slug
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
-  role: conference-organizer
-select_permissions:
-- permission:
-    columns:
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
-    - name
-    - shortName
-    - slug
-    - created_at
-    - updated_at
-    - conferenceId
-    - id
-    filter:
-      _and:
-      - conferenceId:
+  - role: conference-organizer
+    permission:
+      check:
+        conferenceId:
           _in: X-Hasura-Conference-Ids
-      - _or:
-        - id:
-            _in: X-Hasura-Subconference-Ids
-        - conferenceVisibilityLevel:
-            _in:
-            - PUBLIC
-            - EXTERNAL
-            - INTERNAL
-  role: attendee
-- permission:
-    columns:
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
-    - name
-    - shortName
-    - slug
-    - created_at
-    - updated_at
-    - conferenceId
-    - id
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
-    - name
-    - shortName
-    - slug
-    - created_at
-    - updated_at
-    - conferenceId
-    - id
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - id:
-          _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - conferenceVisibilityLevel
-    - created_at
-    - defaultProgramVisibilityLevel
-    - id
-    - name
-    - shortName
-    - slug
-    - updated_at
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - id:
-          _in: X-Hasura-Subconference-Ids
-      - conferenceVisibilityLevel:
-          _in:
-          - PUBLIC
-  role: unauthenticated
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
-    - name
-    - shortName
-    - slug
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
-    - name
-    - shortName
-    - slug
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - id:
-          _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-delete_permissions:
-- permission:
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: true
-    insert:
-      columns: "*"
-    update:
       columns:
-      - conferenceVisibilityLevel
-  headers:
-  - name: X-Hasura-Event-Secret
-    value_from_env: EVENT_SECRET
-  name: Cache_Subconference
-  retry_conf:
-    interval_sec: 10
-    num_retries: 3
-    timeout_sec: 10
-  webhook: "{{CACHES_BASE_URL}}/cache/update/subconference"
+        - id
+        - created_at
+        - updated_at
+        - name
+        - shortName
+        - conferenceId
+        - slug
+        - conferenceVisibilityLevel
+        - defaultProgramVisibilityLevel
+      backend_only: false
+select_permissions:
+  - role: attendee
+    permission:
+      columns:
+        - conferenceVisibilityLevel
+        - defaultProgramVisibilityLevel
+        - name
+        - shortName
+        - slug
+        - created_at
+        - updated_at
+        - conferenceId
+        - id
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - _or:
+              - id:
+                  _in: X-Hasura-Subconference-Ids
+              - conferenceVisibilityLevel:
+                  _in:
+                    - PUBLIC
+                    - EXTERNAL
+                    - INTERNAL
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceVisibilityLevel
+        - defaultProgramVisibilityLevel
+        - name
+        - shortName
+        - slug
+        - created_at
+        - updated_at
+        - conferenceId
+        - id
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceVisibilityLevel
+        - defaultProgramVisibilityLevel
+        - name
+        - shortName
+        - slug
+        - created_at
+        - updated_at
+        - conferenceId
+        - id
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - id:
+              _in: X-Hasura-Subconference-Ids
+  - role: unauthenticated
+    permission:
+      columns:
+        - conferenceId
+        - conferenceVisibilityLevel
+        - created_at
+        - defaultProgramVisibilityLevel
+        - id
+        - name
+        - shortName
+        - slug
+        - updated_at
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - id:
+              _in: X-Hasura-Subconference-Ids
+          - conferenceVisibilityLevel:
+              _in:
+                - PUBLIC
+update_permissions:
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceVisibilityLevel
+        - defaultProgramVisibilityLevel
+        - name
+        - shortName
+        - slug
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+      check: null
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceVisibilityLevel
+        - defaultProgramVisibilityLevel
+        - name
+        - shortName
+        - slug
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - id:
+              _in: X-Hasura-Subconference-Ids
+      check: null
+delete_permissions:
+  - role: conference-organizer
+    permission:
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+event_triggers:
+  - name: Cache_Subconference
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+      update:
+        columns:
+          - conferenceVisibilityLevel
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 10
+    webhook: '{{CACHES_BASE_URL}}/cache/update/subconference'
+    headers:
+      - name: X-Hasura-Event-Secret
+        value_from_env: EVENT_SECRET

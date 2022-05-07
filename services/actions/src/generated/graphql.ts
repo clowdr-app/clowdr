@@ -41548,6 +41548,21 @@ export type UpdateProfilePhotoMutation = {
     update_registrant_Profile?: { __typename?: "registrant_Profile_mutation_response"; affected_rows: number } | null;
 };
 
+export type MigrateProfilePhoto_GetRegistrantQueryVariables = Exact<{
+    registrantId: Scalars["uuid"];
+}>;
+
+export type MigrateProfilePhoto_GetRegistrantQuery = {
+    __typename?: "query_root";
+    registrant_Profile_by_pk?: {
+        __typename?: "registrant_Profile";
+        photoS3BucketName?: string | null;
+        photoS3BucketRegion?: string | null;
+        photoS3ObjectName?: string | null;
+        registrant: { __typename?: "registrant_Registrant"; userId?: string | null };
+    } | null;
+};
+
 export const Configuration_RecordingEmailNotificationsEnabledFragmentDoc = {
     kind: "Document",
     definitions: [
@@ -56413,3 +56428,52 @@ export const UpdateProfilePhotoDocument = {
         },
     ],
 } as unknown as DocumentNode<UpdateProfilePhotoMutation, UpdateProfilePhotoMutationVariables>;
+export const MigrateProfilePhoto_GetRegistrantDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "MigrateProfilePhoto_GetRegistrant" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "registrantId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "registrant_Profile_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "registrantId" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "registrantId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "photoS3BucketName" } },
+                                { kind: "Field", name: { kind: "Name", value: "photoS3BucketRegion" } },
+                                { kind: "Field", name: { kind: "Name", value: "photoS3ObjectName" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "registrant" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "userId" } }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<MigrateProfilePhoto_GetRegistrantQuery, MigrateProfilePhoto_GetRegistrantQueryVariables>;

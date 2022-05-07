@@ -1,89 +1,89 @@
 table:
-  name: StarredEvent
   schema: schedule
+  name: StarredEvent
 object_relationships:
-- name: event
-  using:
-    foreign_key_constraint_on: eventId
-- name: registrant
-  using:
-    manual_configuration:
-      column_mapping:
-        registrantId: id
-      insertion_order: null
-      remote_table:
-        name: Registrant
-        schema: registrant
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  - name: registrant
+    using:
+      manual_configuration:
+        remote_table:
+          schema: registrant
+          name: Registrant
+        insertion_order: null
+        column_mapping:
+          registrantId: id
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - registrantId:
-          _in: X-Hasura-Registrant-Ids
-      - event:
-          _and:
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - _or:
-            - subconferenceId:
-                _is_null: true
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-    columns:
-    - eventId
-    - id
-    - registrantId
-  role: attendee
+  - role: attendee
+    permission:
+      check:
+        _and:
+          - registrantId:
+              _in: X-Hasura-Registrant-Ids
+          - event:
+              _and:
+                - conferenceId:
+                    _in: X-Hasura-Conference-Ids
+                - _or:
+                    - subconferenceId:
+                        _is_null: true
+                    - subconferenceId:
+                        _in: X-Hasura-Subconference-Ids
+      columns:
+        - eventId
+        - id
+        - registrantId
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - created_at
-    - updated_at
-    - eventId
-    - id
-    - registrantId
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: attendee
-- permission:
-    columns:
-    - id
-    - eventId
-    - registrantId
-    - created_at
-    - updated_at
-    filter:
-      event:
-        _or:
-        - _and:
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _is_null: true
-  role: conference-organizer
-- permission:
-    columns:
-    - id
-    - eventId
-    - registrantId
-    - created_at
-    - updated_at
-    filter:
-      event:
-        _or:
-        - _and:
-          - subconferenceId:
-              _is_null: false
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: attendee
+    permission:
+      columns:
+        - created_at
+        - updated_at
+        - eventId
+        - id
+        - registrantId
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  - role: conference-organizer
+    permission:
+      columns:
+        - id
+        - eventId
+        - registrantId
+        - created_at
+        - updated_at
+      filter:
+        event:
+          _or:
+            - _and:
+                - conferenceId:
+                    _in: X-Hasura-Conference-Ids
+                - subconferenceId:
+                    _is_null: true
+  - role: subconference-organizer
+    permission:
+      columns:
+        - id
+        - eventId
+        - registrantId
+        - created_at
+        - updated_at
+      filter:
+        event:
+          _or:
+            - _and:
+                - subconferenceId:
+                    _is_null: false
+                - conferenceId:
+                    _in: X-Hasura-Conference-Ids
+                - subconferenceId:
+                    _in: X-Hasura-Subconference-Ids
 delete_permissions:
-- permission:
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: attendee
+  - role: attendee
+    permission:
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids

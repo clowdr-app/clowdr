@@ -1,257 +1,262 @@
 table:
-  name: Registrant
   schema: registrant
+  name: Registrant
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: invitation
-  using:
-    manual_configuration:
-      column_mapping:
-        id: registrantId
-      insertion_order: after_parent
-      remote_table:
-        name: Invitation
-        schema: registrant
-- name: profile
-  using:
-    manual_configuration:
-      column_mapping:
-        id: registrantId
-      insertion_order: after_parent
-      remote_table:
-        name: Profile
-        schema: registrant
-- name: user
-  using:
-    foreign_key_constraint_on: userId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: invitation
+    using:
+      manual_configuration:
+        remote_table:
+          schema: registrant
+          name: Invitation
+        insertion_order: after_parent
+        column_mapping:
+          id: registrantId
+  - name: profile
+    using:
+      manual_configuration:
+        remote_table:
+          schema: registrant
+          name: Profile
+        insertion_order: after_parent
+        column_mapping:
+          id: registrantId
+  - name: user
+    using:
+      foreign_key_constraint_on: userId
 array_relationships:
-- name: badges
-  using:
-    manual_configuration:
-      column_mapping:
-        id: registrantId
-      insertion_order: null
-      remote_table:
-        name: ProfileBadges
-        schema: registrant
-- name: groupRegistrants
-  using:
-    foreign_key_constraint_on:
-      column: registrantId
-      table:
-        name: GroupRegistrant
-        schema: registrant
-- name: programPeople
-  using:
-    foreign_key_constraint_on:
-      column: registrantId
-      table:
-        name: ProgramPerson
-        schema: collection
-- name: subconferenceMemberships
-  using:
-    foreign_key_constraint_on:
-      column: registrantId
-      table:
-        name: SubconferenceMembership
-        schema: registrant
+  - name: badges
+    using:
+      manual_configuration:
+        remote_table:
+          schema: registrant
+          name: ProfileBadges
+        insertion_order: null
+        column_mapping:
+          id: registrantId
+  - name: groupRegistrants
+    using:
+      foreign_key_constraint_on:
+        column: registrantId
+        table:
+          schema: registrant
+          name: GroupRegistrant
+  - name: programPeople
+    using:
+      foreign_key_constraint_on:
+        column: registrantId
+        table:
+          schema: collection
+          name: ProgramPerson
+  - name: subconferenceMemberships
+    using:
+      foreign_key_constraint_on:
+        column: registrantId
+        table:
+          schema: registrant
+          name: SubconferenceMembership
 computed_fields:
-- definition:
-    function:
-      name: InvitationEmailStatus
-      schema: registrant
-  name: invitationStatus
-- comment: ""
-  definition:
-    function:
-      name: HasBeenInvited
-      schema: registrant
-  name: inviteSent
-- definition:
-    function:
-      name: isProgramPerson
-      schema: registrant
-  name: isProgramPerson
+  - name: invitationStatus
+    definition:
+      function:
+        schema: registrant
+        name: InvitationEmailStatus
+  - name: inviteSent
+    definition:
+      function:
+        schema: registrant
+        name: HasBeenInvited
+    comment: ""
+  - name: isProgramPerson
+    definition:
+      function:
+        schema: registrant
+        name: isProgramPerson
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-    columns:
-    - conferenceId
-    - conferenceRole
-    - displayName
-    - id
-    - userId
-  role: conference-organizer
-select_permissions:
-- permission:
-    columns:
-    - conferenceRole
-    - displayName
-    - userId
-    - created_at
-    - updated_at
-    - conferenceId
-    - id
-    filter:
-      _and:
-      - conferenceId:
+  - role: conference-organizer
+    permission:
+      check:
+        conferenceId:
           _in: X-Hasura-Conference-Ids
-      - userId:
-          _is_null: false
-  role: attendee
-- permission:
-    columns:
-    - conferenceRole
-    - displayName
-    - userId
-    - created_at
-    - updated_at
-    - conferenceId
-    - id
-    computed_fields:
-    - invitationStatus
-    - inviteSent
-    - isProgramPerson
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - id
-    - conferenceId
-    - userId
-    - displayName
-    - created_at
-    - updated_at
-    - conferenceRole
-    computed_fields:
-    - invitationStatus
-    - inviteSent
-    - isProgramPerson
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - id
-    - conferenceId
-    - userId
-    - displayName
-    - created_at
-    - updated_at
-    computed_fields:
-    - inviteSent
-    filter:
-      _exists:
-        _table:
-          name: SuperUserPermissionGrant
-          schema: system
-        _where:
-          _and:
-          - grantedPermissionName:
-              _eq: EDIT_USER_REGISTRANTS
-          - targetPermissionName:
-              _is_null: true
-          - userId:
-              _eq: X-Hasura-User-Id
-  role: superuser
-- permission:
-    columns:
-    - conferenceRole
-    - displayName
-    - userId
-    - created_at
-    - updated_at
-    - conferenceId
-    - id
-    computed_fields:
-    - invitationStatus
-    - inviteSent
-    filter:
-      userId:
-        _eq: X-Hasura-User-Id
-  role: user
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - displayName
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - id:
-          _in: X-Hasura-Registrant-Ids
-      - userId:
-          _eq: X-Hasura-User-Id
-      - userId:
-          _is_null: false
-  role: attendee
-- permission:
-    check: null
-    columns:
-    - conferenceRole
-    - displayName
-    - userId
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - displayName
-    - userId
-    filter:
-      _exists:
-        _table:
-          name: SuperUserPermissionGrant
-          schema: system
-        _where:
-          _and:
-          - grantedPermissionName:
-              _eq: EDIT_USER_REGISTRANTS
-          - targetPermissionName:
-              _is_null: true
-          - userId:
-              _eq: X-Hasura-User-Id
-  role: superuser
-delete_permissions:
-- permission:
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: true
-    insert:
-      columns: "*"
-    update:
       columns:
-      - conferenceRole
-      - displayName
-      - userId
-  headers:
-  - name: X-Hasura-Event-Secret
-    value_from_env: EVENT_SECRET
-  name: Cache_Registrant
-  retry_conf:
-    interval_sec: 10
-    num_retries: 3
-    timeout_sec: 10
-  webhook: "{{CACHES_BASE_URL}}/cache/update/registrant"
+        - conferenceId
+        - conferenceRole
+        - displayName
+        - id
+        - userId
+      backend_only: false
+select_permissions:
+  - role: attendee
+    permission:
+      columns:
+        - conferenceRole
+        - displayName
+        - userId
+        - created_at
+        - updated_at
+        - conferenceId
+        - id
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - userId:
+              _is_null: false
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceRole
+        - displayName
+        - userId
+        - created_at
+        - updated_at
+        - conferenceId
+        - id
+      computed_fields:
+        - invitationStatus
+        - inviteSent
+        - isProgramPerson
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - id
+        - conferenceId
+        - userId
+        - displayName
+        - created_at
+        - updated_at
+        - conferenceRole
+      computed_fields:
+        - invitationStatus
+        - inviteSent
+        - isProgramPerson
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: superuser
+    permission:
+      columns:
+        - id
+        - conferenceId
+        - userId
+        - displayName
+        - created_at
+        - updated_at
+      computed_fields:
+        - inviteSent
+      filter:
+        _exists:
+          _where:
+            _and:
+              - grantedPermissionName:
+                  _eq: EDIT_USER_REGISTRANTS
+              - targetPermissionName:
+                  _is_null: true
+              - userId:
+                  _eq: X-Hasura-User-Id
+          _table:
+            schema: system
+            name: SuperUserPermissionGrant
+  - role: user
+    permission:
+      columns:
+        - conferenceRole
+        - displayName
+        - userId
+        - created_at
+        - updated_at
+        - conferenceId
+        - id
+      computed_fields:
+        - invitationStatus
+        - inviteSent
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+update_permissions:
+  - role: attendee
+    permission:
+      columns:
+        - displayName
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - id:
+              _in: X-Hasura-Registrant-Ids
+          - userId:
+              _eq: X-Hasura-User-Id
+          - userId:
+              _is_null: false
+      check: null
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceRole
+        - displayName
+        - userId
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+      check: null
+  - role: superuser
+    permission:
+      columns:
+        - displayName
+        - userId
+      filter:
+        _exists:
+          _where:
+            _and:
+              - grantedPermissionName:
+                  _eq: EDIT_USER_REGISTRANTS
+              - targetPermissionName:
+                  _is_null: true
+              - userId:
+                  _eq: X-Hasura-User-Id
+          _table:
+            schema: system
+            name: SuperUserPermissionGrant
+      check: null
+delete_permissions:
+  - role: conference-organizer
+    permission:
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+event_triggers:
+  - name: Cache_Registrant
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+      update:
+        columns:
+          - conferenceRole
+          - displayName
+          - userId
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 10
+    webhook: '{{CACHES_BASE_URL}}/cache/update/registrant'
+    headers:
+      - name: X-Hasura-Event-Secret
+        value_from_env: EVENT_SECRET

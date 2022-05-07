@@ -1,23 +1,23 @@
 table:
-  name: CurrentEvents
   schema: schedule
+  name: CurrentEvents
 object_relationships:
-- name: room
-  using:
-    manual_configuration:
-      column_mapping:
-        roomId: id
-      insertion_order: null
-      remote_table:
-        name: Room
-        schema: room
+  - name: room
+    using:
+      manual_configuration:
+        remote_table:
+          schema: room
+          name: Room
+        insertion_order: null
+        column_mapping:
+          roomId: id
 array_relationships:
-- name: eventPeople
-  using:
-    manual_configuration:
-      column_mapping:
-        id: eventId
-      insertion_order: null
-      remote_table:
-        name: EventProgramPerson
-        schema: schedule
+  - name: eventPeople
+    using:
+      manual_configuration:
+        remote_table:
+          schema: schedule
+          name: EventProgramPerson
+        insertion_order: null
+        column_mapping:
+          id: eventId

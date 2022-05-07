@@ -62,6 +62,12 @@ type Mutation {
 }
 
 type Mutation {
+  migrateProfilePhoto(
+    registrantId: uuid!
+  ): MigrateProfilePhotoResponse
+}
+
+type Mutation {
   notifyEventEnded(
     eventId: uuid!
   ): NotifyEventEnded!
@@ -337,5 +343,9 @@ type InitialiseSuperUserOutput {
 
 type TranscribeGeneratePresignedUrlOutput {
   url: String!
+}
+
+type MigrateProfilePhotoResponse {
+  ok: Boolean!
 }
 

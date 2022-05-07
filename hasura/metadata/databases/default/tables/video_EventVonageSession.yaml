@@ -1,125 +1,130 @@
 table:
-  name: EventVonageSession
   schema: video
+  name: EventVonageSession
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: event
-  using:
-    foreign_key_constraint_on: eventId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
 array_relationships:
-- name: layouts
-  using:
-    manual_configuration:
-      column_mapping:
-        sessionId: vonageSessionId
-      insertion_order: null
-      remote_table:
-        name: VonageSessionLayout
-        schema: video
-- name: participantStreams
-  using:
-    manual_configuration:
-      column_mapping:
-        sessionId: vonageSessionId
-      insertion_order: null
-      remote_table:
-        name: VonageParticipantStream
-        schema: video
-- name: recordings
-  using:
-    manual_configuration:
-      column_mapping:
-        sessionId: vonageSessionId
-      insertion_order: null
-      remote_table:
-        name: VonageRoomRecording
-        schema: video
+  - name: layouts
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: VonageSessionLayout
+        insertion_order: null
+        column_mapping:
+          sessionId: vonageSessionId
+  - name: participantStreams
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: VonageParticipantStream
+        insertion_order: null
+        column_mapping:
+          sessionId: vonageSessionId
+  - name: recordings
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: VonageRoomRecording
+        insertion_order: null
+        column_mapping:
+          sessionId: vonageSessionId
 select_permissions:
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - eventId
-    - id
-    - sessionId
-    - subconferenceId
-    - updated_at
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - _or:
-        - subconferenceId:
-            _is_null: true
-        - _and:
-          - subconferenceId:
-              _is_null: false
+  - role: attendee
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - eventId
+        - id
+        - sessionId
+        - subconferenceId
+        - updated_at
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
           - _or:
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-            - event:
-                visibilityLevel:
-                  _in:
-                  - PUBLIC
-                  - EXTERNAL
-      - event:
-          room:
-            _and:
-            - _or:
+              - subconferenceId:
+                  _is_null: true
               - _and:
-                - conferenceId:
-                    _in: X-Hasura-Conference-Ids
-                - subconferenceId:
-                    _is_null: true
-              - _and:
-                - subconferenceId:
-                    _is_null: false
-                - conferenceId:
-                    _in: X-Hasura-Conference-Ids
-                - subconferenceId:
-                    _in: X-Hasura-Subconference-Ids
-            - _or:
-              - managementModeName:
-                  _eq: PUBLIC
-              - id:
-                  _in: X-Hasura-Room-Ids
-  role: attendee
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - eventId
-    - id
-    - sessionId
-    - subconferenceId
-    - updated_at
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - eventId
-    - id
-    - sessionId
-    - subconferenceId
-    - updated_at
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+                  - subconferenceId:
+                      _is_null: false
+                  - _or:
+                      - subconferenceId:
+                          _in: X-Hasura-Subconference-Ids
+                      - event:
+                          visibilityLevel:
+                            _in:
+                              - PUBLIC
+                              - EXTERNAL
+          - event:
+              room:
+                _and:
+                  - _or:
+                      - _and:
+                          - conferenceId:
+                              _in: X-Hasura-Conference-Ids
+                          - subconferenceId:
+                              _is_null: true
+                      - _and:
+                          - subconferenceId:
+                              _is_null: false
+                          - conferenceId:
+                              _in: X-Hasura-Conference-Ids
+                          - subconferenceId:
+                              _in: X-Hasura-Subconference-Ids
+                  - _or:
+                      - managementModeName:
+                          _eq: PUBLIC
+                      - id:
+                          _in: X-Hasura-Room-Ids
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - eventId
+        - id
+        - sessionId
+        - subconferenceId
+        - updated_at
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - eventId
+        - id
+        - sessionId
+        - subconferenceId
+        - updated_at
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids

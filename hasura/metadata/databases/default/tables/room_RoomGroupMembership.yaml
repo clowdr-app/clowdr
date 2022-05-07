@@ -1,10 +1,10 @@
 table:
-  name: RoomGroupMembership
   schema: room
+  name: RoomGroupMembership
 object_relationships:
-- name: group
-  using:
-    foreign_key_constraint_on: groupId
-- name: room
-  using:
-    foreign_key_constraint_on: roomId
+  - name: group
+    using:
+      foreign_key_constraint_on: groupId
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId

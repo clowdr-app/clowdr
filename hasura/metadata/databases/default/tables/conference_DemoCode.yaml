@@ -1,137 +1,142 @@
 table:
-  name: DemoCode
   schema: conference
+  name: DemoCode
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: conference
-  using:
-    manual_configuration:
-      column_mapping:
-        id: demoCodeId
-      insertion_order: null
-      remote_table:
-        name: Conference
-        schema: conference
-- name: usedBy
-  using:
-    foreign_key_constraint_on: usedById
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        insertion_order: null
+        column_mapping:
+          id: demoCodeId
+  - name: usedBy
+    using:
+      foreign_key_constraint_on: usedById
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _exists:
-        _table:
-          name: SuperUserPermissionGrant
-          schema: system
-        _where:
-          _and:
-          - grantedPermissionName:
-              _eq: CREATE_CONFERENCE_DEMO_CODE
-          - userId:
-              _eq: X-Hasura-User-Id
-          - targetPermissionName:
-              _is_null: true
-    columns:
-    - id
-    - note
-    - usedById
-  role: superuser
+  - role: superuser
+    permission:
+      check:
+        _exists:
+          _where:
+            _and:
+              - grantedPermissionName:
+                  _eq: CREATE_CONFERENCE_DEMO_CODE
+              - userId:
+                  _eq: X-Hasura-User-Id
+              - targetPermissionName:
+                  _is_null: true
+          _table:
+            schema: system
+            name: SuperUserPermissionGrant
+      columns:
+        - id
+        - note
+        - usedById
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - note
-    - usedById
-    - created_at
-    - updated_at
-    - id
-    filter:
-      usedById:
-        _eq: X-Hasura-User-Id
-  role: conference-organizer
-- permission:
-    columns:
-    - note
-    - usedById
-    - created_at
-    - updated_at
-    - id
-    filter:
-      _exists:
-        _table:
-          name: SuperUserPermissionGrant
-          schema: system
-        _where:
-          _and:
-          - grantedPermissionName:
-              _eq: LIST_CONFERENCE_DEMO_CODES
-          - userId:
-              _eq: X-Hasura-User-Id
-          - targetPermissionName:
-              _is_null: true
-  role: superuser
-- permission:
-    columns:
-    - id
-    - usedById
-    filter:
-      usedById:
-        _is_null: true
-  role: user
+  - role: conference-organizer
+    permission:
+      columns:
+        - note
+        - usedById
+        - created_at
+        - updated_at
+        - id
+      filter:
+        usedById:
+          _eq: X-Hasura-User-Id
+  - role: superuser
+    permission:
+      columns:
+        - note
+        - usedById
+        - created_at
+        - updated_at
+        - id
+      filter:
+        _exists:
+          _where:
+            _and:
+              - grantedPermissionName:
+                  _eq: LIST_CONFERENCE_DEMO_CODES
+              - userId:
+                  _eq: X-Hasura-User-Id
+              - targetPermissionName:
+                  _is_null: true
+          _table:
+            schema: system
+            name: SuperUserPermissionGrant
+  - role: user
+    permission:
+      columns:
+        - id
+        - usedById
+      filter:
+        usedById:
+          _is_null: true
 update_permissions:
-- permission:
-    check: null
-    columns:
-    - note
-    filter:
-      usedById:
-        _is_null: true
-  role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - id
-    - note
-    - usedById
-    filter:
-      _exists:
-        _table:
-          name: SuperUserPermissionGrant
-          schema: system
-        _where:
-          _and:
-          - grantedPermissionName:
-              _eq: CREATE_CONFERENCE_DEMO_CODE
-          - userId:
-              _eq: X-Hasura-User-Id
-          - targetPermissionName:
-              _is_null: true
-  role: superuser
-- permission:
-    check: null
-    columns:
-    - note
-    - usedById
-    filter:
-      usedById:
-        _is_null: true
-  role: user
+  - role: conference-organizer
+    permission:
+      columns:
+        - note
+      filter:
+        usedById:
+          _is_null: true
+      check: null
+  - role: superuser
+    permission:
+      columns:
+        - id
+        - note
+        - usedById
+      filter:
+        _exists:
+          _where:
+            _and:
+              - grantedPermissionName:
+                  _eq: CREATE_CONFERENCE_DEMO_CODE
+              - userId:
+                  _eq: X-Hasura-User-Id
+              - targetPermissionName:
+                  _is_null: true
+          _table:
+            schema: system
+            name: SuperUserPermissionGrant
+      check: null
+  - role: user
+    permission:
+      columns:
+        - note
+        - usedById
+      filter:
+        usedById:
+          _is_null: true
+      check: null
 delete_permissions:
-- permission:
-    filter:
-      _exists:
-        _table:
-          name: SuperUserPermissionGrant
-          schema: system
-        _where:
-          _and:
-          - grantedPermissionName:
-              _eq: CREATE_CONFERENCE_DEMO_CODE
-          - userId:
-              _eq: X-Hasura-User-Id
-          - targetPermissionName:
-              _is_null: true
-  role: superuser
+  - role: superuser
+    permission:
+      filter:
+        _exists:
+          _where:
+            _and:
+              - grantedPermissionName:
+                  _eq: CREATE_CONFERENCE_DEMO_CODE
+              - userId:
+                  _eq: X-Hasura-User-Id
+              - targetPermissionName:
+                  _is_null: true
+          _table:
+            schema: system
+            name: SuperUserPermissionGrant

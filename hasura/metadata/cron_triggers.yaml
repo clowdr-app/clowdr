@@ -4,24 +4,24 @@
   include_in_metadata: true
   payload: {}
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: Invitation_SendAutomaticJob
   webhook: '{{ACTION_BASE_URL}}/invitation/automaticRepeat'
   schedule: 0 * * * *
   include_in_metadata: true
   payload: {}
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: ProcessCombineVideosobQueue
   webhook: '{{ACTION_BASE_URL}}/combineVideosJob/process'
   schedule: '*/5 * * * *'
   include_in_metadata: true
   payload: {}
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: ProcessCustomEmailsJobQueue
   webhook: '{{ACTION_BASE_URL}}/queues/processCustomEmailsJobQueue'
   schedule: '* * * * *'
@@ -33,8 +33,8 @@
     tolerance_seconds: 60
     retry_interval_seconds: 10
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: ProcessEmailsJobQueue
   webhook: '{{ACTION_BASE_URL}}/queues/processEmailsJobQueue'
   schedule: '* * * * *'
@@ -46,8 +46,8 @@
     tolerance_seconds: 60
     retry_interval_seconds: 10
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: ProcessInvitationEmailsJobQueue
   webhook: '{{ACTION_BASE_URL}}/queues/processInvitationEmailsQueue'
   schedule: '* * * * *'
@@ -59,8 +59,8 @@
     tolerance_seconds: 60
     retry_interval_seconds: 10
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: ProcessSendSubmissionRequestsJobQueue
   webhook: '{{ACTION_BASE_URL}}/queues/processSendSubmissionRequestsJobQueue'
   schedule: '* * * * *'
@@ -72,8 +72,8 @@
     tolerance_seconds: 60
     retry_interval_seconds: 10
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: ProcessShuffleQueues
   webhook: '{{ACTION_BASE_URL}}/shuffle/process'
   schedule: '* * * * *'
@@ -85,8 +85,8 @@
     tolerance_seconds: 70
     retry_interval_seconds: 10
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: ProcessUploadYouTubeVideoQueue
   webhook: '{{ACTION_BASE_URL}}/google/processUploadYouTubeVideoQueue'
   schedule: '* * * * *'
@@ -98,24 +98,24 @@
     tolerance_seconds: 60
     retry_interval_seconds: 10
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: ProcessVideoRenderJobQueue
   webhook: '{{ACTION_BASE_URL}}/videoRenderJob/processQueue'
   schedule: '* * * * *'
   include_in_metadata: true
   payload: {}
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: RemoveOldRoomParticipants
   webhook: '{{ACTION_BASE_URL}}/room/removeOldParticipants'
   schedule: 0 */1 * * *
   include_in_metadata: true
   payload: {}
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: SaveVideoChatNonEventUsage
   webhook: '{{ACTION_BASE_URL}}/usage/saveVideoChatNonEvent'
   schedule: '*/5 * * * *'
@@ -127,24 +127,24 @@
     tolerance_seconds: 21600
     retry_interval_seconds: 10
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: SyncChannelStacks
   webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
   schedule: '*/5 * * * *'
   include_in_metadata: true
   payload: {}
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: SyncChannels
   webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
   schedule: '*/2 * * * *'
   include_in_metadata: true
   payload: {}
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: UpdateEventUsage
   webhook: '{{ACTION_BASE_URL}}/usage/updateEvent'
   schedule: '*/3 * * * *'
@@ -156,8 +156,8 @@
     tolerance_seconds: 21600
     retry_interval_seconds: 30
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: UpdateVideoChatNonEventUsage
   webhook: '{{ACTION_BASE_URL}}/usage/updateVideoChatNonEvent'
   schedule: '* * * * *'
@@ -169,5 +169,5 @@
     tolerance_seconds: 21600
     retry_interval_seconds: 10
   headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET

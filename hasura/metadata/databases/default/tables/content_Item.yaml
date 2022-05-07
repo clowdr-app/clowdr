@@ -1,372 +1,377 @@
 table:
-  name: Item
   schema: content
+  name: Item
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: chat
-  using:
-    foreign_key_constraint_on: chatId
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: room
-  using:
-    manual_configuration:
-      column_mapping:
-        id: itemId
-      insertion_order: null
-      remote_table:
-        name: Room
-        schema: room
-- name: totalViewsStat
-  using:
-    manual_configuration:
-      column_mapping:
-        id: itemId
-      insertion_order: null
-      remote_table:
-        name: ItemTotalViews
-        schema: analytics
-- name: type
-  using:
-    foreign_key_constraint_on: typeName
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: room
+    using:
+      manual_configuration:
+        remote_table:
+          schema: room
+          name: Room
+        insertion_order: null
+        column_mapping:
+          id: itemId
+  - name: totalViewsStat
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: ItemTotalViews
+        insertion_order: null
+        column_mapping:
+          id: itemId
+  - name: type
+    using:
+      foreign_key_constraint_on: typeName
 array_relationships:
-- name: descriptionOfExhibitions
-  using:
-    manual_configuration:
-      column_mapping:
-        id: descriptiveItemId
-      insertion_order: null
-      remote_table:
-        name: Exhibition
-        schema: collection
-- name: elements
-  using:
-    foreign_key_constraint_on:
-      column: itemId
-      table:
-        name: Element
-        schema: content
-- name: events
-  using:
-    foreign_key_constraint_on:
-      column: itemId
-      table:
-        name: Event
-        schema: schedule
-- name: itemExhibitions
-  using:
-    foreign_key_constraint_on:
-      column: itemId
-      table:
-        name: ItemExhibition
-        schema: content
-- name: itemPeople
-  using:
-    foreign_key_constraint_on:
-      column: itemId
-      table:
-        name: ItemProgramPerson
-        schema: content
-- name: itemTags
-  using:
-    foreign_key_constraint_on:
-      column: itemId
-      table:
-        name: ItemTag
-        schema: content
-- name: sponsorshipTierMemberships
-  using:
-    manual_configuration:
-      column_mapping:
-        id: itemId
-      insertion_order: null
-      remote_table:
-        name: TierMember
-        schema: sponsor
-- name: stats
-  using:
-    manual_configuration:
-      column_mapping:
-        id: itemId
-      insertion_order: null
-      remote_table:
-        name: ContentItemStats
-        schema: analytics
+  - name: descriptionOfExhibitions
+    using:
+      manual_configuration:
+        remote_table:
+          schema: collection
+          name: Exhibition
+        insertion_order: null
+        column_mapping:
+          id: descriptiveItemId
+  - name: elements
+    using:
+      foreign_key_constraint_on:
+        column: itemId
+        table:
+          schema: content
+          name: Element
+  - name: events
+    using:
+      foreign_key_constraint_on:
+        column: itemId
+        table:
+          schema: schedule
+          name: Event
+  - name: itemExhibitions
+    using:
+      foreign_key_constraint_on:
+        column: itemId
+        table:
+          schema: content
+          name: ItemExhibition
+  - name: itemPeople
+    using:
+      foreign_key_constraint_on:
+        column: itemId
+        table:
+          schema: content
+          name: ItemProgramPerson
+  - name: itemTags
+    using:
+      foreign_key_constraint_on:
+        column: itemId
+        table:
+          schema: content
+          name: ItemTag
+  - name: sponsorshipTierMemberships
+    using:
+      manual_configuration:
+        remote_table:
+          schema: sponsor
+          name: TierMember
+        insertion_order: null
+        column_mapping:
+          id: itemId
+  - name: stats
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: ContentItemStats
+        insertion_order: null
+        column_mapping:
+          id: itemId
 computed_fields:
-- definition:
-    function:
-      name: itemHasUnsubmittedElements
-      schema: content
-  name: hasUnsubmittedElements
+  - name: hasUnsubmittedElements
+    definition:
+      function:
+        schema: content
+        name: itemHasUnsubmittedElements
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - subconferenceId:
-          _is_null: true
-    columns:
-    - chatId
-    - conferenceId
-    - id
-    - shortTitle
-    - subconferenceId
-    - title
-    - typeName
-    - visibilityLevel
-  role: conference-organizer
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-    columns:
-    - chatId
-    - conferenceId
-    - id
-    - shortTitle
-    - subconferenceId
-    - title
-    - typeName
-    - visibilityLevel
-  role: subconference-organizer
-select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - chatId
-    - conferenceId
-    - created_at
-    - id
-    - shortTitle
-    - subconferenceId
-    - title
-    - typeName
-    - updated_at
-    - visibilityLevel
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - _or:
-        - subconferenceId:
-            _is_null: true
-        - _and:
-          - subconferenceId:
-              _is_null: false
-          - _or:
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-            - visibilityLevel:
-                _in:
-                - PUBLIC
-                - EXTERNAL
-            - typeName:
-                _in:
-                - LANDING_PAGE
-  role: attendee
-- permission:
-    columns:
-    - shortTitle
-    - title
-    - typeName
-    - visibilityLevel
-    - created_at
-    - updated_at
-    - chatId
-    - conferenceId
-    - id
-    - subconferenceId
-    computed_fields:
-    - hasUnsubmittedElements
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - subconferenceId:
-          _is_null: true
-  role: conference-organizer
-- permission:
-    columns:
-    - shortTitle
-    - title
-    - typeName
-    - visibilityLevel
-    - created_at
-    - updated_at
-    - chatId
-    - conferenceId
-    - id
-    - subconferenceId
-    computed_fields:
-    - hasUnsubmittedElements
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - shortTitle
-    - title
-    - typeName
-    - visibilityLevel
-    - created_at
-    - updated_at
-    - chatId
-    - conferenceId
-    - id
-    - subconferenceId
-    computed_fields:
-    - hasUnsubmittedElements
-    filter:
-      itemPeople:
-        person:
-          accessToken:
-            _eq: X-Hasura-Magic-Token
-  role: submitter
-- permission:
-    columns:
-    - chatId
-    - conferenceId
-    - created_at
-    - id
-    - shortTitle
-    - subconferenceId
-    - title
-    - typeName
-    - updated_at
-    - visibilityLevel
-    filter:
-      _and:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - _or:
+  - role: conference-organizer
+    permission:
+      check:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
           - subconferenceId:
               _is_null: true
-          - _and:
-            - subconferenceId:
-                _is_null: false
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-      - _or:
-        - visibilityLevel:
-            _in:
-            - PUBLIC_ONLY
-            - PUBLIC
-        - typeName:
-            _eq: LANDING_PAGE
-  role: unauthenticated
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - chatId
-    - shortTitle
-    - subconferenceId
-    - title
-    - typeName
-    - visibilityLevel
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - subconferenceId:
-          _is_null: true
-  role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - shortTitle
-    - subconferenceId
-    - title
-    - typeName
-    - visibilityLevel
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-delete_permissions:
-- permission:
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - subconferenceId:
-          _is_null: true
-  role: conference-organizer
-- permission:
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: true
-    insert:
-      columns: "*"
-    update:
       columns:
-      - chatId
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: Cache_ContentItem
-  retry_conf:
-    interval_sec: 10
-    num_retries: 3
-    timeout_sec: 10
-  webhook: "{{CACHES_BASE_URL}}/cache/update/contentItem"
+        - chatId
+        - conferenceId
+        - id
+        - shortTitle
+        - subconferenceId
+        - title
+        - typeName
+        - visibilityLevel
+      backend_only: false
+  - role: subconference-organizer
+    permission:
+      check:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      columns:
+        - chatId
+        - conferenceId
+        - id
+        - shortTitle
+        - subconferenceId
+        - title
+        - typeName
+        - visibilityLevel
+      backend_only: false
+select_permissions:
+  - role: attendee
+    permission:
+      columns:
+        - chatId
+        - conferenceId
+        - created_at
+        - id
+        - shortTitle
+        - subconferenceId
+        - title
+        - typeName
+        - updated_at
+        - visibilityLevel
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - _or:
+              - subconferenceId:
+                  _is_null: true
+              - _and:
+                  - subconferenceId:
+                      _is_null: false
+                  - _or:
+                      - subconferenceId:
+                          _in: X-Hasura-Subconference-Ids
+                      - visibilityLevel:
+                          _in:
+                            - PUBLIC
+                            - EXTERNAL
+                      - typeName:
+                          _in:
+                            - LANDING_PAGE
+      allow_aggregations: true
+  - role: conference-organizer
+    permission:
+      columns:
+        - shortTitle
+        - title
+        - typeName
+        - visibilityLevel
+        - created_at
+        - updated_at
+        - chatId
+        - conferenceId
+        - id
+        - subconferenceId
+      computed_fields:
+        - hasUnsubmittedElements
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+  - role: subconference-organizer
+    permission:
+      columns:
+        - shortTitle
+        - title
+        - typeName
+        - visibilityLevel
+        - created_at
+        - updated_at
+        - chatId
+        - conferenceId
+        - id
+        - subconferenceId
+      computed_fields:
+        - hasUnsubmittedElements
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+  - role: submitter
+    permission:
+      columns:
+        - shortTitle
+        - title
+        - typeName
+        - visibilityLevel
+        - created_at
+        - updated_at
+        - chatId
+        - conferenceId
+        - id
+        - subconferenceId
+      computed_fields:
+        - hasUnsubmittedElements
+      filter:
+        itemPeople:
+          person:
+            accessToken:
+              _eq: X-Hasura-Magic-Token
+  - role: unauthenticated
+    permission:
+      columns:
+        - chatId
+        - conferenceId
+        - created_at
+        - id
+        - shortTitle
+        - subconferenceId
+        - title
+        - typeName
+        - updated_at
+        - visibilityLevel
+      filter:
+        _and:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - _or:
+                  - subconferenceId:
+                      _is_null: true
+                  - _and:
+                      - subconferenceId:
+                          _is_null: false
+                      - subconferenceId:
+                          _in: X-Hasura-Subconference-Ids
+          - _or:
+              - visibilityLevel:
+                  _in:
+                    - PUBLIC_ONLY
+                    - PUBLIC
+              - typeName:
+                  _eq: LANDING_PAGE
+update_permissions:
+  - role: conference-organizer
+    permission:
+      columns:
+        - chatId
+        - shortTitle
+        - subconferenceId
+        - title
+        - typeName
+        - visibilityLevel
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+      check: null
+  - role: subconference-organizer
+    permission:
+      columns:
+        - shortTitle
+        - subconferenceId
+        - title
+        - typeName
+        - visibilityLevel
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      check: null
+delete_permissions:
+  - role: conference-organizer
+    permission:
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+  - role: subconference-organizer
+    permission:
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+event_triggers:
+  - name: Cache_ContentItem
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+      update:
+        columns:
+          - chatId
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 10
+    webhook: '{{CACHES_BASE_URL}}/cache/update/contentItem'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET

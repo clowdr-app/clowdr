@@ -1,46 +1,46 @@
 table:
-  name: SavedVonageRoomRecording
   schema: registrant
+  name: SavedVonageRoomRecording
 object_relationships:
-- name: recording
-  using:
-    foreign_key_constraint_on: recordingId
-- name: registrant
-  using:
-    foreign_key_constraint_on: registrantId
+  - name: recording
+    using:
+      foreign_key_constraint_on: recordingId
+  - name: registrant
+    using:
+      foreign_key_constraint_on: registrantId
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - registrantId:
-          _in: X-Hasura-Registrant-Ids
-      - recording:
-          roomId:
-            _in: X-Hasura-Room-Ids
-    columns:
-    - recordingId
-    - registrantId
-  role: attendee
+  - role: attendee
+    permission:
+      check:
+        _and:
+          - registrantId:
+              _in: X-Hasura-Registrant-Ids
+          - recording:
+              roomId:
+                _in: X-Hasura-Room-Ids
+      columns:
+        - recordingId
+        - registrantId
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - isHidden
-    - created_at
-    - updated_at
-    - id
-    - recordingId
-    - registrantId
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: attendee
+  - role: attendee
+    permission:
+      columns:
+        - isHidden
+        - created_at
+        - updated_at
+        - id
+        - recordingId
+        - registrantId
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
 update_permissions:
-- permission:
-    check: null
-    columns:
-    - isHidden
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: attendee
+  - role: attendee
+    permission:
+      columns:
+        - isHidden
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+      check: null

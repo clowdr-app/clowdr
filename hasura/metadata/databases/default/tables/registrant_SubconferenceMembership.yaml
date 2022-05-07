@@ -1,109 +1,109 @@
 table:
-  name: SubconferenceMembership
   schema: registrant
+  name: SubconferenceMembership
 object_relationships:
-- name: registrant
-  using:
-    foreign_key_constraint_on: registrantId
-- name: subconference
-  using:
-    foreign_key_constraint_on: subconferenceId
+  - name: registrant
+    using:
+      foreign_key_constraint_on: registrantId
+  - name: subconference
+    using:
+      foreign_key_constraint_on: subconferenceId
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - subconference:
-          conferenceId:
-            _in: X-Hasura-Conference-Ids
-      - registrant:
-          conferenceId:
-            _in: X-Hasura-Conference-Ids
-    columns:
-    - registrantId
-    - role
-    - subconferenceId
-  role: conference-organizer
-select_permissions:
-- permission:
-    columns:
-    - role
-    - created_at
-    - updated_at
-    - id
-    - registrantId
-    - subconferenceId
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: attendee
-- permission:
-    columns:
-    - role
-    - created_at
-    - updated_at
-    - id
-    - registrantId
-    - subconferenceId
-    filter:
-      subconferenceId:
-        _in: X-Hasura-Subconference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - role
-    - created_at
-    - updated_at
-    - id
-    - registrantId
-    - subconferenceId
-    filter:
-      subconferenceId:
-        _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - role
-    - created_at
-    - updated_at
-    - id
-    - registrantId
-    - subconferenceId
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: user
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - role
-    filter:
-      subconferenceId:
-        _in: X-Hasura-Subconference-Ids
-  role: conference-organizer
-delete_permissions:
-- permission:
-    filter:
-      subconferenceId:
-        _in: X-Hasura-Subconference-Ids
-  role: conference-organizer
-event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: true
-    insert:
-      columns: "*"
-    update:
+  - role: conference-organizer
+    permission:
+      check:
+        _and:
+          - subconference:
+              conferenceId:
+                _in: X-Hasura-Conference-Ids
+          - registrant:
+              conferenceId:
+                _in: X-Hasura-Conference-Ids
       columns:
-      - role
-  headers:
-  - name: X-Hasura-Event-Secret
-    value_from_env: EVENT_SECRET
-  name: Cache_SubconferenceMembership
-  retry_conf:
-    interval_sec: 10
-    num_retries: 3
-    timeout_sec: 10
-  webhook: "{{CACHES_BASE_URL}}/cache/update/subconferenceMembership"
+        - registrantId
+        - role
+        - subconferenceId
+      backend_only: false
+select_permissions:
+  - role: attendee
+    permission:
+      columns:
+        - role
+        - created_at
+        - updated_at
+        - id
+        - registrantId
+        - subconferenceId
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  - role: conference-organizer
+    permission:
+      columns:
+        - role
+        - created_at
+        - updated_at
+        - id
+        - registrantId
+        - subconferenceId
+      filter:
+        subconferenceId:
+          _in: X-Hasura-Subconference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - role
+        - created_at
+        - updated_at
+        - id
+        - registrantId
+        - subconferenceId
+      filter:
+        subconferenceId:
+          _in: X-Hasura-Subconference-Ids
+  - role: user
+    permission:
+      columns:
+        - role
+        - created_at
+        - updated_at
+        - id
+        - registrantId
+        - subconferenceId
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+update_permissions:
+  - role: conference-organizer
+    permission:
+      columns:
+        - role
+      filter:
+        subconferenceId:
+          _in: X-Hasura-Subconference-Ids
+      check: null
+delete_permissions:
+  - role: conference-organizer
+    permission:
+      filter:
+        subconferenceId:
+          _in: X-Hasura-Subconference-Ids
+event_triggers:
+  - name: Cache_SubconferenceMembership
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+      update:
+        columns:
+          - role
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 10
+    webhook: '{{CACHES_BASE_URL}}/cache/update/subconferenceMembership'
+    headers:
+      - name: X-Hasura-Event-Secret
+        value_from_env: EVENT_SECRET

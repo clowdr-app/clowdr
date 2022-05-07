@@ -1,199 +1,199 @@
 table:
-  name: Profile
   schema: registrant
+  name: Profile
 object_relationships:
-- name: registrant
-  using:
-    foreign_key_constraint_on: registrantId
+  - name: registrant
+    using:
+      foreign_key_constraint_on: registrantId
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      registrant:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
-    columns:
-    - affiliation
-    - affiliationURL
-    - badges
-    - bio
-    - country
-    - github
-    - photoURL_350x350
-    - photoURL_50x50
-    - pronouns
-    - registrantId
-    - timezoneUTCOffset
-    - twitter
-    - website
-  role: conference-organizer
+  - role: conference-organizer
+    permission:
+      check:
+        registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
+      columns:
+        - affiliation
+        - affiliationURL
+        - badges
+        - bio
+        - country
+        - github
+        - photoURL_350x350
+        - photoURL_50x50
+        - pronouns
+        - registrantId
+        - timezoneUTCOffset
+        - twitter
+        - website
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - affiliation
-    - affiliationURL
-    - badges
-    - bio
-    - country
-    - created_at
-    - github
-    - hasBeenEdited
-    - photoURL_350x350
-    - photoURL_50x50
-    - pronouns
-    - registrantId
-    - timezoneUTCOffset
-    - twitter
-    - updated_at
-    - website
-    filter:
-      registrant:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
-  role: attendee
-- permission:
-    columns:
-    - affiliation
-    - affiliationURL
-    - badges
-    - bio
-    - country
-    - created_at
-    - github
-    - hasBeenEdited
-    - photoURL_350x350
-    - photoURL_50x50
-    - pronouns
-    - registrantId
-    - timezoneUTCOffset
-    - twitter
-    - updated_at
-    - website
-    filter:
-      registrant:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - affiliation
-    - affiliationURL
-    - badges
-    - bio
-    - country
-    - created_at
-    - github
-    - hasBeenEdited
-    - photoURL_350x350
-    - photoURL_50x50
-    - pronouns
-    - registrantId
-    - timezoneUTCOffset
-    - twitter
-    - updated_at
-    - website
-    filter:
-      registrant:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - affiliation
-    - affiliationURL
-    - badges
-    - bio
-    - country
-    - created_at
-    - github
-    - hasBeenEdited
-    - photoURL_350x350
-    - photoURL_50x50
-    - pronouns
-    - registrantId
-    - timezoneUTCOffset
-    - twitter
-    - updated_at
-    - website
-    filter:
-      registrant:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
-  role: user
+  - role: attendee
+    permission:
+      columns:
+        - affiliation
+        - affiliationURL
+        - badges
+        - bio
+        - country
+        - created_at
+        - github
+        - hasBeenEdited
+        - photoURL_350x350
+        - photoURL_50x50
+        - pronouns
+        - registrantId
+        - timezoneUTCOffset
+        - twitter
+        - updated_at
+        - website
+      filter:
+        registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
+  - role: conference-organizer
+    permission:
+      columns:
+        - affiliation
+        - affiliationURL
+        - badges
+        - bio
+        - country
+        - created_at
+        - github
+        - hasBeenEdited
+        - photoURL_350x350
+        - photoURL_50x50
+        - pronouns
+        - registrantId
+        - timezoneUTCOffset
+        - twitter
+        - updated_at
+        - website
+      filter:
+        registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - affiliation
+        - affiliationURL
+        - badges
+        - bio
+        - country
+        - created_at
+        - github
+        - hasBeenEdited
+        - photoURL_350x350
+        - photoURL_50x50
+        - pronouns
+        - registrantId
+        - timezoneUTCOffset
+        - twitter
+        - updated_at
+        - website
+      filter:
+        registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
+  - role: user
+    permission:
+      columns:
+        - affiliation
+        - affiliationURL
+        - badges
+        - bio
+        - country
+        - created_at
+        - github
+        - hasBeenEdited
+        - photoURL_350x350
+        - photoURL_50x50
+        - pronouns
+        - registrantId
+        - timezoneUTCOffset
+        - twitter
+        - updated_at
+        - website
+      filter:
+        registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
 update_permissions:
-- permission:
-    check: null
-    columns:
-    - affiliation
-    - affiliationURL
-    - badges
-    - bio
-    - country
-    - github
-    - hasBeenEdited
-    - pronouns
-    - timezoneUTCOffset
-    - twitter
-    - website
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: attendee
-- permission:
-    check: null
-    columns:
-    - affiliation
-    - affiliationURL
-    - badges
-    - bio
-    - country
-    - github
-    - pronouns
-    - timezoneUTCOffset
-    - twitter
-    - website
-    filter:
-      registrant:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - affiliation
-    - affiliationURL
-    - badges
-    - bio
-    - country
-    - github
-    - hasBeenEdited
-    - pronouns
-    - timezoneUTCOffset
-    - twitter
-    - website
-    filter:
-      registrant:
-        _and:
-        - conferenceId:
+  - role: attendee
+    permission:
+      columns:
+        - affiliation
+        - affiliationURL
+        - badges
+        - bio
+        - country
+        - github
+        - hasBeenEdited
+        - pronouns
+        - timezoneUTCOffset
+        - twitter
+        - website
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+      check: null
+  - role: conference-organizer
+    permission:
+      columns:
+        - affiliation
+        - affiliationURL
+        - badges
+        - bio
+        - country
+        - github
+        - pronouns
+        - timezoneUTCOffset
+        - twitter
+        - website
+      filter:
+        registrant:
+          conferenceId:
             _in: X-Hasura-Conference-Ids
-        - subconferenceMemberships:
-            subconferenceId:
-              _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+      check: null
+  - role: subconference-organizer
+    permission:
+      columns:
+        - affiliation
+        - affiliationURL
+        - badges
+        - bio
+        - country
+        - github
+        - hasBeenEdited
+        - pronouns
+        - timezoneUTCOffset
+        - twitter
+        - website
+      filter:
+        registrant:
+          _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceMemberships:
+                subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      check: null
 delete_permissions:
-- permission:
-    filter:
-      registrant:
-        conferenceId:
-          _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    filter:
-      registrant:
-        _and:
-        - conferenceId:
+  - role: conference-organizer
+    permission:
+      filter:
+        registrant:
+          conferenceId:
             _in: X-Hasura-Conference-Ids
-        - subconferenceMemberships:
-            subconferenceId:
-              _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: subconference-organizer
+    permission:
+      filter:
+        registrant:
+          _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceMemberships:
+                subconferenceId:
+                  _in: X-Hasura-Subconference-Ids

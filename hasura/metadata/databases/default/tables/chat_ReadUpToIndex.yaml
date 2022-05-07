@@ -1,21 +1,21 @@
 table:
-  name: ReadUpToIndex
   schema: chat
+  name: ReadUpToIndex
 object_relationships:
-- name: chat
-  using:
-    foreign_key_constraint_on: chatId
-- name: registrant
-  using:
-    foreign_key_constraint_on: registrantId
+  - name: chat
+    using:
+      foreign_key_constraint_on: chatId
+  - name: registrant
+    using:
+      foreign_key_constraint_on: registrantId
 select_permissions:
-- permission:
-    columns:
-    - chatId
-    - registrantId
-    - updated_at
-    - messageSId
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: attendee
+  - role: attendee
+    permission:
+      columns:
+        - chatId
+        - registrantId
+        - updated_at
+        - messageSId
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids

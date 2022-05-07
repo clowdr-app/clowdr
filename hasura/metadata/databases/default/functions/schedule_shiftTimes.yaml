@@ -1,8 +1,9 @@
 function:
-  name: shiftTimes
   schema: schedule
+  name: shiftTimes
 configuration:
+  custom_root_fields: {}
   exposed_as: mutation
 permissions:
-- role: subconference-organizer
-- role: conference-organizer
+  - role: subconference-organizer
+  - role: conference-organizer

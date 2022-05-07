@@ -1,8 +1,13 @@
 table:
-  name: ChannelStackDeleteJob
   schema: job_queues
+  name: ChannelStackDeleteJob
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt

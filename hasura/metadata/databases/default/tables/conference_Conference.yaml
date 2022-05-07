@@ -1,303 +1,308 @@
 table:
-  name: Conference
   schema: conference
+  name: Conference
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: completedRegistrationsStat
-  using:
-    manual_configuration:
-      column_mapping:
-        id: id
-      insertion_order: null
-      remote_table:
-        name: CompletedRegistrations
-        schema: analytics
-- name: creator
-  using:
-    foreign_key_constraint_on: createdBy
-- name: demoCode
-  using:
-    foreign_key_constraint_on: demoCodeId
-- name: quota
-  using:
-    manual_configuration:
-      column_mapping:
-        id: conferenceId
-      insertion_order: null
-      remote_table:
-        name: Quota
-        schema: conference
-- name: remainingQuota
-  using:
-    manual_configuration:
-      column_mapping:
-        id: conferenceId
-      insertion_order: null
-      remote_table:
-        name: RemainingQuota
-        schema: conference
-- name: usage
-  using:
-    manual_configuration:
-      column_mapping:
-        id: conferenceId
-      insertion_order: null
-      remote_table:
-        name: Usage
-        schema: conference
+  - name: completedRegistrationsStat
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: CompletedRegistrations
+        insertion_order: null
+        column_mapping:
+          id: id
+  - name: creator
+    using:
+      foreign_key_constraint_on: createdBy
+  - name: demoCode
+    using:
+      foreign_key_constraint_on: demoCodeId
+  - name: quota
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Quota
+        insertion_order: null
+        column_mapping:
+          id: conferenceId
+  - name: remainingQuota
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: RemainingQuota
+        insertion_order: null
+        column_mapping:
+          id: conferenceId
+  - name: usage
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Usage
+        insertion_order: null
+        column_mapping:
+          id: conferenceId
 array_relationships:
-- name: chats
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Chat
-        schema: chat
-- name: configurations
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Configuration
-        schema: conference
-- name: events
-  using:
-    manual_configuration:
-      column_mapping:
-        id: conferenceId
-      insertion_order: null
-      remote_table:
-        name: Event
-        schema: schedule
-- name: exhibitions
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Exhibition
-        schema: collection
-- name: items
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Item
-        schema: content
-- name: programPeople
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: ProgramPerson
-        schema: collection
-- name: registrants
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Registrant
-        schema: registrant
-- name: rooms
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Room
-        schema: room
-- name: shufflePeriods
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: ShufflePeriod
-        schema: room
-- name: sponsorshipTiers
-  using:
-    manual_configuration:
-      column_mapping:
-        id: conferenceId
-      insertion_order: null
-      remote_table:
-        name: Tier
-        schema: sponsor
-- name: subconferences
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Subconference
-        schema: conference
-- name: tags
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Tag
-        schema: collection
+  - name: chats
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: chat
+          name: Chat
+  - name: configurations
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: conference
+          name: Configuration
+  - name: events
+    using:
+      manual_configuration:
+        remote_table:
+          schema: schedule
+          name: Event
+        insertion_order: null
+        column_mapping:
+          id: conferenceId
+  - name: exhibitions
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: collection
+          name: Exhibition
+  - name: items
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: content
+          name: Item
+  - name: programPeople
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: collection
+          name: ProgramPerson
+  - name: registrants
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: registrant
+          name: Registrant
+  - name: rooms
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: room
+          name: Room
+  - name: shufflePeriods
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: room
+          name: ShufflePeriod
+  - name: sponsorshipTiers
+    using:
+      manual_configuration:
+        remote_table:
+          schema: sponsor
+          name: Tier
+        insertion_order: null
+        column_mapping:
+          id: conferenceId
+  - name: subconferences
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: conference
+          name: Subconference
+  - name: tags
+    using:
+      foreign_key_constraint_on:
+        column: conferenceId
+        table:
+          schema: collection
+          name: Tag
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      demoCode:
-        usedById:
-          _is_null: true
-    columns:
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
-    - demoCodeId
-    - name
-    - shortName
-    - slug
-    set:
-      createdBy: x-hasura-User-Id
-  role: user
-select_permissions:
-- permission:
-    columns:
-    - announcementsChatId
-    - conferenceVisibilityLevel
-    - createdBy
-    - created_at
-    - defaultProgramVisibilityLevel
-    - id
-    - name
-    - shortName
-    - slug
-    - updated_at
-    filter:
-      id:
-        _in: X-Hasura-Conference-Ids
-  role: attendee
-- permission:
-    columns:
-    - announcementsChatId
-    - conferenceVisibilityLevel
-    - createdBy
-    - created_at
-    - defaultProgramVisibilityLevel
-    - demoCodeId
-    - globalInviteCode
-    - id
-    - name
-    - shortName
-    - slug
-    - updated_at
-    filter:
-      _or:
-      - id:
-          _in: X-Hasura-Conference-Ids
-      - createdBy:
-          _eq: X-Hasura-User-Id
-  role: conference-organizer
-- permission:
-    columns:
-    - announcementsChatId
-    - conferenceVisibilityLevel
-    - createdBy
-    - created_at
-    - defaultProgramVisibilityLevel
-    - demoCodeId
-    - id
-    - name
-    - shortName
-    - slug
-    - updated_at
-    filter:
-      id:
-        _in: X-Hasura-Conference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - conferenceVisibilityLevel
-    - created_at
-    - defaultProgramVisibilityLevel
-    - id
-    - name
-    - shortName
-    - slug
-    - updated_at
-    filter:
-      _or:
-      - conferenceVisibilityLevel:
-          _eq: PUBLIC
-      - _and:
-        - globalInviteCode:
-            _is_null: false
-        - globalInviteCode:
-            _eq: X-Hasura-Invite-Code
-  role: unauthenticated
-- permission:
-    columns:
-    - created_at
-    - id
-    - name
-    - shortName
-    - slug
-    - updated_at
-    filter:
-      id:
-        _in: X-Hasura-Conference-Ids
-  role: user
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - conferenceVisibilityLevel
-    - defaultProgramVisibilityLevel
-    - globalInviteCode
-    - name
-    - shortName
-    - slug
-    filter:
-      _or:
-      - id:
-          _in: X-Hasura-Conference-Ids
-      - createdBy:
-          _eq: X-Hasura-User-Id
-  role: conference-organizer
-delete_permissions:
-- permission:
-    filter:
-      createdBy:
-        _eq: X-Hasura-User-Id
-  role: conference-organizer
-event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: true
-    insert:
-      columns: "*"
-    update:
+  - role: user
+    permission:
+      check:
+        demoCode:
+          usedById:
+            _is_null: true
+      set:
+        createdBy: x-hasura-User-Id
       columns:
-      - conferenceVisibilityLevel
-      - createdBy
-      - lowestRoleWithAccess
-      - shortName
-      - slug
-  headers:
-  - name: X-Hasura-Event-Secret
-    value_from_env: EVENT_SECRET
-  name: Cache_Conference
-  retry_conf:
-    interval_sec: 10
-    num_retries: 3
-    timeout_sec: 10
-  webhook: "{{CACHES_BASE_URL}}/cache/update/conference"
-- definition:
-    enable_manual: true
-    insert:
-      columns: "*"
-  headers:
-  - name: X-Hasura-Event-Secret
-    value_from_env: EVENT_SECRET
-  name: Realtime_Conference_Inserted
-  retry_conf:
-    interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
-  webhook: "{{REALTIME_BASE_URL}}/conference/inserted"
+        - conferenceVisibilityLevel
+        - defaultProgramVisibilityLevel
+        - demoCodeId
+        - name
+        - shortName
+        - slug
+      backend_only: false
+select_permissions:
+  - role: attendee
+    permission:
+      columns:
+        - announcementsChatId
+        - conferenceVisibilityLevel
+        - createdBy
+        - created_at
+        - defaultProgramVisibilityLevel
+        - id
+        - name
+        - shortName
+        - slug
+        - updated_at
+      filter:
+        id:
+          _in: X-Hasura-Conference-Ids
+  - role: conference-organizer
+    permission:
+      columns:
+        - announcementsChatId
+        - conferenceVisibilityLevel
+        - createdBy
+        - created_at
+        - defaultProgramVisibilityLevel
+        - demoCodeId
+        - globalInviteCode
+        - id
+        - name
+        - shortName
+        - slug
+        - updated_at
+      filter:
+        _or:
+          - id:
+              _in: X-Hasura-Conference-Ids
+          - createdBy:
+              _eq: X-Hasura-User-Id
+  - role: subconference-organizer
+    permission:
+      columns:
+        - announcementsChatId
+        - conferenceVisibilityLevel
+        - createdBy
+        - created_at
+        - defaultProgramVisibilityLevel
+        - demoCodeId
+        - id
+        - name
+        - shortName
+        - slug
+        - updated_at
+      filter:
+        id:
+          _in: X-Hasura-Conference-Ids
+  - role: unauthenticated
+    permission:
+      columns:
+        - conferenceVisibilityLevel
+        - created_at
+        - defaultProgramVisibilityLevel
+        - id
+        - name
+        - shortName
+        - slug
+        - updated_at
+      filter:
+        _or:
+          - conferenceVisibilityLevel:
+              _eq: PUBLIC
+          - _and:
+              - globalInviteCode:
+                  _is_null: false
+              - globalInviteCode:
+                  _eq: X-Hasura-Invite-Code
+  - role: user
+    permission:
+      columns:
+        - created_at
+        - id
+        - name
+        - shortName
+        - slug
+        - updated_at
+      filter:
+        id:
+          _in: X-Hasura-Conference-Ids
+update_permissions:
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceVisibilityLevel
+        - defaultProgramVisibilityLevel
+        - globalInviteCode
+        - name
+        - shortName
+        - slug
+      filter:
+        _or:
+          - id:
+              _in: X-Hasura-Conference-Ids
+          - createdBy:
+              _eq: X-Hasura-User-Id
+      check: null
+delete_permissions:
+  - role: conference-organizer
+    permission:
+      filter:
+        createdBy:
+          _eq: X-Hasura-User-Id
+event_triggers:
+  - name: Cache_Conference
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+      update:
+        columns:
+          - conferenceVisibilityLevel
+          - createdBy
+          - lowestRoleWithAccess
+          - shortName
+          - slug
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 10
+    webhook: '{{CACHES_BASE_URL}}/cache/update/conference'
+    headers:
+      - name: X-Hasura-Event-Secret
+        value_from_env: EVENT_SECRET
+  - name: Realtime_Conference_Inserted
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{REALTIME_BASE_URL}}/conference/inserted'
+    headers:
+      - name: X-Hasura-Event-Secret
+        value_from_env: EVENT_SECRET

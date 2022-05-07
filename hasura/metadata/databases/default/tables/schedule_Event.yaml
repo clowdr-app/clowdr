@@ -1,409 +1,416 @@
 table:
-  name: Event
   schema: schedule
+  name: Event
 configuration:
+  custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+    timings_updated_at:
+      custom_name: timingsUpdatedAt
   custom_column_names:
+    updated_at: updatedAt
     created_at: createdAt
     timings_updated_at: timingsUpdatedAt
-    updated_at: updatedAt
-  custom_root_fields: {}
 object_relationships:
-- name: autoPlayElement
-  using:
-    foreign_key_constraint_on: autoPlayElementId
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: eventVonageSession
-  using:
-    manual_configuration:
-      column_mapping:
-        id: eventId
-      insertion_order: null
-      remote_table:
-        name: EventVonageSession
-        schema: video
-- name: exhibition
-  using:
-    foreign_key_constraint_on: exhibitionId
-- name: item
-  using:
-    foreign_key_constraint_on: itemId
-- name: mode
-  using:
-    foreign_key_constraint_on: modeName
-- name: room
-  using:
-    foreign_key_constraint_on: roomId
-- name: session
-  using:
-    foreign_key_constraint_on: sessionEventId
-- name: shufflePeriod
-  using:
-    foreign_key_constraint_on: shufflePeriodId
-- name: subconference
-  using:
-    foreign_key_constraint_on: subconferenceId
+  - name: autoPlayElement
+    using:
+      foreign_key_constraint_on: autoPlayElementId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: eventVonageSession
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: EventVonageSession
+        insertion_order: null
+        column_mapping:
+          id: eventId
+  - name: exhibition
+    using:
+      foreign_key_constraint_on: exhibitionId
+  - name: item
+    using:
+      foreign_key_constraint_on: itemId
+  - name: mode
+    using:
+      foreign_key_constraint_on: modeName
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+  - name: session
+    using:
+      foreign_key_constraint_on: sessionEventId
+  - name: shufflePeriod
+    using:
+      foreign_key_constraint_on: shufflePeriodId
+  - name: subconference
+    using:
+      foreign_key_constraint_on: subconferenceId
 array_relationships:
-- name: continuations
-  using:
-    foreign_key_constraint_on:
-      column: fromEvent
-      table:
-        name: Continuation
-        schema: schedule
-- name: eventPeople
-  using:
-    foreign_key_constraint_on:
-      column: eventId
-      table:
-        name: EventProgramPerson
-        schema: schedule
-- name: presentations
-  using:
-    foreign_key_constraint_on:
-      column: sessionEventId
-      table:
-        name: Event
-        schema: schedule
+  - name: continuations
+    using:
+      foreign_key_constraint_on:
+        column: fromEvent
+        table:
+          schema: schedule
+          name: Continuation
+  - name: eventPeople
+    using:
+      foreign_key_constraint_on:
+        column: eventId
+        table:
+          schema: schedule
+          name: EventProgramPerson
+  - name: presentations
+    using:
+      foreign_key_constraint_on:
+        column: sessionEventId
+        table:
+          schema: schedule
+          name: Event
 computed_fields:
-- definition:
-    function:
-      name: eventRoomName
-      schema: schedule
-  name: roomName
+  - name: roomName
+    definition:
+      function:
+        schema: schedule
+        name: eventRoomName
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-    columns:
-    - autoPlayElementId
-    - automaticParticipationSurvey
-    - conferenceId
-    - enableRecording
-    - exhibitionId
-    - id
-    - itemId
-    - modeName
-    - name
-    - roomId
-    - scheduledEndTime
-    - scheduledStartTime
-    - sessionEventId
-    - shufflePeriodId
-    - streamTextEventId
-    - subconferenceId
-    - visibilityLevel
-  role: conference-organizer
-- permission:
-    backend_only: false
-    check:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-    columns:
-    - autoPlayElementId
-    - automaticParticipationSurvey
-    - conferenceId
-    - enableRecording
-    - exhibitionId
-    - id
-    - itemId
-    - modeName
-    - name
-    - roomId
-    - scheduledEndTime
-    - scheduledStartTime
-    - sessionEventId
-    - shufflePeriodId
-    - streamTextEventId
-    - subconferenceId
-    - visibilityLevel
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      check:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+      columns:
+        - autoPlayElementId
+        - automaticParticipationSurvey
+        - conferenceId
+        - enableRecording
+        - exhibitionId
+        - id
+        - itemId
+        - modeName
+        - name
+        - roomId
+        - scheduledEndTime
+        - scheduledStartTime
+        - sessionEventId
+        - shufflePeriodId
+        - streamTextEventId
+        - subconferenceId
+        - visibilityLevel
+      backend_only: false
+  - role: subconference-organizer
+    permission:
+      check:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      columns:
+        - autoPlayElementId
+        - automaticParticipationSurvey
+        - conferenceId
+        - enableRecording
+        - exhibitionId
+        - id
+        - itemId
+        - modeName
+        - name
+        - roomId
+        - scheduledEndTime
+        - scheduledStartTime
+        - sessionEventId
+        - shufflePeriodId
+        - streamTextEventId
+        - subconferenceId
+        - visibilityLevel
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - autoPlayElementId
-    - automaticParticipationSurvey
-    - conferenceId
-    - created_at
-    - enableRecording
-    - exhibitionId
-    - id
-    - itemId
-    - modeName
-    - name
-    - roomId
-    - scheduledEndTime
-    - scheduledStartTime
-    - sessionEventId
-    - shufflePeriodId
-    - streamTextEventId
-    - subconferenceId
-    - updated_at
-    - visibilityLevel
-    computed_fields:
-    - roomName
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - _or:
-        - subconferenceId:
-            _is_null: true
-        - _and:
-          - subconferenceId:
-              _is_null: false
+  - role: attendee
+    permission:
+      columns:
+        - autoPlayElementId
+        - automaticParticipationSurvey
+        - conferenceId
+        - created_at
+        - enableRecording
+        - exhibitionId
+        - id
+        - itemId
+        - modeName
+        - name
+        - roomId
+        - scheduledEndTime
+        - scheduledStartTime
+        - sessionEventId
+        - shufflePeriodId
+        - streamTextEventId
+        - subconferenceId
+        - updated_at
+        - visibilityLevel
+      computed_fields:
+        - roomName
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
           - _or:
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-            - visibilityLevel:
-                _in:
-                - PUBLIC
-                - EXTERNAL
-  role: attendee
-- permission:
-    allow_aggregations: true
-    columns:
-    - autoPlayElementId
-    - automaticParticipationSurvey
-    - conferenceId
-    - created_at
-    - enableRecording
-    - exhibitionId
-    - id
-    - itemId
-    - modeName
-    - name
-    - roomId
-    - scheduledEndTime
-    - scheduledStartTime
-    - sessionEventId
-    - shufflePeriodId
-    - streamTextEventId
-    - subconferenceId
-    - updated_at
-    - visibilityLevel
-    computed_fields:
-    - roomName
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    allow_aggregations: true
-    columns:
-    - autoPlayElementId
-    - automaticParticipationSurvey
-    - conferenceId
-    - created_at
-    - enableRecording
-    - exhibitionId
-    - id
-    - itemId
-    - modeName
-    - name
-    - roomId
-    - scheduledEndTime
-    - scheduledStartTime
-    - sessionEventId
-    - shufflePeriodId
-    - streamTextEventId
-    - subconferenceId
-    - updated_at
-    - visibilityLevel
-    computed_fields:
-    - roomName
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - exhibitionId
-    - id
-    - itemId
-    - modeName
-    - name
-    - roomId
-    - scheduledEndTime
-    - scheduledStartTime
-    - sessionEventId
-    - shufflePeriodId
-    - subconferenceId
-    - updated_at
-    - visibilityLevel
-    computed_fields:
-    - roomName
-    filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - _or:
-        - subconferenceId:
-            _is_null: true
-        - _and:
-          - subconferenceId:
-              _is_null: false
+              - subconferenceId:
+                  _is_null: true
+              - _and:
+                  - subconferenceId:
+                      _is_null: false
+                  - _or:
+                      - subconferenceId:
+                          _in: X-Hasura-Subconference-Ids
+                      - visibilityLevel:
+                          _in:
+                            - PUBLIC
+                            - EXTERNAL
+  - role: conference-organizer
+    permission:
+      columns:
+        - autoPlayElementId
+        - automaticParticipationSurvey
+        - conferenceId
+        - created_at
+        - enableRecording
+        - exhibitionId
+        - id
+        - itemId
+        - modeName
+        - name
+        - roomId
+        - scheduledEndTime
+        - scheduledStartTime
+        - sessionEventId
+        - shufflePeriodId
+        - streamTextEventId
+        - subconferenceId
+        - updated_at
+        - visibilityLevel
+      computed_fields:
+        - roomName
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+      allow_aggregations: true
+  - role: subconference-organizer
+    permission:
+      columns:
+        - autoPlayElementId
+        - automaticParticipationSurvey
+        - conferenceId
+        - created_at
+        - enableRecording
+        - exhibitionId
+        - id
+        - itemId
+        - modeName
+        - name
+        - roomId
+        - scheduledEndTime
+        - scheduledStartTime
+        - sessionEventId
+        - shufflePeriodId
+        - streamTextEventId
+        - subconferenceId
+        - updated_at
+        - visibilityLevel
+      computed_fields:
+        - roomName
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      allow_aggregations: true
+  - role: unauthenticated
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - exhibitionId
+        - id
+        - itemId
+        - modeName
+        - name
+        - roomId
+        - scheduledEndTime
+        - scheduledStartTime
+        - sessionEventId
+        - shufflePeriodId
+        - subconferenceId
+        - updated_at
+        - visibilityLevel
+      computed_fields:
+        - roomName
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
           - _or:
-            - subconferenceId:
-                _in: X-Hasura-Subconference-Ids
-            - visibilityLevel:
-                _in:
-                - PUBLIC
-                - PUBLIC_ONLY
-  role: unauthenticated
+              - subconferenceId:
+                  _is_null: true
+              - _and:
+                  - subconferenceId:
+                      _is_null: false
+                  - _or:
+                      - subconferenceId:
+                          _in: X-Hasura-Subconference-Ids
+                      - visibilityLevel:
+                          _in:
+                            - PUBLIC
+                            - PUBLIC_ONLY
 update_permissions:
-- permission:
-    check: null
-    columns:
-    - autoPlayElementId
-    - automaticParticipationSurvey
-    - enableRecording
-    - exhibitionId
-    - itemId
-    - modeName
-    - name
-    - roomId
-    - scheduledEndTime
-    - scheduledStartTime
-    - sessionEventId
-    - shufflePeriodId
-    - streamTextEventId
-    - visibilityLevel
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    check: null
-    columns:
-    - autoPlayElementId
-    - automaticParticipationSurvey
-    - enableRecording
-    - exhibitionId
-    - itemId
-    - modeName
-    - name
-    - roomId
-    - scheduledEndTime
-    - scheduledStartTime
-    - sessionEventId
-    - shufflePeriodId
-    - streamTextEventId
-    - visibilityLevel
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - autoPlayElementId
+        - automaticParticipationSurvey
+        - enableRecording
+        - exhibitionId
+        - itemId
+        - modeName
+        - name
+        - roomId
+        - scheduledEndTime
+        - scheduledStartTime
+        - sessionEventId
+        - shufflePeriodId
+        - streamTextEventId
+        - visibilityLevel
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+      check: null
+  - role: subconference-organizer
+    permission:
+      columns:
+        - autoPlayElementId
+        - automaticParticipationSurvey
+        - enableRecording
+        - exhibitionId
+        - itemId
+        - modeName
+        - name
+        - roomId
+        - scheduledEndTime
+        - scheduledStartTime
+        - sessionEventId
+        - shufflePeriodId
+        - streamTextEventId
+        - visibilityLevel
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
+      check: null
 delete_permissions:
-- permission:
-    filter:
-      _or:
-      - _and:
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _is_null: true
-  role: conference-organizer
-- permission:
-    filter:
-      _or:
-      - _and:
-        - subconferenceId:
-            _is_null: false
-        - conferenceId:
-            _in: X-Hasura-Conference-Ids
-        - subconferenceId:
-            _in: X-Hasura-Subconference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      filter:
+        _or:
+          - _and:
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _is_null: true
+  - role: subconference-organizer
+    permission:
+      filter:
+        _or:
+          - _and:
+              - subconferenceId:
+                  _is_null: false
+              - conferenceId:
+                  _in: X-Hasura-Conference-Ids
+              - subconferenceId:
+                  _in: X-Hasura-Subconference-Ids
 event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: true
-    insert:
-      columns: "*"
-    update:
-      columns:
-      - conferenceId
-      - roomId
-      - subconferenceId
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: Cache_Event
-  retry_conf:
-    interval_sec: 10
-    num_retries: 3
-    timeout_sec: 10
-  webhook: "{{CACHES_BASE_URL}}/cache/update/event"
-- definition:
-    enable_manual: true
-    insert:
-      columns: "*"
-    update:
-      columns:
-      - timings_updated_at
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: EventUpdated
-  retry_conf:
-    interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
-  webhook: "{{ACTION_BASE_URL}}/event/updated"
-- definition:
-    enable_manual: true
-    update:
-      columns:
-      - scheduledEndTime
-      - modeName
-      - scheduledStartTime
-      - conferenceId
-      - id
-      - itemId
-      - roomId
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: Playout_EventUpdated
-  retry_conf:
-    interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
-  webhook: "{{PLAYOUT_BASE_URL}}/hasura/events"
+  - name: Cache_Event
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+      update:
+        columns:
+          - conferenceId
+          - roomId
+          - subconferenceId
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 10
+    webhook: '{{CACHES_BASE_URL}}/cache/update/event'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET
+  - name: EventUpdated
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      update:
+        columns:
+          - timings_updated_at
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/event/updated'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET
+  - name: Playout_EventUpdated
+    definition:
+      enable_manual: true
+      update:
+        columns:
+          - scheduledEndTime
+          - modeName
+          - scheduledStartTime
+          - conferenceId
+          - id
+          - itemId
+          - roomId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET

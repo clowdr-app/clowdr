@@ -1,77 +1,77 @@
 table:
-  name: CombineVideosJob
   schema: job_queues
+  name: CombineVideosJob
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: jobStatus
-  using:
-    foreign_key_constraint_on: jobStatusName
-- name: registrant
-  using:
-    foreign_key_constraint_on: createdByRegistrantId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  - name: registrant
+    using:
+      foreign_key_constraint_on: createdByRegistrantId
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - createdByRegistrantId:
-          _in: X-Hasura-Registrant-Ids
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-    columns:
-    - conferenceId
-    - createdByRegistrantId
-    - data
-    - outputName
-    - subconferenceId
-  role: conference-organizer
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - createdByRegistrantId:
-          _in: X-Hasura-Registrant-Ids
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-    columns:
-    - conferenceId
-    - createdByRegistrantId
-    - data
-    - outputName
-    - subconferenceId
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      check:
+        _and:
+          - createdByRegistrantId:
+              _in: X-Hasura-Registrant-Ids
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+      columns:
+        - conferenceId
+        - createdByRegistrantId
+        - data
+        - outputName
+        - subconferenceId
+      backend_only: false
+  - role: subconference-organizer
+    permission:
+      check:
+        _and:
+          - createdByRegistrantId:
+              _in: X-Hasura-Registrant-Ids
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+      columns:
+        - conferenceId
+        - createdByRegistrantId
+        - data
+        - outputName
+        - subconferenceId
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - conferenceId
-    - createdByRegistrantId
-    - created_at
-    - data
-    - id
-    - jobStatusName
-    - message
-    - outputName
-    - subconferenceId
-    - updated_at
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - createdByRegistrantId
-    - created_at
-    - data
-    - id
-    - jobStatusName
-    - message
-    - outputName
-    - subconferenceId
-    - updated_at
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - createdByRegistrantId
+        - created_at
+        - data
+        - id
+        - jobStatusName
+        - message
+        - outputName
+        - subconferenceId
+        - updated_at
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - createdByRegistrantId
+        - created_at
+        - data
+        - id
+        - jobStatusName
+        - message
+        - outputName
+        - subconferenceId
+        - updated_at
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids

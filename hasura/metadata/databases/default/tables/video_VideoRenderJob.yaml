@@ -1,74 +1,74 @@
 table:
-  name: VideoRenderJob
   schema: video
+  name: VideoRenderJob
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: conferencePrepareJob
-  using:
-    foreign_key_constraint_on: conferencePrepareJobId
-- name: element
-  using:
-    manual_configuration:
-      column_mapping:
-        elementId: id
-      insertion_order: null
-      remote_table:
-        name: Element
-        schema: content
-- name: jobStatus
-  using:
-    foreign_key_constraint_on: jobStatusName
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: conferencePrepareJob
+    using:
+      foreign_key_constraint_on: conferencePrepareJobId
+  - name: element
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: Element
+        insertion_order: null
+        column_mapping:
+          elementId: id
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
 select_permissions:
-- permission:
-    columns:
-    - conferenceId
-    - conferencePrepareJobId
-    - created_at
-    - elementId
-    - id
-    - jobStatusName
-    - retriesCount
-    - updated_at
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - conferencePrepareJobId
-    - created_at
-    - elementId
-    - id
-    - jobStatusName
-    - retriesCount
-    - updated_at
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: subconference-organizer
-event_triggers:
-- definition:
-    enable_manual: false
-    insert:
-      columns: "*"
-    update:
+  - role: conference-organizer
+    permission:
       columns:
-      - data
-      - jobStatusName
-      - message
-      - conferenceId
-      - conferencePrepareJobId
-      - elementId
-      - id
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: VideoRenderJobUpdated
-  retry_conf:
-    interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
-  webhook: "{{ACTION_BASE_URL}}/videoRenderJob/updated"
+        - conferenceId
+        - conferencePrepareJobId
+        - created_at
+        - elementId
+        - id
+        - jobStatusName
+        - retriesCount
+        - updated_at
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - conferencePrepareJobId
+        - created_at
+        - elementId
+        - id
+        - jobStatusName
+        - retriesCount
+        - updated_at
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+event_triggers:
+  - name: VideoRenderJobUpdated
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns:
+          - data
+          - jobStatusName
+          - message
+          - conferenceId
+          - conferencePrepareJobId
+          - elementId
+          - id
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/videoRenderJob/updated'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET

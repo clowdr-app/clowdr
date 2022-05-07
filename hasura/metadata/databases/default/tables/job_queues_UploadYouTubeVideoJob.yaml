@@ -1,139 +1,144 @@
 table:
-  name: UploadYouTubeVideoJob
   schema: job_queues
+  name: UploadYouTubeVideoJob
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: element
-  using:
-    foreign_key_constraint_on: elementId
-- name: jobStatus
-  using:
-    foreign_key_constraint_on: jobStatusName
-- name: registrantGoogleAccount
-  using:
-    foreign_key_constraint_on: registrantGoogleAccountId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: element
+    using:
+      foreign_key_constraint_on: elementId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  - name: registrantGoogleAccount
+    using:
+      foreign_key_constraint_on: registrantGoogleAccountId
 array_relationships:
-- name: youTubeUploads
-  using:
-    manual_configuration:
-      column_mapping:
-        id: uploadYouTubeVideoJobId
-      insertion_order: null
-      remote_table:
-        name: YouTubeUpload
-        schema: video
+  - name: youTubeUploads
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: YouTubeUpload
+        insertion_order: null
+        column_mapping:
+          id: uploadYouTubeVideoJobId
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - _or:
-        - _and:
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _is_null: true
-      - registrantGoogleAccount:
-          registrantId:
-            _in: X-Hasura-Registrant-Ids
-    columns:
-    - conferenceId
-    - elementId
-    - playlistId
-    - registrantGoogleAccountId
-    - subconferenceId
-    - videoDescription
-    - videoPrivacyStatus
-    - videoTitle
-  role: conference-organizer
-- permission:
-    backend_only: false
-    check:
-      _and:
-      - _or:
-        - _and:
-          - subconferenceId:
-              _is_null: false
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _in: X-Hasura-Subconference-Ids
-      - registrantGoogleAccount:
-          registrantId:
-            _in: X-Hasura-Registrant-Ids
-    columns:
-    - conferenceId
-    - elementId
-    - playlistId
-    - registrantGoogleAccountId
-    - subconferenceId
-    - videoDescription
-    - videoPrivacyStatus
-    - videoTitle
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      check:
+        _and:
+          - _or:
+              - _and:
+                  - conferenceId:
+                      _in: X-Hasura-Conference-Ids
+                  - subconferenceId:
+                      _is_null: true
+          - registrantGoogleAccount:
+              registrantId:
+                _in: X-Hasura-Registrant-Ids
+      columns:
+        - conferenceId
+        - elementId
+        - playlistId
+        - registrantGoogleAccountId
+        - subconferenceId
+        - videoDescription
+        - videoPrivacyStatus
+        - videoTitle
+      backend_only: false
+  - role: subconference-organizer
+    permission:
+      check:
+        _and:
+          - _or:
+              - _and:
+                  - subconferenceId:
+                      _is_null: false
+                  - conferenceId:
+                      _in: X-Hasura-Conference-Ids
+                  - subconferenceId:
+                      _in: X-Hasura-Subconference-Ids
+          - registrantGoogleAccount:
+              registrantId:
+                _in: X-Hasura-Registrant-Ids
+      columns:
+        - conferenceId
+        - elementId
+        - playlistId
+        - registrantGoogleAccountId
+        - subconferenceId
+        - videoDescription
+        - videoPrivacyStatus
+        - videoTitle
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - retriesCount
-    - jobStatusName
-    - message
-    - playlistId
-    - videoDescription
-    - videoPrivacyStatus
-    - videoTitle
-    - created_at
-    - updated_at
-    - conferenceId
-    - elementId
-    - id
-    - registrantGoogleAccountId
-    - subconferenceId
-    filter:
-      _and:
-      - _or:
-        - _and:
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _is_null: true
-      - registrantGoogleAccount:
-          registrantId:
-            _in: X-Hasura-Registrant-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - retriesCount
-    - jobStatusName
-    - message
-    - playlistId
-    - videoDescription
-    - videoPrivacyStatus
-    - videoTitle
-    - created_at
-    - updated_at
-    - conferenceId
-    - elementId
-    - id
-    - registrantGoogleAccountId
-    - subconferenceId
-    filter:
-      _and:
-      - _or:
-        - _and:
-          - subconferenceId:
-              _is_null: false
-          - conferenceId:
-              _in: X-Hasura-Conference-Ids
-          - subconferenceId:
-              _in: X-Hasura-Subconference-Ids
-      - registrantGoogleAccount:
-          registrantId:
-            _in: X-Hasura-Registrant-Ids
-  role: subconference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - retriesCount
+        - jobStatusName
+        - message
+        - playlistId
+        - videoDescription
+        - videoPrivacyStatus
+        - videoTitle
+        - created_at
+        - updated_at
+        - conferenceId
+        - elementId
+        - id
+        - registrantGoogleAccountId
+        - subconferenceId
+      filter:
+        _and:
+          - _or:
+              - _and:
+                  - conferenceId:
+                      _in: X-Hasura-Conference-Ids
+                  - subconferenceId:
+                      _is_null: true
+          - registrantGoogleAccount:
+              registrantId:
+                _in: X-Hasura-Registrant-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - retriesCount
+        - jobStatusName
+        - message
+        - playlistId
+        - videoDescription
+        - videoPrivacyStatus
+        - videoTitle
+        - created_at
+        - updated_at
+        - conferenceId
+        - elementId
+        - id
+        - registrantGoogleAccountId
+        - subconferenceId
+      filter:
+        _and:
+          - _or:
+              - _and:
+                  - subconferenceId:
+                      _is_null: false
+                  - conferenceId:
+                      _in: X-Hasura-Conference-Ids
+                  - subconferenceId:
+                      _in: X-Hasura-Subconference-Ids
+          - registrantGoogleAccount:
+              registrantId:
+                _in: X-Hasura-Registrant-Ids

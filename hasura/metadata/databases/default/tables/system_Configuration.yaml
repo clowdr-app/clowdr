@@ -1,149 +1,149 @@
 table:
-  name: Configuration
   schema: system
+  name: Configuration
 object_relationships:
-- name: configurationKey
-  using:
-    foreign_key_constraint_on: key
+  - name: configurationKey
+    using:
+      foreign_key_constraint_on: key
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      configurationKey:
-        grantedPermissions:
-          _and:
-          - permissionName:
-              _eq: SET_SYSTEM_CONFIGURATION
-          - userId:
-              _eq: X-Hasura-User-Id
-    columns:
-    - key
-    - value
-  role: superuser
+  - role: superuser
+    permission:
+      check:
+        configurationKey:
+          grantedPermissions:
+            _and:
+              - permissionName:
+                  _eq: SET_SYSTEM_CONFIGURATION
+              - userId:
+                  _eq: X-Hasura-User-Id
+      columns:
+        - key
+        - value
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - key
-    - updated_at
-    - value
-    filter:
-      key:
-        _in:
-        - HOST_ORGANISATION_NAME
-        - TERMS_LATEST_REVISION_TIMESTAMP
-        - TERMS_URL
-        - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
-        - PRIVACY_POLICY_URL
-        - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
-        - COOKIE_POLICY_URL
-        - DEFAULT_VIDEO_ROOM_BACKEND
-  role: attendee
-- permission:
-    columns:
-    - key
-    - updated_at
-    - value
-    filter:
-      key:
-        _in:
-        - HOST_ORGANISATION_NAME
-        - TERMS_LATEST_REVISION_TIMESTAMP
-        - TERMS_URL
-        - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
-        - PRIVACY_POLICY_URL
-        - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
-        - COOKIE_POLICY_URL
-        - DEFAULT_VIDEO_ROOM_BACKEND
-  role: conference-organizer
-- permission:
-    columns:
-    - key
-    - updated_at
-    - value
-    filter:
-      key:
-        _in:
-        - HOST_ORGANISATION_NAME
-        - TERMS_LATEST_REVISION_TIMESTAMP
-        - TERMS_URL
-        - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
-        - PRIVACY_POLICY_URL
-        - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
-        - COOKIE_POLICY_URL
-        - DEFAULT_VIDEO_ROOM_BACKEND
-  role: subconference-organizer
-- permission:
-    columns:
-    - value
-    - key
-    - created_at
-    - updated_at
-    filter:
-      configurationKey:
-        grantedPermissions:
-          _and:
-          - permissionName:
-              _eq: VIEW_SYSTEM_CONFIGURATION
-          - userId:
-              _eq: X-Hasura-User-Id
-  role: superuser
-- permission:
-    columns:
-    - key
-    - updated_at
-    - value
-    filter:
-      key:
-        _in:
-        - HOST_ORGANISATION_NAME
-        - TERMS_LATEST_REVISION_TIMESTAMP
-        - TERMS_URL
-        - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
-        - PRIVACY_POLICY_URL
-        - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
-        - COOKIE_POLICY_URL
-        - DEFAULT_VIDEO_ROOM_BACKEND
-  role: unauthenticated
-- permission:
-    columns:
-    - key
-    - updated_at
-    - value
-    filter:
-      key:
-        _in:
-        - HOST_ORGANISATION_NAME
-        - TERMS_LATEST_REVISION_TIMESTAMP
-        - TERMS_URL
-        - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
-        - PRIVACY_POLICY_URL
-        - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
-        - COOKIE_POLICY_URL
-        - DEFAULT_VIDEO_ROOM_BACKEND
-  role: user
+  - role: attendee
+    permission:
+      columns:
+        - key
+        - updated_at
+        - value
+      filter:
+        key:
+          _in:
+            - HOST_ORGANISATION_NAME
+            - TERMS_LATEST_REVISION_TIMESTAMP
+            - TERMS_URL
+            - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
+            - PRIVACY_POLICY_URL
+            - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
+            - COOKIE_POLICY_URL
+            - DEFAULT_VIDEO_ROOM_BACKEND
+  - role: conference-organizer
+    permission:
+      columns:
+        - key
+        - updated_at
+        - value
+      filter:
+        key:
+          _in:
+            - HOST_ORGANISATION_NAME
+            - TERMS_LATEST_REVISION_TIMESTAMP
+            - TERMS_URL
+            - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
+            - PRIVACY_POLICY_URL
+            - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
+            - COOKIE_POLICY_URL
+            - DEFAULT_VIDEO_ROOM_BACKEND
+  - role: subconference-organizer
+    permission:
+      columns:
+        - key
+        - updated_at
+        - value
+      filter:
+        key:
+          _in:
+            - HOST_ORGANISATION_NAME
+            - TERMS_LATEST_REVISION_TIMESTAMP
+            - TERMS_URL
+            - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
+            - PRIVACY_POLICY_URL
+            - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
+            - COOKIE_POLICY_URL
+            - DEFAULT_VIDEO_ROOM_BACKEND
+  - role: superuser
+    permission:
+      columns:
+        - value
+        - key
+        - created_at
+        - updated_at
+      filter:
+        configurationKey:
+          grantedPermissions:
+            _and:
+              - permissionName:
+                  _eq: VIEW_SYSTEM_CONFIGURATION
+              - userId:
+                  _eq: X-Hasura-User-Id
+  - role: unauthenticated
+    permission:
+      columns:
+        - key
+        - updated_at
+        - value
+      filter:
+        key:
+          _in:
+            - HOST_ORGANISATION_NAME
+            - TERMS_LATEST_REVISION_TIMESTAMP
+            - TERMS_URL
+            - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
+            - PRIVACY_POLICY_URL
+            - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
+            - COOKIE_POLICY_URL
+            - DEFAULT_VIDEO_ROOM_BACKEND
+  - role: user
+    permission:
+      columns:
+        - key
+        - updated_at
+        - value
+      filter:
+        key:
+          _in:
+            - HOST_ORGANISATION_NAME
+            - TERMS_LATEST_REVISION_TIMESTAMP
+            - TERMS_URL
+            - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
+            - PRIVACY_POLICY_URL
+            - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
+            - COOKIE_POLICY_URL
+            - DEFAULT_VIDEO_ROOM_BACKEND
 update_permissions:
-- permission:
-    check: null
-    columns:
-    - key
-    - value
-    filter:
-      configurationKey:
-        grantedPermissions:
-          _and:
-          - permissionName:
-              _eq: SET_SYSTEM_CONFIGURATION
-          - userId:
-              _eq: X-Hasura-User-Id
-  role: superuser
+  - role: superuser
+    permission:
+      columns:
+        - key
+        - value
+      filter:
+        configurationKey:
+          grantedPermissions:
+            _and:
+              - permissionName:
+                  _eq: SET_SYSTEM_CONFIGURATION
+              - userId:
+                  _eq: X-Hasura-User-Id
+      check: null
 delete_permissions:
-- permission:
-    filter:
-      configurationKey:
-        grantedPermissions:
-          _and:
-          - permissionName:
-              _eq: SET_SYSTEM_CONFIGURATION
-          - userId:
-              _eq: X-Hasura-User-Id
-  role: superuser
+  - role: superuser
+    permission:
+      filter:
+        configurationKey:
+          grantedPermissions:
+            _and:
+              - permissionName:
+                  _eq: SET_SYSTEM_CONFIGURATION
+              - userId:
+                  _eq: X-Hasura-User-Id

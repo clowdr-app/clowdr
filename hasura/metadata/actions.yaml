@@ -1,315 +1,323 @@
 actions:
-- name: createItemRoom
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/room/createForItem'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: conference-organizer
-  - role: subconference-organizer
-- name: createRoomDm
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/room/createDm'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: attendee
-  - role: user
-- name: getGoogleOAuthUrl
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/google/getOAuthUrl'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: conference-organizer
-  - role: subconference-organizer
-- name: getSlug
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/conference/getSlug'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: attendee
-  - role: unauthenticated
-  - role: user
-- name: getUploadAgreement
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/element/getUploadAgreement'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: submitter
-  - role: attendee
-  - role: unauthenticated
-  - role: user
-- name: initialiseSuperUser
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/su/initialise'
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: superuser
-- name: invitationConfirmCurrent
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/invitation/confirm/current'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: attendee
-  - role: user
-- name: joinEventVonageSession
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/vonage/joinEvent'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: conference-organizer
-  - role: room-admin
-  - role: room-member
-  - role: subconference-organizer
-  - role: attendee
-- name: joinRoomChimeSession
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/chime/joinRoom'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: conference-organizer
-  - role: room-member
-  - role: room-admin
-  - role: attendee
-  - role: subconference-organizer
-  - role: user
-- name: joinRoomVonageSession
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/vonage/joinRoom'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: conference-organizer
-  - role: room-member
-  - role: room-admin
-  - role: attendee
-  - role: subconference-organizer
-  - role: user
-- name: notifyEventEnded
-  definition:
-    kind: synchronous
-    handler: '{{REALTIME_BASE_URL}}/event/ended'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-- name: notifyEventStarted
-  definition:
-    kind: synchronous
-    handler: '{{REALTIME_BASE_URL}}/event/started'
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-- name: presence_Flush
-  definition:
-    kind: synchronous
-    handler: '{{REALTIME_BASE_URL}}/flush'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-presence-flush-secret
-      value_from_env: PRESENCE_FLUSH_SECRET
-- name: presence_Summary
-  definition:
-    kind: ""
-    handler: '{{REALTIME_BASE_URL}}/summary'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-presence-summary-secret
-      value_from_env: PRESENCE_SUMMARY_SECRET
-- name: refreshYouTubeData
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/registrantGoogleAccount/refreshYouTubeData'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: conference-organizer
-  - role: subconference-organizer
-- name: stopEventBroadcast
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/event/stopBroadcasts'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: conference-organizer
-  - role: subconference-organizer
-- name: submitGoogleOAuthCode
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/google/submitOAuthCode'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: user
-- name: submitUploadableElement
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/element/submit'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: submitter
-- name: toggleVonageRecordingState
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/vonage/toggleRecordingState'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: conference-organizer
-  - role: room-member
-  - role: room-admin
-  - role: attendee
-  - role: subconference-organizer
-  - role: user
-- name: transcribeGeneratePresignedUrl
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/transcribe/generatePresignedUrl'
-    headers:
-    - name: X-Hasura-Event-Secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: attendee
-- name: updateProfilePhoto
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/profile/photo/update'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: attendee
-- name: updateSubtitles
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/element/updateSubtitles'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: submitter
-- name: vapidPublicKey
-  definition:
-    kind: ""
-    handler: '{{REALTIME_BASE_URL}}/vapid/publicKey'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: attendee
-  - role: unauthenticated
-  - role: user
+  - name: createItemRoom
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/room/createForItem'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: conference-organizer
+      - role: subconference-organizer
+  - name: createRoomDm
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/room/createDm'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: attendee
+      - role: user
+  - name: getGoogleOAuthUrl
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/google/getOAuthUrl'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: conference-organizer
+      - role: subconference-organizer
+  - name: getSlug
+    definition:
+      kind: ""
+      handler: '{{ACTION_BASE_URL}}/conference/getSlug'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: attendee
+      - role: unauthenticated
+      - role: user
+  - name: getUploadAgreement
+    definition:
+      kind: ""
+      handler: '{{ACTION_BASE_URL}}/element/getUploadAgreement'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: submitter
+      - role: attendee
+      - role: unauthenticated
+      - role: user
+  - name: initialiseSuperUser
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/su/initialise'
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: superuser
+  - name: invitationConfirmCurrent
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/invitation/confirm/current'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: attendee
+      - role: user
+  - name: joinEventVonageSession
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/vonage/joinEvent'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: conference-organizer
+      - role: room-admin
+      - role: room-member
+      - role: subconference-organizer
+      - role: attendee
+  - name: joinRoomChimeSession
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/chime/joinRoom'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: conference-organizer
+      - role: room-member
+      - role: room-admin
+      - role: attendee
+      - role: subconference-organizer
+      - role: user
+  - name: joinRoomVonageSession
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/vonage/joinRoom'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: conference-organizer
+      - role: room-member
+      - role: room-admin
+      - role: attendee
+      - role: subconference-organizer
+      - role: user
+  - name: migrateProfilePhoto
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/profile/photo/migrate'
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+  - name: notifyEventEnded
+    definition:
+      kind: synchronous
+      handler: '{{REALTIME_BASE_URL}}/event/ended'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+  - name: notifyEventStarted
+    definition:
+      kind: synchronous
+      handler: '{{REALTIME_BASE_URL}}/event/started'
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+  - name: presence_Flush
+    definition:
+      kind: synchronous
+      handler: '{{REALTIME_BASE_URL}}/flush'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-presence-flush-secret
+          value_from_env: PRESENCE_FLUSH_SECRET
+  - name: presence_Summary
+    definition:
+      kind: ""
+      handler: '{{REALTIME_BASE_URL}}/summary'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-presence-summary-secret
+          value_from_env: PRESENCE_SUMMARY_SECRET
+  - name: refreshYouTubeData
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/registrantGoogleAccount/refreshYouTubeData'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: conference-organizer
+      - role: subconference-organizer
+  - name: stopEventBroadcast
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/event/stopBroadcasts'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: conference-organizer
+      - role: subconference-organizer
+  - name: submitGoogleOAuthCode
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/google/submitOAuthCode'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: user
+  - name: submitUploadableElement
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/element/submit'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: submitter
+  - name: toggleVonageRecordingState
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/vonage/toggleRecordingState'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: conference-organizer
+      - role: room-member
+      - role: room-admin
+      - role: attendee
+      - role: subconference-organizer
+      - role: user
+  - name: transcribeGeneratePresignedUrl
+    definition:
+      kind: ""
+      handler: '{{ACTION_BASE_URL}}/transcribe/generatePresignedUrl'
+      headers:
+        - name: X-Hasura-Event-Secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: attendee
+  - name: updateProfilePhoto
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/profile/photo/update'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: attendee
+  - name: updateSubtitles
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/element/updateSubtitles'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: submitter
+  - name: vapidPublicKey
+    definition:
+      kind: ""
+      handler: '{{REALTIME_BASE_URL}}/vapid/publicKey'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
+    permissions:
+      - role: attendee
+      - role: unauthenticated
+      - role: user
 custom_types:
   enums: []
   input_objects:
-  - name: SubmitContentItemInput
-  - name: ConfirmInvitationInput
-  - name: InvitationConfirmationEmailInput
-  - name: SubmitUpdatedSubtitlesInput
+    - name: SubmitContentItemInput
+    - name: ConfirmInvitationInput
+    - name: InvitationConfirmationEmailInput
+    - name: SubmitUpdatedSubtitlesInput
   objects:
-  - name: SubmitContentItemOutput
-  - name: ConfirmInvitationOutput
-  - name: InvitationConfirmationEmailOutput
-  - name: InvitationSendEmailResult
-  - name: GetContentItemOutput
-  - name: SubmitUpdatedSubtitlesOutput
-  - name: GetUploadAgreementOutput
-  - name: ConferencePrepareOutput
-  - name: UploaderSendSubmissionRequestResult
-  - name: JoinEventVonageSessionOutput
-  - name: JoinRoomVonageSessionOutput
-  - name: ProfilePhotoURLResponse
-  - name: UpdateProfilePhotoResponse
-  - name: CreateRoomDmOutput
-    relationships:
-    - remote_table:
-        schema: room
-        name: Room
-      name: room
-      source: default
-      type: object
-      field_mapping:
-        roomId: id
-  - name: CreateContentGroupRoomOutput
-  - name: StopEventBroadcastOutput
-  - name: GetGoogleOAuthUrlOutput
-  - name: SubmitGoogleOAuthTokenOutput
-  - name: SubmitGoogleOAuthCodeOutput
-  - name: RefreshYouTubeDataOutput
-  - name: ChatRemoteToken
-  - name: GenerateChatRemoteServiceIdsOutput
-  - name: GenerateChatRemoteUserIdsOutput
-  - name: PresenceSummaryOutput
-  - name: PresenceFlushOutput
-  - name: JoinRoomChimeSessionOutput
-  - name: VAPIDPublicKeyOutput
-  - name: CreateItemRoomOutput
-    relationships:
-    - remote_table:
-        schema: room
-        name: Room
-      name: room
-      source: default
-      type: object
-      field_mapping:
-        roomId: id
-  - name: SubmitUploadableElementOutput
-  - name: NotifyEventEnded
-  - name: GetSlugOutput
-  - name: MatchingPersonOutput
-  - name: ToggleVonageRecordingStateOutput
-  - name: NotifyEventStarted
-  - name: InitialiseSuperUserOutput
-  - name: TranscribeGeneratePresignedUrlOutput
+    - name: SubmitContentItemOutput
+    - name: ConfirmInvitationOutput
+    - name: InvitationConfirmationEmailOutput
+    - name: InvitationSendEmailResult
+    - name: GetContentItemOutput
+    - name: SubmitUpdatedSubtitlesOutput
+    - name: GetUploadAgreementOutput
+    - name: ConferencePrepareOutput
+    - name: UploaderSendSubmissionRequestResult
+    - name: JoinEventVonageSessionOutput
+    - name: JoinRoomVonageSessionOutput
+    - name: ProfilePhotoURLResponse
+    - name: UpdateProfilePhotoResponse
+    - name: CreateRoomDmOutput
+      relationships:
+        - remote_table:
+            schema: room
+            name: Room
+          name: room
+          source: default
+          type: object
+          field_mapping:
+            roomId: id
+    - name: CreateContentGroupRoomOutput
+    - name: StopEventBroadcastOutput
+    - name: GetGoogleOAuthUrlOutput
+    - name: SubmitGoogleOAuthTokenOutput
+    - name: SubmitGoogleOAuthCodeOutput
+    - name: RefreshYouTubeDataOutput
+    - name: ChatRemoteToken
+    - name: GenerateChatRemoteServiceIdsOutput
+    - name: GenerateChatRemoteUserIdsOutput
+    - name: PresenceSummaryOutput
+    - name: PresenceFlushOutput
+    - name: JoinRoomChimeSessionOutput
+    - name: VAPIDPublicKeyOutput
+    - name: CreateItemRoomOutput
+      relationships:
+        - remote_table:
+            schema: room
+            name: Room
+          name: room
+          source: default
+          type: object
+          field_mapping:
+            roomId: id
+    - name: SubmitUploadableElementOutput
+    - name: NotifyEventEnded
+    - name: GetSlugOutput
+    - name: MatchingPersonOutput
+    - name: ToggleVonageRecordingStateOutput
+    - name: NotifyEventStarted
+    - name: InitialiseSuperUserOutput
+    - name: TranscribeGeneratePresignedUrlOutput
+    - name: MigrateProfilePhotoResponse
   scalars: []

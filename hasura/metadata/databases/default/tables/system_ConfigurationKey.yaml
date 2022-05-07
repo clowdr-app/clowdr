@@ -1,12 +1,12 @@
 table:
-  name: ConfigurationKey
   schema: system
+  name: ConfigurationKey
 is_enum: true
 array_relationships:
-- name: grantedPermissions
-  using:
-    foreign_key_constraint_on:
-      column: configurationKey
-      table:
-        name: ConfigurationPermissionGrant
-        schema: system
+  - name: grantedPermissions
+    using:
+      foreign_key_constraint_on:
+        column: configurationKey
+        table:
+          schema: system
+          name: ConfigurationPermissionGrant

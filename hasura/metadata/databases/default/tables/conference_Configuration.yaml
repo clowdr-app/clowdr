@@ -1,121 +1,126 @@
 table:
-  name: Configuration
   schema: conference
+  name: Configuration
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
 insert_permissions:
-- permission:
-    backend_only: false
-    check:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-    columns:
-    - conferenceId
-    - key
-    - value
-    - created_at
-    - updated_at
-  role: conference-organizer
+  - role: conference-organizer
+    permission:
+      check:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+      columns:
+        - conferenceId
+        - key
+        - value
+        - created_at
+        - updated_at
+      backend_only: false
 select_permissions:
-- permission:
-    columns:
-    - value
-    - key
-    - created_at
-    - updated_at
-    - conferenceId
-    filter:
-      _and:
-      - conferenceId:
+  - role: attendee
+    permission:
+      columns:
+        - value
+        - key
+        - created_at
+        - updated_at
+        - conferenceId
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - key:
+              _in:
+                - CLOWDR_APP_VERSION
+                - REGISTRATION_URL
+                - SUPPORT_ADDRESS
+                - SCHEDULE_VIEW_VERSION
+                - SPONSORS_LABEL
+                - DISABLE_NEARBY_EVENTS
+                - THEME_COMPONENT_COLORS
+                - DISABLE_ALL_EVENTS_FOR_ITEM
+                - VISIBLE_EXHIBITIONS_LABEL
+                - HIDDEN_EXHIBITIONS_LABEL
+                - FORCE_MENU_SPONSORS_LINK
+                - ENABLE_BACKSTAGE_STREAM_PREVIEW
+                - VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES
+                - MY_BACKSTAGES_NOTICE
+  - role: conference-organizer
+    permission:
+      columns:
+        - value
+        - key
+        - created_at
+        - updated_at
+        - conferenceId
+      filter:
+        conferenceId:
           _in: X-Hasura-Conference-Ids
-      - key:
-          _in:
-          - CLOWDR_APP_VERSION
-          - REGISTRATION_URL
-          - SUPPORT_ADDRESS
-          - SCHEDULE_VIEW_VERSION
-          - SPONSORS_LABEL
-          - DISABLE_NEARBY_EVENTS
-          - THEME_COMPONENT_COLORS
-          - DISABLE_ALL_EVENTS_FOR_ITEM
-          - VISIBLE_EXHIBITIONS_LABEL
-          - HIDDEN_EXHIBITIONS_LABEL
-          - FORCE_MENU_SPONSORS_LINK
-          - ENABLE_BACKSTAGE_STREAM_PREVIEW
-          - VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES
-          - MY_BACKSTAGES_NOTICE
-  role: attendee
-- permission:
-    columns:
-    - value
-    - key
-    - created_at
-    - updated_at
-    - conferenceId
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - value
-    - key
-    - created_at
-    - updated_at
-    - conferenceId
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - value
-    - key
-    - created_at
-    - updated_at
-    - conferenceId
-    filter:
-      _and:
-      - conferenceId:
+  - role: subconference-organizer
+    permission:
+      columns:
+        - value
+        - key
+        - created_at
+        - updated_at
+        - conferenceId
+      filter:
+        conferenceId:
           _in: X-Hasura-Conference-Ids
-      - key:
-          _in:
-          - CLOWDR_APP_VERSION
-          - REGISTRATION_URL
-          - SUPPORT_ADDRESS
-          - SCHEDULE_VIEW_VERSION
-          - SPONSORS_LABEL
-          - DISABLE_NEARBY_EVENTS
-          - THEME_COMPONENT_COLORS
-          - DISABLE_ALL_EVENTS_FOR_ITEM
-          - VISIBLE_EXHIBITIONS_LABEL
-          - HIDDEN_EXHIBITIONS_LABEL
-          - FORCE_MENU_SPONSORS_LINK
-          - EVENT_BOX_HIDE_EXHIBITION_PEOPLE
-  role: unauthenticated
+  - role: unauthenticated
+    permission:
+      columns:
+        - value
+        - key
+        - created_at
+        - updated_at
+        - conferenceId
+      filter:
+        _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - key:
+              _in:
+                - CLOWDR_APP_VERSION
+                - REGISTRATION_URL
+                - SUPPORT_ADDRESS
+                - SCHEDULE_VIEW_VERSION
+                - SPONSORS_LABEL
+                - DISABLE_NEARBY_EVENTS
+                - THEME_COMPONENT_COLORS
+                - DISABLE_ALL_EVENTS_FOR_ITEM
+                - VISIBLE_EXHIBITIONS_LABEL
+                - HIDDEN_EXHIBITIONS_LABEL
+                - FORCE_MENU_SPONSORS_LINK
+                - EVENT_BOX_HIDE_EXHIBITION_PEOPLE
 update_permissions:
-- permission:
-    check: null
-    columns:
-    - value
-    - key
-    - created_at
-    - updated_at
-    - conferenceId
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
+  - role: conference-organizer
+    permission:
+      columns:
+        - value
+        - key
+        - created_at
+        - updated_at
+        - conferenceId
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+      check: null
 delete_permissions:
-- permission:
-    filter:
-      conferenceId:
-        _in: X-Hasura-Conference-Ids
-  role: conference-organizer
+  - role: conference-organizer
+    permission:
+      filter:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids

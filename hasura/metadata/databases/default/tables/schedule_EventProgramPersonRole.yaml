@@ -1,61 +1,61 @@
 table:
-  name: EventProgramPersonRole
   schema: schedule
+  name: EventProgramPersonRole
 is_enum: true
 array_relationships:
-- name: eventPeople
-  using:
-    foreign_key_constraint_on:
-      column: roleName
-      table:
-        name: EventProgramPerson
-        schema: schedule
+  - name: eventPeople
+    using:
+      foreign_key_constraint_on:
+        column: roleName
+        table:
+          schema: schedule
+          name: EventProgramPerson
 select_permissions:
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: attendee
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: conference-organizer
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: room-admin
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: room-member
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: subconference-organizer
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: submitter
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: unauthenticated
-- permission:
-    columns:
-    - description
-    - name
-    filter: {}
-  role: user
+  - role: attendee
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: conference-organizer
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: room-admin
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: room-member
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: subconference-organizer
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: submitter
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: unauthenticated
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}
+  - role: user
+    permission:
+      columns:
+        - description
+        - name
+      filter: {}

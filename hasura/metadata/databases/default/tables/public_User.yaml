@@ -1,154 +1,159 @@
 table:
-  name: User
   schema: public
+  name: User
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 array_relationships:
-- name: conferenceDemoCodes
-  using:
-    foreign_key_constraint_on:
-      column: usedById
-      table:
-        name: DemoCode
-        schema: conference
-- name: conferencesCreated
-  using:
-    foreign_key_constraint_on:
-      column: createdBy
-      table:
-        name: Conference
-        schema: conference
-- name: emails
-  using:
-    foreign_key_constraint_on:
-      column: userId
-      table:
-        name: Email
-        schema: public
-- name: invitationsPendingConfirmation
-  using:
-    foreign_key_constraint_on:
-      column: linkToUserId
-      table:
-        name: Invitation
-        schema: registrant
-- name: pushNotificationSubscriptions
-  using:
-    foreign_key_constraint_on:
-      column: userId
-      table:
-        name: PushNotificationSubscription
-        schema: public
-- name: registrants
-  using:
-    foreign_key_constraint_on:
-      column: userId
-      table:
-        name: Registrant
-        schema: registrant
-- name: superUserPermissionGrants
-  using:
-    manual_configuration:
-      column_mapping:
-        id: userId
-      insertion_order: null
-      remote_table:
-        name: SuperUserPermissionGrant
-        schema: system
+  - name: conferenceDemoCodes
+    using:
+      foreign_key_constraint_on:
+        column: usedById
+        table:
+          schema: conference
+          name: DemoCode
+  - name: conferencesCreated
+    using:
+      foreign_key_constraint_on:
+        column: createdBy
+        table:
+          schema: conference
+          name: Conference
+  - name: emails
+    using:
+      foreign_key_constraint_on:
+        column: userId
+        table:
+          schema: public
+          name: Email
+  - name: invitationsPendingConfirmation
+    using:
+      foreign_key_constraint_on:
+        column: linkToUserId
+        table:
+          schema: registrant
+          name: Invitation
+  - name: pushNotificationSubscriptions
+    using:
+      foreign_key_constraint_on:
+        column: userId
+        table:
+          schema: public
+          name: PushNotificationSubscription
+  - name: registrants
+    using:
+      foreign_key_constraint_on:
+        column: userId
+        table:
+          schema: registrant
+          name: Registrant
+  - name: superUserPermissionGrants
+    using:
+      manual_configuration:
+        remote_table:
+          schema: system
+          name: SuperUserPermissionGrant
+        insertion_order: null
+        column_mapping:
+          id: userId
 select_permissions:
-- permission:
-    columns:
-    - id
-    - created_at
-    - updated_at
-    - email
-    - acceptedTermsAt
-    - acceptedPrivacyPolicyAt
-    filter:
-      _or:
-      - superUserPermissionGrants:
-          grantedPermission:
-            superUserGrantTargets:
-              _and:
-              - grantedPermissionName:
-                  _eq: VIEW_SU_PERMISSION_GRANT
-              - userId:
-                  _eq: X-Hasura-User-Id
-      - _exists:
-          _table:
-            name: SuperUserPermissionGrant
-            schema: system
+  - role: superuser
+    permission:
+      columns:
+        - id
+        - created_at
+        - updated_at
+        - email
+        - acceptedTermsAt
+        - acceptedPrivacyPolicyAt
+      filter:
+        _or:
+          - superUserPermissionGrants:
+              grantedPermission:
+                superUserGrantTargets:
+                  _and:
+                    - grantedPermissionName:
+                        _eq: VIEW_SU_PERMISSION_GRANT
+                    - userId:
+                        _eq: X-Hasura-User-Id
+          - _exists:
+              _where:
+                _and:
+                  - grantedPermissionName:
+                      _in:
+                        - VIEW_USERS
+                        - DELETE_USERS
+                        - EDIT_USER_REGISTRANTS
+                        - INSERT_SU_PERMISSION
+                  - targetPermissionName:
+                      _is_null: true
+                  - userId:
+                      _eq: X-Hasura-User-Id
+              _table:
+                schema: system
+                name: SuperUserPermissionGrant
+          - superUserPermissionGrants:
+              userId:
+                _eq: X-Hasura-User-Id
+  - role: user
+    permission:
+      columns:
+        - id
+        - created_at
+        - updated_at
+        - email
+        - acceptedTermsAt
+        - acceptedPrivacyPolicyAt
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - acceptedPrivacyPolicyAt
+        - acceptedTermsAt
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check: null
+delete_permissions:
+  - role: superuser
+    permission:
+      filter:
+        _exists:
           _where:
             _and:
-            - grantedPermissionName:
-                _in:
-                - VIEW_USERS
-                - DELETE_USERS
-                - EDIT_USER_REGISTRANTS
-                - INSERT_SU_PERMISSION
-            - targetPermissionName:
-                _is_null: true
-            - userId:
-                _eq: X-Hasura-User-Id
-      - superUserPermissionGrants:
-          userId:
-            _eq: X-Hasura-User-Id
-  role: superuser
-- permission:
-    columns:
-    - id
-    - created_at
-    - updated_at
-    - email
-    - acceptedTermsAt
-    - acceptedPrivacyPolicyAt
-    filter:
-      id:
-        _eq: X-Hasura-User-Id
-  role: user
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - acceptedPrivacyPolicyAt
-    - acceptedTermsAt
-    filter:
-      id:
-        _eq: X-Hasura-User-Id
-  role: user
-delete_permissions:
-- permission:
-    filter:
-      _exists:
-        _table:
-          name: SuperUserPermissionGrant
-          schema: system
-        _where:
-          _and:
-          - grantedPermissionName:
-              _in:
-              - DELETE_USERS
-          - targetPermissionName:
-              _is_null: true
-          - userId:
-              _eq: X-Hasura-User-Id
-  role: superuser
+              - grantedPermissionName:
+                  _in:
+                    - DELETE_USERS
+              - targetPermissionName:
+                  _is_null: true
+              - userId:
+                  _eq: X-Hasura-User-Id
+          _table:
+            schema: system
+            name: SuperUserPermissionGrant
 event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: true
-    insert:
-      columns: "*"
-  headers:
-  - name: X-Hasura-Event-Secret
-    value_from_env: EVENT_SECRET
-  name: Cache_User
-  retry_conf:
-    interval_sec: 10
-    num_retries: 3
-    timeout_sec: 10
-  webhook: "{{CACHES_BASE_URL}}/cache/update/user"
+  - name: Cache_User
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 10
+    webhook: '{{CACHES_BASE_URL}}/cache/update/user'
+    headers:
+      - name: X-Hasura-Event-Secret
+        value_from_env: EVENT_SECRET

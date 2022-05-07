@@ -1,87 +1,92 @@
 table:
-  name: GoogleAccount
   schema: registrant
+  name: GoogleAccount
 configuration:
-  custom_column_names:
-    created_at: createdAt
-    updated_at: updatedAt
   custom_root_fields: {}
+  column_config:
+    updated_at:
+      custom_name: updatedAt
+    created_at:
+      custom_name: createdAt
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
-- name: registrant
-  using:
-    foreign_key_constraint_on: registrantId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: registrant
+    using:
+      foreign_key_constraint_on: registrantId
 select_permissions:
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - googleAccountEmail
-    - id
-    - registrantId
-    - updated_at
-    - youTubeData
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: conference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - googleAccountEmail
-    - id
-    - registrantId
-    - updated_at
-    - youTubeData
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: subconference-organizer
-- permission:
-    columns:
-    - conferenceId
-    - created_at
-    - googleAccountEmail
-    - id
-    - registrantId
-    - updated_at
-    - youTubeData
-    filter:
-      registrant:
-        userId:
-          _eq: X-Hasura-User-Id
-  role: user
+  - role: conference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - googleAccountEmail
+        - id
+        - registrantId
+        - updated_at
+        - youTubeData
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  - role: subconference-organizer
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - googleAccountEmail
+        - id
+        - registrantId
+        - updated_at
+        - youTubeData
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  - role: user
+    permission:
+      columns:
+        - conferenceId
+        - created_at
+        - googleAccountEmail
+        - id
+        - registrantId
+        - updated_at
+        - youTubeData
+      filter:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
 delete_permissions:
-- permission:
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: conference-organizer
-- permission:
-    filter:
-      registrantId:
-        _in: X-Hasura-Registrant-Ids
-  role: subconference-organizer
-- permission:
-    filter:
-      registrant:
-        userId:
-          _eq: X-Hasura-User-Id
-  role: user
+  - role: conference-organizer
+    permission:
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  - role: subconference-organizer
+    permission:
+      filter:
+        registrantId:
+          _in: X-Hasura-Registrant-Ids
+  - role: user
+    permission:
+      filter:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
 event_triggers:
-- definition:
-    delete:
-      columns: "*"
-    enable_manual: false
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: RegistrantGoogleAccountDeleted
-  retry_conf:
-    interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
-  webhook: "{{ACTION_BASE_URL}}/registrantGoogleAccount/deleted"
+  - name: RegistrantGoogleAccountDeleted
+    definition:
+      enable_manual: false
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/registrantGoogleAccount/deleted'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET

@@ -213,13 +213,27 @@ export async function computeAuthHeaders(
         const allowedRoles: HasuraRoleName[] = [];
         let requestedRole = (unverifiedParams.role ?? HasuraRoleName.User) as HasuraRoleName;
 
-        const user = await new UserCache(logger).getEntity(verifiedParams.userId);
+        const userCache = new UserCache(logger);
+        let user = await userCache.getEntity(verifiedParams.userId);
         if (user) {
             result[AuthSessionVariables.UserId] = user.id;
             allowedRoles.push(HasuraRoleName.User);
 
             if (unverifiedParams.conferenceId && unverifiedParams.conferenceId !== "NONE") {
-                const registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
+                let registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
+
+                if (!registrantId) {
+                    // Try a bit harder...The most likely scenario is this is an improper cache miss!
+                    await userCache.invalidateEntity(verifiedParams.userId);
+                    const newUser = await userCache.getEntity(verifiedParams.userId);
+                    if (newUser) {
+                        // Oh good, this worked properly. If it came back null we'd just have to shrug and carry on
+                        // with the old data.
+                        user = newUser;
+                        registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
+                    }
+                }
+
                 if (registrantId) {
                     const registrant = await new RegistrantCache(logger).getEntity(registrantId.id);
                     const conference = await new ConferenceCache(logger).getEntity(unverifiedParams.conferenceId);

@@ -570,7 +570,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
 function EditCurrentProfilePage(): JSX.Element {
     const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
     if (maybeCurrentRegistrant) {
-        return <EditProfilePageInner registrant={maybeCurrentRegistrant} />;
+        return <EditProfilePage_FetchWrapper registrantId={maybeCurrentRegistrant.id} />;
     } else {
         return <PageNotFound />;
     }

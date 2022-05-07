@@ -230,7 +230,10 @@ async function handleMigrateProfilePhoto(registrantId: string): Promise<MigrateP
                 result.data.registrant_Profile_by_pk.photoS3ObjectName;
             await S3.copyObject({
                 Bucket: result.data.registrant_Profile_by_pk.photoS3BucketName,
-                CopySource: result.data.registrant_Profile_by_pk.photoS3ObjectName,
+                CopySource:
+                    result.data.registrant_Profile_by_pk.photoS3BucketName +
+                    "/" +
+                    result.data.registrant_Profile_by_pk.photoS3ObjectName,
                 Key: key,
             });
             await updateProfilePhoto(

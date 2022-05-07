@@ -22,7 +22,8 @@ export class TableCache<CacheRecordKeys extends string, HydrationInputFilters ex
         private readonly fetchForHydrate: (
             filters: HydrationInputFilters
         ) => Promise<HydrationRecord<CacheRecordKeys>[] | undefined>,
-        private readonly ttlSeconds = 7 * 24 * 60 * 60
+        private readonly ttlSeconds = 7 * 24 * 60 * 60,
+        private readonly hydrationPeriodMs = 24 * 60 * 60 * 1000
     ) {}
 
     public generateEntityKey(itemKey: string): string {
@@ -313,7 +314,7 @@ export class TableCache<CacheRecordKeys extends string, HydrationInputFilters ex
         try {
             lastHydratedAtStr = await redisClientP.hget(redisClient)(lastHydratedAtKey, filtersHash);
             const lastHydratedAt = lastHydratedAtStr?.length ? Date.parse(lastHydratedAtStr) : undefined;
-            if (!lastHydratedAt || lastHydratedAt < Date.now() - 24 * 60 * 60 * 1000) {
+            if (!lastHydratedAt || lastHydratedAt < Date.now() - this.hydrationPeriodMs) {
                 try {
                     await redisClientP.hset(redisClient)(lastHydratedAtKey, filtersHash, new Date().toISOString());
                     shouldHydrate = true;

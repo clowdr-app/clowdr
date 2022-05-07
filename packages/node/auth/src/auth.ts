@@ -225,11 +225,11 @@ export async function computeAuthHeaders(
                 if (!registrantId) {
                     // Try a bit harder...The most likely scenario is this is an improper cache miss!
                     await userCache.invalidateEntity(verifiedParams.userId);
-                    const newUser = await userCache.getEntity(verifiedParams.userId);
-                    if (newUser) {
+                    const refetchedUser = await userCache.getEntity(verifiedParams.userId);
+                    if (refetchedUser) {
                         // Oh good, this worked properly. If it came back null we'd just have to shrug and carry on
                         // with the old data.
-                        user = newUser;
+                        user = refetchedUser;
                         registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
                     }
                 }
@@ -641,6 +641,17 @@ export async function computeAuthHeaders(
                     }
                 }
             } else {
+                try {
+                    await userCache.hydrateIfNecessary({
+                        id: user.id,
+                    });
+                    const refetchedUser = await userCache.getEntity(user.id, false);
+                    if (refetchedUser) {
+                        user = refetchedUser;
+                    }
+                } catch {
+                    // Suppress the error
+                }
                 result[AuthSessionVariables.RegistrantIds] = formatArrayForHasuraHeader(
                     user.registrants.map((x) => x.id)
                 );

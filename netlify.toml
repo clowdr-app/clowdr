@@ -8,8 +8,8 @@ command = "corepack enable && cd ./frontend && pnpm i --store=node_modules/.pnpm
 publish = "frontend/dist"
 
 [build.environment]
-NPM_VERSION = "8.8.x"
-NODE_VERSION = "18.1.x"
+NPM_VERSION = "8.8.0"
+NODE_VERSION = "18.1.0"
 NODE_ENV = "production"
 NPM_FLAGS="--version" # prevent Netlify npm install
 NODE_OPTIONS = "--max_old_space_size=4096"

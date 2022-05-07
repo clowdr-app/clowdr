@@ -1,7 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
-import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
 import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
 import type { ActionPayload } from "@midspace/hasura/action";
 import type {
@@ -29,7 +28,6 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 router.use(json());
-router.use(checkJwt);
 
 gql`
     mutation UpdateProfilePhoto(
@@ -276,25 +274,21 @@ router.post(
     }
 );
 
-router.post(
-    "/photo/migrate",
-    parseSessionVariables,
-    async (req: Request, res: Response<MigrateProfilePhotoResponse>, next: NextFunction) => {
-        try {
-            const body = assertType<ActionPayload<migrateProfilePhotoArgs>>(req.body);
-            const result = await handleMigrateProfilePhoto(body.input.registrantId);
-            res.status(200).json(result);
-        } catch (err: unknown) {
-            if (err instanceof TypeGuardError) {
-                next(new BadRequestError("Invalid request", { originalError: err }));
-            } else if (err instanceof Error) {
-                next(err);
-            } else {
-                next(new UnexpectedServerError("Server error", undefined, err));
-            }
+router.post("/photo/migrate", async (req: Request, res: Response<MigrateProfilePhotoResponse>, next: NextFunction) => {
+    try {
+        const body = assertType<ActionPayload<migrateProfilePhotoArgs>>(req.body);
+        const result = await handleMigrateProfilePhoto(body.input.registrantId);
+        res.status(200).json(result);
+    } catch (err: unknown) {
+        if (err instanceof TypeGuardError) {
+            next(new BadRequestError("Invalid request", { originalError: err }));
+        } else if (err instanceof Error) {
+            next(err);
+        } else {
+            next(new UnexpectedServerError("Server error", undefined, err));
         }
     }
-);
+});
 
 function btoa(str: string) {
     return Buffer.from(str, "binary").toString("base64");

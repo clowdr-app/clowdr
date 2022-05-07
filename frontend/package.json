@@ -39,7 +39,6 @@
         "@midspace/assert": "workspace:*",
         "@midspace/graphql": "workspace:*",
         "@midspace/shared-types": "workspace:*",
-        "@midspace/urql-hasura-cache-generic-resolver": "workspace:*",
         "@opentok/client": "^2.22.2",
         "@react-hook/size": "^2.1.2",
         "@react-hook/timeout": "^2.1.1",

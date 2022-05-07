@@ -32,9 +32,10 @@ router.use(
                 key: process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID,
                 secret: process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
                 region: process.env.AWS_REGION,
-                getKey(_req, filename, _metadata) {
+                getKey(_req, filename, metadata) {
                     const extension = extname(filename);
-                    return `${uuidv4()}${extension}`;
+                    const prefix = metadata.elementId ?? metadata.userId ?? uuidv4();
+                    return `${prefix}/${uuidv4()}${extension}`;
                 },
                 acl: "private",
                 awsClientOptions: {

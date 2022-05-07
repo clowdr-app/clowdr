@@ -42,6 +42,7 @@ export default function EditProfilePitureForm({
             id: "profile-photo-upload",
             meta: {
                 registrantId: registrant.id,
+                userId: registrant.userId,
             },
             allowMultipleUploads: false,
             restrictions: {
@@ -60,7 +61,7 @@ export default function EditProfilePitureForm({
                     : "",
         });
         return uppy;
-    }, [allowedFileTypes, registrant.id]);
+    }, [allowedFileTypes, registrant.id, registrant.userId]);
 
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;

@@ -22,6 +22,7 @@ import AmazonS3URI from "amazon-s3-uri";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import FAIcon from "../../Chakra/FAIcon";
+import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
 import type { AnswerMessageData, MessageMediaData } from "../Types/Messages";
 import { MediaType } from "../Types/Messages";
@@ -144,11 +145,14 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
     );
     const allowedFileTypesStr = useMemo(() => allowedFileTypes.join(","), [allowedFileTypes]);
 
+    const maybeCurrentUser = useMaybeCurrentUser();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const uppy = useMemo(() => {
         const uppy = new Uppy({
             id: "chat-message-media-upload",
-            meta: {},
+            meta: {
+                userId: maybeCurrentUser?.user ? maybeCurrentUser.user.id : undefined,
+            },
             allowMultipleUploads: false,
             allowMultipleUploadBatches: false,
             restrictions: {
@@ -168,7 +172,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                     : "",
         });
         return uppy;
-    }, [allowedFileTypes]);
+    }, [allowedFileTypes, maybeCurrentUser]);
 
     useEffect(() => {
         const onUpdateFiles = async () => {

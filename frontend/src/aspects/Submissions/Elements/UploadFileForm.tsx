@@ -57,6 +57,7 @@ export default function UploadFileForm({
             id: "required-content-item-upload",
             meta: {
                 uploadableId: elementId,
+                elementId,
             },
             allowMultipleUploads: false,
             restrictions: {

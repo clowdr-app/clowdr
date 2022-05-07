@@ -1,5 +1,6 @@
 import { chakra, Link, Text } from "@chakra-ui/react";
 import React, { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch } from "react-router-dom";
 import ProtectedRoute from "../Auth/ProtectedRoute";
@@ -7,6 +8,7 @@ import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { LinkButton } from "../Chakra/LinkButton";
 import ConferenceRoutes from "../Conference/ConferenceRoutes";
 import { useAuthParameters } from "../GQL/AuthParameters";
+import AppError from "./AppError";
 
 const EmailVerificationRequiredPage = React.lazy(() => import("../Auth/EmailVerificationRequiredPage"));
 const LoggedOutPage = React.lazy(() => import("../Auth/LoggedOutPage"));
@@ -243,7 +245,9 @@ export default function AppRouting(): JSX.Element {
                     conferenceId === "NONE" ? (
                         <PageNotFound />
                     ) : (
-                        <ConferenceRoutes />
+                        <ErrorBoundary FallbackComponent={AppError}>
+                            <ConferenceRoutes />
+                        </ErrorBoundary>
                     )
                 ) : (
                     <CenteredSpinner centerProps={{ minHeight: "calc(100vh - 40px)" }} caller="AppRouting:329" />

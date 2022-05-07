@@ -25,6 +25,7 @@ import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Suspense, useEffect, useMemo, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Link as ReactLink } from "react-router-dom";
 import type {
     MonitorLivestreams_EventFragment,
@@ -35,6 +36,7 @@ import {
     useMonitorLivestreamsQuery,
     useRoomPage_GetRoomChannelStackQuery,
 } from "../../../../generated/graphql";
+import AppError from "../../../App/AppError";
 import FAIcon from "../../../Chakra/FAIcon";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { makeContext } from "../../../GQL/make-context";
@@ -603,13 +605,21 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
                     {name}
                 </Link>
             </Text>
-            <Suspense fallback={<Spinner />}>
-                {hlsUri ? (
-                    <HlsPlayer roomId={id} canPlay={true} hlsUri={hlsUri} initialMute={true} expectLivestream={true} />
-                ) : (
-                    <Spinner />
-                )}
-            </Suspense>
+            <ErrorBoundary FallbackComponent={AppError}>
+                <Suspense fallback={<Spinner />}>
+                    {hlsUri ? (
+                        <HlsPlayer
+                            roomId={id}
+                            canPlay={true}
+                            hlsUri={hlsUri}
+                            initialMute={true}
+                            expectLivestream={true}
+                        />
+                    ) : (
+                        <Spinner />
+                    )}
+                </Suspense>
+            </ErrorBoundary>
         </Box>
     );
 }

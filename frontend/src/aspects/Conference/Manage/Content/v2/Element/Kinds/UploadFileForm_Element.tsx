@@ -22,6 +22,8 @@ import AmazonS3URI from "amazon-s3-uri";
 import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { Suspense, useEffect, useMemo, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import AppError from "../../../../../../App/AppError";
 import FAIcon from "../../../../../../Chakra/FAIcon";
 import UnsavedChangesWarning from "../../../../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { ElementDescriptor } from "./Types";
@@ -116,173 +118,176 @@ export default function UploadFileForm_Element({
     const latestVersion = useMemo(() => (item.data?.length ? item.data[item.data.length - 1] : undefined), [item.data]);
 
     return (
-        <Suspense fallback={<Spinner />}>
-            <Formik
-                initialValues={{
-                    agree: false,
-                    altText: latestVersion?.data.baseType === ElementBaseType.File ? latestVersion.data.altText : "",
-                }}
-                onSubmit={async (values) => {
-                    if (!uppy) {
-                        throw new Error("No Uppy instance");
-                    }
-                    let result;
-                    try {
-                        result = await uppy.upload();
-                    } catch (e) {
-                        console.error("Failed to upload file", e);
-                        toast({
-                            status: "error",
-                            description: "Failed to upload file. Please try again.",
-                        });
-                        uppy.reset();
-                        return;
-                    }
-
-                    if (result.failed.length > 0 || result.successful.length < 1) {
-                        console.error("Failed to upload file", result.failed);
-                        toast({
-                            status: "error",
-                            description: "Failed to upload file. Please try again later.",
-                        });
-                        uppy.reset();
-                        return;
-                    }
-
-                    try {
-                        const { bucket, key } = new AmazonS3URI(result.successful[0].uploadURL);
-                        assert.truthy(bucket);
-                        assert.truthy(key);
-
-                        toast({
-                            status: "success",
-                            description: "Uploaded item successfully.",
-                        });
-                        uppy.reset();
-
-                        if (onElementChange) {
-                            if (contentBaseType === ElementBaseType.Video) {
-                                onElementChange({
-                                    ...item,
-                                    data: [
-                                        ...item.data,
-                                        {
-                                            createdAt: Date.now(),
-                                            createdBy: "user",
-                                            data: {
-                                                baseType: ElementBaseType.Video,
-                                                s3Url: `s3://${bucket}/${key}`,
-                                                type: item.typeName as any,
-                                                subtitles: {},
-                                            },
-                                        },
-                                    ],
-                                });
-                            }
-                            if (contentBaseType === ElementBaseType.Audio) {
-                                onElementChange({
-                                    ...item,
-                                    data: [
-                                        ...item.data,
-                                        {
-                                            createdAt: Date.now(),
-                                            createdBy: "user",
-                                            data: {
-                                                baseType: ElementBaseType.Audio,
-                                                s3Url: `s3://${bucket}/${key}`,
-                                                type: item.typeName as any,
-                                                subtitles: {},
-                                            },
-                                        },
-                                    ],
-                                });
-                            } else if (contentBaseType === ElementBaseType.File) {
-                                onElementChange({
-                                    ...item,
-                                    data: [
-                                        ...item.data,
-                                        {
-                                            createdAt: Date.now(),
-                                            createdBy: "user",
-                                            data: {
-                                                baseType: ElementBaseType.File,
-                                                s3Url: `s3://${bucket}/${key}`,
-                                                type: item.typeName as any,
-                                                altText: values.altText?.length ? values.altText : undefined,
-                                            },
-                                        },
-                                    ],
-                                });
-                            }
+        <ErrorBoundary FallbackComponent={AppError}>
+            <Suspense fallback={<Spinner />}>
+                <Formik
+                    initialValues={{
+                        agree: false,
+                        altText:
+                            latestVersion?.data.baseType === ElementBaseType.File ? latestVersion.data.altText : "",
+                    }}
+                    onSubmit={async (values) => {
+                        if (!uppy) {
+                            throw new Error("No Uppy instance");
                         }
-                    } catch (e: any) {
-                        console.error("Failed to submit item", e);
-                        toast({
-                            status: "error",
-                            title: "Failed to submit item.",
-                            description: e?.message ?? "Please try again later.",
-                        });
-                        uppy.reset();
-                        return;
-                    }
-                }}
-            >
-                {({ dirty, isSubmitting, isValid }) => (
-                    <>
-                        <UnsavedChangesWarning hasUnsavedChanges={dirty} />
-                        <Form style={{ width: "100%" }}>
-                            <FormControl isInvalid={!files} isRequired>
-                                <DragDrop uppy={uppy} allowMultipleFiles={false} />
-                                <FormHelperText>File types: {allowedFileTypes.join(", ")}</FormHelperText>
-                            </FormControl>
-                            <UnorderedList mb={4}>
-                                {files.map((file) => (
-                                    <ListItem key={file.id}>
-                                        {file.name}{" "}
-                                        <Button onClick={() => uppy?.removeFile(file.id)}>
-                                            <FAIcon iconStyle="s" icon="times" color="red.400" />
-                                        </Button>
-                                    </ListItem>
-                                ))}
-                            </UnorderedList>
-                            <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
-                            {contentBaseType === ElementBaseType.File ? (
-                                <Field
-                                    name="altText"
-                                    validate={(inValue: string | null | undefined) => {
-                                        let error;
-                                        if (!inValue?.length) {
-                                            error = "Please provide alternative text.";
-                                        }
-                                        return error;
-                                    }}
+                        let result;
+                        try {
+                            result = await uppy.upload();
+                        } catch (e) {
+                            console.error("Failed to upload file", e);
+                            toast({
+                                status: "error",
+                                description: "Failed to upload file. Please try again.",
+                            });
+                            uppy.reset();
+                            return;
+                        }
+
+                        if (result.failed.length > 0 || result.successful.length < 1) {
+                            console.error("Failed to upload file", result.failed);
+                            toast({
+                                status: "error",
+                                description: "Failed to upload file. Please try again later.",
+                            });
+                            uppy.reset();
+                            return;
+                        }
+
+                        try {
+                            const { bucket, key } = new AmazonS3URI(result.successful[0].uploadURL);
+                            assert.truthy(bucket);
+                            assert.truthy(key);
+
+                            toast({
+                                status: "success",
+                                description: "Uploaded item successfully.",
+                            });
+                            uppy.reset();
+
+                            if (onElementChange) {
+                                if (contentBaseType === ElementBaseType.Video) {
+                                    onElementChange({
+                                        ...item,
+                                        data: [
+                                            ...item.data,
+                                            {
+                                                createdAt: Date.now(),
+                                                createdBy: "user",
+                                                data: {
+                                                    baseType: ElementBaseType.Video,
+                                                    s3Url: `s3://${bucket}/${key}`,
+                                                    type: item.typeName as any,
+                                                    subtitles: {},
+                                                },
+                                            },
+                                        ],
+                                    });
+                                }
+                                if (contentBaseType === ElementBaseType.Audio) {
+                                    onElementChange({
+                                        ...item,
+                                        data: [
+                                            ...item.data,
+                                            {
+                                                createdAt: Date.now(),
+                                                createdBy: "user",
+                                                data: {
+                                                    baseType: ElementBaseType.Audio,
+                                                    s3Url: `s3://${bucket}/${key}`,
+                                                    type: item.typeName as any,
+                                                    subtitles: {},
+                                                },
+                                            },
+                                        ],
+                                    });
+                                } else if (contentBaseType === ElementBaseType.File) {
+                                    onElementChange({
+                                        ...item,
+                                        data: [
+                                            ...item.data,
+                                            {
+                                                createdAt: Date.now(),
+                                                createdBy: "user",
+                                                data: {
+                                                    baseType: ElementBaseType.File,
+                                                    s3Url: `s3://${bucket}/${key}`,
+                                                    type: item.typeName as any,
+                                                    altText: values.altText?.length ? values.altText : undefined,
+                                                },
+                                            },
+                                        ],
+                                    });
+                                }
+                            }
+                        } catch (e: any) {
+                            console.error("Failed to submit item", e);
+                            toast({
+                                status: "error",
+                                title: "Failed to submit item.",
+                                description: e?.message ?? "Please try again later.",
+                            });
+                            uppy.reset();
+                            return;
+                        }
+                    }}
+                >
+                    {({ dirty, isSubmitting, isValid }) => (
+                        <>
+                            <UnsavedChangesWarning hasUnsavedChanges={dirty} />
+                            <Form style={{ width: "100%" }}>
+                                <FormControl isInvalid={!files} isRequired>
+                                    <DragDrop uppy={uppy} allowMultipleFiles={false} />
+                                    <FormHelperText>File types: {allowedFileTypes.join(", ")}</FormHelperText>
+                                </FormControl>
+                                <UnorderedList mb={4}>
+                                    {files.map((file) => (
+                                        <ListItem key={file.id}>
+                                            {file.name}{" "}
+                                            <Button onClick={() => uppy?.removeFile(file.id)}>
+                                                <FAIcon iconStyle="s" icon="times" color="red.400" />
+                                            </Button>
+                                        </ListItem>
+                                    ))}
+                                </UnorderedList>
+                                <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+                                {contentBaseType === ElementBaseType.File ? (
+                                    <Field
+                                        name="altText"
+                                        validate={(inValue: string | null | undefined) => {
+                                            let error;
+                                            if (!inValue?.length) {
+                                                error = "Please provide alternative text.";
+                                            }
+                                            return error;
+                                        }}
+                                    >
+                                        {({ form, field }: FieldProps<string>) => (
+                                            <FormControl
+                                                mb={2}
+                                                isInvalid={!!form.errors.altText && !!form.touched.altText}
+                                                isRequired
+                                                mt={5}
+                                            >
+                                                <FormLabel>Alternative text (for accessibility)</FormLabel>
+                                                <Input type="text" {...field} />
+                                                <FormErrorMessage>{form.errors.altText}</FormErrorMessage>
+                                            </FormControl>
+                                        )}
+                                    </Field>
+                                ) : undefined}
+                                <Button
+                                    colorScheme="purple"
+                                    isLoading={isSubmitting}
+                                    type="submit"
+                                    isDisabled={!isValid || files.length !== 1}
                                 >
-                                    {({ form, field }: FieldProps<string>) => (
-                                        <FormControl
-                                            mb={2}
-                                            isInvalid={!!form.errors.altText && !!form.touched.altText}
-                                            isRequired
-                                            mt={5}
-                                        >
-                                            <FormLabel>Alternative text (for accessibility)</FormLabel>
-                                            <Input type="text" {...field} />
-                                            <FormErrorMessage>{form.errors.altText}</FormErrorMessage>
-                                        </FormControl>
-                                    )}
-                                </Field>
-                            ) : undefined}
-                            <Button
-                                colorScheme="purple"
-                                isLoading={isSubmitting}
-                                type="submit"
-                                isDisabled={!isValid || files.length !== 1}
-                            >
-                                Upload
-                            </Button>
-                        </Form>
-                    </>
-                )}
-            </Formik>
-        </Suspense>
+                                    Upload
+                                </Button>
+                            </Form>
+                        </>
+                    )}
+                </Formik>
+            </Suspense>
+        </ErrorBoundary>
     );
 }

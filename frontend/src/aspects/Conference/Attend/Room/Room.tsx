@@ -18,6 +18,7 @@ import type { ElementDataBlob, ExternalEventLinkBlob } from "@midspace/shared-ty
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
@@ -28,6 +29,7 @@ import {
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
+import AppError from "../../../App/AppError";
 import { useAppLayout } from "../../../App/AppLayoutContext";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import FAIcon from "../../../Chakra/FAIcon";
@@ -569,21 +571,23 @@ function RoomInner({
 
     const backStageEl = useMemo(
         () => (
-            <Suspense fallback={<CenteredSpinner caller="Room:542" />}>
-                <Backstages
-                    showBackstage={showBackstage}
-                    roomName={roomDetails.name}
-                    roomEvents={roomEventsForCurrentRegistrant}
-                    currentRoomEventId={currentRoomEvent?.id}
-                    nextRoomEventId={nextRoomEvent?.id}
-                    selectedEventId={backstageSelectedEventId}
-                    setWatchStreamForEventId={setWatchStreamForEventId}
-                    onEventSelected={setBackstageSelectedEventId}
-                    roomChatId={roomDetails.chatId}
-                    onLeave={onLeaveBackstage}
-                    hlsUri={hlsUri ?? undefined}
-                />
-            </Suspense>
+            <ErrorBoundary FallbackComponent={AppError}>
+                <Suspense fallback={<CenteredSpinner caller="Room:542" />}>
+                    <Backstages
+                        showBackstage={showBackstage}
+                        roomName={roomDetails.name}
+                        roomEvents={roomEventsForCurrentRegistrant}
+                        currentRoomEventId={currentRoomEvent?.id}
+                        nextRoomEventId={nextRoomEvent?.id}
+                        selectedEventId={backstageSelectedEventId}
+                        setWatchStreamForEventId={setWatchStreamForEventId}
+                        onEventSelected={setBackstageSelectedEventId}
+                        roomChatId={roomDetails.chatId}
+                        onLeave={onLeaveBackstage}
+                        hlsUri={hlsUri ?? undefined}
+                    />
+                </Suspense>
+            </ErrorBoundary>
         ),
         [
             showBackstage,
@@ -677,44 +681,53 @@ function RoomInner({
 
         return !showBackstage ? (
             currentEventIsVideoPlayer || (selectedVideoElementId && !currentRoomEvent) ? (
-                <Box pos="relative" ref={videoPlayerRef}>
-                    {selectedVideoElementId ? (
-                        <Suspense fallback={<CenteredSpinner caller="Room.tsx:644" />}>
-                            <VideoPlayer elementId={selectedVideoElementId} />
-                        </Suspense>
-                    ) : (
-                        <Center>
-                            <AspectRatio
-                                w="min(100%, 90vh * (16 / 9))"
-                                maxW="100%"
-                                ratio={16 / 9}
-                                border="3px solid"
-                                borderColor="gray.400"
-                                borderRadius="lg"
-                            >
-                                <VStack>
-                                    <Text fontSize="2xl">Select a video below</Text>
-                                    <FAIcon icon="hand-point-down" aria-hidden="true" iconStyle="r" fontSize="6xl" />
-                                </VStack>
-                            </AspectRatio>
-                        </Center>
-                    )}
-                    <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
-                </Box>
+                <ErrorBoundary FallbackComponent={AppError}>
+                    <Box pos="relative" ref={videoPlayerRef}>
+                        {selectedVideoElementId ? (
+                            <Suspense fallback={<CenteredSpinner caller="Room.tsx:644" />}>
+                                <VideoPlayer elementId={selectedVideoElementId} />
+                            </Suspense>
+                        ) : (
+                            <Center>
+                                <AspectRatio
+                                    w="min(100%, 90vh * (16 / 9))"
+                                    maxW="100%"
+                                    ratio={16 / 9}
+                                    border="3px solid"
+                                    borderColor="gray.400"
+                                    borderRadius="lg"
+                                >
+                                    <VStack>
+                                        <Text fontSize="2xl">Select a video below</Text>
+                                        <FAIcon
+                                            icon="hand-point-down"
+                                            aria-hidden="true"
+                                            iconStyle="r"
+                                            fontSize="6xl"
+                                        />
+                                    </VStack>
+                                </AspectRatio>
+                            </Center>
+                        )}
+                        <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
+                    </Box>
+                </ErrorBoundary>
             ) : shouldShowLivePlayer && hlsUri ? (
                 <Box pos="relative">
                     <VideoAspectWrapper maxHeight={mainPaneHeight} maxWidth={mainPaneWidth}>
                         {(onAspectRatioChange) => (
-                            <Suspense fallback={<CenteredSpinner caller="Room:678" />}>
-                                <HlsPlayer
-                                    roomId={roomDetails.id}
-                                    canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                                    hlsUri={hlsUri}
-                                    onAspectRatioChange={onAspectRatioChange}
-                                    expectLivestream={secondsUntilBroadcastEvent < 10}
-                                />
-                                <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
-                            </Suspense>
+                            <ErrorBoundary FallbackComponent={AppError}>
+                                <Suspense fallback={<CenteredSpinner caller="Room:678" />}>
+                                    <HlsPlayer
+                                        roomId={roomDetails.id}
+                                        canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
+                                        hlsUri={hlsUri}
+                                        onAspectRatioChange={onAspectRatioChange}
+                                        expectLivestream={secondsUntilBroadcastEvent < 10}
+                                    />
+                                    <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
+                                </Suspense>
+                            </ErrorBoundary>
                         )}
                     </VideoAspectWrapper>
                 </Box>

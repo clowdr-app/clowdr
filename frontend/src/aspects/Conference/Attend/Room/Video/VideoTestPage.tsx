@@ -12,6 +12,8 @@ import {
 } from "@chakra-ui/react";
 import type { ChangeEvent, FocusEvent } from "react";
 import React, { Suspense, useCallback, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import AppError from "../../../../App/AppError";
 import { VideoAspectWrapper } from "./VideoAspectWrapper";
 
 const HlsPlayer = React.lazy(() => import("./HlsPlayer"));
@@ -87,18 +89,20 @@ export function VideoTestPage(): JSX.Element {
             </chakra.form>
 
             {mountPlayer ? (
-                <Suspense fallback={<Spinner />}>
-                    <VideoAspectWrapper>
-                        {(onAspectRatioChange) => (
-                            <HlsPlayer
-                                canPlay={true}
-                                hlsUri={uri}
-                                onAspectRatioChange={onAspectRatioChange}
-                                expectLivestream={expectLivestream ?? undefined}
-                            />
-                        )}
-                    </VideoAspectWrapper>
-                </Suspense>
+                <ErrorBoundary FallbackComponent={AppError}>
+                    <Suspense fallback={<Spinner />}>
+                        <VideoAspectWrapper>
+                            {(onAspectRatioChange) => (
+                                <HlsPlayer
+                                    canPlay={true}
+                                    hlsUri={uri}
+                                    onAspectRatioChange={onAspectRatioChange}
+                                    expectLivestream={expectLivestream ?? undefined}
+                                />
+                            )}
+                        </VideoAspectWrapper>
+                    </Suspense>
+                </ErrorBoundary>
             ) : undefined}
 
             <Text>This is a test of the HLS stream component.</Text>

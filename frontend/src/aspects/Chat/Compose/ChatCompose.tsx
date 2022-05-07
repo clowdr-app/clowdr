@@ -20,7 +20,9 @@ import "@uppy/drag-drop/dist/style.css";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
+import AppError from "../../App/AppError";
 import FAIcon from "../../Chakra/FAIcon";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
@@ -436,9 +438,11 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 /> */}
             </Box>
             <Flex w="100%" alignItems="stretch" justifyContent="stretch" flexDir="column">
-                <Suspense fallback={null}>
-                    <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
-                </Suspense>
+                <ErrorBoundary FallbackComponent={AppError}>
+                    <Suspense fallback={null}>
+                        <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+                    </Suspense>
+                </ErrorBoundary>
             </Flex>
             <Flex w="100%" minH="2.4em" alignItems="center">
                 <input

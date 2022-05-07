@@ -1,8 +1,10 @@
 import { Box, Button, HStack, Spinner, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { Suspense, useEffect, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { gql } from "urql";
 import { useContextSelector } from "use-context-selector";
 import { useEnableBackstageStreamPreviewQuery } from "../../../../../../generated/graphql";
+import AppError from "../../../../../App/AppError";
 import { useConference } from "../../../../useConference";
 import { VideoAspectWrapper } from "../../Video/VideoAspectWrapper";
 import { BackstageContext } from "../BackstageContext";
@@ -49,20 +51,22 @@ export default function StreamPreview(): JSX.Element {
     return hlsUri && (isLive || delayCompleted) && enabled ? (
         <Box pos="relative" minW="300px" maxW="calc(9vh / 16vh)" w="20vw" border="1px solid #999" bgColor={bgColor}>
             <Box pos="relative" w="100%" maxH="240px" overflow="hidden" zIndex={1}>
-                <Suspense fallback={<Spinner />}>
-                    <VideoAspectWrapper>
-                        {(onAspectRatioChange) => (
-                            <HlsPlayer
-                                canPlay={isLive}
-                                hlsUri={hlsUri}
-                                onAspectRatioChange={onAspectRatioChange}
-                                expectLivestream={isLive}
-                                forceMute={isLiveOnAir}
-                                initialMute={true}
-                            />
-                        )}
-                    </VideoAspectWrapper>
-                </Suspense>
+                <ErrorBoundary FallbackComponent={AppError}>
+                    <Suspense fallback={<Spinner />}>
+                        <VideoAspectWrapper>
+                            {(onAspectRatioChange) => (
+                                <HlsPlayer
+                                    canPlay={isLive}
+                                    hlsUri={hlsUri}
+                                    onAspectRatioChange={onAspectRatioChange}
+                                    expectLivestream={isLive}
+                                    forceMute={isLiveOnAir}
+                                    initialMute={true}
+                                />
+                            )}
+                        </VideoAspectWrapper>
+                    </Suspense>
+                </ErrorBoundary>
             </Box>
             <VStack
                 pos="absolute"

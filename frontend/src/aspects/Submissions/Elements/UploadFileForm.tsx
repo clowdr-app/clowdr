@@ -20,7 +20,9 @@ import "@uppy/status-bar/dist/style.css";
 import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
+import AppError from "../../App/AppError";
 import FAIcon from "../../Chakra/FAIcon";
 import { makeContext } from "../../GQL/make-context";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
@@ -101,149 +103,155 @@ export default function UploadFileForm({
     }, [toast, updateFiles, uppy]);
 
     return (
-        <Suspense fallback={<Spinner />}>
-            <Formik
-                initialValues={{
-                    agree: false,
-                    altText: isVideo ? "" : existingAltText,
-                }}
-                onSubmit={async (values) => {
-                    if (!uppy) {
-                        throw new Error("No Uppy instance");
-                    }
-                    let result;
-                    try {
-                        result = await uppy.upload();
-                    } catch (e: any) {
-                        console.error("Failed to upload file", e);
-                        toast({
-                            status: "error",
-                            description: "Failed to upload file. Please try again.",
-                        });
-                        uppy.reset();
-                        return;
-                    }
+        <ErrorBoundary FallbackComponent={AppError}>
+            <Suspense fallback={<Spinner />}>
+                <Formik
+                    initialValues={{
+                        agree: false,
+                        altText: isVideo ? "" : existingAltText,
+                    }}
+                    onSubmit={async (values) => {
+                        if (!uppy) {
+                            throw new Error("No Uppy instance");
+                        }
+                        let result;
+                        try {
+                            result = await uppy.upload();
+                        } catch (e: any) {
+                            console.error("Failed to upload file", e);
+                            toast({
+                                status: "error",
+                                description: "Failed to upload file. Please try again.",
+                            });
+                            uppy.reset();
+                            return;
+                        }
 
-                    if (result.failed.length > 0 || result.successful.length < 1) {
-                        console.error("Failed to upload file", result.failed);
-                        toast({
-                            status: "error",
-                            description: "Failed to upload file. Please try again later.",
-                        });
-                        uppy.reset();
-                        return;
-                    }
+                        if (result.failed.length > 0 || result.successful.length < 1) {
+                            console.error("Failed to upload file", result.failed);
+                            toast({
+                                status: "error",
+                                description: "Failed to upload file. Please try again later.",
+                            });
+                            uppy.reset();
+                            return;
+                        }
 
-                    try {
-                        const submitResult = await submitUploadableElement(
-                            {
-                                elementData: {
-                                    s3Url: result.successful[0].uploadURL,
-                                    altText: values.altText,
+                        try {
+                            const submitResult = await submitUploadableElement(
+                                {
+                                    elementData: {
+                                        s3Url: result.successful[0].uploadURL,
+                                        altText: values.altText,
+                                    },
+                                    magicToken,
+                                    elementId,
                                 },
-                                magicToken,
-                                elementId,
-                            },
-                            context
-                        );
-
-                        if (submitResult.error || !submitResult.data?.submitUploadableElement?.success) {
-                            throw new Error(
-                                submitResult.data?.submitUploadableElement?.message ??
-                                    submitResult.error?.message ??
-                                    "Unknown reason for failure."
+                                context
                             );
-                        }
 
-                        toast({
-                            status: "success",
-                            description: "Uploaded item successfully.",
-                        });
-                        uppy.reset();
+                            if (submitResult.error || !submitResult.data?.submitUploadableElement?.success) {
+                                throw new Error(
+                                    submitResult.data?.submitUploadableElement?.message ??
+                                        submitResult.error?.message ??
+                                        "Unknown reason for failure."
+                                );
+                            }
 
-                        if (handleFormSubmitted) {
-                            handleFormSubmitted();
+                            toast({
+                                status: "success",
+                                description: "Uploaded item successfully.",
+                            });
+                            uppy.reset();
+
+                            if (handleFormSubmitted) {
+                                handleFormSubmitted();
+                            }
+                        } catch (e: any) {
+                            console.error("Failed to submit item", e);
+                            toast({
+                                status: "error",
+                                title: "Failed to submit item.",
+                                description: e?.message ?? "Please try again later.",
+                            });
+                            uppy.reset();
+                            return;
                         }
-                    } catch (e: any) {
-                        console.error("Failed to submit item", e);
-                        toast({
-                            status: "error",
-                            title: "Failed to submit item.",
-                            description: e?.message ?? "Please try again later.",
-                        });
-                        uppy.reset();
-                        return;
-                    }
-                }}
-            >
-                {({ dirty, isSubmitting, isValid }) => (
-                    <>
-                        <UnsavedChangesWarning hasUnsavedChanges={dirty} />
-                        <Form
-                            style={{
-                                width: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "stretch",
-                                marginTop: "2em",
-                            }}
-                        >
-                            <FormControl isInvalid={!files} isRequired>
-                                <DragDrop uppy={uppy} allowMultipleFiles={false} />
-                                <FormHelperText>File types: {allowedFileTypes.join(", ")}</FormHelperText>
-                            </FormControl>
-                            <UnorderedList mb={4}>
-                                {files.map((file) => (
-                                    <ListItem key={file.id}>
-                                        {file.name}{" "}
-                                        <Button onClick={() => uppy?.removeFile(file.id)}>
-                                            <FAIcon iconStyle="s" icon="times" color="DestructiveActionButton.400" />
-                                        </Button>
-                                    </ListItem>
-                                ))}
-                            </UnorderedList>
-                            {!isVideo ? (
-                                <Field
-                                    name="altText"
-                                    validate={(inValue: string | null | undefined) => {
-                                        return inValue?.length
-                                            ? undefined
-                                            : "Missing alternative text for accessibility";
-                                    }}
-                                >
-                                    {({ form, field }: FieldProps<string>) => (
-                                        <FormControl
-                                            isInvalid={!!form.errors.altText && !!form.touched.altText}
-                                            isRequired
-                                            mt={5}
-                                        >
-                                            <FormLabel htmlFor="altText">
-                                                Alternative text (for accessibility)
-                                            </FormLabel>
-                                            <Input {...field} id="altText" />
-                                            <FormErrorMessage>{form.errors.altText}</FormErrorMessage>
-                                        </FormControl>
-                                    )}
-                                </Field>
-                            ) : undefined}
-                            <UploadAgreementField
-                                uploadAgreementText={uploadAgreementText}
-                                uploadAgreementUrl={uploadAgreementUrl}
-                            />
-                            <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
-                            <Button
-                                alignSelf="flex-start"
-                                colorScheme="ConfirmButton"
-                                isLoading={isSubmitting}
-                                type="submit"
-                                isDisabled={!isValid || files.length !== 1}
+                    }}
+                >
+                    {({ dirty, isSubmitting, isValid }) => (
+                        <>
+                            <UnsavedChangesWarning hasUnsavedChanges={dirty} />
+                            <Form
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "stretch",
+                                    marginTop: "2em",
+                                }}
                             >
-                                Submit
-                            </Button>
-                        </Form>
-                    </>
-                )}
-            </Formik>
-        </Suspense>
+                                <FormControl isInvalid={!files} isRequired>
+                                    <DragDrop uppy={uppy} allowMultipleFiles={false} />
+                                    <FormHelperText>File types: {allowedFileTypes.join(", ")}</FormHelperText>
+                                </FormControl>
+                                <UnorderedList mb={4}>
+                                    {files.map((file) => (
+                                        <ListItem key={file.id}>
+                                            {file.name}{" "}
+                                            <Button onClick={() => uppy?.removeFile(file.id)}>
+                                                <FAIcon
+                                                    iconStyle="s"
+                                                    icon="times"
+                                                    color="DestructiveActionButton.400"
+                                                />
+                                            </Button>
+                                        </ListItem>
+                                    ))}
+                                </UnorderedList>
+                                {!isVideo ? (
+                                    <Field
+                                        name="altText"
+                                        validate={(inValue: string | null | undefined) => {
+                                            return inValue?.length
+                                                ? undefined
+                                                : "Missing alternative text for accessibility";
+                                        }}
+                                    >
+                                        {({ form, field }: FieldProps<string>) => (
+                                            <FormControl
+                                                isInvalid={!!form.errors.altText && !!form.touched.altText}
+                                                isRequired
+                                                mt={5}
+                                            >
+                                                <FormLabel htmlFor="altText">
+                                                    Alternative text (for accessibility)
+                                                </FormLabel>
+                                                <Input {...field} id="altText" />
+                                                <FormErrorMessage>{form.errors.altText}</FormErrorMessage>
+                                            </FormControl>
+                                        )}
+                                    </Field>
+                                ) : undefined}
+                                <UploadAgreementField
+                                    uploadAgreementText={uploadAgreementText}
+                                    uploadAgreementUrl={uploadAgreementUrl}
+                                />
+                                <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+                                <Button
+                                    alignSelf="flex-start"
+                                    colorScheme="ConfirmButton"
+                                    isLoading={isSubmitting}
+                                    type="submit"
+                                    isDisabled={!isValid || files.length !== 1}
+                                >
+                                    Submit
+                                </Button>
+                            </Form>
+                        </>
+                    )}
+                </Formik>
+            </Suspense>
+        </ErrorBoundary>
     );
 }

@@ -1,5 +1,7 @@
 import React, { Suspense, useMemo } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import * as portals from "react-reverse-portal";
+import AppError from "../App/AppError";
 
 const PermissionInstructionsModal = React.lazy(() => import("./PermissionInstructionsModal"));
 const ChimeRoom = React.lazy(() =>
@@ -32,35 +34,41 @@ export function SharedRoomContextProvider({ children }: { children: JSX.Element 
     const ctx = useValue();
     return (
         <>
-            <Suspense fallback={<></>}>
-                <portals.InPortal node={ctx.vonagePortalNode}>
-                    <VonageRoom
-                        getAccessToken={async () => ""}
-                        roomId={null}
-                        eventId={null}
-                        vonageSessionId=""
-                        disable={true}
-                        isBackstageRoom={false}
-                        raiseHandPrejoinEventId={null}
-                        isRaiseHandWaiting={undefined}
-                        requireMicrophoneOrCamera={false}
-                        completeJoinRef={undefined}
-                        completeGetAccessToken={undefined}
-                        canControlRecordingAs={[]}
-                        layout={undefined}
-                    />
-                </portals.InPortal>
-            </Suspense>
-            <Suspense fallback={<></>}>
-                <portals.InPortal node={ctx.chimePortalNode}>
-                    <ChimeRoom disable={true} roomId="" />
-                </portals.InPortal>
-            </Suspense>
+            <ErrorBoundary FallbackComponent={AppError}>
+                <Suspense fallback={<></>}>
+                    <portals.InPortal node={ctx.vonagePortalNode}>
+                        <VonageRoom
+                            getAccessToken={async () => ""}
+                            roomId={null}
+                            eventId={null}
+                            vonageSessionId=""
+                            disable={true}
+                            isBackstageRoom={false}
+                            raiseHandPrejoinEventId={null}
+                            isRaiseHandWaiting={undefined}
+                            requireMicrophoneOrCamera={false}
+                            completeJoinRef={undefined}
+                            completeGetAccessToken={undefined}
+                            canControlRecordingAs={[]}
+                            layout={undefined}
+                        />
+                    </portals.InPortal>
+                </Suspense>
+            </ErrorBoundary>
+            <ErrorBoundary FallbackComponent={AppError}>
+                <Suspense fallback={<></>}>
+                    <portals.InPortal node={ctx.chimePortalNode}>
+                        <ChimeRoom disable={true} roomId="" />
+                    </portals.InPortal>
+                </Suspense>
+            </ErrorBoundary>
             <SharedRoomContext.Provider value={ctx}>
                 {children}
-                <Suspense fallback={null}>
-                    <PermissionInstructionsModal />
-                </Suspense>
+                <ErrorBoundary FallbackComponent={AppError}>
+                    <Suspense fallback={null}>
+                        <PermissionInstructionsModal />
+                    </Suspense>
+                </ErrorBoundary>
             </SharedRoomContext.Provider>
         </>
     );

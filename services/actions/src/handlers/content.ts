@@ -118,13 +118,15 @@ export async function handleElementUpdated(logger: P.Logger, payload: EventPaylo
                 oldVersion.data.baseType === "video" &&
                 currentVersion.data.transcode?.s3Url &&
                 !currentVersion.data.sourceHasEmbeddedSubtitles &&
-                oldVersion.data.transcode?.s3Url !== currentVersion.data.transcode.s3Url) ||
+                oldVersion.data.transcode?.s3Url !== currentVersion.data.transcode.s3Url &&
+                currentVersion.createdBy !== "migration") ||
             (oldVersion &&
                 oldVersion.data.baseType === "video" &&
                 currentVersion.data.transcode?.s3Url &&
                 oldVersion.data.transcode?.s3Url === currentVersion.data.transcode.s3Url &&
                 Boolean(oldVersion.data.subtitles["en_US"]?.s3Url) &&
-                !currentVersion.data.subtitles["en_US"]?.s3Url) ||
+                !currentVersion.data.subtitles["en_US"]?.s3Url &&
+                currentVersion.createdBy !== "migration") ||
             (!oldVersion && currentVersion.data.transcode?.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
         ) {
             await startTranscribe(logger, currentVersion.data.transcode.s3Url, newRow.id);
@@ -135,7 +137,8 @@ export async function handleElementUpdated(logger: P.Logger, payload: EventPaylo
                 oldVersion.data.baseType === "audio" &&
                 currentVersion.data.s3Url &&
                 !currentVersion.data.sourceHasEmbeddedSubtitles &&
-                oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
+                oldVersion.data.s3Url !== currentVersion.data.s3Url &&
+                currentVersion.createdBy !== "migration") ||
             (!oldVersion && currentVersion.data.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
         ) {
             await startTranscribe(logger, currentVersion.data.s3Url, newRow.id);

@@ -49,6 +49,10 @@ export type SubmitElementOutput = {
     message: string;
 };
 
+export type MigrateElementOutput = {
+    success: boolean;
+};
+
 export type ConfirmInvitationOutput = {
     ok: string;
     confSlug?: Maybe<string>;
@@ -288,6 +292,10 @@ export type stopEventBroadcastArgs = {
 export type submitElementArgs = {
     data: jsonb;
     magicToken: string;
+    elementId: string;
+};
+
+export type migrateElementArgs = {
     elementId: string;
 };
 

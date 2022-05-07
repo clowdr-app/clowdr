@@ -121,6 +121,13 @@ actions:
       - role: attendee
       - role: subconference-organizer
       - role: user
+  - name: migrateElement
+    definition:
+      kind: synchronous
+      handler: '{{ACTION_BASE_URL}}/element/migrate'
+      headers:
+        - name: x-hasura-event-secret
+          value_from_env: EVENT_SECRET
   - name: migrateProfilePhoto
     definition:
       kind: synchronous
@@ -320,4 +327,5 @@ custom_types:
     - name: InitialiseSuperUserOutput
     - name: TranscribeGeneratePresignedUrlOutput
     - name: MigrateProfilePhotoResponse
+    - name: MigrateElementOutput
   scalars: []

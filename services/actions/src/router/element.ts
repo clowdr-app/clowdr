@@ -1,13 +1,18 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
-import type { GetUploadAgreementOutput, submitElementArgs, updateSubtitlesArgs } from "@midspace/hasura/action-types";
+import type {
+    GetUploadAgreementOutput,
+    migrateElementArgs,
+    submitElementArgs,
+    updateSubtitlesArgs,
+} from "@midspace/hasura/action-types";
 import type { EventPayload } from "@midspace/hasura/event";
 import type { ElementData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import { assertType, TypeGuardError } from "typescript-is";
-import { handleElementUpdated, handleGetUploadAgreement } from "../handlers/content";
+import { handleElementUpdated, handleGetUploadAgreement, handleMigrateElement } from "../handlers/content";
 import { handleElementSubmitted, handleUpdateSubtitles } from "../handlers/upload";
 import { BadRequestError, UnexpectedServerError } from "../lib/errors";
 
@@ -49,6 +54,31 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
     try {
         req.log.info("Content item submitted");
         const result = await handleElementSubmitted(req.log, params);
+        return res.status(200).json(result);
+    } catch (e: any) {
+        req.log.error({ err: e }, "Failed to submit content item");
+        return res.status(200).json({
+            success: false,
+            message: "Failed to submit content item",
+        });
+    }
+});
+
+router.post("/migrate", json(), async (req: Request, res: Response) => {
+    const params = req.body.input;
+    try {
+        assertType<migrateElementArgs>(params);
+    } catch (e: any) {
+        req.log.error({ params }, "Invalid request");
+        return res.status(200).json({
+            success: false,
+            message: "Invalid request",
+        });
+    }
+
+    try {
+        req.log.info("Migrate element");
+        const result = await handleMigrateElement(req.log, params);
         return res.status(200).json(result);
     } catch (e: any) {
         req.log.error({ err: e }, "Failed to submit content item");

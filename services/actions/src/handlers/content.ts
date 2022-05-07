@@ -1,11 +1,13 @@
 import { gql } from "@apollo/client/core";
-import type { GetUploadAgreementOutput } from "@midspace/hasura/action-types";
+import type { GetUploadAgreementOutput, migrateElementArgs, MigrateElementOutput } from "@midspace/hasura/action-types";
 import type { EventPayload } from "@midspace/hasura/event";
 import type { ElementData } from "@midspace/hasura/event-data";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
-import { AWSJobStatus } from "@midspace/shared-types/content";
+import type { ElementVersionData, SubtitleDetails } from "@midspace/shared-types/content";
+import { AWSJobStatus, ElementBaseType } from "@midspace/shared-types/content";
 import { SourceType } from "@midspace/shared-types/content/element";
 import type { EmailView_SubtitlesGenerated } from "@midspace/shared-types/email";
+import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { compile } from "handlebars";
 import type { P } from "pino";
@@ -15,8 +17,11 @@ import {
     ElementAddNewVersionDocument,
     GetElementDetailsDocument,
     GetUploadAgreementDocument,
+    MigrateElementDocument,
+    MigrateElement_GetInfoDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { S3 } from "../lib/aws/awsClient";
 import {
     getEmailTemplatesSubtitlesGenerated,
     getRecordingEmailNotificationsEnabled,
@@ -460,4 +465,152 @@ export async function handleGetUploadAgreement(magicToken: string): Promise<GetU
         delete agreement.agreementUrl;
     }
     return agreement;
+}
+
+gql`
+    query MigrateElement_GetInfo($elementId: uuid!) {
+        content_Element_by_pk(id: $elementId) {
+            id
+            typeName
+            data
+        }
+    }
+
+    mutation MigrateElement($elementId: uuid!, $data: jsonb!) {
+        update_content_Element_by_pk(pk_columns: { id: $elementId }, _set: { data: $data }) {
+            id
+        }
+    }
+`;
+
+export async function handleMigrateElement(_logger: P.Logger, args: migrateElementArgs): Promise<MigrateElementOutput> {
+    const elementId = args.elementId;
+
+    const elementResp = await apolloClient.query({
+        query: MigrateElement_GetInfoDocument,
+        variables: {
+            elementId,
+        },
+    });
+    if (elementResp.data.content_Element_by_pk) {
+        if (
+            elementResp.data.content_Element_by_pk.data &&
+            elementResp.data.content_Element_by_pk.data instanceof Array &&
+            elementResp.data.content_Element_by_pk.data.length
+        ) {
+            const currentVersion: ElementVersionData =
+                elementResp.data.content_Element_by_pk.data[elementResp.data.content_Element_by_pk.data.length - 1];
+            let s3Url: string | undefined;
+            let subtitleDetails: Record<string, SubtitleDetails> | undefined;
+
+            switch (currentVersion.data.baseType) {
+                case ElementBaseType.Audio:
+                    s3Url = currentVersion.data.s3Url;
+                    subtitleDetails = currentVersion.data.subtitles;
+                    break;
+                case ElementBaseType.Video:
+                    s3Url = currentVersion.data.s3Url;
+                    subtitleDetails = currentVersion.data.subtitles;
+                    break;
+                case ElementBaseType.File:
+                    s3Url = currentVersion.data.s3Url;
+                    break;
+                default:
+                    return {
+                        success: true,
+                    };
+            }
+
+            const deleteObjectKeys: string[] = [];
+
+            if (s3Url) {
+                const { key } = AmazonS3URI(s3Url);
+
+                if (key && !key.startsWith(elementId)) {
+                    const newKey = elementId + "/" + key;
+                    await S3.copyObject({
+                        Bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                        CopySource: process.env.AWS_CONTENT_BUCKET_ID + "/" + key,
+                        Key: newKey,
+                    });
+
+                    currentVersion.data.s3Url = `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${newKey}`;
+
+                    deleteObjectKeys.push(key);
+                }
+            }
+
+            if (subtitleDetails) {
+                for (const langKey in subtitleDetails) {
+                    const details = subtitleDetails[langKey];
+
+                    if (details.status === AWSJobStatus.Completed) {
+                        const { key } = AmazonS3URI(details.s3Url);
+
+                        if (key && !key.startsWith(elementId)) {
+                            const newKey = elementId + "/" + key;
+                            await S3.copyObject({
+                                Bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                                CopySource: process.env.AWS_CONTENT_BUCKET_ID + "/" + key,
+                                Key: newKey,
+                            });
+
+                            details.s3Url = `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${newKey}`;
+
+                            deleteObjectKeys.push(key);
+                        }
+                    }
+                }
+            }
+
+            if (
+                currentVersion.data.baseType === ElementBaseType.Video &&
+                currentVersion.data.transcode &&
+                currentVersion.data.transcode.s3Url?.length &&
+                currentVersion.data.transcode.status === AWSJobStatus.Completed
+            ) {
+                const { key } = AmazonS3URI(currentVersion.data.transcode.s3Url);
+
+                if (key && !key.startsWith(elementId)) {
+                    const newKey = elementId + "/" + key;
+                    await S3.copyObject({
+                        Bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                        CopySource: process.env.AWS_CONTENT_BUCKET_ID + "/" + key,
+                        Key: newKey,
+                    });
+
+                    currentVersion.data.transcode.s3Url = `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${newKey}`;
+
+                    deleteObjectKeys.push(key);
+                }
+            }
+
+            if (deleteObjectKeys.length > 0) {
+                currentVersion.createdBy = "migration";
+
+                await apolloClient.mutate({
+                    mutation: MigrateElementDocument,
+                    variables: {
+                        elementId,
+                        data: elementResp.data.content_Element_by_pk.data,
+                    },
+                });
+
+                await S3.deleteObjects({
+                    Bucket: process.env.AWS_CONTENT_BUCKET_ID,
+                    Delete: {
+                        Objects: deleteObjectKeys.map((x) => ({ Key: x })),
+                    },
+                });
+            }
+        }
+
+        return {
+            success: true,
+        };
+    } else {
+        return {
+            success: false,
+        };
+    }
 }

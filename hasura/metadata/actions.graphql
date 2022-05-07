@@ -62,6 +62,12 @@ type Mutation {
 }
 
 type Mutation {
+  migrateElement(
+    elementId: uuid!
+  ): MigrateElementOutput
+}
+
+type Mutation {
   migrateProfilePhoto(
     registrantId: uuid!
   ): MigrateProfilePhotoResponse
@@ -347,5 +353,9 @@ type TranscribeGeneratePresignedUrlOutput {
 
 type MigrateProfilePhotoResponse {
   ok: Boolean!
+}
+
+type MigrateElementOutput {
+  success: Boolean!
 }
 

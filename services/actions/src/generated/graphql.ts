@@ -39468,6 +39468,30 @@ export type GetUploadAgreementQuery = {
     }>;
 };
 
+export type MigrateElement_GetInfoQueryVariables = Exact<{
+    elementId: Scalars["uuid"];
+}>;
+
+export type MigrateElement_GetInfoQuery = {
+    __typename?: "query_root";
+    content_Element_by_pk?: {
+        __typename?: "content_Element";
+        id: any;
+        typeName: Content_ElementType_Enum;
+        data: any;
+    } | null;
+};
+
+export type MigrateElementMutationVariables = Exact<{
+    elementId: Scalars["uuid"];
+    data: Scalars["jsonb"];
+}>;
+
+export type MigrateElementMutation = {
+    __typename?: "mutation_root";
+    update_content_Element_by_pk?: { __typename?: "content_Element"; id: any } | null;
+};
+
 export type CustomEmail_SelectRegistrantsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
     subconferenceId: Scalars["uuid"];
@@ -43461,6 +43485,112 @@ export const GetUploadAgreementDocument = {
         },
     ],
 } as unknown as DocumentNode<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>;
+export const MigrateElement_GetInfoDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "MigrateElement_GetInfo" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "content_Element_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "typeName" } },
+                                { kind: "Field", name: { kind: "Name", value: "data" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<MigrateElement_GetInfoQuery, MigrateElement_GetInfoQueryVariables>;
+export const MigrateElementDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "MigrateElement" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_content_Element_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "pk_columns" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "id" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "data" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "data" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<MigrateElementMutation, MigrateElementMutationVariables>;
 export const CustomEmail_SelectRegistrantsDocument = {
     kind: "Document",
     definitions: [

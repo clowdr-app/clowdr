@@ -41322,7 +41322,7 @@ export type Room_GetEventsQuery = {
                 readonly typeName: Content_ElementType_Enum;
                 readonly itemId: any;
             }>;
-            readonly zoomItems: ReadonlyArray<{
+            readonly externalEventItems: ReadonlyArray<{
                 readonly __typename?: "content_Element";
                 readonly id: any;
                 readonly data: any;
@@ -41467,7 +41467,7 @@ export type Room_EventSummaryFragment = {
             readonly typeName: Content_ElementType_Enum;
             readonly itemId: any;
         }>;
-        readonly zoomItems: ReadonlyArray<{
+        readonly externalEventItems: ReadonlyArray<{
             readonly __typename?: "content_Element";
             readonly id: any;
             readonly data: any;
@@ -49727,7 +49727,7 @@ export type RaiseHandPanel_GetEventDetailsQuery = {
                 readonly typeName: Content_ElementType_Enum;
                 readonly itemId: any;
             }>;
-            readonly zoomItems: ReadonlyArray<{
+            readonly externalEventItems: ReadonlyArray<{
                 readonly __typename?: "content_Element";
                 readonly id: any;
                 readonly data: any;
@@ -51204,7 +51204,7 @@ export const Room_EventSummaryFragmentDoc = gql`
                 typeName
                 itemId
             }
-            zoomItems: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }, limit: 1) {
+            externalEventItems: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }, limit: 1) {
                 id
                 data
                 name

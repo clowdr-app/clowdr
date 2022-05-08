@@ -150,7 +150,7 @@ export function ItemElements({
     const { conferencePath } = useAuthParameters();
     useTrackView(true, itemData.id, "Item", 3000);
 
-    const zoomDetailsEls = useMemo(() => {
+    const exteranlEventDetailsEls = useMemo(() => {
         return itemData.elements
             .filter((element) => element.typeName === Content_ElementType_Enum.ExternalEventLink)
             .sort((x, y) =>
@@ -254,10 +254,10 @@ export function ItemElements({
             <VStack
                 alignItems="flex-start"
                 flexWrap="wrap"
-                mt={zoomDetailsEls.length || stackableEls.length ? 5 : 0}
+                mt={exteranlEventDetailsEls.length || stackableEls.length ? 5 : 0}
                 spacing={2}
             >
-                <RequireRole attendeeRole>{zoomDetailsEls}</RequireRole>
+                <RequireRole attendeeRole>{exteranlEventDetailsEls}</RequireRole>
                 {stackableEls}
             </VStack>
             <ElementsGridLayout elements={filteredElements} />

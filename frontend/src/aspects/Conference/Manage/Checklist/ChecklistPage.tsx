@@ -1040,7 +1040,7 @@ export default function ChecklistPage(): JSX.Element {
         );
     }, [checklistResponse.data?.allLiveEventsWithPeople]);
 
-    const externalEventsHaveZoom = useMemo(() => {
+    const externalEventsHaveLink = useMemo(() => {
         const filteredEvents = checklistResponse.data?.externalEvents.filter(
             (event) =>
                 !event.item ||
@@ -1058,9 +1058,9 @@ export default function ChecklistPage(): JSX.Element {
         );
         return (
             <ChecklistItem
-                title="All Zoom events have been assigned a content item with a valid Zoom element"
+                title="All external events have been assigned a content item with a valid External Event Link element"
                 status="error"
-                description="Zoom events show a button that links to Zoom. The link is found from a Zoom element on the event's content item. All Zoom events must have a content item with a Zoom element that contains a valid Zoom link."
+                description="External events show a button that links to your meeting platform of choice (such as Zoom, MS Teams, etc). The link is found from an External Event Link element on the event's content item. All External Events must have a content item with an external event link element that contains a valid meeting link."
                 action={{
                     title: "Manage Content",
                     url: "content",
@@ -1353,10 +1353,10 @@ export default function ChecklistPage(): JSX.Element {
 
                         <GridItem colSpan={defaultColSpan}>
                             <Heading as="h4" fontSize="md" textAlign="left">
-                                Zoom events
+                                External events
                             </Heading>
                         </GridItem>
-                        <GridItem colSpan={defaultColSpan}>{externalEventsHaveZoom}</GridItem>
+                        <GridItem colSpan={defaultColSpan}>{externalEventsHaveLink}</GridItem>
                         <GridItem colSpan={2} rowSpan={2}></GridItem>
 
                         <GridItem colSpan={defaultColSpan}>

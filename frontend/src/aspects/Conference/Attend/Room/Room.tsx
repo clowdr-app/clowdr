@@ -40,7 +40,7 @@ import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { roundDownToNearest, roundUpToNearest } from "../../../Utils/MathUtils";
 import { useEvent } from "../../../Utils/useEvent";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
-import JoinZoomButton from "./JoinZoomButton";
+import JoinExternalEventButton from "./JoinExternalEventButton";
 import { RoomMembersButton } from "./Members/RoomMembersButton";
 import { RoomContent } from "./RoomContent";
 import RoomContinuationChoices from "./RoomContinuationChoices";
@@ -113,7 +113,7 @@ gql`
                 typeName
                 itemId
             }
-            zoomItems: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }, limit: 1) {
+            externalEventItems: elements(where: { typeName: { _eq: EXTERNAL_EVENT_LINK } }, limit: 1) {
                 id
                 data
                 name
@@ -263,7 +263,7 @@ function RoomInner({
         withinThreeMinutesOfBroadcastEvent,
         withinStreamLatencySinceBroadcastEvent,
         broadcastEventStartsAt,
-        zoomEventStartsAt,
+        externalEventStartsAt,
     } = useCurrentRoomEvent(roomEvents);
 
     const hlsUri = useHLSUri(roomDetails.id, broadcastEventStartsAt);
@@ -324,7 +324,7 @@ function RoomInner({
                 ((!currentRoomEvent &&
                     (!nextRoomEvent ||
                         nextRoomEvent.modeName !== Schedule_Mode_Enum.External ||
-                        zoomEventStartsAt - now30s > 20 * 60 * 1000)) ||
+                        externalEventStartsAt - now30s > 20 * 60 * 1000)) ||
                     currentRoomEvent?.modeName === Schedule_Mode_Enum.VideoChat ||
                     (!currentRoomEvent && roomDetails.item?.typeName === Content_ItemType_Enum.Sponsor))),
         [
@@ -334,33 +334,36 @@ function RoomInner({
             roomDetails.isProgramRoom,
             roomDetails.isStreamingProgramRoom,
             roomDetails.item?.typeName,
-            zoomEventStartsAt,
+            externalEventStartsAt,
         ]
     );
 
-    const maybeZoomUrl = useMemo(() => {
+    const maybeExternalEventUrl = useMemo(() => {
         try {
             if (currentRoomEvent) {
-                const currentZoomItems = currentRoomEvent.item?.zoomItems;
-                if (currentZoomItems?.length) {
-                    const versions = currentZoomItems[0].data as ElementDataBlob;
+                const currentExternalEventItems = currentRoomEvent.item?.externalEventItems;
+                if (currentExternalEventItems?.length) {
+                    const versions = currentExternalEventItems[0].data as ElementDataBlob;
                     const latest = R.last(versions)?.data as ExternalEventLinkBlob;
-                    return { url: latest.url, name: currentZoomItems[0].name };
+                    return { url: latest.url, name: currentExternalEventItems[0].name };
                 }
             }
 
             if (nextRoomEvent) {
-                const nextZoomItems = nextRoomEvent.item?.zoomItems;
-                if (nextZoomItems?.length && now30s > Date.parse(nextRoomEvent.scheduledStartTime) - 20 * 60 * 1000) {
-                    const versions = nextZoomItems[0].data as ElementDataBlob;
+                const nextExternalEventItems = nextRoomEvent.item?.externalEventItems;
+                if (
+                    nextExternalEventItems?.length &&
+                    now30s > Date.parse(nextRoomEvent.scheduledStartTime) - 20 * 60 * 1000
+                ) {
+                    const versions = nextExternalEventItems[0].data as ElementDataBlob;
                     const latest = R.last(versions)?.data as ExternalEventLinkBlob;
-                    return { url: latest.url, name: nextZoomItems[0].name };
+                    return { url: latest.url, name: nextExternalEventItems[0].name };
                 }
             }
 
             return undefined;
         } catch (e) {
-            console.error("Error finding current event Zoom details", e);
+            console.error("Error finding current event ExternalEvent details", e);
             return undefined;
         }
     }, [currentRoomEvent, nextRoomEvent, now30s]);
@@ -632,10 +635,10 @@ function RoomInner({
     const bgColour = useColorModeValue("Room.videoChatBackgroundColor-light", "Room.videoChatBackgroundColor-dark");
 
     // Note: A video chat might be shown in a sponsor booth. That booth may
-    //       have an upcoming broadcast or Zoom event. Thus it's possible
+    //       have an upcoming broadcast or ExternalEvent event. Thus it's possible
     //       for the video chat to be closing even when there is no ongoing
     //       breakout event.
-    const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt - 20 * 60 * 1000);
+    const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, externalEventStartsAt - 20 * 60 * 1000);
     // const currentRoomEventEndTime = useMemo(
     //     () => (currentRoomEvent ? Date.parse(currentRoomEvent.scheduledEndTime) : undefined),
     //     [currentRoomEvent]
@@ -659,7 +662,8 @@ function RoomInner({
                 eventIsOngoing={!!currentRoomEvent}
                 showDefaultVideoChatRoom={showDefaultVideoChatRoom}
                 shuffleEndsAt={shuffleRoomEndsAt}
-                zoomStartsAt={zoomEventStartsAt}
+                externalEventStartsAt={externalEventStartsAt}
+                externalEventName={maybeExternalEventUrl?.name}
             />
         ),
         [
@@ -668,7 +672,8 @@ function RoomInner({
             currentRoomEvent,
             showDefaultVideoChatRoom,
             shuffleRoomEndsAt,
-            zoomEventStartsAt,
+            externalEventStartsAt,
+            maybeExternalEventUrl?.name,
         ]
     );
 
@@ -838,13 +843,16 @@ function RoomInner({
                             {isPresenterOfUpcomingEvent ? (
                                 <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
                             ) : undefined}
-                            {maybeZoomUrl && currentRoomEvent?.modeName === Schedule_Mode_Enum.External ? (
-                                <JoinZoomButton zoomUrl={maybeZoomUrl} />
-                            ) : maybeZoomUrl &&
+                            {maybeExternalEventUrl && currentRoomEvent?.modeName === Schedule_Mode_Enum.External ? (
+                                <JoinExternalEventButton externalEventUrl={maybeExternalEventUrl} />
+                            ) : maybeExternalEventUrl &&
                               nextRoomEvent?.modeName === Schedule_Mode_Enum.External &&
-                              zoomEventStartsAt - now5s < 20 * 60 * 1000 &&
+                              externalEventStartsAt - now5s < 20 * 60 * 1000 &&
                               !currentRoomEvent ? (
-                                <JoinZoomButton zoomUrl={maybeZoomUrl} scheduledStartTime={zoomEventStartsAt} />
+                                <JoinExternalEventButton
+                                    externalEventUrl={maybeExternalEventUrl}
+                                    scheduledStartTime={externalEventStartsAt}
+                                />
                             ) : undefined}
 
                             <Box

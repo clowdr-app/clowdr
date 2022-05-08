@@ -78,8 +78,8 @@ export const URLElementTemplate: ElementBaseTemplate = {
                     </Text>
                     <Text pb={4}>
                         External meeting links should be the ordinary link obtained using &ldquo;Copy link&rdquo; within
-                        Zoom or other meeting application. This should include the password field, enabling attendees to
-                        join with a single click.
+                        Zoom or another meeting application. This should include the password field, enabling attendees
+                        to join with a single click.
                     </Text>
                 </>
             ) : undefined;

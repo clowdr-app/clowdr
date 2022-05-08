@@ -12,7 +12,7 @@ interface Result {
     withinStreamLatencySinceBroadcastEvent: boolean;
     withinThreeMinutesOfBroadcastEvent: boolean;
     broadcastEventStartsAt: number;
-    zoomEventStartsAt: number;
+    externalEventStartsAt: number;
 }
 
 export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragment[]): Result {
@@ -21,7 +21,7 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         [roomEvents]
     );
 
-    const zoomEvents = useMemo(
+    const externalEvents = useMemo(
         () => roomEvents.filter((event) => event.modeName === Schedule_Mode_Enum.External),
         [roomEvents]
     );
@@ -74,17 +74,20 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         );
     }, [broadcastEvents]);
 
-    const [zoomEventStartsAt, setZoomEventStartsAt] = useState<number>(Number.MAX_SAFE_INTEGER);
-    const computeSecondsUntilZoomEvent = useCallback(() => {
-        setZoomEventStartsAt(
-            zoomEvents.reduce((acc, ev) => Math.min(acc, Date.parse(ev.scheduledStartTime)), Number.MAX_SAFE_INTEGER)
+    const [externalEventStartsAt, setExternalEventEventStartsAt] = useState<number>(Number.MAX_SAFE_INTEGER);
+    const computeSecondsUntilExternalEventEvent = useCallback(() => {
+        setExternalEventEventStartsAt(
+            externalEvents.reduce(
+                (acc, ev) => Math.min(acc, Date.parse(ev.scheduledStartTime)),
+                Number.MAX_SAFE_INTEGER
+            )
         );
-    }, [zoomEvents]);
+    }, [externalEvents]);
 
     const frequentUpdate = useCallback(() => {
-        computeSecondsUntilZoomEvent();
+        computeSecondsUntilExternalEventEvent();
         computeSecondsUntilBroadcastEvent();
-    }, [computeSecondsUntilBroadcastEvent, computeSecondsUntilZoomEvent]);
+    }, [computeSecondsUntilBroadcastEvent, computeSecondsUntilExternalEventEvent]);
     usePolling(frequentUpdate, 1000, true);
 
     const [nextRoomEvent, setNextRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
@@ -160,7 +163,7 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
             nonCurrentLiveEvents,
             nonCurrentLiveEventsInNext20Mins,
             broadcastEventStartsAt,
-            zoomEventStartsAt,
+            externalEventStartsAt,
         }),
         [
             currentRoomEvent,
@@ -168,7 +171,7 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
             nonCurrentLiveEvents,
             nonCurrentLiveEventsInNext20Mins,
             broadcastEventStartsAt,
-            zoomEventStartsAt,
+            externalEventStartsAt,
             withinStreamLatencySinceBroadcastEvent,
             withinThreeMinutesOfBroadcastEvent,
         ]

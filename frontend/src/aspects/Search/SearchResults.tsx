@@ -171,7 +171,10 @@ export default function SearchResults({
     const error = searchResponse?.error;
 
     const events = useMemo(() => data?.schedule_searchEvents ?? [], [data?.schedule_searchEvents]);
-    const items = useMemo(() => data?.content_searchItems ?? [], [data?.content_searchItems]);
+    const items = useMemo(
+        () => data?.content_searchItems.filter((x) => !events.some((y) => y.itemId === x.id)) ?? [],
+        [data?.content_searchItems, events]
+    );
     const people = useMemo(() => {
         const input = data?.collection_searchProgramPerson ?? [];
         return R.sortBy(

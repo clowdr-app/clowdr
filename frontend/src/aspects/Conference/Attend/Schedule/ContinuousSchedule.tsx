@@ -92,7 +92,7 @@ gql`
     query SelectMySchedulePage(
         $where: schedule_Event_bool_exp!
         $starredOrdering: [schedule_StarredEvent_order_by!]!
-        $peopleOrdering: [schedule_EventProgramPerson_order_by!]!
+        $peopleOrdering: [schedule_Event_order_by!]!
         $limit: Int!
         $includeAbstract: Boolean!
         $includeItemEvents: Boolean!
@@ -108,14 +108,22 @@ gql`
                 ...ScheduleEvent
             }
         }
-        schedule_EventProgramPerson(
-            where: { person: { registrantId: { _eq: $registrantId } }, event: $where }
+        schedule_Event(
+            where: {
+                _and: [
+                    {
+                        _or: [
+                            { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }
+                            { item: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } } }
+                        ]
+                    }
+                    $where
+                ]
+            }
             order_by: $peopleOrdering
             limit: $limit
         ) {
-            event {
-                ...ScheduleEvent
-            }
+            ...ScheduleEvent
         }
     }
 `;
@@ -196,8 +204,8 @@ export default function ContinuousSchedule({
                                         { event: { scheduledEndTime: Order_By.Desc } },
                                     ],
                                     peopleOrdering: [
-                                        { event: { scheduledStartTime: Order_By.Desc } },
-                                        { event: { scheduledEndTime: Order_By.Desc } },
+                                        { scheduledStartTime: Order_By.Desc },
+                                        { scheduledEndTime: Order_By.Desc },
                                     ],
                                     limit: eventsPerPage,
                                     includeAbstract,
@@ -218,7 +226,7 @@ export default function ContinuousSchedule({
                                 (x) => x.id,
                                 [
                                     ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
-                                    ...(response.data?.schedule_EventProgramPerson.map((x) => x.event) ?? []),
+                                    ...(response.data?.schedule_Event ?? []),
                                 ]
                             )
                         );
@@ -330,8 +338,8 @@ export default function ContinuousSchedule({
                                         { event: { scheduledEndTime: Order_By.Asc } },
                                     ],
                                     peopleOrdering: [
-                                        { event: { scheduledStartTime: Order_By.Asc } },
-                                        { event: { scheduledEndTime: Order_By.Asc } },
+                                        { scheduledStartTime: Order_By.Asc },
+                                        { scheduledEndTime: Order_By.Asc },
                                     ],
                                     limit: eventsPerPage,
                                     includeAbstract,
@@ -352,7 +360,7 @@ export default function ContinuousSchedule({
                                 (x) => x.id,
                                 [
                                     ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
-                                    ...(response.data?.schedule_EventProgramPerson.map((x) => x.event) ?? []),
+                                    ...(response.data?.schedule_Event ?? []),
                                 ]
                             )
                         );

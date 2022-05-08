@@ -42678,7 +42678,7 @@ export type SelectSchedulePageQuery = {
 export type SelectMySchedulePageQueryVariables = Exact<{
     where: Schedule_Event_Bool_Exp;
     starredOrdering: ReadonlyArray<Schedule_StarredEvent_Order_By> | Schedule_StarredEvent_Order_By;
-    peopleOrdering: ReadonlyArray<Schedule_EventProgramPerson_Order_By> | Schedule_EventProgramPerson_Order_By;
+    peopleOrdering: ReadonlyArray<Schedule_Event_Order_By> | Schedule_Event_Order_By;
     limit: Scalars["Int"];
     includeAbstract: Scalars["Boolean"];
     includeItemEvents: Scalars["Boolean"];
@@ -42743,60 +42743,57 @@ export type SelectMySchedulePageQuery = {
             } | null;
         };
     }>;
-    readonly schedule_EventProgramPerson: ReadonlyArray<{
-        readonly __typename?: "schedule_EventProgramPerson";
-        readonly event: {
-            readonly __typename?: "schedule_Event";
+    readonly schedule_Event: ReadonlyArray<{
+        readonly __typename?: "schedule_Event";
+        readonly id: any;
+        readonly conferenceId: any;
+        readonly subconferenceId?: any | null;
+        readonly scheduledStartTime?: any | null;
+        readonly scheduledEndTime?: any | null;
+        readonly name: string;
+        readonly roomId: any;
+        readonly modeName?: Schedule_Mode_Enum | null;
+        readonly sessionEventId?: any | null;
+        readonly item?: {
+            readonly __typename?: "content_Item";
             readonly id: any;
             readonly conferenceId: any;
             readonly subconferenceId?: any | null;
-            readonly scheduledStartTime?: any | null;
-            readonly scheduledEndTime?: any | null;
-            readonly name: string;
-            readonly roomId: any;
-            readonly modeName?: Schedule_Mode_Enum | null;
-            readonly sessionEventId?: any | null;
-            readonly item?: {
-                readonly __typename?: "content_Item";
+            readonly title: string;
+            readonly typeName: Content_ItemType_Enum;
+            readonly itemTags: ReadonlyArray<{
+                readonly __typename?: "content_ItemTag";
                 readonly id: any;
-                readonly conferenceId: any;
-                readonly subconferenceId?: any | null;
-                readonly title: string;
-                readonly typeName: Content_ItemType_Enum;
-                readonly itemTags: ReadonlyArray<{
-                    readonly __typename?: "content_ItemTag";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly tagId: any;
-                }>;
-                readonly itemPeople: ReadonlyArray<{
-                    readonly __typename?: "content_ItemProgramPerson";
-                    readonly id: any;
-                    readonly itemId: any;
-                    readonly personId: any;
-                    readonly roleName: string;
-                }>;
-                readonly abstract: ReadonlyArray<{
-                    readonly __typename?: "content_Element";
-                    readonly id: any;
-                    readonly data: any;
-                }>;
-                readonly events?: ReadonlyArray<{
+                readonly itemId: any;
+                readonly tagId: any;
+            }>;
+            readonly itemPeople: ReadonlyArray<{
+                readonly __typename?: "content_ItemProgramPerson";
+                readonly id: any;
+                readonly itemId: any;
+                readonly personId: any;
+                readonly roleName: string;
+            }>;
+            readonly abstract: ReadonlyArray<{
+                readonly __typename?: "content_Element";
+                readonly id: any;
+                readonly data: any;
+            }>;
+            readonly events?: ReadonlyArray<{
+                readonly __typename?: "schedule_Event";
+                readonly id: any;
+                readonly session?: {
                     readonly __typename?: "schedule_Event";
                     readonly id: any;
-                    readonly session?: {
-                        readonly __typename?: "schedule_Event";
+                    readonly name: string;
+                    readonly item?: {
+                        readonly __typename?: "content_Item";
                         readonly id: any;
-                        readonly name: string;
-                        readonly item?: {
-                            readonly __typename?: "content_Item";
-                            readonly id: any;
-                            readonly title: string;
-                        } | null;
+                        readonly title: string;
                     } | null;
-                }>;
-            } | null;
-        };
+                } | null;
+            }>;
+        } | null;
     }>;
 };
 
@@ -54032,7 +54029,7 @@ export const SelectMySchedulePageDocument = gql`
     query SelectMySchedulePage(
         $where: schedule_Event_bool_exp!
         $starredOrdering: [schedule_StarredEvent_order_by!]!
-        $peopleOrdering: [schedule_EventProgramPerson_order_by!]!
+        $peopleOrdering: [schedule_Event_order_by!]!
         $limit: Int!
         $includeAbstract: Boolean!
         $includeItemEvents: Boolean!
@@ -54048,14 +54045,22 @@ export const SelectMySchedulePageDocument = gql`
                 ...ScheduleEvent
             }
         }
-        schedule_EventProgramPerson(
-            where: { person: { registrantId: { _eq: $registrantId } }, event: $where }
+        schedule_Event(
+            where: {
+                _and: [
+                    {
+                        _or: [
+                            { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }
+                            { item: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } } }
+                        ]
+                    }
+                    $where
+                ]
+            }
             order_by: $peopleOrdering
             limit: $limit
         ) {
-            event {
-                ...ScheduleEvent
-            }
+            ...ScheduleEvent
         }
     }
     ${ScheduleEventFragmentDoc}

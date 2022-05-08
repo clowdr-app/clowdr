@@ -94,7 +94,7 @@ export class UserCache {
 
             return undefined;
         },
-        7 * 24 * 60 * 60,
+        18 * 60 * 60,
         60 * 60 * 1000
     );
 

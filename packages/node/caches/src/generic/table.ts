@@ -22,8 +22,8 @@ export class TableCache<CacheRecordKeys extends string, HydrationInputFilters ex
         private readonly fetchForHydrate: (
             filters: HydrationInputFilters
         ) => Promise<HydrationRecord<CacheRecordKeys>[] | undefined>,
-        private readonly ttlSeconds = 7 * 24 * 60 * 60,
-        private readonly hydrationPeriodMs = 24 * 60 * 60 * 1000
+        private readonly ttlSeconds = 18 * 60 * 60,
+        private readonly hydrationPeriodMs = 12 * 60 * 60 * 1000
     ) {}
 
     public generateEntityKey(itemKey: string): string {

@@ -269,7 +269,7 @@ export default function ContinuousSchedule({
                     }
 
                     if (earlierEvents) {
-                        setMightHaveEarlier(earlierEvents.length === eventsPerPage);
+                        setMightHaveEarlier(earlierEvents.length !== 0);
                         setMightHaveLater((old) => Boolean(old || ignoreExisting));
                         const xs = earlierEvents;
                         setEvents((old) => (!ignoreExisting ? [...R.reverse(xs), ...old] : R.reverse(xs)));
@@ -408,7 +408,7 @@ export default function ContinuousSchedule({
 
                     if (laterEvents) {
                         setMightHaveEarlier((old) => Boolean(old || ignoreExisting));
-                        setMightHaveLater(laterEvents.length === eventsPerPage);
+                        setMightHaveLater(laterEvents.length !== 0);
 
                         const xs = laterEvents;
                         setEvents((old) => (!ignoreExisting ? [...old, ...xs] : [...xs]));

@@ -1,3 +1,4 @@
+import { AuthHeader } from "@midspace/shared-types/auth";
 import React, { useCallback, useContext, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { gql } from "urql";
@@ -6,6 +7,7 @@ import {
     useSaveVonageRoomRecordingMutation,
 } from "../../../../../generated/graphql";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
+import { makeContext } from "../../../../GQL/make-context";
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
@@ -101,10 +103,15 @@ export function VonageRoom({
     const onRecordingIdReceived = useCallback(
         (recordingId: string) => {
             if (mRegistrant) {
-                saveVonageRoomRecording({
-                    recordingId,
-                    registrantId: mRegistrant.id,
-                });
+                saveVonageRoomRecording(
+                    {
+                        recordingId,
+                        registrantId: mRegistrant.id,
+                    },
+                    makeContext({
+                        [AuthHeader.IncludeRoomIds]: "true",
+                    })
+                );
             }
         },
         [mRegistrant, saveVonageRoomRecording]

@@ -20,11 +20,13 @@ export default function PresentationsList({
     includeAbstract,
     setHasAnyPresentations,
     noLinks,
+    noAddToScheduleButton,
 }: {
     sessionId: string;
     includeAbstract: boolean;
     setHasAnyPresentations: (value: boolean) => void;
     noLinks?: boolean;
+    noAddToScheduleButton?: boolean;
 }): JSX.Element {
     const [presentationsResponse] = useSchedule_GetPresentationsQuery({
         variables: {
@@ -60,6 +62,7 @@ export default function PresentationsList({
                         includeTypeName
                         includeAbstract={includeAbstract}
                         noLink={noLinks}
+                        noAddToScheduleButton={noAddToScheduleButton}
                     />
                 ))
             )}

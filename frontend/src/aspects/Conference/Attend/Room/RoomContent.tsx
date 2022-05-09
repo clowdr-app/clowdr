@@ -161,6 +161,7 @@ export function RoomContent({
                                 includeTypeName={true}
                                 limitAbstractLengthTo={-1}
                                 noLink
+                                noAddToScheduleButton={true}
                             />
                         ))}
                     </VStack>

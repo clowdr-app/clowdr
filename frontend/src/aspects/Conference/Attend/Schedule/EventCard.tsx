@@ -45,6 +45,7 @@ export default function EventCard({
     limitAbstractLengthTo = 3,
     promptMoveOnLiveEvent,
     noLink,
+    noAddToScheduleButton,
 }: {
     event: ScheduleEventFragment;
     includePresentations?: boolean;
@@ -55,6 +56,7 @@ export default function EventCard({
     limitAbstractLengthTo?: number;
     promptMoveOnLiveEvent?: boolean;
     noLink?: boolean;
+    noAddToScheduleButton?: boolean;
 }) {
     const { conferencePath } = useAuthParameters();
     const conference = useConference();
@@ -185,7 +187,9 @@ export default function EventCard({
                               </Tag>,
                           ]
                         : []),
-                    <StarEventButton key="star-event-button" eventIds={[event.id]} />,
+                    ...(!noAddToScheduleButton
+                        ? [<StarEventButton key="star-event-button" eventIds={[event.id]} />]
+                        : []),
                 ]}
                 bottomButton={
                     includePresentations && hasAnyPresentations
@@ -235,6 +239,7 @@ export default function EventCard({
                     includeAbstract={includeAbstract}
                     setHasAnyPresentations={setHasAnyPresentations}
                     noLinks={noLink}
+                    noAddToScheduleButton={noAddToScheduleButton}
                 />
             ) : undefined}
         </>

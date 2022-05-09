@@ -8,8 +8,10 @@ export default function LiveNow(): JSX.Element {
 
     return (
         <VStack px={[2, 2, 4]} spacing={4} alignItems="flex-start" w="100%">
-            <ScheduleList events={liveEvents} noDayHeadings onlyLinkToRoom />
-            {upcomingEvents.length ? <ScheduleList events={upcomingEvents} noDayHeadings onlyLinkToRoom /> : undefined}
+            <ScheduleList events={liveEvents} noDayHeadings onlyLinkToRoom noAddToScheduleButton />
+            {upcomingEvents.length ? (
+                <ScheduleList events={upcomingEvents} noDayHeadings onlyLinkToRoom noAddToScheduleButton />
+            ) : undefined}
         </VStack>
     );
 }

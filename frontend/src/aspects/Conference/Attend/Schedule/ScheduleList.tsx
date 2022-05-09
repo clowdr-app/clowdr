@@ -13,6 +13,7 @@ export default function ScheduleList({
     onlyLinkToRoom,
     promptMoveOnLiveEvent,
     currentRoomId,
+    noAddToScheduleButton,
 }: {
     events: readonly ScheduleEventFragment[];
     noDayHeadings?: boolean;
@@ -22,6 +23,7 @@ export default function ScheduleList({
     onlyLinkToRoom?: boolean;
     promptMoveOnLiveEvent?: boolean;
     currentRoomId?: string;
+    noAddToScheduleButton?: boolean;
 }): JSX.Element {
     return (
         <VStack spacing={4} alignItems="stretch" justifyContent="flex-start">
@@ -47,6 +49,7 @@ export default function ScheduleList({
                         includeAbstract={includeAbstract}
                         onlyLinkToRoom={onlyLinkToRoom}
                         promptMoveOnLiveEvent={event.roomId !== currentRoomId && promptMoveOnLiveEvent}
+                        noAddToScheduleButton={noAddToScheduleButton}
                     />
                 );
                 return dateChanged && !noDayHeadings ? (

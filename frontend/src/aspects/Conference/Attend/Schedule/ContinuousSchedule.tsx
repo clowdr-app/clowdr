@@ -225,18 +225,12 @@ export default function ContinuousSchedule({
                             .toPromise();
                         setShouldRefreshCache(false);
 
-                        earlierEvents = R.sortWith(
+                        earlierEvents = R.uniqBy(
+                            (x) => x.id,
                             [
-                                (x, y) => Date.parse(y.scheduledStartTime) - Date.parse(x.scheduledStartTime),
-                                (x, y) => Date.parse(y.scheduledEndTime) - Date.parse(x.scheduledEndTime),
-                            ],
-                            R.uniqBy(
-                                (x) => x.id,
-                                [
-                                    ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
-                                    ...(response.data?.schedule_Event ?? []),
-                                ]
-                            )
+                                ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
+                                ...(response.data?.schedule_Event ?? []),
+                            ]
                         );
                     } else {
                         const response = await client
@@ -280,7 +274,15 @@ export default function ContinuousSchedule({
                         setMightHaveEarlier(earlierEvents.length !== 0);
                         setMightHaveLater((old) => Boolean(old || ignoreExisting));
                         const xs = earlierEvents;
-                        setEvents((old) => (!ignoreExisting ? [...R.reverse(xs), ...old] : R.reverse(xs)));
+                        setEvents((old) =>
+                            R.sortWith(
+                                [
+                                    (x, y) => Date.parse(y.scheduledStartTime) - Date.parse(x.scheduledStartTime),
+                                    (x, y) => Date.parse(y.scheduledEndTime) - Date.parse(x.scheduledEndTime),
+                                ],
+                                R.uniqBy((x) => x.id, !ignoreExisting ? [...R.reverse(xs), ...old] : R.reverse(xs))
+                            )
+                        );
                     }
                 } finally {
                     loadingEarlierRef.current = false;
@@ -359,19 +361,10 @@ export default function ContinuousSchedule({
                             .toPromise();
                         setShouldRefreshCache(false);
 
-                        laterEvents = R.sortWith(
-                            [
-                                (x, y) => Date.parse(x.scheduledStartTime) - Date.parse(y.scheduledStartTime),
-                                (x, y) => Date.parse(x.scheduledEndTime) - Date.parse(y.scheduledEndTime),
-                            ],
-                            R.uniqBy(
-                                (x) => x.id,
-                                [
-                                    ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
-                                    ...(response.data?.schedule_Event ?? []),
-                                ]
-                            )
-                        );
+                        laterEvents = [
+                            ...(response.data?.schedule_StarredEvent.map((x) => x.event) ?? []),
+                            ...(response.data?.schedule_Event ?? []),
+                        ];
                     } else {
                         const response = await client
                             .query<SelectSchedulePageQuery, SelectSchedulePageQueryVariables>(
@@ -419,7 +412,15 @@ export default function ContinuousSchedule({
                         setMightHaveLater(laterEvents.length !== 0);
 
                         const xs = laterEvents;
-                        setEvents((old) => (!ignoreExisting ? [...old, ...xs] : [...xs]));
+                        setEvents((old) =>
+                            R.sortWith(
+                                [
+                                    (x, y) => Date.parse(x.scheduledStartTime) - Date.parse(y.scheduledStartTime),
+                                    (x, y) => Date.parse(x.scheduledEndTime) - Date.parse(y.scheduledEndTime),
+                                ],
+                                R.uniqBy((x) => x.id, !ignoreExisting ? [...old, ...xs] : [...xs])
+                            )
+                        );
                     }
                 } finally {
                     loadingLaterRef.current = false;

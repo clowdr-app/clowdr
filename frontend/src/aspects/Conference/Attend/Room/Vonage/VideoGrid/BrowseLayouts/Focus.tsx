@@ -1,7 +1,9 @@
-import { Box, Center, Flex } from "@chakra-ui/react";
+import { Box, Center, Flex, IconButton, Tooltip } from "@chakra-ui/react";
 import useSize from "@react-hook/size";
 import React, { useEffect, useMemo, useState } from "react";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import * as portals from "react-reverse-portal";
+import FAIcon from "../../../../../../Chakra/FAIcon";
 import type { Viewport } from "../../Components/LayoutTypes";
 import { Gallery } from "./Gallery";
 
@@ -42,20 +44,50 @@ export function Focus({
         }
     }, [currentPage, pages]);
 
+    const fullScreenHandle = useFullScreenHandle();
+
     return (
-        <Flex flexDir="column" overflow="hidden" w="100%" h="100%" alignItems="stretch">
-            <Flex flexDir="row" w="100%" h="80%" justifyContent="center" alignItems="stretch" flexShrink={1}>
-                {focusViewports.map((viewport) => (
-                    <Box key={viewport.streamId ?? viewport.connectionId} flexGrow={1} pos="relative">
-                        <portals.OutPortal
-                            node={viewport.component}
-                            enableVideo={true}
-                            resolution="high"
-                            framerate={30}
+        <Flex
+            flexDir="column"
+            overflow="hidden"
+            w="100%"
+            h="100%"
+            alignItems="stretch"
+            css={{
+                ".focus-full-screen": {
+                    position: "relative",
+                    flexShrink: 1,
+                    width: "100%",
+                    height: "80%",
+                },
+            }}
+        >
+            <FullScreen handle={fullScreenHandle} className="focus-full-screen">
+                <Box p={2} position="absolute" top="0px" right="0px" zIndex={500}>
+                    <Tooltip label={fullScreenHandle.active ? "Exit fullscreen" : "Enter fullscreen"}>
+                        <IconButton
+                            size="xs"
+                            aria-label={fullScreenHandle.active ? "Exit fullscreen" : "Enter fullscreen"}
+                            icon={
+                                <FAIcon iconStyle="s" icon={fullScreenHandle.active ? "compress-alt" : "expand-alt"} />
+                            }
+                            onClick={fullScreenHandle.active ? fullScreenHandle.exit : fullScreenHandle.enter}
                         />
-                    </Box>
-                ))}
-            </Flex>
+                    </Tooltip>
+                </Box>
+                <Flex flexDir="row" w="100%" h="100%" justifyContent="center" alignItems="stretch" flexShrink={1}>
+                    {focusViewports.map((viewport) => (
+                        <Box key={viewport.streamId ?? viewport.connectionId} flexGrow={1} pos="relative">
+                            <portals.OutPortal
+                                node={viewport.component}
+                                enableVideo={true}
+                                resolution="high"
+                                framerate={30}
+                            />
+                        </Box>
+                    ))}
+                </Flex>
+            </FullScreen>
 
             <Center
                 ref={containerRef}

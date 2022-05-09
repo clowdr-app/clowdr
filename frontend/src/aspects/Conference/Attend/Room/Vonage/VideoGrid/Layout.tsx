@@ -173,7 +173,7 @@ export default function Layout({
     return (
         <VStack justifyContent="center" alignItems="stretch" flexGrow={1}>
             {!settings.isBackstageRoom && isRecordingActive ? (
-                <Heading as="h3" size="sm" flexGrow={0} flexShrink={1} pt={2}>
+                <Heading as="h3" size="xs" flexGrow={0} flexShrink={1} pt={2}>
                     Preview of recording
                 </Heading>
             ) : undefined}
@@ -184,7 +184,7 @@ export default function Layout({
             </Box>
             {visualLayout.overflowViewports.length ? (
                 <VStack flexBasis={0} minH="5em" flexGrow={1} flexShrink={1}>
-                    <Heading as="h3" size="sm" pt={2}>
+                    <Heading as="h3" size="xs" pt={2}>
                         Not included in {settings.isBackstageRoom ? "stream" : "recording"}
                     </Heading>
                     <Gallery viewports={visualLayout.overflowViewports} streamActivities={new Map()} />

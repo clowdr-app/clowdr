@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { Duration } from "luxon";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import FAIcon from "../../../../../Chakra/FAIcon";
 import { VideoAspectWrapperAuto } from "../../Video/VideoAspectWrapper";
 import { useVonageRoom, VonageRoomStateActionType } from "../State/VonageRoomProvider";
@@ -142,6 +143,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
         () => <video ref={videoRef} src={videoPlayback.video?.url}></video>,
         [videoPlayback.video?.url, videoRef]
     );
+    const fullScreenHandle = useFullScreenHandle();
 
     return (
         <>
@@ -154,165 +156,216 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                 </Alert>
             ) : undefined}
             {videoPlayback.latestCommand?.command.type === "video" ? (
-                <VideoAspectWrapperAuto>
-                    {() => (
-                        <Box position="relative" h="100%" w="100%">
-                            <Skeleton isLoaded={Boolean(videoPlayback.video?.url)} position="relative">
-                                {videoEl}
-                            </Skeleton>
-                            <HStack p={2} position="absolute" bottom="0px" left="0px" width="100%" alignItems="stretch">
-                                {videoPlayback.canControlPlaybackAs.length ? (
-                                    <>
-                                        <Tooltip label={playing ? "Pause" : "Play"}>
+                <Box
+                    h="100%"
+                    w="100%"
+                    css={{
+                        ".video-player-full-screen": {
+                            height: "100%",
+                            width: "100%",
+                        },
+                    }}
+                >
+                    <FullScreen handle={fullScreenHandle} className="video-player-full-screen">
+                        <VideoAspectWrapperAuto>
+                            {() => (
+                                <Box position="relative" h="100%" w="100%">
+                                    <Skeleton isLoaded={Boolean(videoPlayback.video?.url)} position="relative">
+                                        {videoEl}
+                                    </Skeleton>
+                                    <HStack p={2} position="absolute" top="0px" right="0px">
+                                        <Tooltip
+                                            label={fullScreenHandle.active ? "Exit fullscreen" : "Enter fullscreen"}
+                                        >
                                             <IconButton
-                                                aria-label={playing ? "Pause video" : "Play video"}
-                                                icon={<FAIcon iconStyle="s" icon={playing ? "pause" : "play"} />}
-                                                isDisabled={ended || disableControls}
-                                                onClick={() => {
-                                                    temporarilyDisableControls();
-                                                    if (
-                                                        videoElement &&
-                                                        videoPlayback.latestCommand?.command?.type === "video"
-                                                    ) {
-                                                        videoPlayback.sendCommand({
-                                                            type: "video",
-                                                            currentTimeSeconds: videoElement.currentTime,
-                                                            elementId: videoPlayback.latestCommand.command.elementId,
-                                                            playing: !playing,
-                                                            volume: videoPlayback.latestCommand.command.volume,
-                                                        });
-                                                    }
-                                                }}
+                                                aria-label={
+                                                    fullScreenHandle.active ? "Exit fullscreen" : "Enter fullscreen"
+                                                }
+                                                icon={
+                                                    <FAIcon
+                                                        iconStyle="s"
+                                                        icon={fullScreenHandle.active ? "compress-alt" : "expand-alt"}
+                                                    />
+                                                }
+                                                onClick={
+                                                    fullScreenHandle.active
+                                                        ? fullScreenHandle.exit
+                                                        : fullScreenHandle.enter
+                                                }
                                             />
                                         </Tooltip>
-                                        <ButtonGroup isAttached>
-                                            <Tooltip label="Skip backward 15s">
-                                                <IconButton
-                                                    aria-label="Skip backward 15s in video"
-                                                    icon={<ArrowLeftIcon />}
-                                                    isDisabled={disableControls}
-                                                    onClick={() => {
-                                                        temporarilyDisableControls();
-                                                        if (
-                                                            videoElement &&
-                                                            videoPlayback.latestCommand?.command?.type === "video"
-                                                        ) {
-                                                            videoPlayback.sendCommand({
-                                                                type: "video",
-                                                                currentTimeSeconds: Math.max(
-                                                                    videoElement.currentTime - 15,
-                                                                    0
-                                                                ),
-                                                                elementId:
-                                                                    videoPlayback.latestCommand.command.elementId,
-                                                                playing,
-                                                                volume: videoPlayback.latestCommand.command.volume,
-                                                            });
+                                    </HStack>
+                                    <HStack
+                                        p={2}
+                                        position="absolute"
+                                        bottom="0px"
+                                        left="0px"
+                                        width="100%"
+                                        alignItems="stretch"
+                                    >
+                                        {videoPlayback.canControlPlaybackAs.length ? (
+                                            <>
+                                                <Tooltip label={playing ? "Pause" : "Play"}>
+                                                    <IconButton
+                                                        aria-label={playing ? "Pause video" : "Play video"}
+                                                        icon={
+                                                            <FAIcon iconStyle="s" icon={playing ? "pause" : "play"} />
                                                         }
-                                                    }}
-                                                />
-                                            </Tooltip>
-                                            <Tooltip label="Skip forward 15s">
-                                                <IconButton
-                                                    aria-label="Skip forward 15s in video"
-                                                    icon={<ArrowRightIcon />}
-                                                    isDisabled={disableControls}
-                                                    onClick={() => {
-                                                        temporarilyDisableControls();
-                                                        if (
-                                                            videoElement &&
-                                                            videoPlayback.latestCommand?.command?.type === "video"
-                                                        ) {
-                                                            videoPlayback.sendCommand({
-                                                                type: "video",
-                                                                currentTimeSeconds: Math.max(
-                                                                    videoElement.currentTime + 15,
-                                                                    0
-                                                                ),
-                                                                elementId:
-                                                                    videoPlayback.latestCommand.command.elementId,
-                                                                playing,
-                                                                volume: videoPlayback.latestCommand.command.volume,
-                                                            });
-                                                        }
-                                                    }}
-                                                />
-                                            </Tooltip>
-                                        </ButtonGroup>
-                                    </>
-                                ) : undefined}
-                                <Tag size="lg">
-                                    <TagLabel>
-                                        {Duration.fromMillis(currentTime * 1000).toFormat("hh:mm:ss")}
-                                        {!isNaN(duration)
-                                            ? ` / ${Duration.fromMillis(duration * 1000).toFormat("hh:mm:ss")}`
-                                            : ""}
-                                    </TagLabel>
-                                </Tag>
-                                <FAIcon
-                                    iconStyle="s"
-                                    icon="volume-down"
-                                    color="white"
-                                    w="max-content"
-                                    display="flex"
-                                    flexDirection="column"
-                                    justifyContent="center"
-                                />
-                                <Slider
-                                    aria-label="Volume slider"
-                                    defaultValue={0.5}
-                                    max={1}
-                                    min={0}
-                                    step={0.05}
-                                    w="4em"
-                                    maxW="30%"
-                                    onChange={(val) => setVolume(val)}
-                                >
-                                    <SliderTrack>
-                                        <SliderFilledTrack />
-                                    </SliderTrack>
-                                    <SliderThumb />
-                                </Slider>
+                                                        isDisabled={ended || disableControls}
+                                                        onClick={() => {
+                                                            temporarilyDisableControls();
+                                                            if (
+                                                                videoElement &&
+                                                                videoPlayback.latestCommand?.command?.type === "video"
+                                                            ) {
+                                                                videoPlayback.sendCommand({
+                                                                    type: "video",
+                                                                    currentTimeSeconds: videoElement.currentTime,
+                                                                    elementId:
+                                                                        videoPlayback.latestCommand.command.elementId,
+                                                                    playing: !playing,
+                                                                    volume: videoPlayback.latestCommand.command.volume,
+                                                                });
+                                                            }
+                                                        }}
+                                                    />
+                                                </Tooltip>
+                                                <ButtonGroup isAttached>
+                                                    <Tooltip label="Skip backward 15s">
+                                                        <IconButton
+                                                            aria-label="Skip backward 15s in video"
+                                                            icon={<ArrowLeftIcon />}
+                                                            isDisabled={disableControls}
+                                                            onClick={() => {
+                                                                temporarilyDisableControls();
+                                                                if (
+                                                                    videoElement &&
+                                                                    videoPlayback.latestCommand?.command?.type ===
+                                                                        "video"
+                                                                ) {
+                                                                    videoPlayback.sendCommand({
+                                                                        type: "video",
+                                                                        currentTimeSeconds: Math.max(
+                                                                            videoElement.currentTime - 15,
+                                                                            0
+                                                                        ),
+                                                                        elementId:
+                                                                            videoPlayback.latestCommand.command
+                                                                                .elementId,
+                                                                        playing,
+                                                                        volume: videoPlayback.latestCommand.command
+                                                                            .volume,
+                                                                    });
+                                                                }
+                                                            }}
+                                                        />
+                                                    </Tooltip>
+                                                    <Tooltip label="Skip forward 15s">
+                                                        <IconButton
+                                                            aria-label="Skip forward 15s in video"
+                                                            icon={<ArrowRightIcon />}
+                                                            isDisabled={disableControls}
+                                                            onClick={() => {
+                                                                temporarilyDisableControls();
+                                                                if (
+                                                                    videoElement &&
+                                                                    videoPlayback.latestCommand?.command?.type ===
+                                                                        "video"
+                                                                ) {
+                                                                    videoPlayback.sendCommand({
+                                                                        type: "video",
+                                                                        currentTimeSeconds: Math.max(
+                                                                            videoElement.currentTime + 15,
+                                                                            0
+                                                                        ),
+                                                                        elementId:
+                                                                            videoPlayback.latestCommand.command
+                                                                                .elementId,
+                                                                        playing,
+                                                                        volume: videoPlayback.latestCommand.command
+                                                                            .volume,
+                                                                    });
+                                                                }
+                                                            }}
+                                                        />
+                                                    </Tooltip>
+                                                </ButtonGroup>
+                                            </>
+                                        ) : undefined}
+                                        <Tag size="lg">
+                                            <TagLabel>
+                                                {Duration.fromMillis(currentTime * 1000).toFormat("hh:mm:ss")}
+                                                {!isNaN(duration)
+                                                    ? ` / ${Duration.fromMillis(duration * 1000).toFormat("hh:mm:ss")}`
+                                                    : ""}
+                                            </TagLabel>
+                                        </Tag>
+                                        <FAIcon
+                                            iconStyle="s"
+                                            icon="volume-down"
+                                            color="white"
+                                            w="max-content"
+                                            display="flex"
+                                            flexDirection="column"
+                                            justifyContent="center"
+                                        />
+                                        <Slider
+                                            aria-label="Volume slider"
+                                            defaultValue={0.5}
+                                            max={1}
+                                            min={0}
+                                            step={0.05}
+                                            w="4em"
+                                            maxW="30%"
+                                            onChange={(val) => setVolume(val)}
+                                        >
+                                            <SliderTrack>
+                                                <SliderFilledTrack />
+                                            </SliderTrack>
+                                            <SliderThumb />
+                                        </Slider>
 
-                                <Spacer />
-                                {autoplay.autoplayBlocked ? (
-                                    <Tooltip label="Video playback is not enabled. Click for more details.">
-                                        <IconButton
-                                            colorScheme="red"
-                                            aria-label="Video playback is not enabled. Click for more details."
-                                            icon={<WarningIcon />}
-                                            isDisabled={ended || disableControls}
-                                            onClick={() => {
-                                                autoplay.setAutoplayAlertDismissed(false);
-                                            }}
-                                        />
-                                    </Tooltip>
-                                ) : undefined}
-                                {videoPlayback.canControlPlaybackAs.length ? (
-                                    <Tooltip label="Close video">
-                                        <IconButton
-                                            ml="auto"
-                                            aria-label="Close video"
-                                            icon={<CloseIcon />}
-                                            isDisabled={disableControls}
-                                            onClick={() => {
-                                                temporarilyDisableControls();
-                                                if (
-                                                    videoElement &&
-                                                    videoPlayback.latestCommand?.command?.type === "video"
-                                                ) {
-                                                    videoPlayback.sendCommand({
-                                                        type: "no-video",
-                                                    });
-                                                }
-                                            }}
-                                        />
-                                    </Tooltip>
-                                ) : undefined}
-                            </HStack>
-                        </Box>
-                    )}
-                </VideoAspectWrapperAuto>
+                                        <Spacer />
+                                        {autoplay.autoplayBlocked ? (
+                                            <Tooltip label="Video playback is not enabled. Click for more details.">
+                                                <IconButton
+                                                    colorScheme="red"
+                                                    aria-label="Video playback is not enabled. Click for more details."
+                                                    icon={<WarningIcon />}
+                                                    isDisabled={ended || disableControls}
+                                                    onClick={() => {
+                                                        autoplay.setAutoplayAlertDismissed(false);
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                        ) : undefined}
+                                        {videoPlayback.canControlPlaybackAs.length ? (
+                                            <Tooltip label="Close video">
+                                                <IconButton
+                                                    ml="auto"
+                                                    aria-label="Close video"
+                                                    icon={<CloseIcon />}
+                                                    isDisabled={disableControls}
+                                                    onClick={() => {
+                                                        temporarilyDisableControls();
+                                                        if (
+                                                            videoElement &&
+                                                            videoPlayback.latestCommand?.command?.type === "video"
+                                                        ) {
+                                                            videoPlayback.sendCommand({
+                                                                type: "no-video",
+                                                            });
+                                                        }
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                        ) : undefined}
+                                    </HStack>
+                                </Box>
+                            )}
+                        </VideoAspectWrapperAuto>
+                    </FullScreen>
+                </Box>
             ) : undefined}
         </>
     );

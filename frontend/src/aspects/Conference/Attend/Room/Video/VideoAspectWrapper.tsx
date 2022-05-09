@@ -14,7 +14,7 @@ export function VideoAspectWrapperAuto({
     const [width, height] = useSize(ref);
 
     return (
-        <chakra.div w="100%" h="100%" ref={ref}>
+        <chakra.div w="100%" h="100%" display="flex" flexDirection="column" justifyContent="center" ref={ref}>
             <VideoAspectWrapper maxWidth={width} maxHeight={height} initialAspectRatio={initialAspectRatio}>
                 {children}
             </VideoAspectWrapper>

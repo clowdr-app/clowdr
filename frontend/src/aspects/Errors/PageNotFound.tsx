@@ -139,7 +139,7 @@ function RefreshRegistrationsCacheOrError() {
     const { conferenceSlug } = useAuthParameters();
     const currentUser = useCurrentUser();
     const [lastUserRefreshTime, setLastUserRefreshTime] = useRestorableState<number>(
-        `UserRefresh-${currentUser.user.id}`,
+        `UserRefresh-${currentUser.user.id.replace(/\|/g, "-")}`,
         Date.now() - 60 * 60 * 1000,
         (x) => x.toString(),
         (x) => parseInt(x, 10)

@@ -175,7 +175,7 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
                     ? cleanLayout.layout.layout
                     : {
                           type: "bestFit",
-                          screenshareType: "verticalPresentation",
+                          screenShareType: "verticalPresentation",
                       },
                 outputs: {
                     rtmp: [
@@ -376,10 +376,11 @@ export async function startRoomVonageArchiving(
                     hasVideo: true,
                     layout: cleanLayout
                         ? cleanLayout.layout.layout
-                        : {
+                        : ({
                               type: "bestFit",
-                              screenshareType: "verticalPresentation",
-                          },
+                              screenShareType: "verticalPresentation",
+                              stylesheet: null,
+                          } as VonageLayoutBuiltin),
                 })
             );
 
@@ -714,6 +715,7 @@ export interface VonageLayoutCustom {
 export interface VonageLayoutBuiltin {
     type: "bestFit";
     screenShareType: "verticalPresentation" | "horizontalPresentation";
+    stylesheet: null;
 }
 
 async function getOngoingBroadcastIds(logger: P.Logger, vonageSessionId: string): Promise<string[]> {
@@ -874,6 +876,7 @@ export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout
                 layout: {
                     type: "bestFit",
                     screenShareType: layoutData.screenShareType,
+                    stylesheet: null,
                 },
                 streamClasses: {},
             };

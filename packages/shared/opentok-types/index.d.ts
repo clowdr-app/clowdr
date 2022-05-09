@@ -46,7 +46,8 @@ declare module "opentok" {
 
         export interface PredefinedArchiveLayoutOptions {
             type: LayoutType;
-            screenshareType?: ScreenShareType;
+            screenShareType?: ScreenShareType;
+            stylesheet: null;
         }
 
         export interface CustomArchiveLayoutOptions {
@@ -94,7 +95,7 @@ declare module "opentok" {
 
         export interface BroadcastLayoutOptions {
             type?: LayoutType;
-            screenshareType?: ScreenShareType;
+            screenShareType?: ScreenShareType;
         }
 
         export interface CustomBroadcastLayoutOptions {
@@ -218,14 +219,14 @@ declare module "opentok" {
             archiveId: string,
             type: OpenTok.LayoutType | "custom",
             stylesheet: string | null,
-            screenshareType: OpenTok.ScreenShareType | null,
+            screenShareType: OpenTok.ScreenShareType | null,
             callback: (error: Error | null) => void
         ): void;
         public setBroadcastLayout(
             broadcastId: string,
             type: OpenTok.LayoutType | "custom",
             stylesheet: string | null,
-            screenshareType: OpenTok.ScreenShareType | null,
+            screenShareType: OpenTok.ScreenShareType | null,
             callback: (error: Error | null) => void
         ): void;
         public setStreamClassLists(

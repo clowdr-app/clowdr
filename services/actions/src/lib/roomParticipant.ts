@@ -144,7 +144,7 @@ export async function removeRoomParticipant(
                                 vonageSessionId: vonage.sessionId,
                                 layoutData: {
                                     type: VonageSessionLayoutType.BestFit,
-                                    screenshareType: "verticalPresentation",
+                                    screenShareType: "verticalPresentation",
                                 } as VonageSessionLayoutData,
                             },
                         },

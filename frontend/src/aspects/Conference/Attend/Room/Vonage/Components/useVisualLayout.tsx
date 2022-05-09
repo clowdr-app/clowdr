@@ -45,7 +45,7 @@ export default function useVisualLayout(layout: VonageSessionLayoutData, viewpor
                     ).slice(0, 5);
                     result = {
                         type:
-                            layout.screenshareType === "horizontalPresentation"
+                            layout.screenShareType === "horizontalPresentation"
                                 ? VisualLayoutType.BestFit_Screenshare_HorizontalSplit
                                 : VisualLayoutType.BestFit_Screenshare_VerticalSplit,
                         screenshareViewport,

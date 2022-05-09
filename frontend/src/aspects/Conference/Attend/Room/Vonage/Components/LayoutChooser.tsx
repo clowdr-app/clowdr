@@ -75,7 +75,7 @@ export default function LayoutChooser(): JSX.Element {
                         const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.BestFit,
-                            screenshareType: "verticalPresentation",
+                            screenShareType: "verticalPresentation",
                         };
                         let outputIdx = 1;
                         for (let idx = 1; idx <= 6; idx++) {

@@ -33,7 +33,7 @@ export interface BestFitLayout {
      * Vertical = Small streams to the left in a vertical strip
      * Horizontal = Small streams to the bottom in a horizontal strip
      */
-    screenshareType: "verticalPresentation" | "horizontalPresentation";
+    screenShareType: "verticalPresentation" | "horizontalPresentation";
 }
 
 export interface SingleLayout {

@@ -115,6 +115,14 @@ gql`
                         _or: [
                             { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }
                             { item: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } } }
+                            {
+                                presentations: {
+                                    _or: [
+                                        { eventPeople: { person: { registrantId: { _eq: $registrantId } } } }
+                                        { item: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } } }
+                                    ]
+                                }
+                            }
                         ]
                     }
                     $where

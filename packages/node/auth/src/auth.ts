@@ -153,6 +153,7 @@ export async function computeAuthHeaders(
         inviteCode: string;
         role: string;
         includeRoomIds: boolean;
+        refreshRegistrationsCache: boolean;
     }>
 ): Promise<string | Partial<Record<AuthSessionVariables, string>>> {
     logger.trace({ verifiedParams, unverifiedParams }, "Computing auth headers");
@@ -222,7 +223,7 @@ export async function computeAuthHeaders(
             if (unverifiedParams.conferenceId && unverifiedParams.conferenceId !== "NONE") {
                 let registrantId = user.registrants.find((x) => x.conferenceId === unverifiedParams.conferenceId);
 
-                if (!registrantId) {
+                if (!registrantId || unverifiedParams.refreshRegistrationsCache) {
                     // Try a bit harder...The most likely scenario is this is an improper cache miss!
                     await userCache.invalidateEntity(verifiedParams.userId);
                     const refetchedUser = await userCache.getEntity(verifiedParams.userId);
@@ -642,9 +643,13 @@ export async function computeAuthHeaders(
                 }
             } else {
                 try {
-                    await userCache.hydrateIfNecessary({
-                        id: user.id,
-                    });
+                    if (unverifiedParams.refreshRegistrationsCache) {
+                        await userCache.invalidateEntity(verifiedParams.userId);
+                    } else {
+                        await userCache.hydrateIfNecessary({
+                            id: user.id,
+                        });
+                    }
                     const refetchedUser = await userCache.getEntity(user.id, false);
                     if (refetchedUser) {
                         user = refetchedUser;

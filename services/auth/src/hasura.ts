@@ -5,6 +5,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import jwksRsa from "jwks-rsa";
 import fetch from "node-fetch";
+import { AuthHeader } from "../../../packages/node/auth/node_modules/@midspace/shared-types/src/auth";
 
 export const router = express.Router();
 
@@ -66,13 +67,14 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
         }
 
         const userId: undefined | string = decodedToken?.["sub"];
-        const conferenceId = getHeader("X-Auth-Conference-Id");
-        const subconferenceId = getHeader("X-Auth-Subconference-Id");
-        const roomId = getHeader("X-Auth-Room-Id");
-        const magicToken = getHeader("X-Auth-Magic-Token");
-        const inviteCode = getHeader("X-Auth-Invite-Code");
-        const role = getHeader("X-Auth-Role");
-        const includeRoomIds = getHeader("X-Auth-Include-Room-Ids");
+        const conferenceId = getHeader(AuthHeader.ConferenceId);
+        const subconferenceId = getHeader(AuthHeader.SubconferenceId);
+        const roomId = getHeader(AuthHeader.RoomId);
+        const magicToken = getHeader(AuthHeader.MagicToken);
+        const inviteCode = getHeader(AuthHeader.InviteCode);
+        const role = getHeader(AuthHeader.Role);
+        const includeRoomIds = getHeader(AuthHeader.IncludeRoomIds);
+        const refreshRegistrationsCache = getHeader(AuthHeader.RefreshRegistrationsCache);
 
         const result = await computeAuthHeaders(
             req.log,
@@ -85,6 +87,7 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
                 inviteCode,
                 role,
                 includeRoomIds: includeRoomIds?.toLowerCase() === "true",
+                refreshRegistrationsCache: refreshRegistrationsCache?.toLowerCase() === "true",
             }
         );
         req.log.trace({ result }, "Handled webhook");

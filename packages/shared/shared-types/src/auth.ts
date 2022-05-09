@@ -8,6 +8,8 @@ export enum AuthHeader {
     MagicToken = "X-Auth-Magic-Token",
     InviteCode = "X-Auth-Invite-Code",
     IncludeRoomIds = "X-Auth-Include-Room-Ids",
+
+    RefreshRegistrationsCache = "X-Auth-RefreshRegistrationsCache",
 }
 
 /** @summary Roles configured in Hasura. */

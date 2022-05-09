@@ -339,7 +339,7 @@ export default function VideoChatVideoPlayer(): JSX.Element {
                                                 />
                                             </Tooltip>
                                         ) : undefined}
-                                        {videoPlayback.canControlPlaybackAs.length ? (
+                                        {videoPlayback.canControlPlaybackAs.length && !fullScreenHandle.active ? (
                                             <Tooltip label="Close video">
                                                 <IconButton
                                                     ml="auto"

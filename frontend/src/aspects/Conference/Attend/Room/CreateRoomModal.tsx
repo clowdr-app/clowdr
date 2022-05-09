@@ -142,7 +142,6 @@ export function CreateRoomModal({
                                                         !!form.errors.new_room_private &&
                                                         !!form.touched.new_room_private
                                                     }
-                                                    isRequired
                                                     mt="1em"
                                                 >
                                                     <FormLabel htmlFor="new_room_private">Private?</FormLabel>

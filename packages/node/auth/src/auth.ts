@@ -650,7 +650,10 @@ export async function computeAuthHeaders(
                             id: user.id,
                         });
                     }
-                    const refetchedUser = await userCache.getEntity(user.id, false);
+                    const refetchedUser = await userCache.getEntity(
+                        user.id,
+                        unverifiedParams.refreshRegistrationsCache
+                    );
                     if (refetchedUser) {
                         user = refetchedUser;
                     }

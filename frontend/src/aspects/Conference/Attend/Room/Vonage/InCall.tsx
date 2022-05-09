@@ -1,5 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import React, { useContext, useEffect, useMemo } from "react";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import * as portals from "react-reverse-portal";
 import { validate } from "uuid";
 import { useUserId } from "../../../../Auth";
@@ -344,22 +345,53 @@ export function InCall(): JSX.Element {
     }, [display.actualDisplay.type, settings.canControlRecordingAs, streamActivities, viewports]);
 
     const videoPlayback = useContext(VonageVideoPlaybackContext);
+    const fullScreenHandle = useFullScreenHandle();
 
     return (
         <>
             {connected ? (
-                <Flex flexDirection="column" h="100%" w="100%" zIndex={1} alignItems="stretch">
-                    <Flex flexDirection="column" w="100%" zIndex={1} alignItems="stretch" flex={1} overflowY="auto">
-                        {videoPlayback.latestCommand?.command?.type === "video" ? (
-                            <Box flexBasis={0} flexGrow={1.5} flexShrink={1} minH="10em" w="100%" p={2}>
-                                <VideoChatVideoPlayer />
-                            </Box>
-                        ) : undefined}
-                        <Flex flexDirection="column" flexBasis={0} flexGrow={1} flexShrink={1} minH="10em" w="100%">
-                            {displayEl}
+                <Flex
+                    flexDirection="column"
+                    h="100%"
+                    w="100%"
+                    zIndex={1}
+                    alignItems="stretch"
+                    flex={1}
+                    css={{
+                        ".in-call-full-screen": {
+                            display: "flex",
+                            "flex-direction": "column",
+                            height: "100%",
+                        },
+                    }}
+                >
+                    <FullScreen handle={fullScreenHandle} className="in-call-full-screen">
+                        <Flex flexDirection="column" w="100%" zIndex={1} alignItems="stretch" flex={1} overflowY="auto">
+                            {videoPlayback.latestCommand?.command?.type === "video" ? (
+                                <Box
+                                    flexBasis={0}
+                                    flexGrow={fullScreenHandle.active ? 5 : 2}
+                                    flexShrink={1}
+                                    minH="10em"
+                                    w="100%"
+                                    p={2}
+                                >
+                                    <VideoChatVideoPlayer />
+                                </Box>
+                            ) : undefined}
+                            <Flex
+                                flexDirection="column"
+                                flexBasis={0}
+                                flexGrow={1}
+                                flexShrink={fullScreenHandle.active ? 2 : 1}
+                                minH="10em"
+                                w="100%"
+                            >
+                                {displayEl}
+                            </Flex>
                         </Flex>
-                    </Flex>
-                    <VonageRoomControlBar />
+                        <VonageRoomControlBar fullScreenHandle={fullScreenHandle} />
+                    </FullScreen>
                 </Flex>
             ) : undefined}
             {[...streamPortalNodes.values()].map((x) => x.element)}

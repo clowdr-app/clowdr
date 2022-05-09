@@ -20,6 +20,7 @@ import {
 import { AuthHeader } from "@midspace/shared-types/auth";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import type { FullScreenHandle } from "react-full-screen";
 import { gql } from "urql";
 import { useGetRoomChatIdQuery, useToggleVonageRecordingStateMutation } from "../../../../../../generated/graphql";
 import FAIcon from "../../../../../Chakra/FAIcon";
@@ -50,7 +51,13 @@ gql`
     }
 `;
 
-export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: () => void }): JSX.Element {
+export function VonageRoomControlBar({
+    onCancelJoinRoom,
+    fullScreenHandle,
+}: {
+    onCancelJoinRoom?: () => void;
+    fullScreenHandle?: FullScreenHandle;
+}): JSX.Element {
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
     const {
@@ -604,6 +611,31 @@ export function VonageRoomControlBar({ onCancelJoinRoom }: { onCancelJoinRoom?: 
                     </Popover>
                 ) : undefined}
                 <WrapItem flex="1 1 auto" />
+                <ControlBarButton
+                    label={{
+                        active: "Exit fullscreen",
+                        inactive: "Enter fullscreen",
+                    }}
+                    icon={{
+                        active: "compress-alt",
+                        inactive: "expand-alt",
+                    }}
+                    isVisible={Boolean(fullScreenHandle)}
+                    isActive={fullScreenHandle?.active}
+                    onClick={{
+                        active:
+                            fullScreenHandle?.exit ??
+                            (() => {
+                                //
+                            }),
+                        inactive:
+                            fullScreenHandle?.enter ??
+                            (() => {
+                                //
+                            }),
+                    }}
+                    isEnabled={!joining}
+                />
                 {vonage.state.type === StateType.Connected ? (
                     <Button size="sm" colorScheme="DestructiveActionButton" onClick={leaveRoom}>
                         Leave

@@ -51219,7 +51219,7 @@ export const Room_EventSummaryFragmentDoc = gql`
             }
             roleName
         }
-        presentations {
+        presentations(order_by: [{ scheduledStartTime: asc_nulls_last }]) {
             ...ScheduleEvent
             eventPeople {
                 id

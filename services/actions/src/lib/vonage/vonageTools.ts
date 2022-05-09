@@ -171,13 +171,11 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
                 : null;
 
             const broadcast = await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
-                layout: cleanLayout
-                    ? cleanLayout.layout.layout
-                    : ({
-                          type: "bestFit",
-                          screensharetype: "verticalPresentation",
-                          stylesheet: null,
-                      } as VonageLayoutBuiltin),
+                layout: cleanLayout?.layout?.layout ?? {
+                    type: "bestFit",
+                    screenshareType: "verticalPresentation",
+                    stylesheet: null,
+                },
                 outputs: {
                     rtmp: [
                         {
@@ -189,9 +187,30 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
                 },
                 resolution: "1280x720",
             });
+
             logger.info(
                 { broadcastId: broadcast.id, vonageSessionId: broadcastDetails.vonageSessionId, eventId },
-                "Started Vonage RTMP broadcast"
+                `Started Vonage RTMP broadcast. Setting layout... (${
+                    cleanLayout ? "User-configured layout" : "Default layout"
+                })`
+            );
+
+            await applyVonageSessionLayout(
+                logger,
+                broadcastDetails.vonageSessionId,
+                dirtyLayout ?? {
+                    streamClasses: {},
+                    layout: {
+                        type: "bestFit",
+                        screenshareType: "verticalPresentation",
+                        stylesheet: null,
+                    },
+                }
+            );
+
+            logger.info(
+                { broadcastId: broadcast.id, vonageSessionId: broadcastDetails.vonageSessionId, eventId },
+                "Set newly-started Vonage broadcast layout."
             );
         } catch (e: any) {
             logger.error(
@@ -375,20 +394,33 @@ export async function startRoomVonageArchiving(
                     outputMode: "composed",
                     hasAudio: true,
                     hasVideo: true,
-                    layout: cleanLayout
-                        ? cleanLayout.layout.layout
-                        : ({
-                              type: "bestFit",
-                              screensharetype: "verticalPresentation",
-                              stylesheet: null,
-                          } as VonageLayoutBuiltin),
                 })
             );
 
             if (archive) {
                 logger.info(
                     { archiveId: archive.id, vonageSessionId: archiveDetails.vonageSessionId, roomId },
-                    "Started Vonage archive"
+                    `Started Vonage archive. Setting layout... (${
+                        cleanLayout ? "User-configured layout" : "Default layout"
+                    })`
+                );
+
+                await applyVonageSessionLayout(
+                    logger,
+                    archiveDetails.vonageSessionId,
+                    dirtyLayout ?? {
+                        streamClasses: {},
+                        layout: {
+                            type: "bestFit",
+                            screenshareType: "verticalPresentation",
+                            stylesheet: null,
+                        },
+                    }
+                );
+
+                logger.info(
+                    { archiveId: archive.id, vonageSessionId: archiveDetails.vonageSessionId, roomId },
+                    "Set newly-started Vonage archive layout."
                 );
             } else {
                 logger.error(
@@ -715,7 +747,7 @@ export interface VonageLayoutCustom {
 
 export interface VonageLayoutBuiltin {
     type: "bestFit";
-    screensharetype: "verticalPresentation" | "horizontalPresentation";
+    screenshareType: "verticalPresentation" | "horizontalPresentation";
     stylesheet: null;
 }
 
@@ -795,7 +827,7 @@ export async function applyVonageSessionLayout(
                             startedBroadcastId,
                             "bestFit",
                             null,
-                            layout.layout.screensharetype
+                            layout.layout.screenshareType
                         );
                         break;
                     case "custom":
@@ -823,7 +855,7 @@ export async function applyVonageSessionLayout(
             try {
                 switch (layout.layout.type) {
                     case "bestFit":
-                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, layout.layout.screensharetype);
+                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, layout.layout.screenshareType);
                         break;
                     case "custom":
                         await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);
@@ -876,7 +908,7 @@ export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout
             return {
                 layout: {
                     type: "bestFit",
-                    screensharetype: layoutData.screenShareType,
+                    screenshareType: layoutData.screenShareType,
                     stylesheet: null,
                 },
                 streamClasses: {},

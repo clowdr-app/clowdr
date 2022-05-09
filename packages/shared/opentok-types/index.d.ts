@@ -46,7 +46,7 @@ declare module "opentok" {
 
         export interface PredefinedArchiveLayoutOptions {
             type: LayoutType;
-            screensharetype?: ScreenShareType;
+            screenshareType?: ScreenShareType;
             stylesheet: null;
         }
 
@@ -95,7 +95,7 @@ declare module "opentok" {
 
         export interface BroadcastLayoutOptions {
             type: LayoutType;
-            screensharetype?: ScreenShareType;
+            screenshareType?: ScreenShareType;
             stylesheet: null;
         }
 

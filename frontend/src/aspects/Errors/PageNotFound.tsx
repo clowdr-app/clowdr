@@ -1,14 +1,20 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { ButtonGroup, Link, Text } from "@chakra-ui/react";
-import React from "react";
+import { AuthHeader } from "@midspace/shared-types/auth";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link as ReactLink, Route, Switch } from "react-router-dom";
+import { useConferenceBySlugQuery } from "../../generated/graphql";
 import { LoginButton } from "../Auth";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
 import FAIcon from "../Chakra/FAIcon";
 import { ExternalLinkButton, LinkButton } from "../Chakra/LinkButton";
 import { useMaybeConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../GQL/AuthParameters";
+import { makeContext } from "../GQL/make-context";
+import { useRestorableState } from "../Hooks/useRestorableState";
 import { useTitle } from "../Hooks/useTitle";
+import useCurrentUser from "../Users/CurrentUser/useCurrentUser";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import GenericErrorPage from "./GenericErrorPage";
 
@@ -78,10 +84,7 @@ export default function PageNotFound(): JSX.Element {
                         </Text>
                     </>
                 ) : loggedIn ? (
-                    <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                        Please double check the URL, and if this error persists, please contact your conference
-                        organiser.
-                    </Text>
+                    <RefreshRegistrationsCacheOrError />
                 ) : (
                     <>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" fontStyle="italic" maxW={600}>
@@ -129,5 +132,63 @@ export default function PageNotFound(): JSX.Element {
                 </ButtonGroup>
             </>
         </GenericErrorPage>
+    );
+}
+
+function RefreshRegistrationsCacheOrError() {
+    const { conferenceSlug } = useAuthParameters();
+    const currentUser = useCurrentUser();
+    const [lastUserRefreshTime, setLastUserRefreshTime] = useRestorableState<number>(
+        `UserRefresh-${currentUser.user.id}`,
+        Date.now() - 60 * 60 * 1000,
+        (x) => x.toString(),
+        (x) => parseInt(x, 10)
+    );
+
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RefreshRegistrationsCache]: "true",
+            }),
+        []
+    );
+    const [refreshResponse, refetchRefreshResponse] = useConferenceBySlugQuery({
+        variables: {
+            slug: conferenceSlug ?? "",
+        },
+        context,
+        pause: true,
+    });
+
+    const shouldRefresh = conferenceSlug && Date.now() - lastUserRefreshTime > 60 * 1000;
+    const [issuedRefresh, setIssuedRefresh] = useState<boolean>(false);
+    useEffect(() => {
+        if (shouldRefresh) {
+            setIssuedRefresh(true);
+            setLastUserRefreshTime(Date.now());
+            refetchRefreshResponse();
+        }
+    }, [refetchRefreshResponse, setLastUserRefreshTime, shouldRefresh]);
+
+    useEffect(() => {
+        if (issuedRefresh && refreshResponse.data?.conference_Conference[0]?.slug) {
+            window.location.reload();
+        }
+    }, [issuedRefresh, refreshResponse.data?.conference_Conference]);
+
+    return shouldRefresh || refreshResponse.fetching || refreshResponse.data?.conference_Conference[0]?.slug ? (
+        <CenteredSpinner caller="RefreshRegistrationsCacheOrError" />
+    ) : (
+        <>
+            <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                Are you logged in with the same account you used with your invite code? Please ensure you are logged in
+                with the correct account. Invitations are unique per registration and can only be used once by a single
+                user.
+            </Text>
+            <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                If you are confident you are logged in with the right account, please double check the URL, and if this
+                error persists, please contact your conference organiser.
+            </Text>
+        </>
     );
 }

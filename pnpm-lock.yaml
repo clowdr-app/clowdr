@@ -996,6 +996,7 @@ importers:
       '@graphql-typed-document-node/core': ^3.1.1
       '@midspace/auth': workspace:*
       '@midspace/server-utils': workspace:*
+      '@midspace/shared-types': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.2
       '@types/body-parser': ^1.19.2
@@ -1043,6 +1044,7 @@ importers:
       '@graphql-typed-document-node/core': 3.1.1_graphql@15.7.2
       '@midspace/auth': link:../../packages/node/auth
       '@midspace/server-utils': link:../../packages/node/server-utils
+      '@midspace/shared-types': link:../../packages/shared/shared-types
       '@socket.io/redis-emitter': 4.1.1
       '@types/amqplib': 0.8.2
       '@types/body-parser': 1.19.2

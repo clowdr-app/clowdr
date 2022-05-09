@@ -1,11 +1,11 @@
 import { computeAuthHeaders, getAuthHeader } from "@midspace/auth/auth";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import jwt from "jsonwebtoken";
 import jwksRsa from "jwks-rsa";
 import fetch from "node-fetch";
-import { AuthHeader } from "../../../packages/node/auth/node_modules/@midspace/shared-types/src/auth";
 
 export const router = express.Router();
 

@@ -166,7 +166,9 @@ function RefreshRegistrationsCacheOrError() {
         if (shouldRefresh) {
             setIssuedRefresh(true);
             setLastUserRefreshTime(Date.now());
-            refetchRefreshResponse();
+            refetchRefreshResponse({
+                requestPolicy: "network-only",
+            });
         }
     }, [refetchRefreshResponse, setLastUserRefreshTime, shouldRefresh]);
 

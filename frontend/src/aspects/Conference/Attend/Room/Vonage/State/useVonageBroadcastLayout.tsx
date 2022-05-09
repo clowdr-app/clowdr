@@ -84,7 +84,7 @@ export function useVonageBroadcastLayout(
             initialLayoutData ?? {
                 layout: {
                     type: VonageSessionLayoutType.BestFit,
-                    screenShareType: "verticalPresentation",
+                    screenshareType: "verticalPresentation",
                 },
                 createdAt: Date.now(),
             },
@@ -200,7 +200,7 @@ export function useVonageBroadcastLayout(
                         case VonageSessionLayoutType.BestFit:
                             data = {
                                 type: VonageSessionLayoutType.BestFit,
-                                screenShareType: data.screenShareType ?? "verticalPresentation",
+                                screenshareType: data.screenshareType ?? "verticalPresentation",
                             } as VonageSessionLayoutData;
                             break;
                         case VonageSessionLayoutType.Single:

@@ -173,10 +173,11 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
             const broadcast = await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
                 layout: cleanLayout
                     ? cleanLayout.layout.layout
-                    : {
+                    : ({
                           type: "bestFit",
-                          screenShareType: "verticalPresentation",
-                      },
+                          screenshareType: "verticalPresentation",
+                          stylesheet: null,
+                      } as VonageLayoutBuiltin),
                 outputs: {
                     rtmp: [
                         {
@@ -378,7 +379,7 @@ export async function startRoomVonageArchiving(
                         ? cleanLayout.layout.layout
                         : ({
                               type: "bestFit",
-                              screenShareType: "verticalPresentation",
+                              screenshareType: "verticalPresentation",
                               stylesheet: null,
                           } as VonageLayoutBuiltin),
                 })
@@ -714,7 +715,7 @@ export interface VonageLayoutCustom {
 
 export interface VonageLayoutBuiltin {
     type: "bestFit";
-    screenShareType: "verticalPresentation" | "horizontalPresentation";
+    screenshareType: "verticalPresentation" | "horizontalPresentation";
     stylesheet: null;
 }
 
@@ -794,7 +795,7 @@ export async function applyVonageSessionLayout(
                             startedBroadcastId,
                             "bestFit",
                             null,
-                            layout.layout.screenShareType
+                            layout.layout.screenshareType
                         );
                         break;
                     case "custom":
@@ -822,7 +823,7 @@ export async function applyVonageSessionLayout(
             try {
                 switch (layout.layout.type) {
                     case "bestFit":
-                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, layout.layout.screenShareType);
+                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, layout.layout.screenshareType);
                         break;
                     case "custom":
                         await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);
@@ -875,7 +876,7 @@ export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout
             return {
                 layout: {
                     type: "bestFit",
-                    screenShareType: layoutData.screenShareType,
+                    screenshareType: layoutData.screenshareType,
                     stylesheet: null,
                 },
                 streamClasses: {},

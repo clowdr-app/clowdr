@@ -212,6 +212,63 @@ export class PresenceState {
         };
     }
 
+    public observeConference(conferenceSlug: string | undefined | null, observer: Observer<Set<string>>): () => void {
+        // console.log("Presence:observePage", path, conferenceSlug);
+
+        const promise = (async () => {
+            const release = await this.observersMutex.acquire();
+
+            const confSlug = conferenceSlug ?? "";
+            let unsubscribe: () => void = () => {
+                // Empty
+            };
+            let listId: string | undefined;
+            try {
+                listId = confSlug;
+                if (!this.observers[listId]) {
+                    this.observers[listId] = new Observable((observer) => {
+                        observer(this.presences[listId as string] ?? new Set());
+                    });
+                }
+                unsubscribe = this.observers[listId].subscribe(observer);
+
+                if (this.observers[listId].observers.size === 1) {
+                    realtimeService.socket?.emit("observeConference", conferenceSlug);
+                }
+            } catch (e) {
+                console.error("Error subscribing to conference presence observer", e);
+            } finally {
+                release();
+            }
+            return {
+                unsubscribe,
+                listId,
+            };
+        })();
+
+        return () => {
+            (async () => {
+                // console.log("Presence:unobservePage", path, conferenceSlug);
+
+                const release = await this.observersMutex.acquire();
+
+                try {
+                    const info = await promise;
+                    if (info.listId) {
+                        if (this.observers[info.listId].observers.size === 0) {
+                            realtimeService.socket?.emit("unobserveConference", conferenceSlug);
+                        }
+                    }
+                    info.unsubscribe();
+                } catch (e) {
+                    console.error("Error unsubscribing from conference presence observer", e);
+                } finally {
+                    release();
+                }
+            })();
+        };
+    }
+
     private roomObserversMutex = new Mutex();
     public pollRoomParticipants(roomId: string, conferenceId: string) {
         realtimeService.socket?.emit("roomParticipants", { roomId, conferenceId });

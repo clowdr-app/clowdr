@@ -6,6 +6,7 @@ import { gql } from "urql";
 import { useConferenceTechSupportAddressQuery } from "../../../generated/graphql";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import { makeContext } from "../../GQL/make-context";
+import ConferenceCountText from "../../Realtime/ConferenceCountText";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import { DashboardPage } from "./DashboardPage";
@@ -81,6 +82,7 @@ export default function ManagerLandingPage(): JSX.Element {
                         {primarySupportAddress}
                     </Link>
                 </Text>
+                <ConferenceCountText />
                 <HStack w="100%" alignItems="flex-end">
                     <Heading as="h2" mt={4} textAlign="left" w="100%" fontSize="2xl">
                         Program

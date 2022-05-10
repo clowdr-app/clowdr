@@ -175,6 +175,47 @@ export function onUnobservePage(socketId: string, socket: Socket): (path: string
     };
 }
 
+export function onObserveConference(socketId: string, socket: Socket): (path: string) => Promise<void> {
+    return async (slug) => {
+        try {
+            if (typeof slug === "string") {
+                const listKey = presenceListKey(slug);
+                const chan = presenceChannelName(slug);
+                // logger.info(`${userId} observed ${listId}`);
+                await socket.join(chan);
+
+                const redisClient = await redisClientPool.acquire("socket-handlers/presence/onObserveConference");
+                redisClient.zrange(listKey, 0, -1, (err, userIds) => {
+                    redisClientPool.release("socket-handlers/presence/onObserveConference", redisClient);
+
+                    if (err) {
+                        throw err;
+                    }
+
+                    // logger.info(`Emitting presences for ${path} to ${userId} / ${socketId}`, userIds);
+                    socket.emit("presences", { listId: slug, userIds });
+                });
+            }
+        } catch (error: any) {
+            logger.error({ error }, `Error observing presence on socket ${socketId}`);
+        }
+    };
+}
+
+export function onUnobserveConference(socketId: string, socket: Socket): (path: string) => Promise<void> {
+    return async (slug) => {
+        try {
+            if (typeof slug === "string") {
+                const chan = presenceChannelName(slug);
+                // logger.info(`${userId} unobserved ${conferenceKey}`);
+                await socket.leave(chan);
+            }
+        } catch (error: any) {
+            logger.error({ error }, `Error unobserving presence on socket ${socketId}`);
+        }
+    };
+}
+
 export function onConnect(_userId: string, _socketId: string): void {
     // Do nothing
 }

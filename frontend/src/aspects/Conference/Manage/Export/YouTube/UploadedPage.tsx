@@ -1,5 +1,19 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Link, Spinner, Table, Tbody, Td, Th, Thead, Tooltip, Tr, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Link,
+    Spinner,
+    Table,
+    Tbody,
+    Td,
+    Th,
+    Thead,
+    Tooltip,
+    Tr,
+    useDisclosure,
+    VStack,
+} from "@chakra-ui/react";
 import { AuthHeader, HasuraRoleName } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import { default as React, useCallback, useMemo } from "react";
@@ -79,7 +93,7 @@ export function UploadedPage(): JSX.Element {
             conferenceId: conference.id,
             subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
-        requestPolicy: "network-only",
+        requestPolicy: "cache-and-network",
         context,
     });
     usePolling(refetchExistingJobsResult, 20000);
@@ -161,10 +175,8 @@ export function UploadedPage(): JSX.Element {
                                                 upload?.videoPrivacyStatus === "private" ? (
                                                     "No preview for private video."
                                                 ) : (
-                                                    <ReactPlayer
+                                                    <DeferredVideo
                                                         url={`https://youtube.com/watch?v=${upload.videoId}`}
-                                                        width="300px"
-                                                        height="auto"
                                                     />
                                                 )
                                             ) : (
@@ -179,5 +191,16 @@ export function UploadedPage(): JSX.Element {
                 </QueryWrapper>
             </VStack>
         </DashboardPage>
+    );
+}
+
+function DeferredVideo({ url }: { url: string }): JSX.Element {
+    const { isOpen, onOpen } = useDisclosure();
+    return isOpen ? (
+        <ReactPlayer url={url} width="300px" height="auto" />
+    ) : (
+        <Box p={2}>
+            <Button onClick={onOpen}>Load video</Button>
+        </Box>
     );
 }

@@ -27,6 +27,7 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { gql, useClient } from "urql";
 import type {
     Event_EventVonageSessionFragment,
+    ImmediateSwitchItemFragment,
     LiveIndicator_GetLatestQuery,
     LiveIndicator_GetLatestQueryVariables,
     Room_EventSummaryFragment,
@@ -44,19 +45,23 @@ import { useConference } from "../../../../useConference";
 import { ControlBarButton } from "../../Vonage/ControlBar/ControlBarButton";
 
 gql`
+    fragment ImmediateSwitchItem on content_Item {
+        id
+        title
+        elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
+            id
+            name
+            itemId
+            typeName
+        }
+    }
+
     query ImmediateSwitch_GetElements($eventId: uuid!) @cached {
         schedule_Event_by_pk(id: $eventId) {
             id
             itemId
             item {
-                id
-                title
-                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
-                    id
-                    name
-                    itemId
-                    typeName
-                }
+                ...ImmediateSwitchItem
             }
             roomId
             room {
@@ -73,15 +78,14 @@ gql`
                     id
                     itemId
                     item {
-                        id
-                        title
-                        elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
-                            id
-                            name
-                            itemId
-                            typeName
-                        }
+                        ...ImmediateSwitchItem
                     }
+                }
+            }
+            presentations {
+                id
+                item {
+                    ...ImmediateSwitchItem
                 }
             }
         }
@@ -303,20 +307,17 @@ export function ImmediateSwitch({
                                     </Card>
                                 </ListItem>
                             ) : undefined}
-                            {R.sort(
-                                (a, b) => a.title.localeCompare(b.title),
-                                elementsData?.schedule_Event_by_pk?.item &&
-                                    elementsData?.schedule_Event_by_pk?.exhibition?.items
-                                    ? [
-                                          elementsData.schedule_Event_by_pk.item,
-                                          ...elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item),
-                                      ]
-                                    : elementsData?.schedule_Event_by_pk?.item
+                            {R.sort((a, b) => a.title.localeCompare(b.title), [
+                                ...(elementsData?.schedule_Event_by_pk?.item
                                     ? [elementsData.schedule_Event_by_pk.item]
-                                    : elementsData?.schedule_Event_by_pk?.exhibition?.items
-                                    ? [...elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item)]
-                                    : []
-                            ).flatMap((item) =>
+                                    : []),
+                                ...(elementsData?.schedule_Event_by_pk?.exhibition
+                                    ? elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item)
+                                    : []),
+                                ...(elementsData?.schedule_Event_by_pk?.presentations
+                                    ? elementsData.schedule_Event_by_pk.presentations.map((x) => x.item)
+                                    : []),
+                            ] as ImmediateSwitchItemFragment[]).flatMap((item) =>
                                 R.sort((a, b) => a.name.localeCompare(b.name), item.elements).map((element) => (
                                     <ListItem key={element.id}>
                                         <Card

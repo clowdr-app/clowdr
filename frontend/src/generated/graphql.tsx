@@ -41914,6 +41914,19 @@ export type VonageParticipantStreamDetailsFragment = {
     };
 };
 
+export type ImmediateSwitchItemFragment = {
+    readonly __typename?: "content_Item";
+    readonly id: any;
+    readonly title: string;
+    readonly elements: ReadonlyArray<{
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly name: string;
+        readonly itemId: any;
+        readonly typeName: Content_ElementType_Enum;
+    }>;
+};
+
 export type ImmediateSwitch_GetElementsQueryVariables = Exact<{
     eventId: Scalars["uuid"];
 }>;
@@ -41968,6 +41981,22 @@ export type ImmediateSwitch_GetElementsQuery = {
                 };
             }>;
         } | null;
+        readonly presentations: ReadonlyArray<{
+            readonly __typename?: "schedule_Event";
+            readonly id: any;
+            readonly item?: {
+                readonly __typename?: "content_Item";
+                readonly id: any;
+                readonly title: string;
+                readonly elements: ReadonlyArray<{
+                    readonly __typename?: "content_Element";
+                    readonly id: any;
+                    readonly name: string;
+                    readonly itemId: any;
+                    readonly typeName: Content_ElementType_Enum;
+                }>;
+            } | null;
+        }>;
     } | null;
 };
 
@@ -51323,6 +51352,18 @@ export const VonageParticipantStreamDetailsFragmentDoc = gql`
         registrantId
     }
 `;
+export const ImmediateSwitchItemFragmentDoc = gql`
+    fragment ImmediateSwitchItem on content_Item {
+        id
+        title
+        elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
+            id
+            name
+            itemId
+            typeName
+        }
+    }
+`;
 export const Event_EventVonageSessionFragmentDoc = gql`
     fragment Event_EventVonageSession on schedule_Event {
         id
@@ -53506,14 +53547,7 @@ export const ImmediateSwitch_GetElementsDocument = gql`
             id
             itemId
             item {
-                id
-                title
-                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
-                    id
-                    name
-                    itemId
-                    typeName
-                }
+                ...ImmediateSwitchItem
             }
             roomId
             room {
@@ -53530,19 +53564,19 @@ export const ImmediateSwitch_GetElementsDocument = gql`
                     id
                     itemId
                     item {
-                        id
-                        title
-                        elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
-                            id
-                            name
-                            itemId
-                            typeName
-                        }
+                        ...ImmediateSwitchItem
                     }
+                }
+            }
+            presentations {
+                id
+                item {
+                    ...ImmediateSwitchItem
                 }
             }
         }
     }
+    ${ImmediateSwitchItemFragmentDoc}
 `;
 
 export function useImmediateSwitch_GetElementsQuery(

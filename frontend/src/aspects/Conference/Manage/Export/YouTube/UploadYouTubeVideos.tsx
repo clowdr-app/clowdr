@@ -185,7 +185,8 @@ export function UploadYouTubeVideos(): JSX.Element {
     const { subconferenceId } = useAuthParameters();
     const toast = useToast();
     const registrant = useCurrentRegistrant();
-    const { selectedGoogleAccountId, googleAccounts, finished, setFinished } = useContext(YouTubeExportContext);
+    const { selectedGoogleAccountId, googleAccounts, refreshGoogleAccounts, finished, setFinished } =
+        useContext(YouTubeExportContext);
 
     const [, refreshYouTubeData] = useUploadYouTubeVideos_RefreshYouTubeDataMutation();
     useEffect(() => {
@@ -209,11 +210,11 @@ export function UploadYouTubeVideos(): JSX.Element {
                 if (!result.data?.refreshYouTubeData?.success) {
                     throw new Error(result.data?.refreshYouTubeData?.message ?? "Unknown reason");
                 }
-                await googleAccounts[1]();
+                refreshGoogleAccounts();
             }
         }
         fn();
-    }, [googleAccounts, refreshYouTubeData, registrant.id, selectedGoogleAccountId, subconferenceId]);
+    }, [refreshGoogleAccounts, refreshYouTubeData, registrant.id, selectedGoogleAccountId, subconferenceId]);
 
     const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
         "clowdr-youTubeTitleTemplate",
@@ -288,7 +289,7 @@ export function UploadYouTubeVideos(): JSX.Element {
     );
 
     const channelOptions = useMemo(() => {
-        const registrantGoogleAccount = googleAccounts[0].data?.registrant_GoogleAccount.find(
+        const registrantGoogleAccount = googleAccounts.data?.registrant_GoogleAccount.find(
             (a) => a.id === selectedGoogleAccountId
         );
 
@@ -308,7 +309,7 @@ export function UploadYouTubeVideos(): JSX.Element {
     }, [selectedGoogleAccountId, googleAccounts]);
 
     const playlistOptions = useMemo(() => {
-        const registrantGoogleAccount = googleAccounts[0].data?.registrant_GoogleAccount.find(
+        const registrantGoogleAccount = googleAccounts.data?.registrant_GoogleAccount.find(
             (a) => a.id === selectedGoogleAccountId
         );
 

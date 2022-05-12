@@ -51,7 +51,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
 
     const registrant = useCurrentRegistrant();
 
-    const { googleAccounts, selectedGoogleAccountId, setSelectedGoogleAccountId, finished } =
+    const { googleAccounts, refreshGoogleAccounts, selectedGoogleAccountId, setSelectedGoogleAccountId, finished } =
         useContext(YouTubeExportContext);
 
     const [, deleteAccount] = useManageExport_DeleteRegistrantGoogleAccountMutation();
@@ -63,7 +63,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
     const optionIdSuffix = useId();
     const optionIds = useIds(
         optionIdSuffix,
-        ...(googleAccounts[0].data?.registrant_GoogleAccount?.map((x) => x.id) ?? [])
+        ...(googleAccounts.data?.registrant_GoogleAccount?.map((x) => x.id) ?? [])
     );
 
     const disconnectAccount = useCallback(
@@ -84,7 +84,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                         },
                     }
                 );
-                await googleAccounts[1]();
+                refreshGoogleAccounts();
                 toast({
                     status: "success",
                     title: "Unlinked YouTube account.",
@@ -98,7 +98,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                 setDeleting((x) => R.set(R.lensProp(accountId), false, x));
             }
         },
-        [deleteAccount, googleAccounts, subconferenceId, toast]
+        [deleteAccount, refreshGoogleAccounts, subconferenceId, toast]
     );
 
     const addAccount = useCallback(async () => {
@@ -158,7 +158,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                     Add a YouTube account
                 </Button>
             </HStack>
-            <QueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={googleAccounts[0]}>
+            <QueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={googleAccounts}>
                 {(accounts: readonly ManageExport_RegistrantGoogleAccountFragment[]) => (
                     <List
                         role="listbox"

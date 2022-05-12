@@ -19,7 +19,7 @@ function useValue() {
             }),
         [subconferenceId]
     );
-    const googleAccounts = useManageExport_GetRegistrantGoogleAccountsQuery({
+    const [googleAccounts, refreshGoogleAccounts] = useManageExport_GetRegistrantGoogleAccountsQuery({
         variables: {
             registrantId: registrant?.id,
         },
@@ -36,20 +36,24 @@ function useValue() {
     useEffect(() => {
         if (
             selectedGoogleAccountId &&
-            !googleAccounts[0].data?.registrant_GoogleAccount.some((account) => account.id === selectedGoogleAccountId)
+            !googleAccounts.data?.registrant_GoogleAccount.some((account) => account.id === selectedGoogleAccountId)
         ) {
             setSelectedGoogleAccountId(null);
         }
     }, [googleAccounts, selectedGoogleAccountId]);
 
-    return {
-        selectedGoogleAccountId,
-        setSelectedGoogleAccountId,
-        googleAccounts,
-        finished,
-        setFinished,
-        reset,
-    };
+    return useMemo(
+        () => ({
+            selectedGoogleAccountId,
+            setSelectedGoogleAccountId,
+            googleAccounts,
+            refreshGoogleAccounts,
+            finished,
+            setFinished,
+            reset,
+        }),
+        [finished, googleAccounts, refreshGoogleAccounts, reset, selectedGoogleAccountId]
+    );
 }
 
 export const YouTubeExportContext = createContext({} as ReturnType<typeof useValue>);

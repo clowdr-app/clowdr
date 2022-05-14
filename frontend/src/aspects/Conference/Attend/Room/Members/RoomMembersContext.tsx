@@ -76,11 +76,14 @@ function useValue(props: Props): Result {
             ? HasuraRoleName.SubconferenceOrganizer
             : undefined;
 
-    return {
-        roomMembers: data?.room_Room_by_pk?.roomMemberships,
-        loading,
-        canAddMembersAs,
-    };
+    return useMemo(
+        () => ({
+            roomMembers: data?.room_Room_by_pk?.roomMemberships,
+            loading,
+            canAddMembersAs,
+        }),
+        [canAddMembersAs, data?.room_Room_by_pk?.roomMemberships, loading]
+    );
 }
 
 export const RoomMembersContext = createContext({} as ReturnType<typeof useValue>);

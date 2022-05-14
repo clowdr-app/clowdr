@@ -1,6 +1,6 @@
 import useSize from "@react-hook/size";
 import type { PropsWithChildren } from "react";
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
 import useDebouncedState from "../Hooks/useDebouncedState";
 
 function useValue(_props: Record<never, never>) {
@@ -17,11 +17,14 @@ function useValue(_props: Record<never, never>) {
         setMainPaneHeight(mainPaneHeightLive);
     }, [mainPaneHeightLive, setMainPaneHeight]);
 
-    return {
-        mainPaneRef,
-        mainPaneWidth,
-        mainPaneHeight,
-    };
+    return useMemo(
+        () => ({
+            mainPaneRef,
+            mainPaneWidth,
+            mainPaneHeight,
+        }),
+        [mainPaneHeight, mainPaneWidth]
+    );
 }
 
 const AppLayoutContext = createContext({} as ReturnType<typeof useValue>);

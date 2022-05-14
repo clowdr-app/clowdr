@@ -218,15 +218,18 @@ function useValue({ vonageSessionId, canControlPlaybackAs }: Props) {
 
     const latestCommand = useMemo(() => latestCommandData?.[0] ?? null, [latestCommandData]);
 
-    return {
-        receivedCommand,
-        sendCommand,
-        latestCommand,
-        video,
-        subtitles,
-        errors,
-        canControlPlaybackAs,
-    };
+    return useMemo(
+        () => ({
+            receivedCommand,
+            sendCommand,
+            latestCommand,
+            video,
+            subtitles,
+            errors,
+            canControlPlaybackAs,
+        }),
+        [canControlPlaybackAs, errors, latestCommand, receivedCommand, sendCommand, subtitles, video]
+    );
 }
 
 export const VonageVideoPlaybackContext = createContext({} as ReturnType<typeof useValue>);

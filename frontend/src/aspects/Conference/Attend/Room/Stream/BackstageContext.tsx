@@ -213,17 +213,20 @@ function useValue({ hlsUri, event }: Props) {
 
     const liveOnAir = live && currentInput !== "video" && currentInput !== "filler";
 
-    return {
-        hlsUri,
-        event,
-        scheduledStartTime,
-        scheduledEndTime,
-        now,
-        live,
-        liveOnAir,
-        currentInput,
-        connected: isConnected,
-    };
+    return useMemo(
+        () => ({
+            hlsUri,
+            event,
+            scheduledStartTime,
+            scheduledEndTime,
+            now,
+            live,
+            liveOnAir,
+            currentInput,
+            connected: isConnected,
+        }),
+        [currentInput, event, hlsUri, isConnected, live, liveOnAir, now, scheduledEndTime, scheduledStartTime]
+    );
 }
 
 export const BackstageContext = createContext({} as ReturnType<typeof useValue>);

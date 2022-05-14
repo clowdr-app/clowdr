@@ -1,6 +1,6 @@
 import { useDisclosure } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
-import React, { createContext, useCallback, useState } from "react";
+import React, { createContext, useCallback, useMemo, useState } from "react";
 
 export type DevicesProps = {
     camera?: boolean;
@@ -21,12 +21,15 @@ function useValue() {
         [permissionsModal, setDevices]
     );
 
-    return {
-        onPermissionsProblem,
-        devices,
-        title,
-        permissionsModal,
-    };
+    return useMemo(
+        () => ({
+            onPermissionsProblem,
+            devices,
+            title,
+            permissionsModal,
+        }),
+        [devices, onPermissionsProblem, permissionsModal, title]
+    );
 }
 
 export const PermissionInstructionsContext = createContext({} as ReturnType<typeof useValue>);

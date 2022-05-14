@@ -1,6 +1,6 @@
 import canAutoplay from "can-autoplay";
 import type { PropsWithChildren } from "react";
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
 function useValue() {
     const [autoplayAlertDismissed, setAutoplayAlertDismissed] = useState<boolean>(false);
@@ -22,7 +22,10 @@ function useValue() {
         fn().catch((err) => console.error(err));
     }, [unblockAutoplay]);
 
-    return { unblockAutoplay, autoplayBlocked, autoplayAlertDismissed, setAutoplayAlertDismissed };
+    return useMemo(
+        () => ({ unblockAutoplay, autoplayBlocked, autoplayAlertDismissed, setAutoplayAlertDismissed }),
+        [autoplayAlertDismissed, autoplayBlocked, unblockAutoplay]
+    );
 }
 
 export const AutoplayContext = createContext({} as ReturnType<typeof useValue>);

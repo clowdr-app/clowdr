@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import type { PropsWithChildren } from "react";
-import React, { createContext, useCallback } from "react";
+import React, { createContext, useCallback, useMemo } from "react";
 import { useRestorableState } from "../../../../Hooks/useRestorableState";
 
 function useValue() {
@@ -20,12 +20,15 @@ function useValue() {
 
     const reset = useCallback(() => setDownloadedElementIds([]), [setDownloadedElementIds]);
 
-    return {
-        downloadedElementIds,
-        setDownloadedElementIds,
-        addDownloadedElementId,
-        reset,
-    };
+    return useMemo(
+        () => ({
+            downloadedElementIds,
+            setDownloadedElementIds,
+            addDownloadedElementId,
+            reset,
+        }),
+        [addDownloadedElementId, downloadedElementIds, reset, setDownloadedElementIds]
+    );
 }
 
 export const VideoDownloadContext = createContext({} as ReturnType<typeof useValue>);

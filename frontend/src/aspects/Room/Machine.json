@@ -1,0 +1,759 @@
+{
+    "id": "Room",
+    "initial": "Pre-join",
+    "states": {
+        "Pre-join": {
+            "initial": "Check guided setup done",
+            "states": {
+                "Check guided setup done": {
+                    "always": [
+                        {
+                            "cond": "guidedSetupPreviouslyCompleted",
+                            "target": "Enable mic/cam choices"
+                        },
+                        {
+                            "target": "Guided Setup or Skip Setup choice"
+                        }
+                    ]
+                },
+                "Guided Setup or Skip Setup choice": {
+                    "on": {
+                        "Start guided setup": {
+                            "actions": ["clearSilentMicSetup", "clearSilentCamSetup"],
+                            "target": "Setup camera choice"
+                        }
+                    }
+                },
+                "Enable mic/cam choices": {
+                    "type": "parallel",
+                    "states": {
+                        "Camera": {
+                            "initial": "Check cam state",
+                            "states": {
+                                "Check cam state": {
+                                    "on": {
+                                        "CamIsEnabled": {
+                                            "target": "Cam enabled"
+                                        },
+                                        "CamIsDisabled": [
+                                            {
+                                                "actions": "setSilentCamSetup",
+                                                "cond": "camPreviouslyEnabled",
+                                                "target": "#Room.Camera Setup"
+                                            },
+                                            {
+                                                "target": "Cam disabled"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "Cam enabled": {
+                                    "on": {
+                                        "Toggle camera": {
+                                            "target": "Cam disabled"
+                                        }
+                                    }
+                                },
+                                "Cam disabled": {
+                                    "on": {
+                                        "Toggle camera": {
+                                            "actions": "setSilentCamSetup",
+                                            "target": "#Room.Camera Setup"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "Microphone": {
+                            "initial": "Check mic state",
+                            "states": {
+                                "Mic enabled": {
+                                    "on": {
+                                        "Toggle microphone": {
+                                            "target": "Mic disabled"
+                                        }
+                                    }
+                                },
+                                "Mic disabled": {
+                                    "on": {
+                                        "Toggle microphone": {
+                                            "actions": "setSilentMicSetup",
+                                            "target": "#Room.Microphone Setup"
+                                        }
+                                    }
+                                },
+                                "Check mic state": {
+                                    "on": {
+                                        "MicIsEnabled": {
+                                            "target": "Mic enabled"
+                                        },
+                                        "MicIsDisabled": [
+                                            {
+                                                "actions": "setSilentMicSetup",
+                                                "cond": "micPreviouslyEnabled",
+                                                "target": "#Room.Microphone Setup"
+                                            },
+                                            {
+                                                "target": "Mic disabled"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "Screenshare": {
+                            "on": {
+                                "Test screeshare": {
+                                    "target": "#Room.Pre-join.Screenshare test"
+                                }
+                            }
+                        }
+                    },
+                    "on": {
+                        "Join": {
+                            "target": "Join"
+                        }
+                    }
+                },
+                "Setup camera choice": {
+                    "on": {
+                        "Setup camera": {
+                            "target": "#Room.Camera Setup"
+                        },
+                        "Skip setup": {
+                            "actions": "setCamSetupSkipped",
+                            "target": "Setup microphone choice"
+                        }
+                    }
+                },
+                "Setup microphone choice": {
+                    "on": {
+                        "Setup microphone": {
+                            "target": "#Room.Microphone Setup"
+                        },
+                        "Skip setup": {
+                            "actions": "setMicSetupSkipped",
+                            "target": "Test screenshare choice"
+                        }
+                    }
+                },
+                "Test screenshare choice": {
+                    "on": {
+                        "Test screenshare": {
+                            "target": "Screenshare test"
+                        },
+                        "Skip test": [
+                            {
+                                "cond": "allGuidedSetupsSkipped",
+                                "target": "Check guided setup done"
+                            },
+                            {
+                                "target": "Enable mic/cam choices"
+                            }
+                        ]
+                    }
+                },
+                "Screenshare test": {
+                    "initial": "new state 1",
+                    "states": {
+                        "new state 1": {
+                            "on": {
+                                "Event 1": {
+                                    "target": "Done"
+                                }
+                            }
+                        },
+                        "Done": {
+                            "type": "final"
+                        }
+                    },
+                    "onDone": [
+                        {
+                            "cond": "allGuidedSetupsSkipped",
+                            "target": "Check guided setup done"
+                        },
+                        {
+                            "target": "Enable mic/cam choices"
+                        }
+                    ]
+                },
+                "Join": {
+                    "type": "final"
+                }
+            },
+            "onDone": {
+                "target": "Joined"
+            }
+        },
+        "Camera Setup": {
+            "initial": "Silent mode check",
+            "states": {
+                "Silent mode check": {
+                    "on": {
+                        "IsNotSilent": {
+                            "target": "Detecting system configuration splashscreen"
+                        },
+                        "IsSilent": {
+                            "target": "Enumerate devices"
+                        }
+                    }
+                },
+                "Done": {
+                    "type": "final"
+                },
+                "Detecting system configuration splashscreen": {
+                    "after": {
+                        "250": {
+                            "target": "Pre-permissions check warning"
+                        }
+                    }
+                },
+                "Pre-permissions check warning": {
+                    "on": {
+                        "Ready": {
+                            "target": "Enumerate devices"
+                        },
+                        "Cancel": {
+                            "actions": "clearCamPreviouslyEnabled",
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Enumerate devices": {
+                    "on": {
+                        "No devices": {
+                            "actions": "clearSilentCamSetup",
+                            "target": "No devices available"
+                        },
+                        "Devices lack labels": {
+                            "actions": "clearSilentCamSetup",
+                            "target": "Permission denied"
+                        },
+                        "Devices have labels": {
+                            "target": "Permission granted"
+                        }
+                    }
+                },
+                "No devices available": {
+                    "on": {
+                        "Check permissions": {
+                            "target": "Permission denied"
+                        },
+                        "Cancel": {
+                            "actions": "clearCamPreviouslyEnabled",
+                            "target": "Done"
+                        },
+                        "Retry": {
+                            "target": "Enumerate devices"
+                        }
+                    }
+                },
+                "Permission denied": {
+                    "after": {
+                        "250": {
+                            "target": "Diagnosing browser configuration"
+                        }
+                    }
+                },
+                "Permission granted": {
+                    "after": {
+                        "500": [
+                            {
+                                "cond": "hasPreviouslySelectedCamera",
+                                "target": "Check previously selected camera available"
+                            },
+                            {
+                                "actions": "clearSilentCamSetup",
+                                "cond": "isMoreThanOneCameraAvailable",
+                                "target": "Select camera"
+                            },
+                            {
+                                "actions": "selectDefaultCamera",
+                                "target": "Check obtain feed"
+                            }
+                        ]
+                    }
+                },
+                "Select camera": {
+                    "on": {
+                        "Camera selected": {
+                            "target": "Check obtain feed"
+                        },
+                        "Cancel": {
+                            "actions": "clearCamPreviouslyEnabled",
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Check obtain feed": {
+                    "on": {
+                        "Camera ready": {
+                            "actions": ["setCamPreviouslyEnabled", "setPreviouslySelectedCam"],
+                            "target": "Done"
+                        },
+                        "Camera not ready": {
+                            "actions": "clearSilentCamSetup",
+                            "target": "Camera unavailable"
+                        }
+                    }
+                },
+                "Check previously selected camera available": {
+                    "on": {
+                        "Not available": {
+                            "actions": "clearSilentCamSetup",
+                            "target": "Previously selected camera not available warning"
+                        },
+                        "Select previous camera": {
+                            "target": "Check obtain feed"
+                        }
+                    }
+                },
+                "Previously selected camera not available warning": {
+                    "after": {
+                        "500": {
+                            "target": "Select camera"
+                        }
+                    }
+                },
+                "Camera unavailable": {
+                    "on": {
+                        "Select different camera": {
+                            "target": "Select camera"
+                        },
+                        "Retry": {
+                            "target": "Check obtain feed"
+                        }
+                    }
+                },
+                "Diagnosing browser configuration": {
+                    "after": {
+                        "500": {
+                            "target": "Show browser permission check instructions"
+                        }
+                    }
+                },
+                "Show browser permission check instructions": {
+                    "description": "\"Additional information required\"",
+                    "on": {
+                        "Ready": {
+                            "target": "Choose permission state"
+                        },
+                        "Cancel": {
+                            "actions": "clearCamPreviouslyEnabled",
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Choose permission state": {
+                    "on": {
+                        "Blocked": {
+                            "target": "Clear permissions"
+                        },
+                        "Allowed": {
+                            "target": "Diagnosing system configuration"
+                        }
+                    }
+                },
+                "Clear permissions": {
+                    "on": {
+                        "Ready": {
+                            "target": "Enumerate devices"
+                        },
+                        "Cancel": {
+                            "actions": "clearCamPreviouslyEnabled",
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Diagnosing system configuration": {
+                    "on": {
+                        "MacOS detected": {
+                            "target": "MacOS"
+                        },
+                        "iOS detected": {
+                            "target": "iOS"
+                        },
+                        "Windows11 detected": {
+                            "target": "Windows 11"
+                        },
+                        "Windows10 or below detected": {
+                            "target": "Windows 10 or below"
+                        },
+                        "Android detected": {
+                            "target": "Android"
+                        },
+                        "Linux detected": {
+                            "target": "Linux"
+                        }
+                    }
+                },
+                "MacOS": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "iOS": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Windows 11": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Windows 10 or below": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Android": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Linux": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Check system restarted": {
+                    "on": {
+                        "Confirmed": {
+                            "target": "Check devices not in use"
+                        }
+                    }
+                },
+                "Check devices not in use": {
+                    "on": {
+                        "Confirmed": {
+                            "target": "Enumerate devices"
+                        }
+                    }
+                }
+            },
+            "onDone": [
+                {
+                    "actions": "setCamSetupCompleted",
+                    "cond": "isSilentCamSetup",
+                    "target": "#Room.Pre-join.Enable mic/cam choices"
+                },
+                {
+                    "actions": "setCamSetupCompleted",
+                    "target": "#Room.Pre-join.Setup microphone choice"
+                }
+            ]
+        },
+        "Microphone Setup": {
+            "initial": "Silent mode check",
+            "states": {
+                "Silent mode check": {
+                    "on": {
+                        "IsNotSilent": {
+                            "target": "Detecting system configuration splashscreen"
+                        },
+                        "IsSilent": {
+                            "target": "Enumerate devices"
+                        }
+                    }
+                },
+                "Done": {
+                    "type": "final"
+                },
+                "Detecting system configuration splashscreen": {
+                    "after": {
+                        "250": {
+                            "target": "Pre-permissions check warning"
+                        }
+                    }
+                },
+                "Pre-permissions check warning": {
+                    "on": {
+                        "Ready": {
+                            "target": "Enumerate devices"
+                        },
+                        "Cancel": {
+                            "actions": "clearMicPreviouslyEnabled",
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Enumerate devices": {
+                    "on": {
+                        "No devices": {
+                            "actions": "clearSilentMicSetup",
+                            "target": "No devices available"
+                        },
+                        "Devices lack labels": {
+                            "actions": "clearSilentMicSetup",
+                            "target": "Permission denied"
+                        },
+                        "Devices have labels": {
+                            "target": "Permission granted"
+                        }
+                    }
+                },
+                "No devices available": {
+                    "on": {
+                        "Check permissions": {
+                            "target": "Permission denied"
+                        },
+                        "Cancel": {
+                            "actions": "    ",
+                            "target": "Done"
+                        },
+                        "Retry": {
+                            "target": "Enumerate devices"
+                        }
+                    }
+                },
+                "Permission denied": {
+                    "after": {
+                        "250": {
+                            "target": "Diagnosing browser configuration"
+                        }
+                    }
+                },
+                "Permission granted": {
+                    "after": {
+                        "500": [
+                            {
+                                "cond": "hasPreviouslySelectedCamera",
+                                "target": "Check previously selected microphone available"
+                            },
+                            {
+                                "actions": "clearSilentMicSetup",
+                                "cond": "isMoreThanOneMicrophoneAvailable",
+                                "target": "Select microphone"
+                            },
+                            {
+                                "actions": "selectDefaultMicrophone",
+                                "target": "Check obtain feed"
+                            }
+                        ]
+                    }
+                },
+                "Select microphone": {
+                    "on": {
+                        "Microphone selected": {
+                            "target": "Check obtain feed"
+                        },
+                        "Cancel": {
+                            "actions": "clearMicPreviouslyEnabled",
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Check obtain feed": {
+                    "on": {
+                        "Microphone not ready": {
+                            "actions": "clearSilentCamSetup",
+                            "target": "Microphone unavailable"
+                        },
+                        "Microphone ready": {
+                            "actions": ["setMicPreviouslyEnabled", "setPreviouslySelectedMic"],
+                            "target": "Offer record sample"
+                        }
+                    }
+                },
+                "Check previously selected microphone available": {
+                    "on": {
+                        "Not available": {
+                            "actions": "clearSilentMicSetup",
+                            "target": "Previously selected microphone not available warning"
+                        },
+                        "Select previous microphone": {
+                            "target": "Check obtain feed"
+                        }
+                    }
+                },
+                "Previously selected microphone not available warning": {
+                    "after": {
+                        "500": {
+                            "target": "Select microphone"
+                        }
+                    }
+                },
+                "Microphone unavailable": {
+                    "on": {
+                        "Select different microphone": {
+                            "target": "Select microphone"
+                        },
+                        "Retry": {
+                            "target": "Check obtain feed"
+                        }
+                    }
+                },
+                "Diagnosing browser configuration": {
+                    "after": {
+                        "500": {
+                            "target": "Show browser permission check instructions"
+                        }
+                    }
+                },
+                "Show browser permission check instructions": {
+                    "description": "\"Additional information required\"",
+                    "on": {
+                        "Ready": {
+                            "target": "Choose permission state"
+                        },
+                        "Cancel": {
+                            "actions": "clearMicPreviouslyEnabled",
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Choose permission state": {
+                    "on": {
+                        "Blocked": {
+                            "target": "Clear permissions"
+                        },
+                        "Allowed": {
+                            "target": "Diagnosing system configuration"
+                        }
+                    }
+                },
+                "Clear permissions": {
+                    "on": {
+                        "Ready": {
+                            "target": "Enumerate devices"
+                        },
+                        "Cancel": {
+                            "actions": "clearMicPreviouslyEnabled",
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Diagnosing system configuration": {
+                    "on": {
+                        "MacOS detected": {
+                            "target": "MacOS"
+                        },
+                        "iOS detected": {
+                            "target": "iOS"
+                        },
+                        "Windows11 detected": {
+                            "target": "Windows 11"
+                        },
+                        "Windows10 or below detected": {
+                            "target": "Windows 10 or below"
+                        },
+                        "Android detected": {
+                            "target": "Android"
+                        },
+                        "Linux detected": {
+                            "target": "Linux"
+                        }
+                    }
+                },
+                "MacOS": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "iOS": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Windows 11": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Windows 10 or below": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Android": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Linux": {
+                    "on": {
+                        "Permissions granted": {
+                            "target": "Check system restarted"
+                        }
+                    }
+                },
+                "Check system restarted": {
+                    "on": {
+                        "Confirmed": {
+                            "target": "Check devices not in use"
+                        }
+                    }
+                },
+                "Check devices not in use": {
+                    "on": {
+                        "Confirmed": {
+                            "target": "Enumerate devices"
+                        }
+                    }
+                },
+                "Offer record sample": {
+                    "on": {
+                        "Microphone ready": {
+                            "target": "Done"
+                        },
+                        "Proceed": {
+                            "target": "Record sample"
+                        }
+                    }
+                },
+                "Playback sample": {
+                    "on": {
+                        "Test again": {
+                            "target": "Record sample"
+                        },
+                        "Microphone ready": {
+                            "target": "Done"
+                        }
+                    }
+                },
+                "Record sample": {
+                    "after": {
+                        "10000": {
+                            "target": "Playback sample"
+                        }
+                    }
+                }
+            },
+            "onDone": [
+                {
+                    "actions": "setMicSetupCompleted",
+                    "cond": "isSilentMicSetup",
+                    "target": "#Room.Pre-join.Enable mic/cam choices"
+                },
+                {
+                    "actions": "setMicSetupCompleted",
+                    "target": "#Room.Pre-join.Test screenshare choice"
+                }
+            ]
+        },
+        "Joined": {}
+    }
+}

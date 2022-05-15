@@ -70,13 +70,6 @@ export function VonageRoomControlBar({
     const [toggleVonageRecordingResponse, toggleVonageRecording] = useToggleVonageRecordingStateMutation();
 
     const [isOpening, setIsOpening] = useState<boolean>(false);
-    const [userMediaPermissionGranted, setUserMediaPermissionGranted] = useState<{
-        camera: boolean;
-        microphone: boolean;
-    }>({
-        camera: false,
-        microphone: false,
-    });
     const [deviceModalState, setDeviceModalState] = useState<{
         isOpen: boolean;
         showCamera: boolean;
@@ -94,29 +87,36 @@ export function VonageRoomControlBar({
 
     const onClose = useCallback(
         (
-            madeSelection: "made-selection" | "cancelled" | "unable-to-list",
+            madeSelection:
+                | "made-selection"
+                | "cancelled"
+                | "no-devices-available"
+                | "device-permissions-not-granted"
+                | "unable-to-list",
             cameraId: string | null = null,
-            microphoneId: string | null = null
+            microphoneId: string | null = null,
+            overrideStartCameraOnClose = false,
+            overrideStartMicrophoneOnClose = false
         ) => {
             switch (madeSelection) {
                 case "made-selection":
-                    if (cameraId) {
-                        if (cameraId !== state.preferredCameraId) {
+                    if (cameraId !== state.preferredCameraId) {
+                        if (cameraId) {
                             dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId });
+                        } else {
+                            dispatch({ type: VonageRoomStateActionType.ClearPreferredCamera });
                         }
-                    } else {
-                        dispatch({ type: VonageRoomStateActionType.ClearPreferredCamera });
                     }
 
-                    if (microphoneId) {
-                        if (microphoneId !== state.preferredMicrophoneId) {
+                    if (microphoneId !== state.preferredMicrophoneId) {
+                        if (microphoneId) {
                             dispatch({ type: VonageRoomStateActionType.SetPreferredMicrophone, microphoneId });
+                        } else {
+                            dispatch({ type: VonageRoomStateActionType.ClearPreferredMicrophone });
                         }
-                    } else {
-                        dispatch({ type: VonageRoomStateActionType.ClearPreferredMicrophone });
                     }
 
-                    if (startCameraOnClose && cameraId) {
+                    if ((overrideStartCameraOnClose || startCameraOnClose) && cameraId) {
                         dispatch({
                             type: VonageRoomStateActionType.SetCameraIntendedState,
                             cameraEnabled: true,
@@ -124,7 +124,7 @@ export function VonageRoomControlBar({
                         });
                     }
 
-                    if (startMicrophoneOnClose && microphoneId) {
+                    if ((overrideStartMicrophoneOnClose || startMicrophoneOnClose) && microphoneId) {
                         dispatch({
                             type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                             microphoneEnabled: true,
@@ -139,13 +139,45 @@ export function VonageRoomControlBar({
                             camera: deviceModalState.showCamera,
                             microphone: deviceModalState.showMicrophone,
                         },
-                        `Could not list choices of ${devicesToFriendlyName(
+                        `Browser error: Unable to list ${devicesToFriendlyName(
                             {
                                 camera: deviceModalState.showCamera,
                                 microphone: deviceModalState.showMicrophone,
                             },
                             "or"
-                        )}`
+                        )} devices`
+                    );
+                    break;
+
+                case "no-devices-available":
+                    settings.onPermissionsProblem(
+                        {
+                            camera: deviceModalState.showCamera,
+                            microphone: deviceModalState.showMicrophone,
+                        },
+                        `No ${devicesToFriendlyName(
+                            {
+                                camera: deviceModalState.showCamera,
+                                microphone: deviceModalState.showMicrophone,
+                            },
+                            "or"
+                        )} available`
+                    );
+                    break;
+
+                case "device-permissions-not-granted":
+                    settings.onPermissionsProblem(
+                        {
+                            camera: deviceModalState.showCamera,
+                            microphone: deviceModalState.showMicrophone,
+                        },
+                        `Permission to access ${devicesToFriendlyName(
+                            {
+                                camera: deviceModalState.showCamera,
+                                microphone: deviceModalState.showMicrophone,
+                            },
+                            "or"
+                        )} denied`
                     );
                     break;
             }
@@ -170,88 +202,151 @@ export function VonageRoomControlBar({
     );
     const dialogOpenMutex = useRef(new Mutex());
     const onOpen = useCallback(
-        async (video: boolean, audio: boolean) => {
+        async (video: boolean, audio: boolean, autoSelectDevices: boolean) => {
             const release = await dialogOpenMutex.current.acquire();
             setIsOpening(true);
             (async () => {
                 try {
+                    const initialListOfDevices = await navigator.mediaDevices.enumerateDevices();
+                    const initialListOfVideoDevices = initialListOfDevices.filter((d) => d.kind === "videoinput");
+                    const initialListOfAudioDevices = initialListOfDevices.filter((d) => d.kind === "audioinput");
+                    const canInitiallySeeVideoDevices = initialListOfVideoDevices.some((x) => x.label.length > 0);
+                    const canInitiallySeeAudioDevices = initialListOfAudioDevices.some((x) => x.label.length > 0);
+
+                    // Trigger permissions request
+                    if (video && !canInitiallySeeVideoDevices) {
+                        try {
+                            await navigator.mediaDevices.getUserMedia({ video: true });
+                        } catch (err: any) {
+                            // if you try to get user media while mic/cam are active, you run into an error
+                            const msg = err.toString();
+                            if (err.name === "NotFoundError" || err.name === "OverconstrainedError") {
+                                console.warn("No devices found by getUserMedia", { err, video });
+                            } else if (msg.includes("NotAllowedError")) {
+                                console.warn(
+                                    "getUserMedia failed with NotAllowedError - permission has certainly been denied by the browser or operating system.",
+                                    { err, video }
+                                );
+                            } else if (msg.includes("NotReadableError")) {
+                                console.warn(
+                                    "getUserMedia failed with NotReadableError - device is probably in use by another application.",
+                                    { err, video }
+                                );
+                                // Don't re-throw this error if we're trying to open the settings dialog
+                                if (autoSelectDevices) {
+                                    throw err;
+                                }
+                            } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
+                                throw err;
+                            }
+                        }
+                    }
+
+                    // Trigger permissions request
+                    if (audio && !canInitiallySeeAudioDevices) {
+                        try {
+                            await navigator.mediaDevices.getUserMedia({ audio: true });
+                        } catch (err: any) {
+                            // if you try to get user media while mic/cam are active, you run into an error
+                            const msg = err.toString();
+                            if (err.name === "NotFoundError" || err.name === "OverconstrainedError") {
+                                console.warn("No devices found by getUserMedia", { err, audio });
+                            } else if (msg.includes("NotAllowedError")) {
+                                console.warn(
+                                    "getUserMedia failed with NotAllowedError - permission has certainly been denied by the browser or operating system.",
+                                    { err, audio }
+                                );
+                            } else if (msg.includes("NotReadableError")) {
+                                console.warn(
+                                    "getUserMedia failed with NotReadableError - device is probably in use by another application.",
+                                    { err, audio }
+                                );
+                                // Don't re-throw this error if we're trying to open the settings dialog
+                                if (autoSelectDevices) {
+                                    throw err;
+                                }
+                            } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
+                                throw err;
+                            }
+                        }
+                    }
+
                     const devices = await navigator.mediaDevices.enumerateDevices();
-                    const canSeeVideoDevices = devices
-                        .filter((d) => d.kind === "videoinput")
-                        .some((d) => d.label.length > 0);
-                    const canSeeAudioDevices = devices
-                        .filter((d) => d.kind === "audioinput")
-                        .some((d) => d.label.length > 0);
-                    if (
-                        (video && (!userMediaPermissionGranted.camera || !canSeeVideoDevices)) ||
-                        (audio && (!userMediaPermissionGranted.microphone || !canSeeAudioDevices))
-                    ) {
-                        let gotVideoPermission = false;
-                        let gotAudioPermission = false;
-                        if (video) {
-                            try {
-                                await navigator.mediaDevices.getUserMedia({ video });
-                                gotVideoPermission = true;
-                            } catch (err: any) {
-                                // if you try to get user media while mic/cam are active, you run into an error
-                                const msg = err.toString();
-                                if (err.name === "NotFoundError" || err.name === "OverconstrainedError") {
-                                    console.warn("No devices found by getUserMedia", { err, video });
-                                } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
-                                    throw err;
-                                }
-                            }
-                        }
-                        if (audio) {
-                            try {
-                                await navigator.mediaDevices.getUserMedia({ audio });
-                                gotAudioPermission = true;
-                            } catch (err: any) {
-                                // if you try to get user media while mic/cam are active, you run into an error
-                                const msg = err.toString();
-                                if (err.name === "NotFoundError" || err.name === "OverconstrainedError") {
-                                    console.warn("No devices found by getUserMedia", { err, audio });
-                                } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
-                                    throw err;
-                                }
-                            }
-                        }
-                        setUserMediaPermissionGranted({
-                            camera: userMediaPermissionGranted.camera || gotVideoPermission,
-                            microphone: userMediaPermissionGranted.microphone || gotAudioPermission,
+                    const availableVideoDevices = devices.filter((d) => d.kind === "videoinput" && d.label.length > 0);
+                    const availableAudioDevices = devices.filter((d) => d.kind === "audioinput" && d.label.length > 0);
+
+                    let newPreferredCameraId = availableVideoDevices.some((x) => x.deviceId === state.preferredCameraId)
+                        ? state.preferredCameraId
+                        : null;
+                    if (autoSelectDevices && video && availableVideoDevices.length > 0) {
+                        newPreferredCameraId = availableVideoDevices[0].deviceId;
+                    }
+
+                    let newPreferredMicrophoneId = availableAudioDevices.some(
+                        (x) => x.deviceId === state.preferredMicrophoneId
+                    )
+                        ? state.preferredMicrophoneId
+                        : null;
+                    if (autoSelectDevices && audio && availableAudioDevices.length > 0) {
+                        newPreferredMicrophoneId = availableAudioDevices[0].deviceId;
+                    }
+
+                    const shouldOpenChooser =
+                        !autoSelectDevices || (video && !newPreferredCameraId) || (audio && !newPreferredMicrophoneId);
+
+                    if (shouldOpenChooser) {
+                        setDeviceModalState({
+                            isOpen: true,
+                            showCamera: video,
+                            showMicrophone: audio,
+                        });
+                    } else {
+                        onClose("made-selection", newPreferredCameraId, newPreferredMicrophoneId, video, audio);
+                    }
+                } catch (err: any) {
+                    if (video) {
+                        dispatch({
+                            type: VonageRoomStateActionType.ClearPreferredCamera,
                         });
                     }
-                    setDeviceModalState({
-                        isOpen: true,
-                        showCamera: video,
-                        showMicrophone: audio,
-                    });
-                } catch (err) {
-                    console.log("Could not list device choices", { err });
-                    settings.onPermissionsProblem(
-                        { camera: video, microphone: audio },
-                        `Could not list choices of ${devicesToFriendlyName(
+                    if (audio) {
+                        dispatch({
+                            type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                        });
+                    }
+
+                    console.log("Could not access camera or microphone", { err });
+
+                    if (err.toString().includes("NotReadableError")) {
+                        settings.onPermissionsProblem(
                             { camera: video, microphone: audio },
-                            "and"
-                        )}`
-                    );
-                    setUserMediaPermissionGranted({
-                        camera: video ? false : userMediaPermissionGranted.camera,
-                        microphone: audio ? false : userMediaPermissionGranted.microphone,
-                    });
+                            `Browser error: ${devicesToFriendlyName(
+                                { camera: video, microphone: audio },
+                                "or"
+                            )} unavailable (it is probably in use by another program)`
+                        );
+                    } else {
+                        settings.onPermissionsProblem(
+                            { camera: video, microphone: audio },
+                            `Browser error: Unable to access ${devicesToFriendlyName(
+                                { camera: video, microphone: audio },
+                                "and"
+                            )}`
+                        );
+                    }
                 } finally {
                     setIsOpening(false);
                     release();
                 }
             })();
         },
-        [settings, userMediaPermissionGranted.camera, userMediaPermissionGranted.microphone]
+        [dispatch, onClose, settings, state.preferredCameraId, state.preferredMicrophoneId]
     );
 
     const startCamera = useCallback(() => {
         if (!state.preferredCameraId) {
             setStartCameraOnClose(true);
-            onOpen(true, false);
+            onOpen(true, false, true);
         } else if (state.cameraIntendedEnabled) {
             // Something must have desynced, so disable the camera
             dispatch({
@@ -265,23 +360,12 @@ export function VonageRoomControlBar({
                 type: VonageRoomStateActionType.SetCameraIntendedState,
                 cameraEnabled: true,
                 onError: () => {
-                    dispatch({
-                        type: VonageRoomStateActionType.ClearPreferredCamera,
-                    });
-                    setUserMediaPermissionGranted({
-                        camera: false,
-                        microphone: userMediaPermissionGranted.microphone,
-                    });
-                    // dispatch({
-                    //     type: VonageRoomStateActionType.ClearPreferredMicrophone,
-                    // });
-
                     setStartCameraOnClose(true);
-                    onOpen(true, false);
+                    onOpen(true, false, false);
                 },
             });
         }
-    }, [dispatch, onOpen, state.cameraIntendedEnabled, state.preferredCameraId, userMediaPermissionGranted.microphone]);
+    }, [dispatch, onOpen, state.cameraIntendedEnabled, state.preferredCameraId]);
 
     const stopCamera = useCallback(() => {
         dispatch({
@@ -295,7 +379,7 @@ export function VonageRoomControlBar({
     const startMicrophone = useCallback(() => {
         if (!state.preferredMicrophoneId) {
             setStartMicrophoneOnClose(true);
-            onOpen(false, true);
+            onOpen(false, true, true);
         } else if (state.microphoneIntendedEnabled) {
             // Something must have desynced, so disable the microphone
             dispatch({
@@ -315,23 +399,13 @@ export function VonageRoomControlBar({
                     dispatch({
                         type: VonageRoomStateActionType.ClearPreferredMicrophone,
                     });
-                    setUserMediaPermissionGranted({
-                        camera: userMediaPermissionGranted.camera,
-                        microphone: false,
-                    });
 
                     setStartMicrophoneOnClose(true);
-                    onOpen(false, true);
+                    onOpen(false, true, false);
                 },
             });
         }
-    }, [
-        dispatch,
-        onOpen,
-        state.microphoneIntendedEnabled,
-        state.preferredMicrophoneId,
-        userMediaPermissionGranted.camera,
-    ]);
+    }, [dispatch, onOpen, state.microphoneIntendedEnabled, state.preferredMicrophoneId]);
 
     const stopMicrophone = useCallback(() => {
         dispatch({
@@ -440,7 +514,7 @@ export function VonageRoomControlBar({
                         text="Settings"
                         isLoading={isOpening}
                         icon="cog"
-                        onClick={() => onOpen(true, !joining || !settings.requireMicrophoneOrCamera)}
+                        onClick={() => onOpen(true, !joining || !settings.requireMicrophoneOrCamera, false)}
                         isEnabled={!joining}
                     />
                     <ControlBarButton

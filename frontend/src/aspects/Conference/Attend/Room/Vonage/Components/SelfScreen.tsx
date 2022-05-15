@@ -29,9 +29,19 @@ export default function SelfScreenComponent({
                 if (state.screenShareIntendedEnabled && !screen) {
                     try {
                         await vonage.publishScreen(screenPublishContainerRef.current as HTMLElement);
-                    } catch (err) {
-                        console.error("Failed to publish screen", { err });
-                        onPermissionsProblem({ screen: true }, "Failed to publish screen");
+                    } catch (e: any) {
+                        console.error("Browser error: Failed to publish screen", e);
+
+                        if (e.toString().includes("NotReadableError")) {
+                            onPermissionsProblem(
+                                { screen: true },
+                                "Browser error: Screen-share unavailable (are you sharing your screen in another application?)"
+                            );
+                        } else if (e.toString().includes("NotAllowedError")) {
+                            onPermissionsProblem({ screen: true }, "Permission to share screen denied");
+                        } else {
+                            onPermissionsProblem({ screen: true }, "Browser error: Failed to share screen");
+                        }
                     }
                 } else if (!state.screenShareIntendedEnabled && screen) {
                     try {

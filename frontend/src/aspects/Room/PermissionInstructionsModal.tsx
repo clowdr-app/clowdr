@@ -21,7 +21,13 @@ export default function PermissionInstructionsModal(): JSX.Element {
                       )
                     : undefined}
                 <ModalCloseButton />
-                <ModalBody>{devices ? <PermissionInstructions {...devices} /> : <Spinner />}</ModalBody>
+                <ModalBody>
+                    {devices ? (
+                        <PermissionInstructions reason={title} onClose={permissionsModal.onClose} {...devices} />
+                    ) : (
+                        <Spinner />
+                    )}
+                </ModalBody>
             </ModalContent>
         </Modal>
     );

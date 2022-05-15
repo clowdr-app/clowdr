@@ -374,14 +374,9 @@ export function VonageRoomProvider({
 
     useEffect(() => {
         async function enableCamera() {
-            const deviceConstraints = state.preferredCameraId ? { deviceId: { exact: state.preferredCameraId } } : {};
-
             try {
                 const mediaStream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        ...deviceConstraints,
-                    },
-                    audio: false,
+                    video: state.preferredCameraId ? { deviceId: { exact: state.preferredCameraId } } : true,
                 });
 
                 // If the stream ends for external reasons, update the state
@@ -455,16 +450,9 @@ export function VonageRoomProvider({
 
     useEffect(() => {
         async function enableMicrophone() {
-            const deviceConstraints = state.preferredMicrophoneId
-                ? { deviceId: { exact: state.preferredMicrophoneId } }
-                : {};
-
             try {
                 const mediaStream = await navigator.mediaDevices.getUserMedia({
-                    audio: {
-                        ...deviceConstraints,
-                    },
-                    video: false,
+                    audio: state.preferredMicrophoneId ? { deviceId: { exact: state.preferredMicrophoneId } } : true,
                 });
 
                 // If the stream ends for external reasons, update the state

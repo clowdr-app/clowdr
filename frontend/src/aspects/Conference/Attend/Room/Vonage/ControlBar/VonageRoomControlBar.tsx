@@ -702,7 +702,6 @@ export function VonageRoomControlBar({
                 showCamera={deviceModalState.showCamera}
                 showMicrophone={deviceModalState.showMicrophone}
                 onClose={onClose}
-                onOpen={() => onOpen(true, true)}
             />
         </>
     );

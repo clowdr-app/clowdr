@@ -10,13 +10,17 @@ import {
     ModalOverlay,
     Select,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 interface Props {
     isOpen: boolean;
-    onOpen: () => void;
     onClose: (
-        actionPerformed: "made-selection" | "cancelled" | "unable-to-list",
+        actionPerformed:
+            | "made-selection"
+            | "cancelled"
+            | "no-devices-available"
+            | "device-permissions-not-granted"
+            | "unable-to-list",
         cameraId?: string | null,
         microphoneId?: string | null
     ) => void;
@@ -34,47 +38,59 @@ export default function DeviceChooserModal({
     showCamera,
     showMicrophone,
 }: Props): JSX.Element {
-    const [mediaDevices, setMediaDevices] = useState<MediaDeviceInfo[]>([]);
+    const [mediaDevices, setMediaDevices] = useState<null | MediaDeviceInfo[]>(null);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(cameraId);
     const [selectedMicrophone, setSelectedMicrophone] = useState<string | null>(microphoneId);
+    const [readyToOpen, setReadyToOpen] = useState<boolean>(false);
 
     useEffect(() => {
         async function effect() {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            if (!devices.some((d) => d.label.length > 0)) {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                if (devices.length === 0) {
+                    onClose("no-devices-available");
+                } else if (!devices.some((d) => d.label.length > 0)) {
+                    onClose("device-permissions-not-granted");
+                } else {
+                    setMediaDevices(devices);
+                    setReadyToOpen(true);
+                }
+            } catch (e) {
+                console.log(e);
                 onClose("unable-to-list");
-            } else {
-                setMediaDevices(devices);
             }
         }
         if (isOpen) {
+            setReadyToOpen(false);
             effect();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
-    function doClose() {
+    const doClose = useCallback(() => {
+        setReadyToOpen(false);
         onClose("made-selection", selectedCamera, selectedMicrophone);
-    }
+    }, [onClose, selectedCamera, selectedMicrophone]);
 
-    function doCancel() {
+    const doCancel = useCallback(() => {
+        setReadyToOpen(false);
         onClose("cancelled");
         setSelectedCamera(cameraId);
         setSelectedMicrophone(microphoneId);
-    }
+    }, [cameraId, microphoneId, onClose]);
 
     const availableCams = useMemo(
-        () => mediaDevices.filter((device) => device.kind === "videoinput" && device.label),
+        () => mediaDevices?.filter((device) => device.kind === "videoinput" && device.label.length > 0),
         [mediaDevices]
     );
     const availableMics = useMemo(
-        () => mediaDevices.filter((device) => device.kind === "audioinput" && device.label),
+        () => mediaDevices?.filter((device) => device.kind === "audioinput" && device.label.length > 0),
         [mediaDevices]
     );
 
     return (
         <>
-            <Modal scrollBehavior="inside" onClose={doCancel} isOpen={isOpen} motionPreset="scale">
+            <Modal scrollBehavior="inside" onClose={doCancel} isOpen={readyToOpen} motionPreset="scale">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>
@@ -100,11 +116,17 @@ export default function DeviceChooserModal({
                                             : setSelectedCamera(e.target.value)
                                     }
                                 >
-                                    {availableCams.map((device) => (
-                                        <option key={device.deviceId} value={device.deviceId}>
-                                            {device.label}
+                                    {availableCams?.length ? (
+                                        availableCams.map((device) => (
+                                            <option key={device.deviceId} value={device.deviceId}>
+                                                {device.label}
+                                            </option>
+                                        ))
+                                    ) : (
+                                        <option disabled value="">
+                                            No devices available
                                         </option>
-                                    ))}
+                                    )}
                                 </Select>
                             </>
                         ) : undefined}
@@ -122,11 +144,17 @@ export default function DeviceChooserModal({
                                             : setSelectedMicrophone(e.target.value)
                                     }
                                 >
-                                    {availableMics.map((device) => (
-                                        <option key={device.deviceId} value={device.deviceId}>
-                                            {device.label}
+                                    {availableMics?.length ? (
+                                        availableMics.map((device) => (
+                                            <option key={device.deviceId} value={device.deviceId}>
+                                                {device.label}
+                                            </option>
+                                        ))
+                                    ) : (
+                                        <option disabled value="">
+                                            No devices available
                                         </option>
-                                    ))}
+                                    )}
                                 </Select>
                             </>
                         ) : undefined}

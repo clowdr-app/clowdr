@@ -120,7 +120,6 @@ export function CameraViewport({
         }
 
         if (!ref.current) {
-            console.error("No element to inject stream into", stream.streamId);
             return;
         }
 

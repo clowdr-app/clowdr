@@ -406,7 +406,7 @@ export function VonageRoomProvider({
                     type: VonageRoomStateActionType.SetCameraMediaStream,
                     mediaStream,
                 });
-            } catch (e) {
+            } catch (e: any) {
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraIntendedState,
                     cameraEnabled: false,
@@ -418,7 +418,17 @@ export function VonageRoomProvider({
                     state.cameraOnError();
                 } else {
                     console.error("Failed to start camera", e);
-                    onPermissionsProblem({ microphone: true }, "Failed to start camera");
+
+                    if (e.toString().includes("NotReadableError")) {
+                        onPermissionsProblem(
+                            { camera: true },
+                            "Browser error: Camera unavailable (it is probably in use by another program)"
+                        );
+                    } else if (e.toString().includes("NotAllowedError")) {
+                        onPermissionsProblem({ camera: true }, "Permission to access camera denied");
+                    } else {
+                        onPermissionsProblem({ camera: true }, "Browser error: Failed to start camera");
+                    }
                 }
                 return;
             }
@@ -479,7 +489,7 @@ export function VonageRoomProvider({
                     type: VonageRoomStateActionType.SetMicrophoneMediaStream,
                     mediaStream,
                 });
-            } catch (e) {
+            } catch (e: any) {
                 dispatch({
                     type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                     microphoneEnabled: false,
@@ -490,7 +500,16 @@ export function VonageRoomProvider({
                     state.microphoneOnError();
                 } else {
                     console.error("Failed to start microphone", e);
-                    onPermissionsProblem({ microphone: true }, "Failed to unmute");
+                    if (e.toString().includes("NotReadableError")) {
+                        onPermissionsProblem(
+                            { microphone: true },
+                            "Browser error: Microphone unavailable (it is probably in use by another program)"
+                        );
+                    } else if (e.toString().includes("NotAllowedError")) {
+                        onPermissionsProblem({ camera: true }, "Permission to access microphone denied");
+                    } else {
+                        onPermissionsProblem({ microphone: true }, "Browser error: Failed to unmute");
+                    }
                 }
                 return;
             }

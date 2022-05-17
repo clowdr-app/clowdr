@@ -31,7 +31,7 @@ export default function SponsorsSummary({
                             </Heading>
                             {tier.info.description?.length ? (
                                 <Box pl={1} textAlign={leftAlign ? "left" : "center"}>
-                                    <Markdown>{tier.info.description}</Markdown>
+                                    <Markdown autoLinkify>{tier.info.description}</Markdown>
                                 </Box>
                             ) : undefined}{" "}
                         </>

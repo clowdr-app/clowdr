@@ -131,7 +131,9 @@ export default function ProfileModal({
                                 ) : undefined}
                                 {registrant.profile.bio ? (
                                     <Box py={0} px={2} w="100%">
-                                        <Markdown restrictHeadingSize>{registrant.profile.bio}</Markdown>
+                                        <Markdown restrictHeadingSize autoLinkify>
+                                            {registrant.profile.bio}
+                                        </Markdown>
                                     </Box>
                                 ) : undefined}
                                 <RegistrantExtraInfo registrant={registrant} mb={4} px={2} maxW="100%" />

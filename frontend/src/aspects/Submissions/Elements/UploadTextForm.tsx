@@ -147,7 +147,7 @@ export default function UploadTextForm({
                                                 Please note, as per any ordinary website, text will reflow automatically
                                                 to fit the size of the reader&apos;s screen.
                                             </Text>
-                                            <Markdown>{field.value}</Markdown>
+                                            <Markdown autoLinkify>{field.value}</Markdown>
                                         </VStack>
                                     </HStack>
                                 )}

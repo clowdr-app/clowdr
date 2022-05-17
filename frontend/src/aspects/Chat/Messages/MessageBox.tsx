@@ -236,7 +236,9 @@ function MessageBody({
             ) : message.type === Chat_MessageType_Enum.ParticipationSurvey ? (
                 <ParticipationSurvey message={message} />
             ) : (
-                <Markdown restrictHeadingSize>{message.message}</Markdown>
+                <Markdown restrictHeadingSize autoLinkify>
+                    {message.message}
+                </Markdown>
             ),
         [config.spacing, message, pictureSize]
     );

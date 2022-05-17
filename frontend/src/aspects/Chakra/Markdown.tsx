@@ -109,7 +109,7 @@ function autoLinkify(input: string) {
                 }
             },
             truncate: 40,
-            middleTruncation: false,
+            middleTruncation: true,
         },
     });
 }

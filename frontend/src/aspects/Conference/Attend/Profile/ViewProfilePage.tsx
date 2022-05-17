@@ -186,7 +186,9 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                         {registrant.profile.badges ? <BadgeList badges={registrant.profile.badges} /> : undefined}
                         <Box alignSelf="flex-start" pb={4}>
                             {registrant.profile.bio ? (
-                                <Markdown restrictHeadingSize>{registrant.profile.bio}</Markdown>
+                                <Markdown restrictHeadingSize autoLinkify>
+                                    {registrant.profile.bio}
+                                </Markdown>
                             ) : undefined}
                         </Box>
                     </VStack>

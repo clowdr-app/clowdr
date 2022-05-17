@@ -55,7 +55,7 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
             case ElementBaseType.Text:
                 return (
                     <Container maxW="container.md">
-                        <Markdown>{latestVersion.data.text}</Markdown>
+                        <Markdown autoLinkify>{latestVersion.data.text}</Markdown>
                     </Container>
                 );
             case ElementBaseType.URL:

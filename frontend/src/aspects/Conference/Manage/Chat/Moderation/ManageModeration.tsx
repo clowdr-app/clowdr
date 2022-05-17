@@ -337,7 +337,7 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                 </Box>
                 <VStack spacing={1} alignItems="flex-start" w="100%">
                     <Text fontWeight="bold">Notes</Text>
-                    <Markdown>{flag.notes ?? "No notes provided."}</Markdown>
+                    <Markdown autoLinkify>{flag.notes ?? "No notes provided."}</Markdown>
                 </VStack>
                 <Divider borderColor={dividerColour} />
                 {!resolvedAt ? (

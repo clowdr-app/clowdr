@@ -573,7 +573,7 @@ function SessionDetailsCard({ session }: { session: Session }): JSX.Element {
                 </Tag>,
             ]}
         >
-            <Markdown>{session.content.abstract}</Markdown>
+            <Markdown autoLinkify>{session.content.abstract}</Markdown>
             <Tags tags={session.content.tags} />
             <People people={session.content.chairs} colorScheme="yellow" asTable />
         </Card>
@@ -595,7 +595,7 @@ function ExhibitionDetailsCard({ exhibition }: { exhibition: Exhibition }): JSX.
                 </Tag>,
             ]}
         >
-            <Markdown>{exhibition.content.abstract}</Markdown>
+            <Markdown autoLinkify>{exhibition.content.abstract}</Markdown>
             <Tags tags={exhibition.content.tags} />
             <People people={exhibition.content.chairs} colorScheme="yellow" asTable />
         </Card>
@@ -659,7 +659,7 @@ function PresentationDetailsCard({ presentation }: { presentation: Presentation 
                 </>
             ) : (
                 <>
-                    <Markdown>{presentation.content.abstract}</Markdown>
+                    <Markdown autoLinkify>{presentation.content.abstract}</Markdown>
                     <Tags tags={presentation.content.tags} />
                     <ContentUploadSummary content={presentation.content} />
                     <People
@@ -692,7 +692,7 @@ function ItemDetailsCard({ item }: { item: Content }): JSX.Element {
                 </Tag>,
             ]}
         >
-            <Markdown>{item.abstract}</Markdown>
+            <Markdown autoLinkify>{item.abstract}</Markdown>
             <Tags tags={item.tags} />
             <ContentUploadSummary content={item} />
             <People

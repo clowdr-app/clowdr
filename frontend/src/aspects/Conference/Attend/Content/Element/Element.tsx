@@ -74,7 +74,7 @@ function ElementInner({
             case Content_ElementType_Enum.Abstract:
                 return (
                     <Container width="100%" maxW="50em" mx={0}>
-                        <Markdown>{latestVersion.data.text}</Markdown>
+                        <Markdown autoLinkify>{latestVersion.data.text}</Markdown>
                     </Container>
                 );
             case Content_ElementType_Enum.ExternalEventLink:
@@ -86,7 +86,7 @@ function ElementInner({
             case Content_ElementType_Enum.Text:
                 return (
                     <Container width="100%" maxW="100%" mx={0}>
-                        <Markdown>{latestVersion.data.text}</Markdown>
+                        <Markdown autoLinkify>{latestVersion.data.text}</Markdown>
                     </Container>
                 );
             case Content_ElementType_Enum.VideoUrl:

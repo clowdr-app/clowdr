@@ -133,7 +133,7 @@ function MyBackstages(): JSX.Element {
     );
     return (
         <>
-            {myBackstagesNotice ? <Markdown>{myBackstagesNotice}</Markdown> : undefined}
+            {myBackstagesNotice ? <Markdown autoLinkify>{myBackstagesNotice}</Markdown> : undefined}
             <Text pb={2} pt={myBackstagesNotice ? 2 : undefined}>
                 If you are an author, chair or presenter, below is the list of your backstages for current and future
                 live-stream (not video-chat) events. You should join your backstage when it is available.

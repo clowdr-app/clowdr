@@ -51,7 +51,7 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
     Please <a href="{{uploadLink}}">submit your content on this page</a> by 23:59 UTC on DD MMMM.
 </p>
 <p>
-    Please <a href="https://resources.midspace.app/video-subtitles/uploading-videos/">watch this 6 minute instructional video</a> to learn how to use Midspace's content upload system. This video also shows how to edit subtitles.
+    Please <a href="https://midspace.app/resources/video-subtitles/uploading-videos/">watch this 6 minute instructional video</a> to learn how to use Midspace's content upload system. This video also shows how to edit subtitles.
 </p>
 <p>
     Please do not leave submitting to the last moment - this can be risky! If we are unable to automatically process your upload, it may not be possible to prepare it in time for the conference.

@@ -78,10 +78,7 @@ export default function SelectFileStep({
         >
             <Text>
                 Get help{" "}
-                <Link
-                    isExternal
-                    href="https://resources.midspace.app/organizer-guides/getting-started/import/"
-                >
+                <Link isExternal href="https://midspace.app/resources/organizer-guides/getting-started/import/">
                     importing your program
                 </Link>
             </Text>

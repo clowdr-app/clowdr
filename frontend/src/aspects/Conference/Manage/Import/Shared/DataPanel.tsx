@@ -89,7 +89,10 @@ export default function DataPanel({
             <VStack w="100%" align="flex-start" spacing={4}>
                 <Text>
                     Get help{" "}
-                    <Link isExternal href="https://resources.midspace.app/organizer-guides/getting-started/import-registrants/">
+                    <Link
+                        isExternal
+                        href="https://midspace.app/resources/organizer-guides/getting-started/import-registrants/"
+                    >
                         importing your registrants
                     </Link>
                 </Text>

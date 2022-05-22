@@ -273,7 +273,7 @@ export default function SubmitElementPage({
                                             <ListItem>
                                                 Please refer to{" "}
                                                 <Link
-                                                    href="https://resources.midspace.app/video-subtitles/uploading-videos/"
+                                                    href="https://midspace.app/resources/video-subtitles/uploading-videos/"
                                                     isExternal
                                                 >
                                                     these instructions

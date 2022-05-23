@@ -585,6 +585,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                 videoDescription: updatedPairs[id]?.description ?? "",
                                 videoPrivacyStatus: data.videoPrivacyStatus,
                                 playlistId: data.playlistId,
+                                subconferenceId,
                             })
                         ),
                     },

@@ -55740,7 +55740,7 @@ export function useDownloadVideos_GetAllVideosQuery(
 }
 export const ChooseElementByItemTypeModal_GetTypesDocument = gql`
     query ChooseElementByItemTypeModal_GetTypes @cached {
-        content_ItemType {
+        content_ItemType(order_by: [{ name: asc }]) {
             name
         }
     }

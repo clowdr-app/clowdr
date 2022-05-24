@@ -38,7 +38,7 @@ import { useConference } from "../../../useConference";
 
 gql`
     query ChooseElementByItemTypeModal_GetTypes @cached {
-        content_ItemType {
+        content_ItemType(order_by: [{ name: asc }]) {
             name
         }
     }
@@ -70,6 +70,11 @@ gql`
         }
     }
 `;
+
+function formatEnumValueForLabel(value: string): string {
+    const parts = value.split("_");
+    return parts.reduce((acc, x) => `${acc} ${x[0]}${x.substr(1).toLowerCase()}`, "").trimStart();
+}
 
 export function ChooseElementByItemTypeModal({
     isOpen,
@@ -103,7 +108,7 @@ export function ChooseElementByItemTypeModal({
     const typeOptions = useMemo(() => {
         return typesResult.data?.content_ItemType.map((type) => (
             <option key={type.name} value={type.name}>
-                {type.name}
+                {formatEnumValueForLabel(type.name)}
             </option>
         ));
     }, [typesResult.data?.content_ItemType]);
@@ -153,8 +158,8 @@ export function ChooseElementByItemTypeModal({
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
-            <Formik<{ typeName: string | null; searchString: string | null }>
-                initialValues={{ typeName: null, searchString: null }}
+            <Formik<{ typeName: Content_ItemType_Enum; searchString: string | null }>
+                initialValues={{ typeName: Content_ItemType_Enum.Session, searchString: null }}
                 onSubmit={(_values, actions) => {
                     if (elementsResult.data) {
                         chooseItems(elementsResult.data.content_Element.map((item) => item.id));

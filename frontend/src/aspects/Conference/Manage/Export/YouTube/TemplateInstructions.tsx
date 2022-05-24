@@ -44,7 +44,7 @@ export function TemplateInstructions(): JSX.Element {
                     <Code>elementId</Code>: unique ID of the element
                 </ListItem>
                 <ListItem>
-                    <Code>itemId</Code>: unique ID of the item that contains this file
+                    <Code>itemId</Code>: unique ID of the item that contains this element
                 </ListItem>
             </List>
             <Text mt={2}>Example:</Text>

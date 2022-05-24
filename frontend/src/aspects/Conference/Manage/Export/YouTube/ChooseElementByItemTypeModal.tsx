@@ -27,8 +27,9 @@ import { Field, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
 import { gql } from "urql";
 import {
-    useChooseElementByTagModal_GetTagsQuery,
-    useChooseElementByTagModal_GetVideoElementsQuery,
+    Content_ItemType_Enum,
+    useChooseElementByItemTypeModal_GetTypesQuery,
+    useChooseElementByItemTypeModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
@@ -36,24 +37,25 @@ import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
 
 gql`
-    query ChooseElementByTagModal_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {
-        collection_Tag(
-            where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
-            order_by: { name: asc }
-        ) {
-            id
+    query ChooseElementByItemTypeModal_GetTypes @cached {
+        content_ItemType {
             name
-            conferenceId
-            subconferenceId
         }
     }
 
-    query ChooseElementByTagModal_GetVideoElements($tagId: uuid!, $name: String!) {
+    query ChooseElementByItemTypeModal_GetVideoElements(
+        $typeName: content_ItemType_enum!
+        $name: String!
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+    ) {
         content_Element(
             where: {
                 typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] }
-                item: { itemTags: { tag: { id: { _eq: $tagId } } } }
+                item: { typeName: { _eq: $typeName } }
                 name: { _ilike: $name }
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
             }
             order_by: [{ item: { title: asc } }, { name: asc }]
         ) {
@@ -69,7 +71,7 @@ gql`
     }
 `;
 
-export function ChooseElementByTagModal({
+export function ChooseElementByItemTypeModal({
     isOpen,
     onClose,
     chooseItems,
@@ -92,30 +94,28 @@ export function ChooseElementByTagModal({
             ),
         [subconferenceId]
     );
-    const [tagsResult] = useChooseElementByTagModal_GetTagsQuery({
-        variables: {
-            conferenceId: conference.id,
-            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
-        },
+    const [typesResult] = useChooseElementByItemTypeModal_GetTypesQuery({
         context,
     });
 
-    const [tagId, setTagId] = useState<string | null>(null);
+    const [typeName, setTypeName] = useState<Content_ItemType_Enum>(Content_ItemType_Enum.Session);
 
-    const tagOptions = useMemo(() => {
-        return tagsResult.data?.collection_Tag.map((tag) => (
-            <option key={tag.id} value={tag.id}>
-                {tag.name}
+    const typeOptions = useMemo(() => {
+        return typesResult.data?.content_ItemType.map((type) => (
+            <option key={type.name} value={type.name}>
+                {type.name}
             </option>
         ));
-    }, [tagsResult.data?.collection_Tag]);
+    }, [typesResult.data?.content_ItemType]);
 
     const [searchString, setSearchString] = useState<string | null>(null);
 
-    const [elementsResult] = useChooseElementByTagModal_GetVideoElementsQuery({
+    const [elementsResult] = useChooseElementByItemTypeModal_GetVideoElementsQuery({
         variables: {
-            tagId,
+            typeName,
             name: searchString ?? "%%",
+            conferenceId: conference.id,
+            subconferenceCond: subconferenceId ? { _eq: subconferenceId } : { _is_null: true },
         },
         context,
     });
@@ -153,8 +153,8 @@ export function ChooseElementByTagModal({
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
-            <Formik<{ tagId: string | null; searchString: string | null }>
-                initialValues={{ tagId: null, searchString: null }}
+            <Formik<{ typeName: string | null; searchString: string | null }>
+                initialValues={{ typeName: null, searchString: null }}
                 onSubmit={(_values, actions) => {
                     if (elementsResult.data) {
                         chooseItems(elementsResult.data.content_Element.map((item) => item.id));
@@ -170,25 +170,30 @@ export function ChooseElementByTagModal({
                     <Form>
                         <ModalOverlay />
                         <ModalContent>
-                            <ModalHeader>Choose a tag</ModalHeader>
+                            <ModalHeader>Choose a type</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody>
-                                <Field name="tagId">
+                                <Field name="typeName">
                                     {({ field, form }: FieldProps<string>) => (
-                                        <FormControl isInvalid={!!form.errors.tagId && !!form.touched.tagId} isRequired>
-                                            <FormLabel htmlFor="tagId" mt={2}>
+                                        <FormControl
+                                            isInvalid={!!form.errors.typeName && !!form.touched.typeName}
+                                            isRequired
+                                        >
+                                            <FormLabel htmlFor="typeName" mt={2}>
                                                 Content Item
                                             </FormLabel>
                                             <Select
                                                 {...field}
-                                                id="tagId"
-                                                placeholder="Choose tag"
+                                                id="typeName"
+                                                placeholder="Choose type"
                                                 mt={2}
-                                                onChange={(event) => setTagId(event.target.value)}
+                                                onChange={(event) =>
+                                                    setTypeName(event.target.value as Content_ItemType_Enum)
+                                                }
                                             >
-                                                {tagOptions}
+                                                {typeOptions}
                                             </Select>
-                                            <FormErrorMessage>{form.errors.tagId}</FormErrorMessage>
+                                            <FormErrorMessage>{form.errors.typeName}</FormErrorMessage>
                                         </FormControl>
                                     )}
                                 </Field>
@@ -201,8 +206,8 @@ export function ChooseElementByTagModal({
                                                 Element name
                                             </FormLabel>
                                             <FormHelperText>
-                                                Use a search string to narrow down the elements you want to include. You
-                                                can use % as a wildcard.
+                                                Use a search string to narrow down the elements you want. You can use %
+                                                as a wildcard.
                                             </FormHelperText>
                                             <Input
                                                 {...field}

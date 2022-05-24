@@ -52,6 +52,7 @@ import { makeContext } from "../../../../GQL/make-context";
 import { useRestorableState } from "../../../../Hooks/useRestorableState";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
+import { ChooseElementByItemTypeModal } from "./ChooseElementByItemTypeModal";
 import { ChooseElementByTagModal } from "./ChooseElementByTagModal";
 import { ChooseElementModal } from "./ChooseElementModal";
 import { MetadataPreview } from "./MetadataPreview";
@@ -218,7 +219,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
         "clowdr-youTubeTitleTemplate",
-        "{{{itemTitle}}} ({{{fileName}}})",
+        "{{{itemTitle}}}",
         (x) => x,
         (x) => x
     );
@@ -334,6 +335,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const chooseVideoDisclosure = useDisclosure();
     const chooseByTagDisclosure = useDisclosure();
+    const chooseByItemTypeDisclosure = useDisclosure();
 
     const context = useMemo(
         () =>
@@ -660,10 +662,24 @@ export function UploadYouTubeVideos(): JSX.Element {
                     <FAIcon icon="plus-square" iconStyle="s" mr={2} />
                     Add videos by tag
                 </Button>
+                <Button
+                    aria-label="add a videos by item type"
+                    size="sm"
+                    ml={4}
+                    onClick={() => chooseByItemTypeDisclosure.onOpen()}
+                >
+                    <FAIcon icon="plus-square" iconStyle="s" mr={2} />
+                    Add videos by item type
+                </Button>
                 <ChooseElementByTagModal
                     chooseItems={(newElementIds) => setValue("elementIds", R.union(elementIds, newElementIds))}
                     isOpen={chooseByTagDisclosure.isOpen}
                     onClose={chooseByTagDisclosure.onClose}
+                />
+                <ChooseElementByItemTypeModal
+                    chooseItems={(newElementIds) => setValue("elementIds", R.union(elementIds, newElementIds))}
+                    isOpen={chooseByItemTypeDisclosure.isOpen}
+                    onClose={chooseByItemTypeDisclosure.onClose}
                 />
 
                 <Button
@@ -776,7 +792,7 @@ export function UploadYouTubeVideos(): JSX.Element {
             </Popover>
             <FormControl isInvalid={Boolean(errors.titleTemplate) && Boolean(touchedFields.titleTemplate)} isRequired>
                 <FormLabel mt={2}>Video title template</FormLabel>
-                <Input {...register("titleTemplate")} placeholder="{{fileName}}" mt={2} />
+                <Input {...register("titleTemplate")} placeholder="{{elementName}}" mt={2} />
                 <FormErrorMessage>{errors.titleTemplate?.message}</FormErrorMessage>
             </FormControl>
             <FormControl

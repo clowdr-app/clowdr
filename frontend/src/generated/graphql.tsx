@@ -45030,6 +45030,32 @@ export type DownloadVideos_GetAllVideosQuery = {
     }>;
 };
 
+export type ChooseElementByItemTypeModal_GetTypesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ChooseElementByItemTypeModal_GetTypesQuery = {
+    readonly __typename?: "query_root";
+    readonly content_ItemType: ReadonlyArray<{ readonly __typename?: "content_ItemType"; readonly name: string }>;
+};
+
+export type ChooseElementByItemTypeModal_GetVideoElementsQueryVariables = Exact<{
+    typeName: Content_ItemType_Enum;
+    name: Scalars["String"];
+    conferenceId: Scalars["uuid"];
+    subconferenceCond: Uuid_Comparison_Exp;
+}>;
+
+export type ChooseElementByItemTypeModal_GetVideoElementsQuery = {
+    readonly __typename?: "query_root";
+    readonly content_Element: ReadonlyArray<{
+        readonly __typename?: "content_Element";
+        readonly id: any;
+        readonly name: string;
+        readonly typeName: Content_ElementType_Enum;
+        readonly itemId: any;
+        readonly item: { readonly __typename?: "content_Item"; readonly id: any; readonly title: string };
+    }>;
+};
+
 export type ChooseElementByTagModal_GetTagsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
     subconferenceCond: Uuid_Comparison_Exp;
@@ -55711,6 +55737,59 @@ export function useDownloadVideos_GetAllVideosQuery(
     options: Omit<Urql.UseQueryArgs<DownloadVideos_GetAllVideosQueryVariables>, "query">
 ) {
     return Urql.useQuery<DownloadVideos_GetAllVideosQuery>({ query: DownloadVideos_GetAllVideosDocument, ...options });
+}
+export const ChooseElementByItemTypeModal_GetTypesDocument = gql`
+    query ChooseElementByItemTypeModal_GetTypes @cached {
+        content_ItemType {
+            name
+        }
+    }
+`;
+
+export function useChooseElementByItemTypeModal_GetTypesQuery(
+    options?: Omit<Urql.UseQueryArgs<ChooseElementByItemTypeModal_GetTypesQueryVariables>, "query">
+) {
+    return Urql.useQuery<ChooseElementByItemTypeModal_GetTypesQuery>({
+        query: ChooseElementByItemTypeModal_GetTypesDocument,
+        ...options,
+    });
+}
+export const ChooseElementByItemTypeModal_GetVideoElementsDocument = gql`
+    query ChooseElementByItemTypeModal_GetVideoElements(
+        $typeName: content_ItemType_enum!
+        $name: String!
+        $conferenceId: uuid!
+        $subconferenceCond: uuid_comparison_exp!
+    ) {
+        content_Element(
+            where: {
+                typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] }
+                item: { typeName: { _eq: $typeName } }
+                name: { _ilike: $name }
+                conferenceId: { _eq: $conferenceId }
+                subconferenceId: $subconferenceCond
+            }
+            order_by: [{ item: { title: asc } }, { name: asc }]
+        ) {
+            id
+            name
+            typeName
+            itemId
+            item {
+                id
+                title
+            }
+        }
+    }
+`;
+
+export function useChooseElementByItemTypeModal_GetVideoElementsQuery(
+    options: Omit<Urql.UseQueryArgs<ChooseElementByItemTypeModal_GetVideoElementsQueryVariables>, "query">
+) {
+    return Urql.useQuery<ChooseElementByItemTypeModal_GetVideoElementsQuery>({
+        query: ChooseElementByItemTypeModal_GetVideoElementsDocument,
+        ...options,
+    });
 }
 export const ChooseElementByTagModal_GetTagsDocument = gql`
     query ChooseElementByTagModal_GetTags($conferenceId: uuid!, $subconferenceCond: uuid_comparison_exp!) {

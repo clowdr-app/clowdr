@@ -140,7 +140,7 @@ export function ChooseElementModal({
                                             >
                                                 {itemOptions}
                                             </Select>
-                                            <Select {...field} id="elementId" placeholder="Choose file" mt={2}>
+                                            <Select {...field} id="elementId" placeholder="Choose element" mt={2}>
                                                 {elementOptions}
                                             </Select>
                                             <FormErrorMessage>{form.errors.elementId}</FormErrorMessage>

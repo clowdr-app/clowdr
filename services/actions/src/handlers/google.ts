@@ -289,6 +289,7 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                             variables: {
                                 id: job.id,
                                 message: JSON.stringify(error),
+                                result: error,
                             },
                         });
                     });
@@ -309,6 +310,11 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                                 variables: {
                                     id: job.id,
                                     message: "No data returned from YouTube API",
+                                    result: {
+                                        data: result?.data,
+                                        status: result?.status,
+                                        statusText: result?.statusText,
+                                    },
                                 },
                             });
                         });
@@ -477,10 +483,11 @@ gql`
         }
     }
 
-    mutation FailUploadYouTubeVideoJob($id: uuid!, $message: String!) {
+    mutation FailUploadYouTubeVideoJob($id: uuid!, $message: String!, $result: jsonb) {
         update_job_queues_UploadYouTubeVideoJob_by_pk(
             pk_columns: { id: $id }
             _set: { message: $message, jobStatusName: FAILED }
+            _append: { result: $result }
         ) {
             id
         }

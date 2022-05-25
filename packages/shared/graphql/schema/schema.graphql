@@ -38,20 +38,14 @@ type ConfirmInvitationOutput {
 
 type CreateItemRoomOutput {
     message: String
-    """
-    An object relationship
-    """
-    room: room_Room!
+    room: room_Room
     roomId: String
 }
 
 type CreateRoomDmOutput {
     chatId: uuid
     message: String
-    """
-    An object relationship
-    """
-    room: room_Room!
+    room: room_Room
     roomId: uuid
 }
 
@@ -135,7 +129,7 @@ input type for inserting array relation for remote table "Email"
 input Email_arr_rel_insert_input {
     data: [Email_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: Email_on_conflict
 }
@@ -341,7 +335,7 @@ type Email_mutation_response {
 }
 
 """
-on conflict condition type for table "Email"
+on_conflict condition type for table "Email"
 """
 input Email_on_conflict {
     constraint: Email_constraint!
@@ -818,6 +812,14 @@ type JoinRoomVonageSessionOutput {
     sessionId: String
 }
 
+type MigrateElementOutput {
+    success: Boolean!
+}
+
+type MigrateProfilePhotoResponse {
+    ok: Boolean!
+}
+
 type NotifyEventEnded {
     ok: Boolean!
 }
@@ -884,7 +886,7 @@ input type for inserting array relation for remote table "PushNotificationSubscr
 input PushNotificationSubscription_arr_rel_insert_input {
     data: [PushNotificationSubscription_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: PushNotificationSubscription_on_conflict
 }
@@ -991,7 +993,7 @@ type PushNotificationSubscription_mutation_response {
 }
 
 """
-on conflict condition type for table "PushNotificationSubscription"
+on_conflict condition type for table "PushNotificationSubscription"
 """
 input PushNotificationSubscription_on_conflict {
     constraint: PushNotificationSubscription_constraint!
@@ -1663,13 +1665,13 @@ input type for inserting object relation for remote table "User"
 input User_obj_rel_insert_input {
     data: User_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: User_on_conflict
 }
 
 """
-on conflict condition type for table "User"
+on_conflict condition type for table "User"
 """
 input User_on_conflict {
     constraint: User_constraint!
@@ -1943,7 +1945,7 @@ type analytics_AppStats_mutation_response {
 }
 
 """
-on conflict condition type for table "analytics.AppStats"
+on_conflict condition type for table "analytics.AppStats"
 """
 input analytics_AppStats_on_conflict {
     constraint: analytics_AppStats_constraint!
@@ -2335,7 +2337,7 @@ input type for inserting array relation for remote table "analytics.ContentEleme
 input analytics_ContentElementStats_arr_rel_insert_input {
     data: [analytics_ContentElementStats_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: analytics_ContentElementStats_on_conflict
 }
@@ -2461,7 +2463,7 @@ type analytics_ContentElementStats_mutation_response {
 }
 
 """
-on conflict condition type for table "analytics.ContentElementStats"
+on_conflict condition type for table "analytics.ContentElementStats"
 """
 input analytics_ContentElementStats_on_conflict {
     constraint: analytics_ContentElementStats_constraint!
@@ -2712,7 +2714,7 @@ input type for inserting array relation for remote table "analytics.ContentItemS
 input analytics_ContentItemStats_arr_rel_insert_input {
     data: [analytics_ContentItemStats_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: analytics_ContentItemStats_on_conflict
 }
@@ -2838,7 +2840,7 @@ type analytics_ContentItemStats_mutation_response {
 }
 
 """
-on conflict condition type for table "analytics.ContentItemStats"
+on_conflict condition type for table "analytics.ContentItemStats"
 """
 input analytics_ContentItemStats_on_conflict {
     constraint: analytics_ContentItemStats_constraint!
@@ -3144,13 +3146,13 @@ input type for inserting object relation for remote table "analytics.ElementTota
 input analytics_ElementTotalViews_obj_rel_insert_input {
     data: analytics_ElementTotalViews_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: analytics_ElementTotalViews_on_conflict
 }
 
 """
-on conflict condition type for table "analytics.ElementTotalViews"
+on_conflict condition type for table "analytics.ElementTotalViews"
 """
 input analytics_ElementTotalViews_on_conflict {
     constraint: analytics_ElementTotalViews_constraint!
@@ -3377,13 +3379,13 @@ input type for inserting object relation for remote table "analytics.ItemTotalVi
 input analytics_ItemTotalViews_obj_rel_insert_input {
     data: analytics_ItemTotalViews_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: analytics_ItemTotalViews_on_conflict
 }
 
 """
-on conflict condition type for table "analytics.ItemTotalViews"
+on_conflict condition type for table "analytics.ItemTotalViews"
 """
 input analytics_ItemTotalViews_on_conflict {
     constraint: analytics_ItemTotalViews_constraint!
@@ -3554,7 +3556,7 @@ input type for inserting array relation for remote table "analytics.RoomPresence
 input analytics_RoomPresence_arr_rel_insert_input {
     data: [analytics_RoomPresence_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: analytics_RoomPresence_on_conflict
 }
@@ -3674,7 +3676,7 @@ type analytics_RoomPresence_mutation_response {
 }
 
 """
-on conflict condition type for table "analytics.RoomPresence"
+on_conflict condition type for table "analytics.RoomPresence"
 """
 input analytics_RoomPresence_on_conflict {
     constraint: analytics_RoomPresence_constraint!
@@ -3915,7 +3917,7 @@ input type for inserting array relation for remote table "analytics.RoomStats"
 input analytics_RoomStats_arr_rel_insert_input {
     data: [analytics_RoomStats_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: analytics_RoomStats_on_conflict
 }
@@ -4037,7 +4039,7 @@ type analytics_RoomStats_mutation_response {
 }
 
 """
-on conflict condition type for table "analytics.RoomStats"
+on_conflict condition type for table "analytics.RoomStats"
 """
 input analytics_RoomStats_on_conflict {
     constraint: analytics_RoomStats_constraint!
@@ -4607,7 +4609,7 @@ input type for inserting array relation for remote table "chat.Chat"
 input chat_Chat_arr_rel_insert_input {
     data: [chat_Chat_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Chat_on_conflict
 }
@@ -4747,13 +4749,13 @@ input type for inserting object relation for remote table "chat.Chat"
 input chat_Chat_obj_rel_insert_input {
     data: chat_Chat_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Chat_on_conflict
 }
 
 """
-on conflict condition type for table "chat.Chat"
+on_conflict condition type for table "chat.Chat"
 """
 input chat_Chat_on_conflict {
     constraint: chat_Chat_constraint!
@@ -5059,7 +5061,7 @@ type chat_FlagType_mutation_response {
 }
 
 """
-on conflict condition type for table "chat.FlagType"
+on_conflict condition type for table "chat.FlagType"
 """
 input chat_FlagType_on_conflict {
     constraint: chat_FlagType_constraint!
@@ -5166,7 +5168,7 @@ input type for inserting array relation for remote table "chat.Flag"
 input chat_Flag_arr_rel_insert_input {
     data: [chat_Flag_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Flag_on_conflict
 }
@@ -5322,7 +5324,7 @@ type chat_Flag_mutation_response {
 }
 
 """
-on conflict condition type for table "chat.Flag"
+on_conflict condition type for table "chat.Flag"
 """
 input chat_Flag_on_conflict {
     constraint: chat_Flag_constraint!
@@ -5564,9 +5566,6 @@ input chat_Flag_variance_order_by {
 
 """
 Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
-
-
-columns and relationships of "chat.Message"
 """
 type chat_Message {
     """
@@ -5807,7 +5806,7 @@ type chat_MessageType_mutation_response {
 }
 
 """
-on conflict condition type for table "chat.MessageType"
+on_conflict condition type for table "chat.MessageType"
 """
 input chat_MessageType_on_conflict {
     constraint: chat_MessageType_constraint!
@@ -5911,7 +5910,7 @@ input type for inserting array relation for remote table "chat.Message"
 input chat_Message_arr_rel_insert_input {
     data: [chat_Message_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Message_on_conflict
 }
@@ -6115,13 +6114,13 @@ input type for inserting object relation for remote table "chat.Message"
 input chat_Message_obj_rel_insert_input {
     data: chat_Message_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Message_on_conflict
 }
 
 """
-on conflict condition type for table "chat.Message"
+on_conflict condition type for table "chat.Message"
 """
 input chat_Message_on_conflict {
     constraint: chat_Message_constraint!
@@ -6393,9 +6392,6 @@ input chat_Message_variance_order_by {
 
 """
 Pin a chat to the sidebar.
-
-
-columns and relationships of "chat.Pin"
 """
 type chat_Pin {
     """
@@ -6444,7 +6440,7 @@ input type for inserting array relation for remote table "chat.Pin"
 input chat_Pin_arr_rel_insert_input {
     data: [chat_Pin_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Pin_on_conflict
 }
@@ -6542,13 +6538,13 @@ input type for inserting object relation for remote table "chat.Pin"
 input chat_Pin_obj_rel_insert_input {
     data: chat_Pin_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Pin_on_conflict
 }
 
 """
-on conflict condition type for table "chat.Pin"
+on_conflict condition type for table "chat.Pin"
 """
 input chat_Pin_on_conflict {
     constraint: chat_Pin_constraint!
@@ -6840,7 +6836,7 @@ type chat_ReactionType_mutation_response {
 }
 
 """
-on conflict condition type for table "chat.ReactionType"
+on_conflict condition type for table "chat.ReactionType"
 """
 input chat_ReactionType_on_conflict {
     constraint: chat_ReactionType_constraint!
@@ -6938,7 +6934,7 @@ input type for inserting array relation for remote table "chat.Reaction"
 input chat_Reaction_arr_rel_insert_input {
     data: [chat_Reaction_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Reaction_on_conflict
 }
@@ -7099,13 +7095,13 @@ input type for inserting object relation for remote table "chat.Reaction"
 input chat_Reaction_obj_rel_insert_input {
     data: chat_Reaction_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Reaction_on_conflict
 }
 
 """
-on conflict condition type for table "chat.Reaction"
+on_conflict condition type for table "chat.Reaction"
 """
 input chat_Reaction_on_conflict {
     constraint: chat_Reaction_constraint!
@@ -7306,7 +7302,7 @@ input type for inserting array relation for remote table "chat.ReadUpToIndex"
 input chat_ReadUpToIndex_arr_rel_insert_input {
     data: [chat_ReadUpToIndex_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_ReadUpToIndex_on_conflict
 }
@@ -7403,7 +7399,7 @@ type chat_ReadUpToIndex_mutation_response {
 }
 
 """
-on conflict condition type for table "chat.ReadUpToIndex"
+on_conflict condition type for table "chat.ReadUpToIndex"
 """
 input chat_ReadUpToIndex_on_conflict {
     constraint: chat_ReadUpToIndex_constraint!
@@ -7487,9 +7483,6 @@ enum chat_ReadUpToIndex_update_column {
 
 """
 Subscribe to chat notifications.
-
-
-columns and relationships of "chat.Subscription"
 """
 type chat_Subscription {
     """
@@ -7542,7 +7535,7 @@ input type for inserting array relation for remote table "chat.Subscription"
 input chat_Subscription_arr_rel_insert_input {
     data: [chat_Subscription_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: chat_Subscription_on_conflict
 }
@@ -7637,7 +7630,7 @@ type chat_Subscription_mutation_response {
 }
 
 """
-on conflict condition type for table "chat.Subscription"
+on_conflict condition type for table "chat.Subscription"
 """
 input chat_Subscription_on_conflict {
     constraint: chat_Subscription_constraint!
@@ -7843,7 +7836,7 @@ input type for inserting array relation for remote table "collection.Exhibition"
 input collection_Exhibition_arr_rel_insert_input {
     data: [collection_Exhibition_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: collection_Exhibition_on_conflict
 }
@@ -8010,13 +8003,13 @@ input type for inserting object relation for remote table "collection.Exhibition
 input collection_Exhibition_obj_rel_insert_input {
     data: collection_Exhibition_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: collection_Exhibition_on_conflict
 }
 
 """
-on conflict condition type for table "collection.Exhibition"
+on_conflict condition type for table "collection.Exhibition"
 """
 input collection_Exhibition_on_conflict {
     constraint: collection_Exhibition_constraint!
@@ -8442,7 +8435,7 @@ input type for inserting array relation for remote table "collection.ProgramPers
 input collection_ProgramPerson_arr_rel_insert_input {
     data: [collection_ProgramPerson_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: collection_ProgramPerson_on_conflict
 }
@@ -8623,13 +8616,13 @@ input type for inserting object relation for remote table "collection.ProgramPer
 input collection_ProgramPerson_obj_rel_insert_input {
     data: collection_ProgramPerson_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: collection_ProgramPerson_on_conflict
 }
 
 """
-on conflict condition type for table "collection.ProgramPerson"
+on_conflict condition type for table "collection.ProgramPerson"
 """
 input collection_ProgramPerson_on_conflict {
     constraint: collection_ProgramPerson_constraint!
@@ -8988,7 +8981,7 @@ input type for inserting array relation for remote table "collection.Tag"
 input collection_Tag_arr_rel_insert_input {
     data: [collection_Tag_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: collection_Tag_on_conflict
 }
@@ -9137,13 +9130,13 @@ input type for inserting object relation for remote table "collection.Tag"
 input collection_Tag_obj_rel_insert_input {
     data: collection_Tag_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: collection_Tag_on_conflict
 }
 
 """
-on conflict condition type for table "collection.Tag"
+on_conflict condition type for table "collection.Tag"
 """
 input collection_Tag_on_conflict {
     constraint: collection_Tag_constraint!
@@ -10053,7 +10046,7 @@ input type for inserting array relation for remote table "conference.Conference"
 input conference_Conference_arr_rel_insert_input {
     data: [conference_Conference_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_Conference_on_conflict
 }
@@ -10253,13 +10246,13 @@ input type for inserting object relation for remote table "conference.Conference
 input conference_Conference_obj_rel_insert_input {
     data: conference_Conference_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_Conference_on_conflict
 }
 
 """
-on conflict condition type for table "conference.Conference"
+on_conflict condition type for table "conference.Conference"
 """
 input conference_Conference_on_conflict {
     constraint: conference_Conference_constraint!
@@ -10691,7 +10684,7 @@ type conference_ConfigurationKey_mutation_response {
 }
 
 """
-on conflict condition type for table "conference.ConfigurationKey"
+on_conflict condition type for table "conference.ConfigurationKey"
 """
 input conference_ConfigurationKey_on_conflict {
     constraint: conference_ConfigurationKey_constraint!
@@ -10789,7 +10782,7 @@ input type for inserting array relation for remote table "conference.Configurati
 input conference_Configuration_arr_rel_insert_input {
     data: [conference_Configuration_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_Configuration_on_conflict
 }
@@ -10903,7 +10896,7 @@ type conference_Configuration_mutation_response {
 }
 
 """
-on conflict condition type for table "conference.Configuration"
+on_conflict condition type for table "conference.Configuration"
 """
 input conference_Configuration_on_conflict {
     constraint: conference_Configuration_constraint!
@@ -11052,7 +11045,7 @@ input type for inserting array relation for remote table "conference.DemoCode"
 input conference_DemoCode_arr_rel_insert_input {
     data: [conference_DemoCode_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_DemoCode_on_conflict
 }
@@ -11160,13 +11153,13 @@ input type for inserting object relation for remote table "conference.DemoCode"
 input conference_DemoCode_obj_rel_insert_input {
     data: conference_DemoCode_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_DemoCode_on_conflict
 }
 
 """
-on conflict condition type for table "conference.DemoCode"
+on_conflict condition type for table "conference.DemoCode"
 """
 input conference_DemoCode_on_conflict {
     constraint: conference_DemoCode_constraint!
@@ -11505,13 +11498,13 @@ input type for inserting object relation for remote table "conference.Quota"
 input conference_Quota_obj_rel_insert_input {
     data: conference_Quota_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_Quota_on_conflict
 }
 
 """
-on conflict condition type for table "conference.Quota"
+on_conflict condition type for table "conference.Quota"
 """
 input conference_Quota_on_conflict {
     constraint: conference_Quota_constraint!
@@ -12401,7 +12394,7 @@ input type for inserting array relation for remote table "conference.Subconferen
 input conference_Subconference_arr_rel_insert_input {
     data: [conference_Subconference_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_Subconference_on_conflict
 }
@@ -12539,13 +12532,13 @@ input type for inserting object relation for remote table "conference.Subconfere
 input conference_Subconference_obj_rel_insert_input {
     data: conference_Subconference_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_Subconference_on_conflict
 }
 
 """
-on conflict condition type for table "conference.Subconference"
+on_conflict condition type for table "conference.Subconference"
 """
 input conference_Subconference_on_conflict {
     constraint: conference_Subconference_constraint!
@@ -12855,13 +12848,13 @@ input type for inserting object relation for remote table "conference.Usage"
 input conference_Usage_obj_rel_insert_input {
     data: conference_Usage_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: conference_Usage_on_conflict
 }
 
 """
-on conflict condition type for table "conference.Usage"
+on_conflict condition type for table "conference.Usage"
 """
 input conference_Usage_on_conflict {
     constraint: conference_Usage_constraint!
@@ -13198,7 +13191,7 @@ type conference_VisibilityLevel_mutation_response {
 }
 
 """
-on conflict condition type for table "conference.VisibilityLevel"
+on_conflict condition type for table "conference.VisibilityLevel"
 """
 input conference_VisibilityLevel_on_conflict {
     constraint: conference_VisibilityLevel_constraint!
@@ -13259,9 +13252,6 @@ enum conference_VisibilityLevel_update_column {
 
 """
 The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
-
-
-columns and relationships of "content.Element"
 """
 type content_Element {
     """
@@ -13655,13 +13645,13 @@ input type for inserting object relation for remote table "content.ElementType"
 input content_ElementType_obj_rel_insert_input {
     data: content_ElementType_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_ElementType_on_conflict
 }
 
 """
-on conflict condition type for table "content.ElementType"
+on_conflict condition type for table "content.ElementType"
 """
 input content_ElementType_on_conflict {
     constraint: content_ElementType_constraint!
@@ -13777,7 +13767,7 @@ input type for inserting array relation for remote table "content.Element"
 input content_Element_arr_rel_insert_input {
     data: [content_Element_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_Element_on_conflict
 }
@@ -13975,13 +13965,13 @@ input type for inserting object relation for remote table "content.Element"
 input content_Element_obj_rel_insert_input {
     data: content_Element_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_Element_on_conflict
 }
 
 """
-on conflict condition type for table "content.Element"
+on_conflict condition type for table "content.Element"
 """
 input content_Element_on_conflict {
     constraint: content_Element_constraint!
@@ -14795,7 +14785,7 @@ input type for inserting array relation for remote table "content.ItemExhibition
 input content_ItemExhibition_arr_rel_insert_input {
     data: [content_ItemExhibition_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_ItemExhibition_on_conflict
 }
@@ -14936,7 +14926,7 @@ type content_ItemExhibition_mutation_response {
 }
 
 """
-on conflict condition type for table "content.ItemExhibition"
+on_conflict condition type for table "content.ItemExhibition"
 """
 input content_ItemExhibition_on_conflict {
     constraint: content_ItemExhibition_constraint!
@@ -15203,7 +15193,7 @@ input type for inserting array relation for remote table "content.ItemProgramPer
 input content_ItemProgramPerson_arr_rel_insert_input {
     data: [content_ItemProgramPerson_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_ItemProgramPerson_on_conflict
 }
@@ -15332,7 +15322,7 @@ type content_ItemProgramPerson_mutation_response {
 }
 
 """
-on conflict condition type for table "content.ItemProgramPerson"
+on_conflict condition type for table "content.ItemProgramPerson"
 """
 input content_ItemProgramPerson_on_conflict {
     constraint: content_ItemProgramPerson_constraint!
@@ -15571,7 +15561,7 @@ input type for inserting array relation for remote table "content.ItemTag"
 input content_ItemTag_arr_rel_insert_input {
     data: [content_ItemTag_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_ItemTag_on_conflict
 }
@@ -15666,7 +15656,7 @@ type content_ItemTag_mutation_response {
 }
 
 """
-on conflict condition type for table "content.ItemTag"
+on_conflict condition type for table "content.ItemTag"
 """
 input content_ItemTag_on_conflict {
     constraint: content_ItemTag_constraint!
@@ -15901,13 +15891,13 @@ input type for inserting object relation for remote table "content.ItemType"
 input content_ItemType_obj_rel_insert_input {
     data: content_ItemType_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_ItemType_on_conflict
 }
 
 """
-on conflict condition type for table "content.ItemType"
+on_conflict condition type for table "content.ItemType"
 """
 input content_ItemType_on_conflict {
     constraint: content_ItemType_constraint!
@@ -15998,7 +15988,7 @@ input type for inserting array relation for remote table "content.Item"
 input content_Item_arr_rel_insert_input {
     data: [content_Item_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_Item_on_conflict
 }
@@ -16155,13 +16145,13 @@ input type for inserting object relation for remote table "content.Item"
 input content_Item_obj_rel_insert_input {
     data: content_Item_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: content_Item_on_conflict
 }
 
 """
-on conflict condition type for table "content.Item"
+on_conflict condition type for table "content.Item"
 """
 input content_Item_on_conflict {
     constraint: content_Item_constraint!
@@ -16394,7 +16384,7 @@ input type for inserting array relation for remote table "job_queues.ChannelStac
 input job_queues_ChannelStackCreateJob_arr_rel_insert_input {
     data: [job_queues_ChannelStackCreateJob_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: job_queues_ChannelStackCreateJob_on_conflict
 }
@@ -16522,13 +16512,13 @@ input type for inserting object relation for remote table "job_queues.ChannelSta
 input job_queues_ChannelStackCreateJob_obj_rel_insert_input {
     data: job_queues_ChannelStackCreateJob_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: job_queues_ChannelStackCreateJob_on_conflict
 }
 
 """
-on conflict condition type for table "job_queues.ChannelStackCreateJob"
+on_conflict condition type for table "job_queues.ChannelStackCreateJob"
 """
 input job_queues_ChannelStackCreateJob_on_conflict {
     constraint: job_queues_ChannelStackCreateJob_constraint!
@@ -16758,7 +16748,7 @@ type job_queues_ChannelStackDeleteJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.ChannelStackDeleteJob"
+on_conflict condition type for table "job_queues.ChannelStackDeleteJob"
 """
 input job_queues_ChannelStackDeleteJob_on_conflict {
     constraint: job_queues_ChannelStackDeleteJob_constraint!
@@ -16930,7 +16920,7 @@ input type for inserting array relation for remote table "job_queues.ChannelStac
 input job_queues_ChannelStackUpdateJob_arr_rel_insert_input {
     data: [job_queues_ChannelStackUpdateJob_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: job_queues_ChannelStackUpdateJob_on_conflict
 }
@@ -17123,7 +17113,7 @@ type job_queues_ChannelStackUpdateJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.ChannelStackUpdateJob"
+on_conflict condition type for table "job_queues.ChannelStackUpdateJob"
 """
 input job_queues_ChannelStackUpdateJob_on_conflict {
     constraint: job_queues_ChannelStackUpdateJob_constraint!
@@ -17550,7 +17540,7 @@ type job_queues_CombineVideosJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.CombineVideosJob"
+on_conflict condition type for table "job_queues.CombineVideosJob"
 """
 input job_queues_CombineVideosJob_on_conflict {
     constraint: job_queues_CombineVideosJob_constraint!
@@ -17870,7 +17860,7 @@ type job_queues_CustomEmailJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.CustomEmailJob"
+on_conflict condition type for table "job_queues.CustomEmailJob"
 """
 input job_queues_CustomEmailJob_on_conflict {
     constraint: job_queues_CustomEmailJob_constraint!
@@ -18160,7 +18150,7 @@ input type for inserting array relation for remote table "job_queues.ImportJobOu
 input job_queues_ImportJobOutput_arr_rel_insert_input {
     data: [job_queues_ImportJobOutput_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: job_queues_ImportJobOutput_on_conflict
 }
@@ -18286,7 +18276,7 @@ type job_queues_ImportJobOutput_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.ImportJobOutput"
+on_conflict condition type for table "job_queues.ImportJobOutput"
 """
 input job_queues_ImportJobOutput_on_conflict {
     constraint: job_queues_ImportJobOutput_constraint!
@@ -18583,7 +18573,7 @@ type job_queues_ImportJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.ImportJob"
+on_conflict condition type for table "job_queues.ImportJob"
 """
 input job_queues_ImportJob_on_conflict {
     constraint: job_queues_ImportJob_constraint!
@@ -18964,7 +18954,7 @@ type job_queues_InvitationEmailJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.InvitationEmailJob"
+on_conflict condition type for table "job_queues.InvitationEmailJob"
 """
 input job_queues_InvitationEmailJob_on_conflict {
     constraint: job_queues_InvitationEmailJob_constraint!
@@ -19205,13 +19195,13 @@ input type for inserting object relation for remote table "job_queues.JobStatus"
 input job_queues_JobStatus_obj_rel_insert_input {
     data: job_queues_JobStatus_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: job_queues_JobStatus_on_conflict
 }
 
 """
-on conflict condition type for table "job_queues.JobStatus"
+on_conflict condition type for table "job_queues.JobStatus"
 """
 input job_queues_JobStatus_on_conflict {
     constraint: job_queues_JobStatus_constraint!
@@ -19410,7 +19400,7 @@ type job_queues_MediaPackageHarvestJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.MediaPackageHarvestJob"
+on_conflict condition type for table "job_queues.MediaPackageHarvestJob"
 """
 input job_queues_MediaPackageHarvestJob_on_conflict {
     constraint: job_queues_MediaPackageHarvestJob_constraint!
@@ -19714,13 +19704,13 @@ input type for inserting object relation for remote table "job_queues.PrepareJob
 input job_queues_PrepareJob_obj_rel_insert_input {
     data: job_queues_PrepareJob_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: job_queues_PrepareJob_on_conflict
 }
 
 """
-on conflict condition type for table "job_queues.PrepareJob"
+on_conflict condition type for table "job_queues.PrepareJob"
 """
 input job_queues_PrepareJob_on_conflict {
     constraint: job_queues_PrepareJob_constraint!
@@ -19949,7 +19939,7 @@ type job_queues_PublishVideoJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.PublishVideoJob"
+on_conflict condition type for table "job_queues.PublishVideoJob"
 """
 input job_queues_PublishVideoJob_on_conflict {
     constraint: job_queues_PublishVideoJob_constraint!
@@ -20210,7 +20200,7 @@ type job_queues_SubmissionRequestEmailJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.SubmissionRequestEmailJob"
+on_conflict condition type for table "job_queues.SubmissionRequestEmailJob"
 """
 input job_queues_SubmissionRequestEmailJob_on_conflict {
     constraint: job_queues_SubmissionRequestEmailJob_constraint!
@@ -20345,6 +20335,12 @@ type job_queues_UploadYouTubeVideoJob {
     """
     registrantGoogleAccount: registrant_GoogleAccount!
     registrantGoogleAccountId: uuid!
+    result(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb
     retriesCount: Int!
     subconferenceId: uuid
     updatedAt: timestamptz!
@@ -20429,6 +20425,13 @@ type job_queues_UploadYouTubeVideoJob_aggregate_fields {
 }
 
 """
+append existing jsonb value of filtered columns with new jsonb value
+"""
+input job_queues_UploadYouTubeVideoJob_append_input {
+    result: jsonb
+}
+
+"""
 aggregate avg on columns
 """
 type job_queues_UploadYouTubeVideoJob_avg_fields {
@@ -20454,6 +20457,7 @@ input job_queues_UploadYouTubeVideoJob_bool_exp {
     playlistId: String_comparison_exp
     registrantGoogleAccount: registrant_GoogleAccount_bool_exp
     registrantGoogleAccountId: uuid_comparison_exp
+    result: jsonb_comparison_exp
     retriesCount: Int_comparison_exp
     subconferenceId: uuid_comparison_exp
     updatedAt: timestamptz_comparison_exp
@@ -20471,6 +20475,27 @@ enum job_queues_UploadYouTubeVideoJob_constraint {
     unique or primary key constraint
     """
     UploadYouTubeVideoJob_pkey
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input job_queues_UploadYouTubeVideoJob_delete_at_path_input {
+    result: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input job_queues_UploadYouTubeVideoJob_delete_elem_input {
+    result: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input job_queues_UploadYouTubeVideoJob_delete_key_input {
+    result: String
 }
 
 """
@@ -20496,6 +20521,7 @@ input job_queues_UploadYouTubeVideoJob_insert_input {
     playlistId: String
     registrantGoogleAccount: registrant_GoogleAccount_obj_rel_insert_input
     registrantGoogleAccountId: uuid
+    result: jsonb
     retriesCount: Int
     subconferenceId: uuid
     updatedAt: timestamptz
@@ -20558,7 +20584,7 @@ type job_queues_UploadYouTubeVideoJob_mutation_response {
 }
 
 """
-on conflict condition type for table "job_queues.UploadYouTubeVideoJob"
+on_conflict condition type for table "job_queues.UploadYouTubeVideoJob"
 """
 input job_queues_UploadYouTubeVideoJob_on_conflict {
     constraint: job_queues_UploadYouTubeVideoJob_constraint!
@@ -20582,6 +20608,7 @@ input job_queues_UploadYouTubeVideoJob_order_by {
     playlistId: order_by
     registrantGoogleAccount: registrant_GoogleAccount_order_by
     registrantGoogleAccountId: order_by
+    result: order_by
     retriesCount: order_by
     subconferenceId: order_by
     updatedAt: order_by
@@ -20596,6 +20623,13 @@ primary key columns input for table: job_queues_UploadYouTubeVideoJob
 """
 input job_queues_UploadYouTubeVideoJob_pk_columns_input {
     id: uuid!
+}
+
+"""
+prepend existing jsonb value of filtered columns with new jsonb value
+"""
+input job_queues_UploadYouTubeVideoJob_prepend_input {
+    result: jsonb
 }
 
 """
@@ -20637,6 +20671,10 @@ enum job_queues_UploadYouTubeVideoJob_select_column {
     """
     column name
     """
+    result
+    """
+    column name
+    """
     retriesCount
     """
     column name
@@ -20672,6 +20710,7 @@ input job_queues_UploadYouTubeVideoJob_set_input {
     message: String
     playlistId: String
     registrantGoogleAccountId: uuid
+    result: jsonb
     retriesCount: Int
     subconferenceId: uuid
     updatedAt: timestamptz
@@ -20747,6 +20786,10 @@ enum job_queues_UploadYouTubeVideoJob_update_column {
     """
     column name
     """
+    result
+    """
+    column name
+    """
     retriesCount
     """
     column name
@@ -20793,10 +20836,15 @@ type job_queues_UploadYouTubeVideoJob_variance_fields {
 
 scalar jsonb
 
+input jsonb_cast_exp {
+    String: String_comparison_exp
+}
+
 """
 Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'.
 """
 input jsonb_comparison_exp {
+    _cast: jsonb_cast_exp
     """
     is the column contained in the given json value
     """
@@ -22182,7 +22230,7 @@ type mutation_root {
         """
         objects: [Email_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: Email_on_conflict
     ): Email_mutation_response
@@ -22195,7 +22243,7 @@ type mutation_root {
         """
         object: Email_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: Email_on_conflict
     ): Email
@@ -22208,7 +22256,7 @@ type mutation_root {
         """
         objects: [PushNotificationSubscription_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: PushNotificationSubscription_on_conflict
     ): PushNotificationSubscription_mutation_response
@@ -22221,7 +22269,7 @@ type mutation_root {
         """
         object: PushNotificationSubscription_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: PushNotificationSubscription_on_conflict
     ): PushNotificationSubscription
@@ -22234,7 +22282,7 @@ type mutation_root {
         """
         objects: [User_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: User_on_conflict
     ): User_mutation_response
@@ -22247,7 +22295,7 @@ type mutation_root {
         """
         object: User_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: User_on_conflict
     ): User
@@ -22260,7 +22308,7 @@ type mutation_root {
         """
         objects: [analytics_AppStats_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_AppStats_on_conflict
     ): analytics_AppStats_mutation_response
@@ -22273,7 +22321,7 @@ type mutation_root {
         """
         object: analytics_AppStats_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_AppStats_on_conflict
     ): analytics_AppStats
@@ -22286,7 +22334,7 @@ type mutation_root {
         """
         objects: [analytics_ContentElementStats_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_ContentElementStats_on_conflict
     ): analytics_ContentElementStats_mutation_response
@@ -22299,7 +22347,7 @@ type mutation_root {
         """
         object: analytics_ContentElementStats_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_ContentElementStats_on_conflict
     ): analytics_ContentElementStats
@@ -22312,7 +22360,7 @@ type mutation_root {
         """
         objects: [analytics_ContentItemStats_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_ContentItemStats_on_conflict
     ): analytics_ContentItemStats_mutation_response
@@ -22325,7 +22373,7 @@ type mutation_root {
         """
         object: analytics_ContentItemStats_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_ContentItemStats_on_conflict
     ): analytics_ContentItemStats
@@ -22338,7 +22386,7 @@ type mutation_root {
         """
         objects: [analytics_ElementTotalViews_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_ElementTotalViews_on_conflict
     ): analytics_ElementTotalViews_mutation_response
@@ -22351,7 +22399,7 @@ type mutation_root {
         """
         object: analytics_ElementTotalViews_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_ElementTotalViews_on_conflict
     ): analytics_ElementTotalViews
@@ -22364,7 +22412,7 @@ type mutation_root {
         """
         objects: [analytics_ItemTotalViews_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_ItemTotalViews_on_conflict
     ): analytics_ItemTotalViews_mutation_response
@@ -22377,7 +22425,7 @@ type mutation_root {
         """
         object: analytics_ItemTotalViews_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_ItemTotalViews_on_conflict
     ): analytics_ItemTotalViews
@@ -22390,7 +22438,7 @@ type mutation_root {
         """
         objects: [analytics_RoomPresence_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_RoomPresence_on_conflict
     ): analytics_RoomPresence_mutation_response
@@ -22403,7 +22451,7 @@ type mutation_root {
         """
         object: analytics_RoomPresence_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_RoomPresence_on_conflict
     ): analytics_RoomPresence
@@ -22416,7 +22464,7 @@ type mutation_root {
         """
         objects: [analytics_RoomStats_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_RoomStats_on_conflict
     ): analytics_RoomStats_mutation_response
@@ -22429,7 +22477,7 @@ type mutation_root {
         """
         object: analytics_RoomStats_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: analytics_RoomStats_on_conflict
     ): analytics_RoomStats
@@ -22442,7 +22490,7 @@ type mutation_root {
         """
         objects: [chat_Chat_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Chat_on_conflict
     ): chat_Chat_mutation_response
@@ -22455,7 +22503,7 @@ type mutation_root {
         """
         object: chat_Chat_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Chat_on_conflict
     ): chat_Chat
@@ -22468,7 +22516,7 @@ type mutation_root {
         """
         objects: [chat_Flag_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Flag_on_conflict
     ): chat_Flag_mutation_response
@@ -22481,7 +22529,7 @@ type mutation_root {
         """
         objects: [chat_FlagType_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_FlagType_on_conflict
     ): chat_FlagType_mutation_response
@@ -22494,7 +22542,7 @@ type mutation_root {
         """
         object: chat_FlagType_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_FlagType_on_conflict
     ): chat_FlagType
@@ -22507,7 +22555,7 @@ type mutation_root {
         """
         object: chat_Flag_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Flag_on_conflict
     ): chat_Flag
@@ -22520,7 +22568,7 @@ type mutation_root {
         """
         objects: [chat_Message_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Message_on_conflict
     ): chat_Message_mutation_response
@@ -22533,7 +22581,7 @@ type mutation_root {
         """
         objects: [chat_MessageType_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_MessageType_on_conflict
     ): chat_MessageType_mutation_response
@@ -22546,7 +22594,7 @@ type mutation_root {
         """
         object: chat_MessageType_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_MessageType_on_conflict
     ): chat_MessageType
@@ -22559,7 +22607,7 @@ type mutation_root {
         """
         object: chat_Message_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Message_on_conflict
     ): chat_Message
@@ -22572,7 +22620,7 @@ type mutation_root {
         """
         objects: [chat_Pin_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Pin_on_conflict
     ): chat_Pin_mutation_response
@@ -22585,7 +22633,7 @@ type mutation_root {
         """
         object: chat_Pin_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Pin_on_conflict
     ): chat_Pin
@@ -22598,7 +22646,7 @@ type mutation_root {
         """
         objects: [chat_Reaction_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Reaction_on_conflict
     ): chat_Reaction_mutation_response
@@ -22611,7 +22659,7 @@ type mutation_root {
         """
         objects: [chat_ReactionType_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_ReactionType_on_conflict
     ): chat_ReactionType_mutation_response
@@ -22624,7 +22672,7 @@ type mutation_root {
         """
         object: chat_ReactionType_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_ReactionType_on_conflict
     ): chat_ReactionType
@@ -22637,7 +22685,7 @@ type mutation_root {
         """
         object: chat_Reaction_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Reaction_on_conflict
     ): chat_Reaction
@@ -22650,7 +22698,7 @@ type mutation_root {
         """
         objects: [chat_ReadUpToIndex_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_ReadUpToIndex_on_conflict
     ): chat_ReadUpToIndex_mutation_response
@@ -22663,7 +22711,7 @@ type mutation_root {
         """
         object: chat_ReadUpToIndex_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_ReadUpToIndex_on_conflict
     ): chat_ReadUpToIndex
@@ -22676,7 +22724,7 @@ type mutation_root {
         """
         objects: [chat_Subscription_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Subscription_on_conflict
     ): chat_Subscription_mutation_response
@@ -22689,7 +22737,7 @@ type mutation_root {
         """
         object: chat_Subscription_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: chat_Subscription_on_conflict
     ): chat_Subscription
@@ -22702,7 +22750,7 @@ type mutation_root {
         """
         objects: [collection_Exhibition_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: collection_Exhibition_on_conflict
     ): collection_Exhibition_mutation_response
@@ -22715,7 +22763,7 @@ type mutation_root {
         """
         object: collection_Exhibition_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: collection_Exhibition_on_conflict
     ): collection_Exhibition
@@ -22728,7 +22776,7 @@ type mutation_root {
         """
         objects: [collection_ProgramPerson_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: collection_ProgramPerson_on_conflict
     ): collection_ProgramPerson_mutation_response
@@ -22741,7 +22789,7 @@ type mutation_root {
         """
         object: collection_ProgramPerson_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: collection_ProgramPerson_on_conflict
     ): collection_ProgramPerson
@@ -22754,7 +22802,7 @@ type mutation_root {
         """
         objects: [collection_Tag_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: collection_Tag_on_conflict
     ): collection_Tag_mutation_response
@@ -22767,7 +22815,7 @@ type mutation_root {
         """
         object: collection_Tag_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: collection_Tag_on_conflict
     ): collection_Tag
@@ -22780,7 +22828,7 @@ type mutation_root {
         """
         objects: [conference_Conference_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Conference_on_conflict
     ): conference_Conference_mutation_response
@@ -22793,7 +22841,7 @@ type mutation_root {
         """
         object: conference_Conference_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Conference_on_conflict
     ): conference_Conference
@@ -22806,7 +22854,7 @@ type mutation_root {
         """
         objects: [conference_Configuration_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Configuration_on_conflict
     ): conference_Configuration_mutation_response
@@ -22819,7 +22867,7 @@ type mutation_root {
         """
         objects: [conference_ConfigurationKey_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_ConfigurationKey_on_conflict
     ): conference_ConfigurationKey_mutation_response
@@ -22832,7 +22880,7 @@ type mutation_root {
         """
         object: conference_ConfigurationKey_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_ConfigurationKey_on_conflict
     ): conference_ConfigurationKey
@@ -22845,7 +22893,7 @@ type mutation_root {
         """
         object: conference_Configuration_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Configuration_on_conflict
     ): conference_Configuration
@@ -22858,7 +22906,7 @@ type mutation_root {
         """
         objects: [conference_DemoCode_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_DemoCode_on_conflict
     ): conference_DemoCode_mutation_response
@@ -22871,7 +22919,7 @@ type mutation_root {
         """
         object: conference_DemoCode_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_DemoCode_on_conflict
     ): conference_DemoCode
@@ -22884,7 +22932,7 @@ type mutation_root {
         """
         objects: [conference_Quota_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Quota_on_conflict
     ): conference_Quota_mutation_response
@@ -22897,7 +22945,7 @@ type mutation_root {
         """
         object: conference_Quota_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Quota_on_conflict
     ): conference_Quota
@@ -22910,7 +22958,7 @@ type mutation_root {
         """
         objects: [conference_Subconference_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Subconference_on_conflict
     ): conference_Subconference_mutation_response
@@ -22923,7 +22971,7 @@ type mutation_root {
         """
         object: conference_Subconference_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Subconference_on_conflict
     ): conference_Subconference
@@ -22936,7 +22984,7 @@ type mutation_root {
         """
         objects: [conference_Usage_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Usage_on_conflict
     ): conference_Usage_mutation_response
@@ -22949,7 +22997,7 @@ type mutation_root {
         """
         object: conference_Usage_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_Usage_on_conflict
     ): conference_Usage
@@ -22962,7 +23010,7 @@ type mutation_root {
         """
         objects: [conference_VisibilityLevel_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_VisibilityLevel_on_conflict
     ): conference_VisibilityLevel_mutation_response
@@ -22975,7 +23023,7 @@ type mutation_root {
         """
         object: conference_VisibilityLevel_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: conference_VisibilityLevel_on_conflict
     ): conference_VisibilityLevel
@@ -22988,7 +23036,7 @@ type mutation_root {
         """
         objects: [content_Element_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_Element_on_conflict
     ): content_Element_mutation_response
@@ -23001,7 +23049,7 @@ type mutation_root {
         """
         objects: [content_ElementType_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ElementType_on_conflict
     ): content_ElementType_mutation_response
@@ -23014,7 +23062,7 @@ type mutation_root {
         """
         object: content_ElementType_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ElementType_on_conflict
     ): content_ElementType
@@ -23027,7 +23075,7 @@ type mutation_root {
         """
         object: content_Element_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_Element_on_conflict
     ): content_Element
@@ -23040,7 +23088,7 @@ type mutation_root {
         """
         objects: [content_Item_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_Item_on_conflict
     ): content_Item_mutation_response
@@ -23053,7 +23101,7 @@ type mutation_root {
         """
         objects: [content_ItemExhibition_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ItemExhibition_on_conflict
     ): content_ItemExhibition_mutation_response
@@ -23066,7 +23114,7 @@ type mutation_root {
         """
         object: content_ItemExhibition_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ItemExhibition_on_conflict
     ): content_ItemExhibition
@@ -23079,7 +23127,7 @@ type mutation_root {
         """
         objects: [content_ItemProgramPerson_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ItemProgramPerson_on_conflict
     ): content_ItemProgramPerson_mutation_response
@@ -23092,7 +23140,7 @@ type mutation_root {
         """
         object: content_ItemProgramPerson_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ItemProgramPerson_on_conflict
     ): content_ItemProgramPerson
@@ -23105,7 +23153,7 @@ type mutation_root {
         """
         objects: [content_ItemTag_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ItemTag_on_conflict
     ): content_ItemTag_mutation_response
@@ -23118,7 +23166,7 @@ type mutation_root {
         """
         object: content_ItemTag_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ItemTag_on_conflict
     ): content_ItemTag
@@ -23131,7 +23179,7 @@ type mutation_root {
         """
         objects: [content_ItemType_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ItemType_on_conflict
     ): content_ItemType_mutation_response
@@ -23144,7 +23192,7 @@ type mutation_root {
         """
         object: content_ItemType_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_ItemType_on_conflict
     ): content_ItemType
@@ -23157,7 +23205,7 @@ type mutation_root {
         """
         object: content_Item_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: content_Item_on_conflict
     ): content_Item
@@ -23170,7 +23218,7 @@ type mutation_root {
         """
         objects: [job_queues_ChannelStackCreateJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ChannelStackCreateJob_on_conflict
     ): job_queues_ChannelStackCreateJob_mutation_response
@@ -23183,7 +23231,7 @@ type mutation_root {
         """
         object: job_queues_ChannelStackCreateJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ChannelStackCreateJob_on_conflict
     ): job_queues_ChannelStackCreateJob
@@ -23196,7 +23244,7 @@ type mutation_root {
         """
         objects: [job_queues_ChannelStackDeleteJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ChannelStackDeleteJob_on_conflict
     ): job_queues_ChannelStackDeleteJob_mutation_response
@@ -23209,7 +23257,7 @@ type mutation_root {
         """
         object: job_queues_ChannelStackDeleteJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ChannelStackDeleteJob_on_conflict
     ): job_queues_ChannelStackDeleteJob
@@ -23222,7 +23270,7 @@ type mutation_root {
         """
         objects: [job_queues_ChannelStackUpdateJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ChannelStackUpdateJob_on_conflict
     ): job_queues_ChannelStackUpdateJob_mutation_response
@@ -23235,7 +23283,7 @@ type mutation_root {
         """
         object: job_queues_ChannelStackUpdateJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ChannelStackUpdateJob_on_conflict
     ): job_queues_ChannelStackUpdateJob
@@ -23248,7 +23296,7 @@ type mutation_root {
         """
         objects: [job_queues_CombineVideosJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_CombineVideosJob_on_conflict
     ): job_queues_CombineVideosJob_mutation_response
@@ -23261,7 +23309,7 @@ type mutation_root {
         """
         object: job_queues_CombineVideosJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_CombineVideosJob_on_conflict
     ): job_queues_CombineVideosJob
@@ -23274,7 +23322,7 @@ type mutation_root {
         """
         objects: [job_queues_CustomEmailJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_CustomEmailJob_on_conflict
     ): job_queues_CustomEmailJob_mutation_response
@@ -23287,7 +23335,7 @@ type mutation_root {
         """
         object: job_queues_CustomEmailJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_CustomEmailJob_on_conflict
     ): job_queues_CustomEmailJob
@@ -23300,7 +23348,7 @@ type mutation_root {
         """
         objects: [job_queues_ImportJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ImportJob_on_conflict
     ): job_queues_ImportJob_mutation_response
@@ -23313,7 +23361,7 @@ type mutation_root {
         """
         objects: [job_queues_ImportJobOutput_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ImportJobOutput_on_conflict
     ): job_queues_ImportJobOutput_mutation_response
@@ -23326,7 +23374,7 @@ type mutation_root {
         """
         object: job_queues_ImportJobOutput_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ImportJobOutput_on_conflict
     ): job_queues_ImportJobOutput
@@ -23339,7 +23387,7 @@ type mutation_root {
         """
         object: job_queues_ImportJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_ImportJob_on_conflict
     ): job_queues_ImportJob
@@ -23352,7 +23400,7 @@ type mutation_root {
         """
         objects: [job_queues_InvitationEmailJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_InvitationEmailJob_on_conflict
     ): job_queues_InvitationEmailJob_mutation_response
@@ -23365,7 +23413,7 @@ type mutation_root {
         """
         object: job_queues_InvitationEmailJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_InvitationEmailJob_on_conflict
     ): job_queues_InvitationEmailJob
@@ -23378,7 +23426,7 @@ type mutation_root {
         """
         objects: [job_queues_JobStatus_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_JobStatus_on_conflict
     ): job_queues_JobStatus_mutation_response
@@ -23391,7 +23439,7 @@ type mutation_root {
         """
         object: job_queues_JobStatus_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_JobStatus_on_conflict
     ): job_queues_JobStatus
@@ -23404,7 +23452,7 @@ type mutation_root {
         """
         objects: [job_queues_MediaPackageHarvestJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_MediaPackageHarvestJob_on_conflict
     ): job_queues_MediaPackageHarvestJob_mutation_response
@@ -23417,7 +23465,7 @@ type mutation_root {
         """
         object: job_queues_MediaPackageHarvestJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_MediaPackageHarvestJob_on_conflict
     ): job_queues_MediaPackageHarvestJob
@@ -23430,7 +23478,7 @@ type mutation_root {
         """
         objects: [job_queues_PrepareJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_PrepareJob_on_conflict
     ): job_queues_PrepareJob_mutation_response
@@ -23443,7 +23491,7 @@ type mutation_root {
         """
         object: job_queues_PrepareJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_PrepareJob_on_conflict
     ): job_queues_PrepareJob
@@ -23456,7 +23504,7 @@ type mutation_root {
         """
         objects: [job_queues_PublishVideoJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_PublishVideoJob_on_conflict
     ): job_queues_PublishVideoJob_mutation_response
@@ -23469,7 +23517,7 @@ type mutation_root {
         """
         object: job_queues_PublishVideoJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_PublishVideoJob_on_conflict
     ): job_queues_PublishVideoJob
@@ -23482,7 +23530,7 @@ type mutation_root {
         """
         objects: [job_queues_SubmissionRequestEmailJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_SubmissionRequestEmailJob_on_conflict
     ): job_queues_SubmissionRequestEmailJob_mutation_response
@@ -23495,7 +23543,7 @@ type mutation_root {
         """
         object: job_queues_SubmissionRequestEmailJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_SubmissionRequestEmailJob_on_conflict
     ): job_queues_SubmissionRequestEmailJob
@@ -23508,7 +23556,7 @@ type mutation_root {
         """
         objects: [job_queues_UploadYouTubeVideoJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_UploadYouTubeVideoJob_on_conflict
     ): job_queues_UploadYouTubeVideoJob_mutation_response
@@ -23521,7 +23569,7 @@ type mutation_root {
         """
         object: job_queues_UploadYouTubeVideoJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: job_queues_UploadYouTubeVideoJob_on_conflict
     ): job_queues_UploadYouTubeVideoJob
@@ -23534,7 +23582,7 @@ type mutation_root {
         """
         objects: [registrant_GoogleAccount_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_GoogleAccount_on_conflict
     ): registrant_GoogleAccount_mutation_response
@@ -23547,7 +23595,7 @@ type mutation_root {
         """
         object: registrant_GoogleAccount_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_GoogleAccount_on_conflict
     ): registrant_GoogleAccount
@@ -23560,7 +23608,7 @@ type mutation_root {
         """
         objects: [registrant_Group_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_Group_on_conflict
     ): registrant_Group_mutation_response
@@ -23573,7 +23621,7 @@ type mutation_root {
         """
         objects: [registrant_GroupRegistrant_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_GroupRegistrant_on_conflict
     ): registrant_GroupRegistrant_mutation_response
@@ -23586,7 +23634,7 @@ type mutation_root {
         """
         object: registrant_GroupRegistrant_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_GroupRegistrant_on_conflict
     ): registrant_GroupRegistrant
@@ -23599,7 +23647,7 @@ type mutation_root {
         """
         object: registrant_Group_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_Group_on_conflict
     ): registrant_Group
@@ -23612,7 +23660,7 @@ type mutation_root {
         """
         objects: [registrant_Invitation_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_Invitation_on_conflict
     ): registrant_Invitation_mutation_response
@@ -23625,7 +23673,7 @@ type mutation_root {
         """
         object: registrant_Invitation_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_Invitation_on_conflict
     ): registrant_Invitation
@@ -23638,7 +23686,7 @@ type mutation_root {
         """
         objects: [registrant_Profile_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_Profile_on_conflict
     ): registrant_Profile_mutation_response
@@ -23651,7 +23699,7 @@ type mutation_root {
         """
         object: registrant_Profile_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_Profile_on_conflict
     ): registrant_Profile
@@ -23664,7 +23712,7 @@ type mutation_root {
         """
         objects: [registrant_Registrant_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_Registrant_on_conflict
     ): registrant_Registrant_mutation_response
@@ -23677,7 +23725,7 @@ type mutation_root {
         """
         objects: [registrant_RegistrantRole_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_RegistrantRole_on_conflict
     ): registrant_RegistrantRole_mutation_response
@@ -23690,7 +23738,7 @@ type mutation_root {
         """
         object: registrant_RegistrantRole_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_RegistrantRole_on_conflict
     ): registrant_RegistrantRole
@@ -23703,7 +23751,7 @@ type mutation_root {
         """
         object: registrant_Registrant_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_Registrant_on_conflict
     ): registrant_Registrant
@@ -23716,7 +23764,7 @@ type mutation_root {
         """
         objects: [registrant_SavedVonageRoomRecording_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_SavedVonageRoomRecording_on_conflict
     ): registrant_SavedVonageRoomRecording_mutation_response
@@ -23729,7 +23777,7 @@ type mutation_root {
         """
         object: registrant_SavedVonageRoomRecording_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_SavedVonageRoomRecording_on_conflict
     ): registrant_SavedVonageRoomRecording
@@ -23742,7 +23790,7 @@ type mutation_root {
         """
         objects: [registrant_SubconferenceMembership_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_SubconferenceMembership_on_conflict
     ): registrant_SubconferenceMembership_mutation_response
@@ -23755,7 +23803,7 @@ type mutation_root {
         """
         object: registrant_SubconferenceMembership_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: registrant_SubconferenceMembership_on_conflict
     ): registrant_SubconferenceMembership
@@ -23768,7 +23816,7 @@ type mutation_root {
         """
         objects: [room_Backend_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_Backend_on_conflict
     ): room_Backend_mutation_response
@@ -23781,7 +23829,7 @@ type mutation_root {
         """
         object: room_Backend_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_Backend_on_conflict
     ): room_Backend
@@ -23794,7 +23842,7 @@ type mutation_root {
         """
         objects: [room_ChimeMeeting_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ChimeMeeting_on_conflict
     ): room_ChimeMeeting_mutation_response
@@ -23807,7 +23855,7 @@ type mutation_root {
         """
         object: room_ChimeMeeting_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ChimeMeeting_on_conflict
     ): room_ChimeMeeting
@@ -23820,7 +23868,7 @@ type mutation_root {
         """
         objects: [room_ManagementMode_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ManagementMode_on_conflict
     ): room_ManagementMode_mutation_response
@@ -23833,7 +23881,7 @@ type mutation_root {
         """
         object: room_ManagementMode_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ManagementMode_on_conflict
     ): room_ManagementMode
@@ -23846,7 +23894,7 @@ type mutation_root {
         """
         objects: [room_PersonRole_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_PersonRole_on_conflict
     ): room_PersonRole_mutation_response
@@ -23859,7 +23907,7 @@ type mutation_root {
         """
         object: room_PersonRole_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_PersonRole_on_conflict
     ): room_PersonRole
@@ -23872,7 +23920,7 @@ type mutation_root {
         """
         objects: [room_Room_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_Room_on_conflict
     ): room_Room_mutation_response
@@ -23885,7 +23933,7 @@ type mutation_root {
         """
         objects: [room_RoomGroupMembership_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_RoomGroupMembership_on_conflict
     ): room_RoomGroupMembership_mutation_response
@@ -23898,7 +23946,7 @@ type mutation_root {
         """
         object: room_RoomGroupMembership_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_RoomGroupMembership_on_conflict
     ): room_RoomGroupMembership
@@ -23911,7 +23959,7 @@ type mutation_root {
         """
         objects: [room_RoomMembership_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_RoomMembership_on_conflict
     ): room_RoomMembership_mutation_response
@@ -23924,7 +23972,7 @@ type mutation_root {
         """
         object: room_RoomMembership_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_RoomMembership_on_conflict
     ): room_RoomMembership
@@ -23937,7 +23985,7 @@ type mutation_root {
         """
         object: room_Room_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_Room_on_conflict
     ): room_Room
@@ -23950,7 +23998,7 @@ type mutation_root {
         """
         objects: [room_ShuffleAlgorithm_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ShuffleAlgorithm_on_conflict
     ): room_ShuffleAlgorithm_mutation_response
@@ -23963,7 +24011,7 @@ type mutation_root {
         """
         object: room_ShuffleAlgorithm_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ShuffleAlgorithm_on_conflict
     ): room_ShuffleAlgorithm
@@ -23976,7 +24024,7 @@ type mutation_root {
         """
         objects: [room_ShufflePeriod_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ShufflePeriod_on_conflict
     ): room_ShufflePeriod_mutation_response
@@ -23989,7 +24037,7 @@ type mutation_root {
         """
         object: room_ShufflePeriod_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ShufflePeriod_on_conflict
     ): room_ShufflePeriod
@@ -24002,7 +24050,7 @@ type mutation_root {
         """
         objects: [room_ShuffleQueueEntry_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ShuffleQueueEntry_on_conflict
     ): room_ShuffleQueueEntry_mutation_response
@@ -24015,7 +24063,7 @@ type mutation_root {
         """
         object: room_ShuffleQueueEntry_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ShuffleQueueEntry_on_conflict
     ): room_ShuffleQueueEntry
@@ -24028,7 +24076,7 @@ type mutation_root {
         """
         objects: [room_ShuffleRoom_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ShuffleRoom_on_conflict
     ): room_ShuffleRoom_mutation_response
@@ -24041,7 +24089,7 @@ type mutation_root {
         """
         object: room_ShuffleRoom_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: room_ShuffleRoom_on_conflict
     ): room_ShuffleRoom
@@ -24054,7 +24102,7 @@ type mutation_root {
         """
         objects: [schedule_Continuation_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_Continuation_on_conflict
     ): schedule_Continuation_mutation_response
@@ -24067,7 +24115,7 @@ type mutation_root {
         """
         object: schedule_Continuation_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_Continuation_on_conflict
     ): schedule_Continuation
@@ -24098,7 +24146,7 @@ type mutation_root {
         """
         objects: [schedule_Event_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_Event_on_conflict
     ): schedule_Event_mutation_response
@@ -24111,7 +24159,7 @@ type mutation_root {
         """
         objects: [schedule_EventProgramPerson_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_EventProgramPerson_on_conflict
     ): schedule_EventProgramPerson_mutation_response
@@ -24124,7 +24172,7 @@ type mutation_root {
         """
         objects: [schedule_EventProgramPersonRole_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_EventProgramPersonRole_on_conflict
     ): schedule_EventProgramPersonRole_mutation_response
@@ -24137,7 +24185,7 @@ type mutation_root {
         """
         object: schedule_EventProgramPersonRole_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_EventProgramPersonRole_on_conflict
     ): schedule_EventProgramPersonRole
@@ -24150,7 +24198,7 @@ type mutation_root {
         """
         object: schedule_EventProgramPerson_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_EventProgramPerson_on_conflict
     ): schedule_EventProgramPerson
@@ -24163,7 +24211,7 @@ type mutation_root {
         """
         object: schedule_Event_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_Event_on_conflict
     ): schedule_Event
@@ -24176,7 +24224,7 @@ type mutation_root {
         """
         objects: [schedule_Mode_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_Mode_on_conflict
     ): schedule_Mode_mutation_response
@@ -24189,7 +24237,7 @@ type mutation_root {
         """
         object: schedule_Mode_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_Mode_on_conflict
     ): schedule_Mode
@@ -24202,7 +24250,7 @@ type mutation_root {
         """
         objects: [schedule_StarredEvent_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_StarredEvent_on_conflict
     ): schedule_StarredEvent_mutation_response
@@ -24215,7 +24263,7 @@ type mutation_root {
         """
         object: schedule_StarredEvent_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: schedule_StarredEvent_on_conflict
     ): schedule_StarredEvent
@@ -24228,7 +24276,7 @@ type mutation_root {
         """
         objects: [sponsor_Tier_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: sponsor_Tier_on_conflict
     ): sponsor_Tier_mutation_response
@@ -24241,7 +24289,7 @@ type mutation_root {
         """
         objects: [sponsor_TierMember_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: sponsor_TierMember_on_conflict
     ): sponsor_TierMember_mutation_response
@@ -24254,7 +24302,7 @@ type mutation_root {
         """
         object: sponsor_TierMember_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: sponsor_TierMember_on_conflict
     ): sponsor_TierMember
@@ -24267,7 +24315,7 @@ type mutation_root {
         """
         object: sponsor_Tier_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: sponsor_Tier_on_conflict
     ): sponsor_Tier
@@ -24280,7 +24328,7 @@ type mutation_root {
         """
         objects: [system_Configuration_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_Configuration_on_conflict
     ): system_Configuration_mutation_response
@@ -24293,7 +24341,7 @@ type mutation_root {
         """
         objects: [system_ConfigurationKey_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_ConfigurationKey_on_conflict
     ): system_ConfigurationKey_mutation_response
@@ -24306,7 +24354,7 @@ type mutation_root {
         """
         object: system_ConfigurationKey_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_ConfigurationKey_on_conflict
     ): system_ConfigurationKey
@@ -24319,7 +24367,7 @@ type mutation_root {
         """
         objects: [system_ConfigurationPermissionGrant_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_ConfigurationPermissionGrant_on_conflict
     ): system_ConfigurationPermissionGrant_mutation_response
@@ -24332,7 +24380,7 @@ type mutation_root {
         """
         object: system_ConfigurationPermissionGrant_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_ConfigurationPermissionGrant_on_conflict
     ): system_ConfigurationPermissionGrant
@@ -24345,7 +24393,7 @@ type mutation_root {
         """
         object: system_Configuration_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_Configuration_on_conflict
     ): system_Configuration
@@ -24358,7 +24406,7 @@ type mutation_root {
         """
         objects: [system_SuperUserPermission_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_SuperUserPermission_on_conflict
     ): system_SuperUserPermission_mutation_response
@@ -24371,7 +24419,7 @@ type mutation_root {
         """
         objects: [system_SuperUserPermissionGrant_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_SuperUserPermissionGrant_on_conflict
     ): system_SuperUserPermissionGrant_mutation_response
@@ -24384,7 +24432,7 @@ type mutation_root {
         """
         object: system_SuperUserPermissionGrant_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_SuperUserPermissionGrant_on_conflict
     ): system_SuperUserPermissionGrant
@@ -24397,7 +24445,7 @@ type mutation_root {
         """
         object: system_SuperUserPermission_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: system_SuperUserPermission_on_conflict
     ): system_SuperUserPermission
@@ -24410,7 +24458,7 @@ type mutation_root {
         """
         objects: [video_ChannelStack_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_ChannelStack_on_conflict
     ): video_ChannelStack_mutation_response
@@ -24423,7 +24471,7 @@ type mutation_root {
         """
         object: video_ChannelStack_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_ChannelStack_on_conflict
     ): video_ChannelStack
@@ -24436,7 +24484,7 @@ type mutation_root {
         """
         objects: [video_EventVonageSession_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_EventVonageSession_on_conflict
     ): video_EventVonageSession_mutation_response
@@ -24449,7 +24497,7 @@ type mutation_root {
         """
         object: video_EventVonageSession_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_EventVonageSession_on_conflict
     ): video_EventVonageSession
@@ -24462,7 +24510,7 @@ type mutation_root {
         """
         objects: [video_ImmediateSwitch_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_ImmediateSwitch_on_conflict
     ): video_ImmediateSwitch_mutation_response
@@ -24475,7 +24523,7 @@ type mutation_root {
         """
         object: video_ImmediateSwitch_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_ImmediateSwitch_on_conflict
     ): video_ImmediateSwitch
@@ -24488,7 +24536,7 @@ type mutation_root {
         """
         objects: [video_InputType_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_InputType_on_conflict
     ): video_InputType_mutation_response
@@ -24501,7 +24549,7 @@ type mutation_root {
         """
         object: video_InputType_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_InputType_on_conflict
     ): video_InputType
@@ -24514,7 +24562,7 @@ type mutation_root {
         """
         objects: [video_MediaLiveChannelStatus_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_MediaLiveChannelStatus_on_conflict
     ): video_MediaLiveChannelStatus_mutation_response
@@ -24527,7 +24575,7 @@ type mutation_root {
         """
         object: video_MediaLiveChannelStatus_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_MediaLiveChannelStatus_on_conflict
     ): video_MediaLiveChannelStatus
@@ -24540,7 +24588,7 @@ type mutation_root {
         """
         objects: [video_RoomRtmpInput_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_RoomRtmpInput_on_conflict
     ): video_RoomRtmpInput_mutation_response
@@ -24553,7 +24601,7 @@ type mutation_root {
         """
         object: video_RoomRtmpInput_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_RoomRtmpInput_on_conflict
     ): video_RoomRtmpInput
@@ -24566,7 +24614,7 @@ type mutation_root {
         """
         objects: [video_RoomRtmpOutput_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_RoomRtmpOutput_on_conflict
     ): video_RoomRtmpOutput_mutation_response
@@ -24579,7 +24627,7 @@ type mutation_root {
         """
         object: video_RoomRtmpOutput_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_RoomRtmpOutput_on_conflict
     ): video_RoomRtmpOutput
@@ -24592,7 +24640,7 @@ type mutation_root {
         """
         objects: [video_RtmpInput_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_RtmpInput_on_conflict
     ): video_RtmpInput_mutation_response
@@ -24605,7 +24653,7 @@ type mutation_root {
         """
         object: video_RtmpInput_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_RtmpInput_on_conflict
     ): video_RtmpInput
@@ -24618,7 +24666,7 @@ type mutation_root {
         """
         objects: [video_TranscriptionJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_TranscriptionJob_on_conflict
     ): video_TranscriptionJob_mutation_response
@@ -24631,7 +24679,7 @@ type mutation_root {
         """
         object: video_TranscriptionJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_TranscriptionJob_on_conflict
     ): video_TranscriptionJob
@@ -24644,7 +24692,7 @@ type mutation_root {
         """
         objects: [video_VideoRenderJob_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VideoRenderJob_on_conflict
     ): video_VideoRenderJob_mutation_response
@@ -24657,7 +24705,7 @@ type mutation_root {
         """
         object: video_VideoRenderJob_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VideoRenderJob_on_conflict
     ): video_VideoRenderJob
@@ -24670,7 +24718,7 @@ type mutation_root {
         """
         objects: [video_VonageParticipantStream_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VonageParticipantStream_on_conflict
     ): video_VonageParticipantStream_mutation_response
@@ -24683,7 +24731,7 @@ type mutation_root {
         """
         object: video_VonageParticipantStream_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VonageParticipantStream_on_conflict
     ): video_VonageParticipantStream
@@ -24696,7 +24744,7 @@ type mutation_root {
         """
         objects: [video_VonageRoomRecording_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VonageRoomRecording_on_conflict
     ): video_VonageRoomRecording_mutation_response
@@ -24709,7 +24757,7 @@ type mutation_root {
         """
         object: video_VonageRoomRecording_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VonageRoomRecording_on_conflict
     ): video_VonageRoomRecording
@@ -24722,7 +24770,7 @@ type mutation_root {
         """
         objects: [video_VonageSessionLayout_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VonageSessionLayout_on_conflict
     ): video_VonageSessionLayout_mutation_response
@@ -24735,7 +24783,7 @@ type mutation_root {
         """
         object: video_VonageSessionLayout_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VonageSessionLayout_on_conflict
     ): video_VonageSessionLayout
@@ -24748,7 +24796,7 @@ type mutation_root {
         """
         objects: [video_VonageVideoPlaybackCommand_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VonageVideoPlaybackCommand_on_conflict
     ): video_VonageVideoPlaybackCommand_mutation_response
@@ -24761,7 +24809,7 @@ type mutation_root {
         """
         object: video_VonageVideoPlaybackCommand_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_VonageVideoPlaybackCommand_on_conflict
     ): video_VonageVideoPlaybackCommand
@@ -24774,7 +24822,7 @@ type mutation_root {
         """
         objects: [video_YouTubeUpload_insert_input!]!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_YouTubeUpload_on_conflict
     ): video_YouTubeUpload_mutation_response
@@ -24787,7 +24835,7 @@ type mutation_root {
         """
         object: video_YouTubeUpload_insert_input!
         """
-        on conflict condition
+        upsert condition
         """
         on_conflict: video_YouTubeUpload_on_conflict
     ): video_YouTubeUpload
@@ -24795,6 +24843,8 @@ type mutation_root {
     joinEventVonageSession(eventId: uuid!, registrantId: uuid!): JoinEventVonageSessionOutput
     joinRoomChimeSession(registrantId: uuid!, roomId: uuid!): JoinRoomChimeSessionOutput
     joinRoomVonageSession(registrantId: uuid!, roomId: uuid!): JoinRoomVonageSessionOutput
+    migrateElement(elementId: uuid!): MigrateElementOutput
+    migrateProfilePhoto(registrantId: uuid!): MigrateProfilePhotoResponse
     notifyEventEnded(eventId: uuid!): NotifyEventEnded!
     notifyEventStarted(eventId: uuid!): NotifyEventStarted!
     presence_Flush: PresenceFlushOutput!
@@ -24804,7 +24854,7 @@ type mutation_root {
     """
     schedule_shiftPresentationTimes(
         """
-        input parameters for function "schedule.shiftPresentationTimes"
+        input parameters for function "schedule_shiftPresentationTimes"
         """
         args: schedule_shiftPresentationTimes_args!
         """
@@ -24833,7 +24883,7 @@ type mutation_root {
     """
     schedule_shiftTimes(
         """
-        input parameters for function "schedule.shiftTimes"
+        input parameters for function "schedule_shiftTimes"
         """
         args: schedule_shiftTimes_args!
         """
@@ -26673,9 +26723,29 @@ type mutation_root {
     """
     update_job_queues_UploadYouTubeVideoJob(
         """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: job_queues_UploadYouTubeVideoJob_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: job_queues_UploadYouTubeVideoJob_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: job_queues_UploadYouTubeVideoJob_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: job_queues_UploadYouTubeVideoJob_delete_key_input
+        """
         increments the numeric columns with given value of the filtered values
         """
         _inc: job_queues_UploadYouTubeVideoJob_inc_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: job_queues_UploadYouTubeVideoJob_prepend_input
         """
         sets the columns of the filtered rows to the given values
         """
@@ -26690,9 +26760,29 @@ type mutation_root {
     """
     update_job_queues_UploadYouTubeVideoJob_by_pk(
         """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: job_queues_UploadYouTubeVideoJob_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: job_queues_UploadYouTubeVideoJob_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: job_queues_UploadYouTubeVideoJob_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: job_queues_UploadYouTubeVideoJob_delete_key_input
+        """
         increments the numeric columns with given value of the filtered values
         """
         _inc: job_queues_UploadYouTubeVideoJob_inc_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: job_queues_UploadYouTubeVideoJob_prepend_input
         """
         sets the columns of the filtered rows to the given values
         """
@@ -29670,7 +29760,7 @@ type query_root {
     """
     collection_searchProgramPerson(
         """
-        input parameters for function "collection.searchProgramPerson"
+        input parameters for function "collection_searchProgramPerson"
         """
         args: collection_searchProgramPerson_args!
         """
@@ -29699,7 +29789,7 @@ type query_root {
     """
     collection_searchProgramPerson_aggregate(
         """
-        input parameters for function "collection.searchProgramPerson"
+        input parameters for function "collection_searchProgramPerson_aggregate"
         """
         args: collection_searchProgramPerson_args!
         """
@@ -30591,7 +30681,7 @@ type query_root {
     """
     content_searchItems(
         """
-        input parameters for function "content.searchItems"
+        input parameters for function "content_searchItems"
         """
         args: content_searchItems_args!
         """
@@ -30620,7 +30710,7 @@ type query_root {
     """
     content_searchItems_aggregate(
         """
-        input parameters for function "content.searchItems"
+        input parameters for function "content_searchItems_aggregate"
         """
         args: content_searchItems_args!
         """
@@ -31944,7 +32034,7 @@ type query_root {
     """
     registrant_searchRegistrants(
         """
-        input parameters for function "registrant.searchRegistrants"
+        input parameters for function "registrant_searchRegistrants"
         """
         args: registrant_searchRegistrants_args!
         """
@@ -31973,7 +32063,7 @@ type query_root {
     """
     registrant_searchRegistrants_aggregate(
         """
-        input parameters for function "registrant.searchRegistrants"
+        input parameters for function "registrant_searchRegistrants_aggregate"
         """
         args: registrant_searchRegistrants_args!
         """
@@ -33070,7 +33160,7 @@ type query_root {
     """
     schedule_searchEvents(
         """
-        input parameters for function "schedule.searchEvents"
+        input parameters for function "schedule_searchEvents"
         """
         args: schedule_searchEvents_args!
         """
@@ -33099,7 +33189,7 @@ type query_root {
     """
     schedule_searchEvents_aggregate(
         """
-        input parameters for function "schedule.searchEvents"
+        input parameters for function "schedule_searchEvents_aggregate"
         """
         args: schedule_searchEvents_args!
         """
@@ -34539,13 +34629,13 @@ input type for inserting object relation for remote table "registrant.GoogleAcco
 input registrant_GoogleAccount_obj_rel_insert_input {
     data: registrant_GoogleAccount_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_GoogleAccount_on_conflict
 }
 
 """
-on conflict condition type for table "registrant.GoogleAccount"
+on_conflict condition type for table "registrant.GoogleAccount"
 """
 input registrant_GoogleAccount_on_conflict {
     constraint: registrant_GoogleAccount_constraint!
@@ -34795,7 +34885,7 @@ input type for inserting array relation for remote table "registrant.GroupRegist
 input registrant_GroupRegistrant_arr_rel_insert_input {
     data: [registrant_GroupRegistrant_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_GroupRegistrant_on_conflict
 }
@@ -34902,7 +34992,7 @@ type registrant_GroupRegistrant_mutation_response {
 }
 
 """
-on conflict condition type for table "registrant.GroupRegistrant"
+on_conflict condition type for table "registrant.GroupRegistrant"
 """
 input registrant_GroupRegistrant_on_conflict {
     constraint: registrant_GroupRegistrant_constraint!
@@ -35105,13 +35195,13 @@ input type for inserting object relation for remote table "registrant.Group"
 input registrant_Group_obj_rel_insert_input {
     data: registrant_Group_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_Group_on_conflict
 }
 
 """
-on conflict condition type for table "registrant.Group"
+on_conflict condition type for table "registrant.Group"
 """
 input registrant_Group_on_conflict {
     constraint: registrant_Group_constraint!
@@ -35270,9 +35360,6 @@ type registrant_Invitation {
         """
         where: Email_bool_exp
     ): Email_aggregate!
-    """
-    A computed field, executes function "registrant.invitationHash"
-    """
     hash: String
     id: uuid!
     inviteCode: uuid!
@@ -35322,7 +35409,7 @@ input type for inserting array relation for remote table "registrant.Invitation"
 input registrant_Invitation_arr_rel_insert_input {
     data: [registrant_Invitation_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_Invitation_on_conflict
 }
@@ -35473,13 +35560,13 @@ input type for inserting object relation for remote table "registrant.Invitation
 input registrant_Invitation_obj_rel_insert_input {
     data: registrant_Invitation_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_Invitation_on_conflict
 }
 
 """
-on conflict condition type for table "registrant.Invitation"
+on_conflict condition type for table "registrant.Invitation"
 """
 input registrant_Invitation_on_conflict {
     constraint: registrant_Invitation_constraint!
@@ -35988,13 +36075,13 @@ input type for inserting object relation for remote table "registrant.Profile"
 input registrant_Profile_obj_rel_insert_input {
     data: registrant_Profile_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_Profile_on_conflict
 }
 
 """
-on conflict condition type for table "registrant.Profile"
+on_conflict condition type for table "registrant.Profile"
 """
 input registrant_Profile_on_conflict {
     constraint: registrant_Profile_constraint!
@@ -36407,9 +36494,6 @@ type registrant_Registrant {
         """
         path: String
     ): jsonb
-    """
-    A computed field, executes function "registrant.HasBeenInvited"
-    """
     inviteSent: Boolean
     """
     A computed field, executes function "registrant.isProgramPerson"
@@ -36629,7 +36713,7 @@ type registrant_RegistrantRole_mutation_response {
 }
 
 """
-on conflict condition type for table "registrant.RegistrantRole"
+on_conflict condition type for table "registrant.RegistrantRole"
 """
 input registrant_RegistrantRole_on_conflict {
     constraint: registrant_RegistrantRole_constraint!
@@ -36720,7 +36804,7 @@ input type for inserting array relation for remote table "registrant.Registrant"
 input registrant_Registrant_arr_rel_insert_input {
     data: [registrant_Registrant_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_Registrant_on_conflict
 }
@@ -36855,13 +36939,13 @@ input type for inserting object relation for remote table "registrant.Registrant
 input registrant_Registrant_obj_rel_insert_input {
     data: registrant_Registrant_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_Registrant_on_conflict
 }
 
 """
-on conflict condition type for table "registrant.Registrant"
+on_conflict condition type for table "registrant.Registrant"
 """
 input registrant_Registrant_on_conflict {
     constraint: registrant_Registrant_constraint!
@@ -37033,7 +37117,7 @@ input type for inserting array relation for remote table "registrant.SavedVonage
 input registrant_SavedVonageRoomRecording_arr_rel_insert_input {
     data: [registrant_SavedVonageRoomRecording_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_SavedVonageRoomRecording_on_conflict
 }
@@ -37142,7 +37226,7 @@ type registrant_SavedVonageRoomRecording_mutation_response {
 }
 
 """
-on conflict condition type for table "registrant.SavedVonageRoomRecording"
+on_conflict condition type for table "registrant.SavedVonageRoomRecording"
 """
 input registrant_SavedVonageRoomRecording_on_conflict {
     constraint: registrant_SavedVonageRoomRecording_constraint!
@@ -37295,7 +37379,7 @@ input type for inserting array relation for remote table "registrant.Subconferen
 input registrant_SubconferenceMembership_arr_rel_insert_input {
     data: [registrant_SubconferenceMembership_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: registrant_SubconferenceMembership_on_conflict
 }
@@ -37404,7 +37488,7 @@ type registrant_SubconferenceMembership_mutation_response {
 }
 
 """
-on conflict condition type for table "registrant.SubconferenceMembership"
+on_conflict condition type for table "registrant.SubconferenceMembership"
 """
 input registrant_SubconferenceMembership_on_conflict {
     constraint: registrant_SubconferenceMembership_constraint!
@@ -37617,7 +37701,7 @@ type room_Backend_mutation_response {
 }
 
 """
-on conflict condition type for table "room.Backend"
+on_conflict condition type for table "room.Backend"
 """
 input room_Backend_on_conflict {
     constraint: room_Backend_constraint!
@@ -37843,13 +37927,13 @@ input type for inserting object relation for remote table "room.ChimeMeeting"
 input room_ChimeMeeting_obj_rel_insert_input {
     data: room_ChimeMeeting_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_ChimeMeeting_on_conflict
 }
 
 """
-on conflict condition type for table "room.ChimeMeeting"
+on_conflict condition type for table "room.ChimeMeeting"
 """
 input room_ChimeMeeting_on_conflict {
     constraint: room_ChimeMeeting_constraint!
@@ -38284,13 +38368,13 @@ input type for inserting object relation for remote table "room.ManagementMode"
 input room_ManagementMode_obj_rel_insert_input {
     data: room_ManagementMode_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_ManagementMode_on_conflict
 }
 
 """
-on conflict condition type for table "room.ManagementMode"
+on_conflict condition type for table "room.ManagementMode"
 """
 input room_ManagementMode_on_conflict {
     constraint: room_ManagementMode_constraint!
@@ -38461,13 +38545,13 @@ input type for inserting object relation for remote table "room.PersonRole"
 input room_PersonRole_obj_rel_insert_input {
     data: room_PersonRole_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_PersonRole_on_conflict
 }
 
 """
-on conflict condition type for table "room.PersonRole"
+on_conflict condition type for table "room.PersonRole"
 """
 input room_PersonRole_on_conflict {
     constraint: room_PersonRole_constraint!
@@ -38703,9 +38787,6 @@ type room_Room {
         where: schedule_Event_bool_exp
     ): schedule_Event_aggregate!
     id: uuid!
-    """
-    A computed field, executes function "room.IsProgramRoom"
-    """
     isProgramRoom: Boolean
     """
     A computed field, executes function "room.IsStreamingProgramRoom"
@@ -39160,7 +39241,7 @@ type room_RoomGroupMembership_mutation_response {
 }
 
 """
-on conflict condition type for table "room.RoomGroupMembership"
+on_conflict condition type for table "room.RoomGroupMembership"
 """
 input room_RoomGroupMembership_on_conflict {
     constraint: room_RoomGroupMembership_constraint!
@@ -39307,7 +39388,7 @@ input type for inserting array relation for remote table "room.RoomMembership"
 input room_RoomMembership_arr_rel_insert_input {
     data: [room_RoomMembership_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_RoomMembership_on_conflict
 }
@@ -39418,7 +39499,7 @@ type room_RoomMembership_mutation_response {
 }
 
 """
-on conflict condition type for table "room.RoomMembership"
+on_conflict condition type for table "room.RoomMembership"
 """
 input room_RoomMembership_on_conflict {
     constraint: room_RoomMembership_constraint!
@@ -39568,7 +39649,7 @@ input type for inserting array relation for remote table "room.Room"
 input room_Room_arr_rel_insert_input {
     data: [room_Room_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_Room_on_conflict
 }
@@ -39790,13 +39871,13 @@ input type for inserting object relation for remote table "room.Room"
 input room_Room_obj_rel_insert_input {
     data: room_Room_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_Room_on_conflict
 }
 
 """
-on conflict condition type for table "room.Room"
+on_conflict condition type for table "room.Room"
 """
 input room_Room_on_conflict {
     constraint: room_Room_constraint!
@@ -40219,7 +40300,7 @@ type room_ShuffleAlgorithm_mutation_response {
 }
 
 """
-on conflict condition type for table "room.ShuffleAlgorithm"
+on_conflict condition type for table "room.ShuffleAlgorithm"
 """
 input room_ShuffleAlgorithm_on_conflict {
     constraint: room_ShuffleAlgorithm_constraint!
@@ -40504,7 +40585,7 @@ input type for inserting array relation for remote table "room.ShufflePeriod"
 input room_ShufflePeriod_arr_rel_insert_input {
     data: [room_ShufflePeriod_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_ShufflePeriod_on_conflict
 }
@@ -40698,13 +40779,13 @@ input type for inserting object relation for remote table "room.ShufflePeriod"
 input room_ShufflePeriod_obj_rel_insert_input {
     data: room_ShufflePeriod_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_ShufflePeriod_on_conflict
 }
 
 """
-on conflict condition type for table "room.ShufflePeriod"
+on_conflict condition type for table "room.ShufflePeriod"
 """
 input room_ShufflePeriod_on_conflict {
     constraint: room_ShufflePeriod_constraint!
@@ -41101,7 +41182,7 @@ input type for inserting array relation for remote table "room.ShuffleQueueEntry
 input room_ShuffleQueueEntry_arr_rel_insert_input {
     data: [room_ShuffleQueueEntry_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_ShuffleQueueEntry_on_conflict
 }
@@ -41242,7 +41323,7 @@ type room_ShuffleQueueEntry_mutation_response {
 }
 
 """
-on conflict condition type for table "room.ShuffleQueueEntry"
+on_conflict condition type for table "room.ShuffleQueueEntry"
 """
 input room_ShuffleQueueEntry_on_conflict {
     constraint: room_ShuffleQueueEntry_constraint!
@@ -41637,7 +41718,7 @@ input type for inserting array relation for remote table "room.ShuffleRoom"
 input room_ShuffleRoom_arr_rel_insert_input {
     data: [room_ShuffleRoom_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_ShuffleRoom_on_conflict
 }
@@ -41789,13 +41870,13 @@ input type for inserting object relation for remote table "room.ShuffleRoom"
 input room_ShuffleRoom_obj_rel_insert_input {
     data: room_ShuffleRoom_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: room_ShuffleRoom_on_conflict
 }
 
 """
-on conflict condition type for table "room.ShuffleRoom"
+on_conflict condition type for table "room.ShuffleRoom"
 """
 input room_ShuffleRoom_on_conflict {
     constraint: room_ShuffleRoom_constraint!
@@ -42042,9 +42123,6 @@ input room_ShuffleRoom_variance_order_by {
 
 """
 A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go.
-
-
-columns and relationships of "schedule.Continuation"
 """
 type schedule_Continuation {
     colour: String!
@@ -42126,7 +42204,7 @@ input type for inserting array relation for remote table "schedule.Continuation"
 input schedule_Continuation_arr_rel_insert_input {
     data: [schedule_Continuation_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: schedule_Continuation_on_conflict
 }
@@ -42287,7 +42365,7 @@ type schedule_Continuation_mutation_response {
 }
 
 """
-on conflict condition type for table "schedule.Continuation"
+on_conflict condition type for table "schedule.Continuation"
 """
 input schedule_Continuation_on_conflict {
     constraint: schedule_Continuation_constraint!
@@ -43344,13 +43422,13 @@ input type for inserting object relation for remote table "schedule.EventProgram
 input schedule_EventProgramPersonRole_obj_rel_insert_input {
     data: schedule_EventProgramPersonRole_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: schedule_EventProgramPersonRole_on_conflict
 }
 
 """
-on conflict condition type for table "schedule.EventProgramPersonRole"
+on_conflict condition type for table "schedule.EventProgramPersonRole"
 """
 input schedule_EventProgramPersonRole_on_conflict {
     constraint: schedule_EventProgramPersonRole_constraint!
@@ -43442,7 +43520,7 @@ input type for inserting array relation for remote table "schedule.EventProgramP
 input schedule_EventProgramPerson_arr_rel_insert_input {
     data: [schedule_EventProgramPerson_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: schedule_EventProgramPerson_on_conflict
 }
@@ -43553,7 +43631,7 @@ type schedule_EventProgramPerson_mutation_response {
 }
 
 """
-on conflict condition type for table "schedule.EventProgramPerson"
+on_conflict condition type for table "schedule.EventProgramPerson"
 """
 input schedule_EventProgramPerson_on_conflict {
     constraint: schedule_EventProgramPerson_constraint!
@@ -43687,7 +43765,7 @@ input type for inserting array relation for remote table "schedule.Event"
 input schedule_Event_arr_rel_insert_input {
     data: [schedule_Event_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: schedule_Event_on_conflict
 }
@@ -43892,13 +43970,13 @@ input type for inserting object relation for remote table "schedule.Event"
 input schedule_Event_obj_rel_insert_input {
     data: schedule_Event_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: schedule_Event_on_conflict
 }
 
 """
-on conflict condition type for table "schedule.Event"
+on_conflict condition type for table "schedule.Event"
 """
 input schedule_Event_on_conflict {
     constraint: schedule_Event_constraint!
@@ -44335,13 +44413,13 @@ input type for inserting object relation for remote table "schedule.Mode"
 input schedule_Mode_obj_rel_insert_input {
     data: schedule_Mode_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: schedule_Mode_on_conflict
 }
 
 """
-on conflict condition type for table "schedule.Mode"
+on_conflict condition type for table "schedule.Mode"
 """
 input schedule_Mode_on_conflict {
     constraint: schedule_Mode_constraint!
@@ -44627,7 +44705,7 @@ type schedule_StarredEvent_mutation_response {
 }
 
 """
-on conflict condition type for table "schedule.StarredEvent"
+on_conflict condition type for table "schedule.StarredEvent"
 """
 input schedule_StarredEvent_on_conflict {
     constraint: schedule_StarredEvent_constraint!
@@ -44876,7 +44954,7 @@ input type for inserting array relation for remote table "sponsor.TierMember"
 input sponsor_TierMember_arr_rel_insert_input {
     data: [sponsor_TierMember_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: sponsor_TierMember_on_conflict
 }
@@ -45010,7 +45088,7 @@ type sponsor_TierMember_mutation_response {
 }
 
 """
-on conflict condition type for table "sponsor.TierMember"
+on_conflict condition type for table "sponsor.TierMember"
 """
 input sponsor_TierMember_on_conflict {
     constraint: sponsor_TierMember_constraint!
@@ -45257,7 +45335,7 @@ input type for inserting array relation for remote table "sponsor.Tier"
 input sponsor_Tier_arr_rel_insert_input {
     data: [sponsor_Tier_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: sponsor_Tier_on_conflict
 }
@@ -45427,13 +45505,13 @@ input type for inserting object relation for remote table "sponsor.Tier"
 input sponsor_Tier_obj_rel_insert_input {
     data: sponsor_Tier_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: sponsor_Tier_on_conflict
 }
 
 """
-on conflict condition type for table "sponsor.Tier"
+on_conflict condition type for table "sponsor.Tier"
 """
 input sponsor_Tier_on_conflict {
     constraint: sponsor_Tier_constraint!
@@ -47045,7 +47123,7 @@ type subscription_root {
     """
     collection_searchProgramPerson(
         """
-        input parameters for function "collection.searchProgramPerson"
+        input parameters for function "collection_searchProgramPerson"
         """
         args: collection_searchProgramPerson_args!
         """
@@ -47074,7 +47152,7 @@ type subscription_root {
     """
     collection_searchProgramPerson_aggregate(
         """
-        input parameters for function "collection.searchProgramPerson"
+        input parameters for function "collection_searchProgramPerson_aggregate"
         """
         args: collection_searchProgramPerson_args!
         """
@@ -47966,7 +48044,7 @@ type subscription_root {
     """
     content_searchItems(
         """
-        input parameters for function "content.searchItems"
+        input parameters for function "content_searchItems"
         """
         args: content_searchItems_args!
         """
@@ -47995,7 +48073,7 @@ type subscription_root {
     """
     content_searchItems_aggregate(
         """
-        input parameters for function "content.searchItems"
+        input parameters for function "content_searchItems_aggregate"
         """
         args: content_searchItems_args!
         """
@@ -49316,7 +49394,7 @@ type subscription_root {
     """
     registrant_searchRegistrants(
         """
-        input parameters for function "registrant.searchRegistrants"
+        input parameters for function "registrant_searchRegistrants"
         """
         args: registrant_searchRegistrants_args!
         """
@@ -49345,7 +49423,7 @@ type subscription_root {
     """
     registrant_searchRegistrants_aggregate(
         """
-        input parameters for function "registrant.searchRegistrants"
+        input parameters for function "registrant_searchRegistrants_aggregate"
         """
         args: registrant_searchRegistrants_args!
         """
@@ -50442,7 +50520,7 @@ type subscription_root {
     """
     schedule_searchEvents(
         """
-        input parameters for function "schedule.searchEvents"
+        input parameters for function "schedule_searchEvents"
         """
         args: schedule_searchEvents_args!
         """
@@ -50471,7 +50549,7 @@ type subscription_root {
     """
     schedule_searchEvents_aggregate(
         """
-        input parameters for function "schedule.searchEvents"
+        input parameters for function "schedule_searchEvents_aggregate"
         """
         args: schedule_searchEvents_args!
         """
@@ -51983,13 +52061,13 @@ input type for inserting object relation for remote table "system.ConfigurationK
 input system_ConfigurationKey_obj_rel_insert_input {
     data: system_ConfigurationKey_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: system_ConfigurationKey_on_conflict
 }
 
 """
-on conflict condition type for table "system.ConfigurationKey"
+on_conflict condition type for table "system.ConfigurationKey"
 """
 input system_ConfigurationKey_on_conflict {
     constraint: system_ConfigurationKey_constraint!
@@ -52105,7 +52183,7 @@ input type for inserting array relation for remote table "system.ConfigurationPe
 input system_ConfigurationPermissionGrant_arr_rel_insert_input {
     data: [system_ConfigurationPermissionGrant_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: system_ConfigurationPermissionGrant_on_conflict
 }
@@ -52212,7 +52290,7 @@ type system_ConfigurationPermissionGrant_mutation_response {
 }
 
 """
-on conflict condition type for table "system.ConfigurationPermissionGrant"
+on_conflict condition type for table "system.ConfigurationPermissionGrant"
 """
 input system_ConfigurationPermissionGrant_on_conflict {
     constraint: system_ConfigurationPermissionGrant_constraint!
@@ -52425,7 +52503,7 @@ type system_Configuration_mutation_response {
 }
 
 """
-on conflict condition type for table "system.Configuration"
+on_conflict condition type for table "system.Configuration"
 """
 input system_Configuration_on_conflict {
     constraint: system_Configuration_constraint!
@@ -52726,7 +52804,7 @@ input type for inserting array relation for remote table "system.SuperUserPermis
 input system_SuperUserPermissionGrant_arr_rel_insert_input {
     data: [system_SuperUserPermissionGrant_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: system_SuperUserPermissionGrant_on_conflict
 }
@@ -52833,7 +52911,7 @@ type system_SuperUserPermissionGrant_mutation_response {
 }
 
 """
-on conflict condition type for table "system.SuperUserPermissionGrant"
+on_conflict condition type for table "system.SuperUserPermissionGrant"
 """
 input system_SuperUserPermissionGrant_on_conflict {
     constraint: system_SuperUserPermissionGrant_constraint!
@@ -53077,13 +53155,13 @@ input type for inserting object relation for remote table "system.SuperUserPermi
 input system_SuperUserPermission_obj_rel_insert_input {
     data: system_SuperUserPermission_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: system_SuperUserPermission_on_conflict
 }
 
 """
-on conflict condition type for table "system.SuperUserPermission"
+on_conflict condition type for table "system.SuperUserPermission"
 """
 input system_SuperUserPermission_on_conflict {
     constraint: system_SuperUserPermission_constraint!
@@ -53525,13 +53603,13 @@ input type for inserting object relation for remote table "video.ChannelStack"
 input video_ChannelStack_obj_rel_insert_input {
     data: video_ChannelStack_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_ChannelStack_on_conflict
 }
 
 """
-on conflict condition type for table "video.ChannelStack"
+on_conflict condition type for table "video.ChannelStack"
 """
 input video_ChannelStack_on_conflict {
     constraint: video_ChannelStack_constraint!
@@ -54129,13 +54207,13 @@ input type for inserting object relation for remote table "video.EventVonageSess
 input video_EventVonageSession_obj_rel_insert_input {
     data: video_EventVonageSession_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_EventVonageSession_on_conflict
 }
 
 """
-on conflict condition type for table "video.EventVonageSession"
+on_conflict condition type for table "video.EventVonageSession"
 """
 input video_EventVonageSession_on_conflict {
     constraint: video_EventVonageSession_constraint!
@@ -54422,7 +54500,7 @@ type video_ImmediateSwitch_mutation_response {
 }
 
 """
-on conflict condition type for table "video.ImmediateSwitch"
+on_conflict condition type for table "video.ImmediateSwitch"
 """
 input video_ImmediateSwitch_on_conflict {
     constraint: video_ImmediateSwitch_constraint!
@@ -54645,7 +54723,7 @@ type video_InputType_mutation_response {
 }
 
 """
-on conflict condition type for table "video.InputType"
+on_conflict condition type for table "video.InputType"
 """
 input video_InputType_on_conflict {
     constraint: video_InputType_constraint!
@@ -54867,13 +54945,13 @@ input type for inserting object relation for remote table "video.MediaLiveChanne
 input video_MediaLiveChannelStatus_obj_rel_insert_input {
     data: video_MediaLiveChannelStatus_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_MediaLiveChannelStatus_on_conflict
 }
 
 """
-on conflict condition type for table "video.MediaLiveChannelStatus"
+on_conflict condition type for table "video.MediaLiveChannelStatus"
 """
 input video_MediaLiveChannelStatus_on_conflict {
     constraint: video_MediaLiveChannelStatus_constraint!
@@ -55200,13 +55278,13 @@ input type for inserting object relation for remote table "video.RoomRtmpInput"
 input video_RoomRtmpInput_obj_rel_insert_input {
     data: video_RoomRtmpInput_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_RoomRtmpInput_on_conflict
 }
 
 """
-on conflict condition type for table "video.RoomRtmpInput"
+on_conflict condition type for table "video.RoomRtmpInput"
 """
 input video_RoomRtmpInput_on_conflict {
     constraint: video_RoomRtmpInput_constraint!
@@ -55338,9 +55416,6 @@ enum video_RoomRtmpInput_update_column {
 
 """
 Enables broadcasting of a live-stream from a room to an RTMP-capable service, such as YouTube.
-
-
-columns and relationships of "video.RoomRtmpOutput"
 """
 type video_RoomRtmpOutput {
     created_at: timestamptz!
@@ -55459,13 +55534,13 @@ input type for inserting object relation for remote table "video.RoomRtmpOutput"
 input video_RoomRtmpOutput_obj_rel_insert_input {
     data: video_RoomRtmpOutput_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_RoomRtmpOutput_on_conflict
 }
 
 """
-on conflict condition type for table "video.RoomRtmpOutput"
+on_conflict condition type for table "video.RoomRtmpOutput"
 """
 input video_RoomRtmpOutput_on_conflict {
     constraint: video_RoomRtmpOutput_constraint!
@@ -55676,7 +55751,7 @@ type video_RtmpInput_mutation_response {
 }
 
 """
-on conflict condition type for table "video.RtmpInput"
+on_conflict condition type for table "video.RtmpInput"
 """
 input video_RtmpInput_on_conflict {
     constraint: video_RtmpInput_constraint!
@@ -55854,7 +55929,7 @@ type video_TranscriptionJob_mutation_response {
 }
 
 """
-on conflict condition type for table "video.TranscriptionJob"
+on_conflict condition type for table "video.TranscriptionJob"
 """
 input video_TranscriptionJob_on_conflict {
     constraint: video_TranscriptionJob_constraint!
@@ -56065,7 +56140,7 @@ input type for inserting array relation for remote table "video.VideoRenderJob"
 input video_VideoRenderJob_arr_rel_insert_input {
     data: [video_VideoRenderJob_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_VideoRenderJob_on_conflict
 }
@@ -56236,7 +56311,7 @@ type video_VideoRenderJob_mutation_response {
 }
 
 """
-on conflict condition type for table "video.VideoRenderJob"
+on_conflict condition type for table "video.VideoRenderJob"
 """
 input video_VideoRenderJob_on_conflict {
     constraint: video_VideoRenderJob_constraint!
@@ -56486,9 +56561,6 @@ input video_VideoRenderJob_variance_order_by {
 
 """
 Current streams in Vonage sessions.
-
-
-columns and relationships of "video.VonageParticipantStream"
 """
 type video_VonageParticipantStream {
     """
@@ -56551,7 +56623,7 @@ input type for inserting array relation for remote table "video.VonageParticipan
 input video_VonageParticipantStream_arr_rel_insert_input {
     data: [video_VonageParticipantStream_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_VonageParticipantStream_on_conflict
 }
@@ -56687,7 +56759,7 @@ type video_VonageParticipantStream_mutation_response {
 }
 
 """
-on conflict condition type for table "video.VonageParticipantStream"
+on_conflict condition type for table "video.VonageParticipantStream"
 """
 input video_VonageParticipantStream_on_conflict {
     constraint: video_VonageParticipantStream_constraint!
@@ -56936,7 +57008,7 @@ input type for inserting array relation for remote table "video.VonageRoomRecord
 input video_VonageRoomRecording_arr_rel_insert_input {
     data: [video_VonageRoomRecording_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_VonageRoomRecording_on_conflict
 }
@@ -57076,13 +57148,13 @@ input type for inserting object relation for remote table "video.VonageRoomRecor
 input video_VonageRoomRecording_obj_rel_insert_input {
     data: video_VonageRoomRecording_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_VonageRoomRecording_on_conflict
 }
 
 """
-on conflict condition type for table "video.VonageRoomRecording"
+on_conflict condition type for table "video.VonageRoomRecording"
 """
 input video_VonageRoomRecording_on_conflict {
     constraint: video_VonageRoomRecording_constraint!
@@ -57339,7 +57411,7 @@ input type for inserting array relation for remote table "video.VonageSessionLay
 input video_VonageSessionLayout_arr_rel_insert_input {
     data: [video_VonageSessionLayout_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_VonageSessionLayout_on_conflict
 }
@@ -57478,13 +57550,13 @@ input type for inserting object relation for remote table "video.VonageSessionLa
 input video_VonageSessionLayout_obj_rel_insert_input {
     data: video_VonageSessionLayout_insert_input!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_VonageSessionLayout_on_conflict
 }
 
 """
-on conflict condition type for table "video.VonageSessionLayout"
+on_conflict condition type for table "video.VonageSessionLayout"
 """
 input video_VonageSessionLayout_on_conflict {
     constraint: video_VonageSessionLayout_constraint!
@@ -57825,7 +57897,7 @@ type video_VonageVideoPlaybackCommand_mutation_response {
 }
 
 """
-on conflict condition type for table "video.VonageVideoPlaybackCommand"
+on_conflict condition type for table "video.VonageVideoPlaybackCommand"
 """
 input video_VonageVideoPlaybackCommand_on_conflict {
     constraint: video_VonageVideoPlaybackCommand_constraint!
@@ -58013,7 +58085,7 @@ input type for inserting array relation for remote table "video.YouTubeUpload"
 input video_YouTubeUpload_arr_rel_insert_input {
     data: [video_YouTubeUpload_insert_input!]!
     """
-    on conflict condition
+    upsert condition
     """
     on_conflict: video_YouTubeUpload_on_conflict
 }
@@ -58156,7 +58228,7 @@ type video_YouTubeUpload_mutation_response {
 }
 
 """
-on conflict condition type for table "video.YouTubeUpload"
+on_conflict condition type for table "video.YouTubeUpload"
 """
 input video_YouTubeUpload_on_conflict {
     constraint: video_YouTubeUpload_constraint!

@@ -437,10 +437,10 @@ gql`
         }
     }
 
-    mutation MarkAndSelectNewUploadYouTubeVideoJobs($ids: [uuid!]!) {
+    mutation MarkAndSelectNewUploadYouTubeVideoJobs($ids: [uuid!]!, $initialResult: jsonb!) {
         update_job_queues_UploadYouTubeVideoJob(
             where: { id: { _in: $ids }, jobStatusName: { _eq: NEW } }
-            _set: { jobStatusName: IN_PROGRESS }
+            _set: { jobStatusName: IN_PROGRESS, result: $initialResult }
             _inc: { retriesCount: 1 }
         ) {
             returning {
@@ -510,6 +510,7 @@ export async function handleUploadYouTubeVideoJobQueue(logger: P.Logger): Promis
         mutation: MarkAndSelectNewUploadYouTubeVideoJobsDocument,
         variables: {
             ids: newJobs.data.job_queues_UploadYouTubeVideoJob.map((x) => x.id),
+            initialResult: [],
         },
     });
     assert(jobs.data?.update_job_queues_UploadYouTubeVideoJob, "Failed to fetch new UploadYouTubeVideoJobs");

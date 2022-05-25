@@ -39762,6 +39762,7 @@ export type SelectNewUploadYouTubeVideoJobsQuery = {
 
 export type MarkAndSelectNewUploadYouTubeVideoJobsMutationVariables = Exact<{
     ids: Array<Scalars["uuid"]> | Scalars["uuid"];
+    initialResult: Scalars["jsonb"];
 }>;
 
 export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = {
@@ -45811,6 +45812,11 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                         },
                     },
                 },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "initialResult" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } } },
+                },
             ],
             selectionSet: {
                 kind: "SelectionSet",
@@ -45869,6 +45875,11 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "jobStatusName" },
                                             value: { kind: "EnumValue", value: "IN_PROGRESS" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "result" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "initialResult" } },
                                         },
                                     ],
                                 },

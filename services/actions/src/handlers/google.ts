@@ -554,7 +554,7 @@ gql`
         update_job_queues_UploadYouTubeVideoJob(
             where: {
                 registrantGoogleAccountId: { _eq: $registrantGoogleAccountId }
-                _or: [{ jobStatusName: { _eq: NEW }, pausedUntil: { _is_null: true } }, { id: { _eq: $id } }]
+                _or: [{ jobStatusName: { _eq: NEW } }, { id: { _eq: $id } }]
             }
             _set: { jobStatusName: NEW, pausedUntil: $pausedUntil }
         ) {

@@ -46628,23 +46628,6 @@ export const PauseUploadYouTubeVideoJobDocument = {
                                                                     ],
                                                                 },
                                                             },
-                                                            {
-                                                                kind: "ObjectField",
-                                                                name: { kind: "Name", value: "pausedUntil" },
-                                                                value: {
-                                                                    kind: "ObjectValue",
-                                                                    fields: [
-                                                                        {
-                                                                            kind: "ObjectField",
-                                                                            name: { kind: "Name", value: "_is_null" },
-                                                                            value: {
-                                                                                kind: "BooleanValue",
-                                                                                value: true,
-                                                                            },
-                                                                        },
-                                                                    ],
-                                                                },
-                                                            },
                                                         ],
                                                     },
                                                     {

@@ -82,7 +82,7 @@ function formatJobMessage(
     jobStatusName: Job_Queues_JobStatus_Enum,
     message?: string | null,
     pausedUntil?: string | null
-) {
+): string {
     if (jobStatusName === Job_Queues_JobStatus_Enum.InProgress) {
         return "Upload in progress. You may close this page while you wait.";
     }
@@ -106,8 +106,10 @@ function formatJobMessage(
             return messageObj.errors.map((x: any) => `\`${x.reason}\`: ${x.message}`).join("\n\n");
         }
     } catch {
-        return message;
+        // Ignore
     }
+
+    return message ?? "";
 }
 
 export function UploadedPage(): JSX.Element {

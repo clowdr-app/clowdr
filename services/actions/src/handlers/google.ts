@@ -483,7 +483,7 @@ gql`
             }
         }
         expiredJobs: update_job_queues_UploadYouTubeVideoJob(
-            where: { jobStatusName: { _nin: [IN_PROGRESS, FAILED, EXPIRED] }, retriesCount: { _gte: 12 } }
+            where: { jobStatusName: { _nin: [IN_PROGRESS, COMPLETED, FAILED, EXPIRED] }, retriesCount: { _gte: 12 } }
             _set: {
                 jobStatusName: EXPIRED
                 message: "12 attempts to upload this video have failed. No longer retrying."
@@ -495,7 +495,7 @@ gql`
         }
         cancelledJobs: update_job_queues_UploadYouTubeVideoJob(
             where: {
-                jobStatusName: { _nin: [IN_PROGRESS, FAILED, EXPIRED] }
+                jobStatusName: { _nin: [IN_PROGRESS, COMPLETED, FAILED, EXPIRED] }
                 registrantGoogleAccount: { isDeleted: { _eq: true } }
             }
             _set: { jobStatusName: EXPIRED, message: "YouTube account has been disconnected." }

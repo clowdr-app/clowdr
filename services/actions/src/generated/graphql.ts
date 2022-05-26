@@ -46188,6 +46188,7 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                                                             kind: "ListValue",
                                                             values: [
                                                                 { kind: "EnumValue", value: "IN_PROGRESS" },
+                                                                { kind: "EnumValue", value: "COMPLETED" },
                                                                 { kind: "EnumValue", value: "FAILED" },
                                                                 { kind: "EnumValue", value: "EXPIRED" },
                                                             ],
@@ -46280,6 +46281,7 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                                                             kind: "ListValue",
                                                             values: [
                                                                 { kind: "EnumValue", value: "IN_PROGRESS" },
+                                                                { kind: "EnumValue", value: "COMPLETED" },
                                                                 { kind: "EnumValue", value: "FAILED" },
                                                                 { kind: "EnumValue", value: "EXPIRED" },
                                                             ],

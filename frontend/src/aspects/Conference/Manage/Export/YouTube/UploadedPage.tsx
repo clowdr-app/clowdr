@@ -80,7 +80,7 @@ gql`
 
 function formatJobMessage(message?: string | null) {
     if (!message) {
-        return "No status message available";
+        return "Processing...";
     }
 
     try {

@@ -42,7 +42,7 @@ gql`
     ) {
         job_queues_UploadYouTubeVideoJob(
             where: { conferenceId: { _eq: $conferenceId }, subconferenceId: $subconferenceCond }
-            order_by: [{ createdAt: desc }, { updatedAt: asc }]
+            order_by: [{ createdAt: desc }, { pausedUntil: asc_nulls_last }, { updatedAt: asc }]
             limit: 100
         ) {
             ...UploadYouTubeVideos_UploadYouTubeVideoJob

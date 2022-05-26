@@ -427,7 +427,7 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                                 variables: {
                                     id: job.id,
                                     registrantGoogleAccountId: job.registrantGoogleAccount.id,
-                                    pausedUntil: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+                                    pausedUntil: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
                                 },
                             });
                         });
@@ -473,7 +473,7 @@ gql`
                 id: { _in: $ids }
                 jobStatusName: { _eq: NEW }
                 _or: [{ pausedUntil: { _is_null: true } }, { pausedUntil: { _lt: $now } }]
-                retriesCount: { _lt: 3 }
+                retriesCount: { _lt: 12 }
             }
             _set: { jobStatusName: IN_PROGRESS, result: $initialResult, pausedUntil: null }
             _inc: { retriesCount: 1 }
@@ -486,7 +486,7 @@ gql`
             where: {
                 id: { _in: $ids }
                 jobStatusName: { _nin: [FAILED, EXPIRED] }
-                _or: [{ registrantGoogleAccount: { isDeleted: { _eq: true } } }, { retriesCount: { _gte: 3 } }]
+                _or: [{ registrantGoogleAccount: { isDeleted: { _eq: true } } }, { retriesCount: { _gte: 12 } }]
             }
             _set: { jobStatusName: EXPIRED }
         ) {

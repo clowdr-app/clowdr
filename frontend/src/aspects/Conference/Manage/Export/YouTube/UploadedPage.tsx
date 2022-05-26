@@ -78,7 +78,11 @@ gql`
     }
 `;
 
-function formatJobMessage(message?: string | null) {
+function formatJobMessage(message?: string | null, pausedUntil?: string | null) {
+    if (pausedUntil && Date.parse(pausedUntil) > Date.now())
+        return `Upload temporarily paused as your YouTube account is currently rate limited. Next attempt will be at ${new Date(
+            pausedUntil
+        ).toLocaleString()}`;
     if (!message) {
         return "Processing...";
     }
@@ -207,10 +211,8 @@ export function UploadedPage(): JSX.Element {
                                                             url={`https://youtube.com/watch?v=${upload.videoId}`}
                                                         />
                                                     )
-                                                ) : job.pausedUntil && Date.parse(job.pausedUntil) > Date.now() ? (
-                                                    "Upload temporarily paused as your YouTube account is currently rate limited"
                                                 ) : (
-                                                    formatJobMessage(job.message)
+                                                    formatJobMessage(job.message, job.pausedUntil)
                                                 )}
                                             </Markdown>
                                         </Td>

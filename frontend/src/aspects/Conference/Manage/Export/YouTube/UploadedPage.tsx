@@ -27,6 +27,7 @@ import {
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
 } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Chakra/FAIcon";
+import { Markdown } from "../../../../Chakra/Markdown";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { makeContext } from "../../../../GQL/make-context";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
@@ -76,6 +77,21 @@ gql`
         }
     }
 `;
+
+function formatJobMessage(message?: string | null) {
+    if (!message) {
+        return "No status message available";
+    }
+
+    try {
+        const messageObj = JSON.parse(message);
+        if (messageObj.errors && messageObj.errors.length) {
+            return messageObj.errors.map((x: any) => x.reason + ": " + x.message).join("\n\n");
+        }
+    } catch {
+        return message;
+    }
+}
 
 export function UploadedPage(): JSX.Element {
     const conference = useConference();
@@ -182,17 +198,21 @@ export function UploadedPage(): JSX.Element {
                                         </Td>
                                         <Td>{upload?.videoPrivacyStatus}</Td>
                                         <Td>
-                                            {upload ? (
-                                                upload?.videoPrivacyStatus === "private" ? (
-                                                    "No preview for private video."
+                                            <Markdown>
+                                                {upload ? (
+                                                    upload?.videoPrivacyStatus === "private" ? (
+                                                        "No preview for private video."
+                                                    ) : (
+                                                        <DeferredVideo
+                                                            url={`https://youtube.com/watch?v=${upload.videoId}`}
+                                                        />
+                                                    )
+                                                ) : job.pausedUntil && Date.parse(job.pausedUntil) > Date.now() ? (
+                                                    "Upload temporarily paused as your YouTube account is currently rate limited"
                                                 ) : (
-                                                    <DeferredVideo
-                                                        url={`https://youtube.com/watch?v=${upload.videoId}`}
-                                                    />
-                                                )
-                                            ) : (
-                                                job.message
-                                            )}
+                                                    formatJobMessage(job.message)
+                                                )}
+                                            </Markdown>
                                         </Td>
                                     </Tr>
                                 ))}

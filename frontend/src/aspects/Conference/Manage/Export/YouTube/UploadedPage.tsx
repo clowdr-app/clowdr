@@ -222,19 +222,19 @@ export function UploadedPage(): JSX.Element {
                                         </Td>
                                         <Td>{upload?.videoPrivacyStatus}</Td>
                                         <Td>
-                                            <Markdown>
-                                                {upload ? (
-                                                    upload?.videoPrivacyStatus === "private" ? (
-                                                        "No preview for private video."
-                                                    ) : (
-                                                        <DeferredVideo
-                                                            url={`https://youtube.com/watch?v=${upload.videoId}`}
-                                                        />
-                                                    )
+                                            {upload ? (
+                                                upload?.videoPrivacyStatus === "private" ? (
+                                                    "No preview for private video."
                                                 ) : (
-                                                    formatJobMessage(job.jobStatusName, job.message, job.pausedUntil)
-                                                )}
-                                            </Markdown>
+                                                    <DeferredVideo
+                                                        url={`https://youtube.com/watch?v=${upload.videoId}`}
+                                                    />
+                                                )
+                                            ) : (
+                                                <Markdown>
+                                                    {formatJobMessage(job.jobStatusName, job.message, job.pausedUntil)}
+                                                </Markdown>
+                                            )}
                                         </Td>
                                     </Tr>
                                 ))}

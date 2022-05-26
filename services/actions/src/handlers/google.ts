@@ -426,8 +426,7 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                                 mutation: PauseUploadYouTubeVideoJobDocument,
                                 variables: {
                                     id: job.id,
-                                    message: JSON.stringify(error),
-                                    result: [error],
+                                    registrantGoogleAccountId: job.registrantGoogleAccount.id,
                                     pausedUntil: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
                                 },
                             });
@@ -541,13 +540,15 @@ gql`
         }
     }
 
-    mutation PauseUploadYouTubeVideoJob($id: uuid!, $message: String!, $pausedUntil: timestamptz!, $result: jsonb) {
-        update_job_queues_UploadYouTubeVideoJob_by_pk(
-            pk_columns: { id: $id }
-            _set: { message: $message, jobStatusName: NEW, pausedUntil: $pausedUntil }
-            _append: { result: $result }
+    mutation PauseUploadYouTubeVideoJob($id: uuid!, $registrantGoogleAccountId: uuid!, $pausedUntil: timestamptz!) {
+        update_job_queues_UploadYouTubeVideoJob(
+            where: {
+                registrantGoogleAccountId: { _eq: $registrantGoogleAccountId }
+                _or: [{ jobStatusName: { _eq: NEW }, pausedUntil: { _is_null: true } }, { id: { _eq: $id } }]
+            }
+            _set: { jobStatusName: NEW, pausedUntil: $pausedUntil }
         ) {
-            id
+            affected_rows
         }
     }
 

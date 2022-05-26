@@ -39897,14 +39897,16 @@ export type FailUploadYouTubeVideoJobMutation = {
 
 export type PauseUploadYouTubeVideoJobMutationVariables = Exact<{
     id: Scalars["uuid"];
-    message: Scalars["String"];
+    registrantGoogleAccountId: Scalars["uuid"];
     pausedUntil: Scalars["timestamptz"];
-    result?: InputMaybe<Scalars["jsonb"]>;
 }>;
 
 export type PauseUploadYouTubeVideoJobMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any } | null;
+    update_job_queues_UploadYouTubeVideoJob?: {
+        __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
+        affected_rows: number;
+    } | null;
 };
 
 export type CompleteUploadYouTubeVideoJobMutationVariables = Exact<{
@@ -46484,8 +46486,8 @@ export const PauseUploadYouTubeVideoJobDocument = {
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "message" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "registrantGoogleAccountId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
                 },
                 {
                     kind: "VariableDefinition",
@@ -46495,29 +46497,103 @@ export const PauseUploadYouTubeVideoJobDocument = {
                         type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
                     },
                 },
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "result" } },
-                    type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } },
-                },
             ],
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
                     {
                         kind: "Field",
-                        name: { kind: "Name", value: "update_job_queues_UploadYouTubeVideoJob_by_pk" },
+                        name: { kind: "Name", value: "update_job_queues_UploadYouTubeVideoJob" },
                         arguments: [
                             {
                                 kind: "Argument",
-                                name: { kind: "Name", value: "pk_columns" },
+                                name: { kind: "Name", value: "where" },
                                 value: {
                                     kind: "ObjectValue",
                                     fields: [
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "id" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                                            name: { kind: "Name", value: "registrantGoogleAccountId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "registrantGoogleAccountId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_or" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "jobStatusName" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_eq" },
+                                                                            value: { kind: "EnumValue", value: "NEW" },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "pausedUntil" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_is_null" },
+                                                                            value: {
+                                                                                kind: "BooleanValue",
+                                                                                value: true,
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "id" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_eq" },
+                                                                            value: {
+                                                                                kind: "Variable",
+                                                                                name: { kind: "Name", value: "id" },
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
                                         },
                                     ],
                                 },
@@ -46528,11 +46604,6 @@ export const PauseUploadYouTubeVideoJobDocument = {
                                 value: {
                                     kind: "ObjectValue",
                                     fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "message" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "message" } },
-                                        },
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "jobStatusName" },
@@ -46546,24 +46617,10 @@ export const PauseUploadYouTubeVideoJobDocument = {
                                     ],
                                 },
                             },
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "_append" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "result" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "result" } },
-                                        },
-                                    ],
-                                },
-                            },
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
                         },
                     },
                 ],

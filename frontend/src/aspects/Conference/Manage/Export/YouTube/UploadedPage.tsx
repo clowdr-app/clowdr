@@ -88,13 +88,14 @@ function formatJobMessage(
     }
 
     if (jobStatusName === Job_Queues_JobStatus_Enum.New) {
+        if (pausedUntil && Date.parse(pausedUntil) > Date.now())
+            return `Upload temporarily paused as your YouTube account is currently rate limited. Next attempt will be at \`${new Date(
+                pausedUntil
+            ).toLocaleString()}\``;
+
         return "Upload queued. You may close this page while you wait.";
     }
 
-    if (pausedUntil && Date.parse(pausedUntil) > Date.now())
-        return `Upload temporarily paused as your YouTube account is currently rate limited. Next attempt will be at \`${new Date(
-            pausedUntil
-        ).toLocaleString()}\``;
     if (!message) {
         return "Processing...";
     }

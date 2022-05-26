@@ -46095,6 +46095,11 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                                             name: { kind: "Name", value: "result" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "initialResult" } },
                                         },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "pausedUntil" },
+                                            value: { kind: "NullValue" },
+                                        },
                                     ],
                                 },
                             },

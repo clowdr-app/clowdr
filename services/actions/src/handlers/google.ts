@@ -475,7 +475,7 @@ gql`
                 _or: [{ pausedUntil: { _is_null: true } }, { pausedUntil: { _lt: $now } }]
                 retriesCount: { _lt: 3 }
             }
-            _set: { jobStatusName: IN_PROGRESS, result: $initialResult }
+            _set: { jobStatusName: IN_PROGRESS, result: $initialResult, pausedUntil: null }
             _inc: { retriesCount: 1 }
         ) {
             returning {

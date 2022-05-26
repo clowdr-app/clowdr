@@ -78,11 +78,23 @@ gql`
     }
 `;
 
-function formatJobMessage(message?: string | null, pausedUntil?: string | null) {
+function formatJobMessage(
+    jobStatusName: Job_Queues_JobStatus_Enum,
+    message?: string | null,
+    pausedUntil?: string | null
+) {
+    if (jobStatusName === Job_Queues_JobStatus_Enum.InProgress) {
+        return "Upload in progress. You may close this page while you wait.";
+    }
+
+    if (jobStatusName === Job_Queues_JobStatus_Enum.New) {
+        return "Upload queued. You may close this page while you wait.";
+    }
+
     if (pausedUntil && Date.parse(pausedUntil) > Date.now())
-        return `Upload temporarily paused as your YouTube account is currently rate limited. Next attempt will be at ${new Date(
+        return `Upload temporarily paused as your YouTube account is currently rate limited. Next attempt will be at \`${new Date(
             pausedUntil
-        ).toLocaleString()}`;
+        ).toLocaleString()}\``;
     if (!message) {
         return "Processing...";
     }
@@ -90,7 +102,7 @@ function formatJobMessage(message?: string | null, pausedUntil?: string | null) 
     try {
         const messageObj = JSON.parse(message);
         if (messageObj.errors && messageObj.errors.length) {
-            return messageObj.errors.map((x: any) => x.reason + ": " + x.message).join("\n\n");
+            return messageObj.errors.map((x: any) => `\`${x.reason}\`: ${x.message}`).join("\n\n");
         }
     } catch {
         return message;
@@ -127,11 +139,16 @@ export function UploadedPage(): JSX.Element {
                         <FAIcon icon="check-circle" iconStyle="s" aria-label="completed" color="green.500" />
                     </Tooltip>
                 );
-            case Job_Queues_JobStatus_Enum.Expired:
             case Job_Queues_JobStatus_Enum.Failed:
                 return (
-                    <Tooltip label="Upload failed">
+                    <Tooltip label="Upload failed - error">
                         <FAIcon icon="exclamation-circle" iconStyle="s" aria-label="error" color="red.500" />
+                    </Tooltip>
+                );
+            case Job_Queues_JobStatus_Enum.Expired:
+                return (
+                    <Tooltip label="Upload failed - expired">
+                        <FAIcon icon="stopwatch" iconStyle="s" aria-label="failure" color="red.500" />
                     </Tooltip>
                 );
             case Job_Queues_JobStatus_Enum.InProgress:
@@ -212,7 +229,7 @@ export function UploadedPage(): JSX.Element {
                                                         />
                                                     )
                                                 ) : (
-                                                    formatJobMessage(job.message, job.pausedUntil)
+                                                    formatJobMessage(job.jobStatusName, job.message, job.pausedUntil)
                                                 )}
                                             </Markdown>
                                         </Td>

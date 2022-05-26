@@ -87,20 +87,21 @@ select_permissions:
   - role: conference-organizer
     permission:
       columns:
-        - retriesCount
+        - conferenceId
+        - created_at
+        - elementId
+        - id
         - jobStatusName
         - message
+        - pausedUntil
         - playlistId
+        - registrantGoogleAccountId
+        - retriesCount
+        - subconferenceId
+        - updated_at
         - videoDescription
         - videoPrivacyStatus
         - videoTitle
-        - created_at
-        - updated_at
-        - conferenceId
-        - elementId
-        - id
-        - registrantGoogleAccountId
-        - subconferenceId
       filter:
         _or:
           - _and:
@@ -111,20 +112,21 @@ select_permissions:
   - role: subconference-organizer
     permission:
       columns:
-        - retriesCount
+        - conferenceId
+        - created_at
+        - elementId
+        - id
         - jobStatusName
         - message
+        - pausedUntil
         - playlistId
+        - registrantGoogleAccountId
+        - retriesCount
+        - subconferenceId
+        - updated_at
         - videoDescription
         - videoPrivacyStatus
         - videoTitle
-        - created_at
-        - updated_at
-        - conferenceId
-        - elementId
-        - id
-        - registrantGoogleAccountId
-        - subconferenceId
       filter:
         _or:
           - _and:

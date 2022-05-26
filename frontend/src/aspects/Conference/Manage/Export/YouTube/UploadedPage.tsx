@@ -66,6 +66,7 @@ gql`
         createdAt
         jobStatusName
         message
+        pausedUntil
         element {
             id
             name
@@ -98,7 +99,7 @@ export function UploadedPage(): JSX.Element {
     });
     usePolling(refetchExistingJobsResult, 20000);
 
-    const jobStatus = useCallback((jobStatusName: Job_Queues_JobStatus_Enum) => {
+    const jobStatus = useCallback((jobStatusName: Job_Queues_JobStatus_Enum, pausedUntil: Date | null | undefined) => {
         switch (jobStatusName) {
             case Job_Queues_JobStatus_Enum.Completed:
                 return (
@@ -115,7 +116,15 @@ export function UploadedPage(): JSX.Element {
                 );
             case Job_Queues_JobStatus_Enum.InProgress:
             case Job_Queues_JobStatus_Enum.New:
-                return <Spinner size="sm" aria-label="in progress" />;
+                if (pausedUntil && pausedUntil.getTime() >= Date.now()) {
+                    return (
+                        <Tooltip label="Upload temporarily paused as your YouTube account is currently rate limited">
+                            <FAIcon icon="pause-circle" iconStyle="s" aria-label="notice" color="yellow.500" />
+                        </Tooltip>
+                    );
+                } else {
+                    return <Spinner size="sm" aria-label="in progress" />;
+                }
         }
     }, []);
 
@@ -168,7 +177,9 @@ export function UploadedPage(): JSX.Element {
                                                 job.element?.name
                                             )}
                                         </Td>
-                                        <Td>{jobStatus(job.jobStatusName)}</Td>
+                                        <Td>
+                                            {jobStatus(job.jobStatusName, job.pausedUntil && new Date(job.pausedUntil))}
+                                        </Td>
                                         <Td>{upload?.videoPrivacyStatus}</Td>
                                         <Td>
                                             {upload ? (

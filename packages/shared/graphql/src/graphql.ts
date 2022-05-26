@@ -14884,6 +14884,7 @@ export type Job_Queues_UploadYouTubeVideoJob = {
     jobStatus: Job_Queues_JobStatus;
     jobStatusName: Job_Queues_JobStatus_Enum;
     message?: Maybe<Scalars["String"]>;
+    pausedUntil?: Maybe<Scalars["timestamptz"]>;
     playlistId?: Maybe<Scalars["String"]>;
     /** An object relationship */
     registrantGoogleAccount: Registrant_GoogleAccount;
@@ -14978,6 +14979,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
     jobStatus?: InputMaybe<Job_Queues_JobStatus_Bool_Exp>;
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum_Comparison_Exp>;
     message?: InputMaybe<String_Comparison_Exp>;
+    pausedUntil?: InputMaybe<Timestamptz_Comparison_Exp>;
     playlistId?: InputMaybe<String_Comparison_Exp>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Bool_Exp>;
     registrantGoogleAccountId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -15028,6 +15030,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
     jobStatus?: InputMaybe<Job_Queues_JobStatus_Obj_Rel_Insert_Input>;
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     message?: InputMaybe<Scalars["String"]>;
+    pausedUntil?: InputMaybe<Scalars["timestamptz"]>;
     playlistId?: InputMaybe<Scalars["String"]>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Obj_Rel_Insert_Input>;
     registrantGoogleAccountId?: InputMaybe<Scalars["uuid"]>;
@@ -15049,6 +15052,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Max_Fields = {
     elementId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     message?: Maybe<Scalars["String"]>;
+    pausedUntil?: Maybe<Scalars["timestamptz"]>;
     playlistId?: Maybe<Scalars["String"]>;
     registrantGoogleAccountId?: Maybe<Scalars["uuid"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
@@ -15067,6 +15071,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Min_Fields = {
     elementId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     message?: Maybe<Scalars["String"]>;
+    pausedUntil?: Maybe<Scalars["timestamptz"]>;
     playlistId?: Maybe<Scalars["String"]>;
     registrantGoogleAccountId?: Maybe<Scalars["uuid"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
@@ -15104,6 +15109,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
     jobStatus?: InputMaybe<Job_Queues_JobStatus_Order_By>;
     jobStatusName?: InputMaybe<Order_By>;
     message?: InputMaybe<Order_By>;
+    pausedUntil?: InputMaybe<Order_By>;
     playlistId?: InputMaybe<Order_By>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Order_By>;
     registrantGoogleAccountId?: InputMaybe<Order_By>;
@@ -15142,6 +15148,8 @@ export enum Job_Queues_UploadYouTubeVideoJob_Select_Column {
     /** column name */
     Message = "message",
     /** column name */
+    PausedUntil = "pausedUntil",
+    /** column name */
     PlaylistId = "playlistId",
     /** column name */
     RegistrantGoogleAccountId = "registrantGoogleAccountId",
@@ -15169,6 +15177,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Set_Input = {
     id?: InputMaybe<Scalars["uuid"]>;
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     message?: InputMaybe<Scalars["String"]>;
+    pausedUntil?: InputMaybe<Scalars["timestamptz"]>;
     playlistId?: InputMaybe<Scalars["String"]>;
     registrantGoogleAccountId?: InputMaybe<Scalars["uuid"]>;
     result?: InputMaybe<Scalars["jsonb"]>;
@@ -15218,6 +15227,8 @@ export enum Job_Queues_UploadYouTubeVideoJob_Update_Column {
     JobStatusName = "jobStatusName",
     /** column name */
     Message = "message",
+    /** column name */
+    PausedUntil = "pausedUntil",
     /** column name */
     PlaylistId = "playlistId",
     /** column name */

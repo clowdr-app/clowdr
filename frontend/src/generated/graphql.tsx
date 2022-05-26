@@ -14894,6 +14894,7 @@ export type Job_Queues_UploadYouTubeVideoJob = {
     readonly jobStatus: Job_Queues_JobStatus;
     readonly jobStatusName: Job_Queues_JobStatus_Enum;
     readonly message?: Maybe<Scalars["String"]>;
+    readonly pausedUntil?: Maybe<Scalars["timestamptz"]>;
     readonly playlistId?: Maybe<Scalars["String"]>;
     /** An object relationship */
     readonly registrantGoogleAccount: Registrant_GoogleAccount;
@@ -14988,6 +14989,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
     readonly jobStatus?: InputMaybe<Job_Queues_JobStatus_Bool_Exp>;
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum_Comparison_Exp>;
     readonly message?: InputMaybe<String_Comparison_Exp>;
+    readonly pausedUntil?: InputMaybe<Timestamptz_Comparison_Exp>;
     readonly playlistId?: InputMaybe<String_Comparison_Exp>;
     readonly registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Bool_Exp>;
     readonly registrantGoogleAccountId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -15038,6 +15040,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
     readonly jobStatus?: InputMaybe<Job_Queues_JobStatus_Obj_Rel_Insert_Input>;
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     readonly message?: InputMaybe<Scalars["String"]>;
+    readonly pausedUntil?: InputMaybe<Scalars["timestamptz"]>;
     readonly playlistId?: InputMaybe<Scalars["String"]>;
     readonly registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Obj_Rel_Insert_Input>;
     readonly registrantGoogleAccountId?: InputMaybe<Scalars["uuid"]>;
@@ -15059,6 +15062,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Max_Fields = {
     readonly elementId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly message?: Maybe<Scalars["String"]>;
+    readonly pausedUntil?: Maybe<Scalars["timestamptz"]>;
     readonly playlistId?: Maybe<Scalars["String"]>;
     readonly registrantGoogleAccountId?: Maybe<Scalars["uuid"]>;
     readonly retriesCount?: Maybe<Scalars["Int"]>;
@@ -15077,6 +15081,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Min_Fields = {
     readonly elementId?: Maybe<Scalars["uuid"]>;
     readonly id?: Maybe<Scalars["uuid"]>;
     readonly message?: Maybe<Scalars["String"]>;
+    readonly pausedUntil?: Maybe<Scalars["timestamptz"]>;
     readonly playlistId?: Maybe<Scalars["String"]>;
     readonly registrantGoogleAccountId?: Maybe<Scalars["uuid"]>;
     readonly retriesCount?: Maybe<Scalars["Int"]>;
@@ -15114,6 +15119,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
     readonly jobStatus?: InputMaybe<Job_Queues_JobStatus_Order_By>;
     readonly jobStatusName?: InputMaybe<Order_By>;
     readonly message?: InputMaybe<Order_By>;
+    readonly pausedUntil?: InputMaybe<Order_By>;
     readonly playlistId?: InputMaybe<Order_By>;
     readonly registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Order_By>;
     readonly registrantGoogleAccountId?: InputMaybe<Order_By>;
@@ -15152,6 +15158,8 @@ export enum Job_Queues_UploadYouTubeVideoJob_Select_Column {
     /** column name */
     Message = "message",
     /** column name */
+    PausedUntil = "pausedUntil",
+    /** column name */
     PlaylistId = "playlistId",
     /** column name */
     RegistrantGoogleAccountId = "registrantGoogleAccountId",
@@ -15179,6 +15187,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Set_Input = {
     readonly id?: InputMaybe<Scalars["uuid"]>;
     readonly jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     readonly message?: InputMaybe<Scalars["String"]>;
+    readonly pausedUntil?: InputMaybe<Scalars["timestamptz"]>;
     readonly playlistId?: InputMaybe<Scalars["String"]>;
     readonly registrantGoogleAccountId?: InputMaybe<Scalars["uuid"]>;
     readonly result?: InputMaybe<Scalars["jsonb"]>;
@@ -15228,6 +15237,8 @@ export enum Job_Queues_UploadYouTubeVideoJob_Update_Column {
     JobStatusName = "jobStatusName",
     /** column name */
     Message = "message",
+    /** column name */
+    PausedUntil = "pausedUntil",
     /** column name */
     PlaylistId = "playlistId",
     /** column name */
@@ -45310,6 +45321,7 @@ export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = {
         readonly createdAt: any;
         readonly jobStatusName: Job_Queues_JobStatus_Enum;
         readonly message?: string | null;
+        readonly pausedUntil?: any | null;
         readonly element: { readonly __typename?: "content_Element"; readonly id: any; readonly name: string };
         readonly youTubeUploads: ReadonlyArray<{
             readonly __typename?: "video_YouTubeUpload";
@@ -45345,6 +45357,7 @@ export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = {
     readonly createdAt: any;
     readonly jobStatusName: Job_Queues_JobStatus_Enum;
     readonly message?: string | null;
+    readonly pausedUntil?: any | null;
     readonly element: { readonly __typename?: "content_Element"; readonly id: any; readonly name: string };
     readonly youTubeUploads: ReadonlyArray<{
         readonly __typename?: "video_YouTubeUpload";
@@ -51887,6 +51900,7 @@ export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
         createdAt
         jobStatusName
         message
+        pausedUntil
         element {
             id
             name
@@ -74072,6 +74086,11 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        pausedUntil?: GraphCacheResolver<
+            WithTypename<Job_Queues_UploadYouTubeVideoJob>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
         playlistId?: GraphCacheResolver<
             WithTypename<Job_Queues_UploadYouTubeVideoJob>,
             Record<string, never>,
@@ -74235,6 +74254,11 @@ export type GraphCacheResolvers = {
             Record<string, never>,
             Scalars["String"] | string
         >;
+        pausedUntil?: GraphCacheResolver<
+            WithTypename<Job_Queues_UploadYouTubeVideoJob_Max_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
+        >;
         playlistId?: GraphCacheResolver<
             WithTypename<Job_Queues_UploadYouTubeVideoJob_Max_Fields>,
             Record<string, never>,
@@ -74301,6 +74325,11 @@ export type GraphCacheResolvers = {
             WithTypename<Job_Queues_UploadYouTubeVideoJob_Min_Fields>,
             Record<string, never>,
             Scalars["String"] | string
+        >;
+        pausedUntil?: GraphCacheResolver<
+            WithTypename<Job_Queues_UploadYouTubeVideoJob_Min_Fields>,
+            Record<string, never>,
+            Scalars["timestamptz"] | string
         >;
         playlistId?: GraphCacheResolver<
             WithTypename<Job_Queues_UploadYouTubeVideoJob_Min_Fields>,

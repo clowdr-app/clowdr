@@ -20329,6 +20329,7 @@ type job_queues_UploadYouTubeVideoJob {
     jobStatus: job_queues_JobStatus!
     jobStatusName: job_queues_JobStatus_enum!
     message: String
+    pausedUntil: timestamptz
     playlistId: String
     """
     An object relationship
@@ -20454,6 +20455,7 @@ input job_queues_UploadYouTubeVideoJob_bool_exp {
     jobStatus: job_queues_JobStatus_bool_exp
     jobStatusName: job_queues_JobStatus_enum_comparison_exp
     message: String_comparison_exp
+    pausedUntil: timestamptz_comparison_exp
     playlistId: String_comparison_exp
     registrantGoogleAccount: registrant_GoogleAccount_bool_exp
     registrantGoogleAccountId: uuid_comparison_exp
@@ -20518,6 +20520,7 @@ input job_queues_UploadYouTubeVideoJob_insert_input {
     jobStatus: job_queues_JobStatus_obj_rel_insert_input
     jobStatusName: job_queues_JobStatus_enum
     message: String
+    pausedUntil: timestamptz
     playlistId: String
     registrantGoogleAccount: registrant_GoogleAccount_obj_rel_insert_input
     registrantGoogleAccountId: uuid
@@ -20540,6 +20543,7 @@ type job_queues_UploadYouTubeVideoJob_max_fields {
     elementId: uuid
     id: uuid
     message: String
+    pausedUntil: timestamptz
     playlistId: String
     registrantGoogleAccountId: uuid
     retriesCount: Int
@@ -20559,6 +20563,7 @@ type job_queues_UploadYouTubeVideoJob_min_fields {
     elementId: uuid
     id: uuid
     message: String
+    pausedUntil: timestamptz
     playlistId: String
     registrantGoogleAccountId: uuid
     retriesCount: Int
@@ -20605,6 +20610,7 @@ input job_queues_UploadYouTubeVideoJob_order_by {
     jobStatus: job_queues_JobStatus_order_by
     jobStatusName: order_by
     message: order_by
+    pausedUntil: order_by
     playlistId: order_by
     registrantGoogleAccount: registrant_GoogleAccount_order_by
     registrantGoogleAccountId: order_by
@@ -20663,6 +20669,10 @@ enum job_queues_UploadYouTubeVideoJob_select_column {
     """
     column name
     """
+    pausedUntil
+    """
+    column name
+    """
     playlistId
     """
     column name
@@ -20708,6 +20718,7 @@ input job_queues_UploadYouTubeVideoJob_set_input {
     id: uuid
     jobStatusName: job_queues_JobStatus_enum
     message: String
+    pausedUntil: timestamptz
     playlistId: String
     registrantGoogleAccountId: uuid
     result: jsonb
@@ -20775,6 +20786,10 @@ enum job_queues_UploadYouTubeVideoJob_update_column {
     column name
     """
     message
+    """
+    column name
+    """
+    pausedUntil
     """
     column name
     """

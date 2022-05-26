@@ -14885,6 +14885,7 @@ export type Job_Queues_UploadYouTubeVideoJob = {
     jobStatus: Job_Queues_JobStatus;
     jobStatusName: Job_Queues_JobStatus_Enum;
     message?: Maybe<Scalars["String"]>;
+    pausedUntil?: Maybe<Scalars["timestamptz"]>;
     playlistId?: Maybe<Scalars["String"]>;
     /** An object relationship */
     registrantGoogleAccount: Registrant_GoogleAccount;
@@ -14979,6 +14980,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
     jobStatus?: InputMaybe<Job_Queues_JobStatus_Bool_Exp>;
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum_Comparison_Exp>;
     message?: InputMaybe<String_Comparison_Exp>;
+    pausedUntil?: InputMaybe<Timestamptz_Comparison_Exp>;
     playlistId?: InputMaybe<String_Comparison_Exp>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Bool_Exp>;
     registrantGoogleAccountId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -15029,6 +15031,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
     jobStatus?: InputMaybe<Job_Queues_JobStatus_Obj_Rel_Insert_Input>;
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     message?: InputMaybe<Scalars["String"]>;
+    pausedUntil?: InputMaybe<Scalars["timestamptz"]>;
     playlistId?: InputMaybe<Scalars["String"]>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Obj_Rel_Insert_Input>;
     registrantGoogleAccountId?: InputMaybe<Scalars["uuid"]>;
@@ -15050,6 +15053,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Max_Fields = {
     elementId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     message?: Maybe<Scalars["String"]>;
+    pausedUntil?: Maybe<Scalars["timestamptz"]>;
     playlistId?: Maybe<Scalars["String"]>;
     registrantGoogleAccountId?: Maybe<Scalars["uuid"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
@@ -15068,6 +15072,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Min_Fields = {
     elementId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     message?: Maybe<Scalars["String"]>;
+    pausedUntil?: Maybe<Scalars["timestamptz"]>;
     playlistId?: Maybe<Scalars["String"]>;
     registrantGoogleAccountId?: Maybe<Scalars["uuid"]>;
     retriesCount?: Maybe<Scalars["Int"]>;
@@ -15105,6 +15110,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
     jobStatus?: InputMaybe<Job_Queues_JobStatus_Order_By>;
     jobStatusName?: InputMaybe<Order_By>;
     message?: InputMaybe<Order_By>;
+    pausedUntil?: InputMaybe<Order_By>;
     playlistId?: InputMaybe<Order_By>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Order_By>;
     registrantGoogleAccountId?: InputMaybe<Order_By>;
@@ -15143,6 +15149,8 @@ export enum Job_Queues_UploadYouTubeVideoJob_Select_Column {
     /** column name */
     Message = "message",
     /** column name */
+    PausedUntil = "pausedUntil",
+    /** column name */
     PlaylistId = "playlistId",
     /** column name */
     RegistrantGoogleAccountId = "registrantGoogleAccountId",
@@ -15170,6 +15178,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Set_Input = {
     id?: InputMaybe<Scalars["uuid"]>;
     jobStatusName?: InputMaybe<Job_Queues_JobStatus_Enum>;
     message?: InputMaybe<Scalars["String"]>;
+    pausedUntil?: InputMaybe<Scalars["timestamptz"]>;
     playlistId?: InputMaybe<Scalars["String"]>;
     registrantGoogleAccountId?: InputMaybe<Scalars["uuid"]>;
     result?: InputMaybe<Scalars["jsonb"]>;
@@ -15219,6 +15228,8 @@ export enum Job_Queues_UploadYouTubeVideoJob_Update_Column {
     JobStatusName = "jobStatusName",
     /** column name */
     Message = "message",
+    /** column name */
+    PausedUntil = "pausedUntil",
     /** column name */
     PlaylistId = "playlistId",
     /** column name */
@@ -39762,7 +39773,9 @@ export type CreateYouTubeUploadMutation = {
     insert_video_YouTubeUpload_one?: { __typename?: "video_YouTubeUpload"; id: any } | null;
 };
 
-export type SelectNewUploadYouTubeVideoJobsQueryVariables = Exact<{ [key: string]: never }>;
+export type SelectNewUploadYouTubeVideoJobsQueryVariables = Exact<{
+    now: Scalars["timestamptz"];
+}>;
 
 export type SelectNewUploadYouTubeVideoJobsQuery = {
     __typename?: "query_root";
@@ -39772,6 +39785,7 @@ export type SelectNewUploadYouTubeVideoJobsQuery = {
 export type MarkAndSelectNewUploadYouTubeVideoJobsMutationVariables = Exact<{
     ids: Array<Scalars["uuid"]> | Scalars["uuid"];
     initialResult: Scalars["jsonb"];
+    now: Scalars["timestamptz"];
 }>;
 
 export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = {
@@ -39877,6 +39891,18 @@ export type FailUploadYouTubeVideoJobMutationVariables = Exact<{
 }>;
 
 export type FailUploadYouTubeVideoJobMutation = {
+    __typename?: "mutation_root";
+    update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any } | null;
+};
+
+export type PauseUploadYouTubeVideoJobMutationVariables = Exact<{
+    id: Scalars["uuid"];
+    message: Scalars["String"];
+    pausedUntil: Scalars["timestamptz"];
+    result?: InputMaybe<Scalars["jsonb"]>;
+}>;
+
+export type PauseUploadYouTubeVideoJobMutation = {
     __typename?: "mutation_root";
     update_job_queues_UploadYouTubeVideoJob_by_pk?: { __typename?: "job_queues_UploadYouTubeVideoJob"; id: any } | null;
 };
@@ -45777,6 +45803,16 @@ export const SelectNewUploadYouTubeVideoJobsDocument = {
             kind: "OperationDefinition",
             operation: "query",
             name: { kind: "Name", value: "SelectNewUploadYouTubeVideoJobs" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "now" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
+            ],
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
@@ -45805,6 +45841,59 @@ export const SelectNewUploadYouTubeVideoJobsDocument = {
                                                         kind: "ObjectField",
                                                         name: { kind: "Name", value: "_eq" },
                                                         value: { kind: "EnumValue", value: "NEW" },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_or" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "pausedUntil" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_is_null" },
+                                                                            value: {
+                                                                                kind: "BooleanValue",
+                                                                                value: true,
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "pausedUntil" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_lt" },
+                                                                            value: {
+                                                                                kind: "Variable",
+                                                                                name: { kind: "Name", value: "now" },
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
                                                     },
                                                 ],
                                             },
@@ -45864,6 +45953,14 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                     variable: { kind: "Variable", name: { kind: "Name", value: "initialResult" } },
                     type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } } },
                 },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "now" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
             ],
             selectionSet: {
                 kind: "SelectionSet",
@@ -45906,6 +46003,59 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                                                         kind: "ObjectField",
                                                         name: { kind: "Name", value: "_eq" },
                                                         value: { kind: "EnumValue", value: "NEW" },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_or" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "pausedUntil" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_is_null" },
+                                                                            value: {
+                                                                                kind: "BooleanValue",
+                                                                                value: true,
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "pausedUntil" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_lt" },
+                                                                            value: {
+                                                                                kind: "Variable",
+                                                                                name: { kind: "Name", value: "now" },
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
                                                     },
                                                 ],
                                             },
@@ -46319,6 +46469,108 @@ export const FailUploadYouTubeVideoJobDocument = {
         },
     ],
 } as unknown as DocumentNode<FailUploadYouTubeVideoJobMutation, FailUploadYouTubeVideoJobMutationVariables>;
+export const PauseUploadYouTubeVideoJobDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "PauseUploadYouTubeVideoJob" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "pausedUntil" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "result" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_job_queues_UploadYouTubeVideoJob_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "pk_columns" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "id" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "message" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: { kind: "EnumValue", value: "NEW" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "pausedUntil" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "pausedUntil" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_append" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "result" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "result" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<PauseUploadYouTubeVideoJobMutation, PauseUploadYouTubeVideoJobMutationVariables>;
 export const CompleteUploadYouTubeVideoJobDocument = {
     kind: "Document",
     definitions: [

@@ -23,6 +23,7 @@ import {
     GoogleOAuth_ConferenceConfig_FrontendHostDocument,
     Google_CreateRegistrantGoogleAccountDocument,
     MarkAndSelectNewUploadYouTubeVideoJobsDocument,
+    PauseUploadYouTubeVideoJobDocument,
     SelectNewUploadYouTubeVideoJobsDocument,
     UnmarkUploadYouTubeVideoJobsDocument,
 } from "../generated/graphql";
@@ -284,23 +285,6 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                     },
                 },
             })
-            .catch(async (error) => {
-                logger.error({ jobId: job.id, err: error }, "YouTube upload failed");
-                try {
-                    await callWithRetry(async () => {
-                        await apolloClient.mutate({
-                            mutation: FailUploadYouTubeVideoJobDocument,
-                            variables: {
-                                id: job.id,
-                                message: JSON.stringify(error),
-                                result: [error],
-                            },
-                        });
-                    });
-                } catch (e: any) {
-                    logger.error({ err: e }, "Failure while recording failure of YouTube upload job");
-                }
-            })
             .then(async (result) => {
                 try {
                     if (!result || !result.data.id || !result.data.snippet || !result.data.status) {
@@ -428,6 +412,41 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                         logger.error({ err: e }, "Failure while recording failure to complete YouTube upload");
                     }
                 }
+            })
+            .catch(async (error) => {
+                logger.error({ jobId: job.id, err: error }, "YouTube upload failed");
+                try {
+                    const retriableFailureReasons = ["quotaExceeded", "uploadLimitExceeded"];
+                    if (
+                        (error.code === 400 || error.code === 403) &&
+                        error.errors?.some?.((x: any) => x.reason && retriableFailureReasons.includes(x.reason))
+                    ) {
+                        await callWithRetry(async () => {
+                            await apolloClient.mutate({
+                                mutation: PauseUploadYouTubeVideoJobDocument,
+                                variables: {
+                                    id: job.id,
+                                    message: JSON.stringify(error),
+                                    result: [error],
+                                    pausedUntil: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+                                },
+                            });
+                        });
+                    } else {
+                        await callWithRetry(async () => {
+                            await apolloClient.mutate({
+                                mutation: FailUploadYouTubeVideoJobDocument,
+                                variables: {
+                                    id: job.id,
+                                    message: JSON.stringify(error),
+                                    result: [error],
+                                },
+                            });
+                        });
+                    }
+                } catch (e: any) {
+                    logger.error({ err: e }, "Failure while recording failure of YouTube upload job");
+                }
             });
     } catch (e: any) {
         logger.error({ err: e, jobId: job.id }, "Failure starting UploadYouTubeVideoJob");
@@ -436,19 +455,27 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
 }
 
 gql`
-    query SelectNewUploadYouTubeVideoJobs {
+    query SelectNewUploadYouTubeVideoJobs($now: timestamptz!) {
         job_queues_UploadYouTubeVideoJob(
             limit: 2
-            where: { jobStatusName: { _eq: NEW } }
+            where: {
+                jobStatusName: { _eq: NEW }
+                _or: [{ pausedUntil: { _is_null: true } }, { pausedUntil: { _lt: $now } }]
+            }
             order_by: { createdAt: asc }
         ) {
             id
         }
     }
 
-    mutation MarkAndSelectNewUploadYouTubeVideoJobs($ids: [uuid!]!, $initialResult: jsonb!) {
+    mutation MarkAndSelectNewUploadYouTubeVideoJobs($ids: [uuid!]!, $initialResult: jsonb!, $now: timestamptz!) {
         nextJobs: update_job_queues_UploadYouTubeVideoJob(
-            where: { id: { _in: $ids }, jobStatusName: { _eq: NEW }, retriesCount: { _lt: 3 } }
+            where: {
+                id: { _in: $ids }
+                jobStatusName: { _eq: NEW }
+                _or: [{ pausedUntil: { _is_null: true } }, { pausedUntil: { _lt: $now } }]
+                retriesCount: { _lt: 3 }
+            }
             _set: { jobStatusName: IN_PROGRESS, result: $initialResult }
             _inc: { retriesCount: 1 }
         ) {
@@ -514,6 +541,16 @@ gql`
         }
     }
 
+    mutation PauseUploadYouTubeVideoJob($id: uuid!, $message: String!, $pausedUntil: timestamptz!, $result: jsonb) {
+        update_job_queues_UploadYouTubeVideoJob_by_pk(
+            pk_columns: { id: $id }
+            _set: { message: $message, jobStatusName: NEW, pausedUntil: $pausedUntil }
+            _append: { result: $result }
+        ) {
+            id
+        }
+    }
+
     mutation CompleteUploadYouTubeVideoJob($id: uuid!) {
         update_job_queues_UploadYouTubeVideoJob_by_pk(pk_columns: { id: $id }, _set: { jobStatusName: COMPLETED }) {
             id
@@ -526,12 +563,16 @@ export async function handleUploadYouTubeVideoJobQueue(logger: P.Logger): Promis
 
     const newJobs = await apolloClient.query({
         query: SelectNewUploadYouTubeVideoJobsDocument,
+        variables: {
+            now: new Date().toISOString(),
+        },
     });
     const jobs = await apolloClient.mutate({
         mutation: MarkAndSelectNewUploadYouTubeVideoJobsDocument,
         variables: {
             ids: newJobs.data.job_queues_UploadYouTubeVideoJob.map((x) => x.id),
             initialResult: [],
+            now: new Date().toISOString(),
         },
     });
     assert(

@@ -10,6 +10,7 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
+    _uuid: any;
     bigint: any;
     float8: any;
     jsonb: any;
@@ -41,8 +42,7 @@ export type ConfirmInvitationOutput = {
 export type CreateItemRoomOutput = {
     __typename?: "CreateItemRoomOutput";
     message?: Maybe<Scalars["String"]>;
-    /** An object relationship */
-    room: Room_Room;
+    room?: Maybe<Room_Room>;
     roomId?: Maybe<Scalars["String"]>;
 };
 
@@ -50,8 +50,7 @@ export type CreateRoomDmOutput = {
     __typename?: "CreateRoomDmOutput";
     chatId?: Maybe<Scalars["uuid"]>;
     message?: Maybe<Scalars["String"]>;
-    /** An object relationship */
-    room: Room_Room;
+    room?: Maybe<Room_Room>;
     roomId?: Maybe<Scalars["uuid"]>;
 };
 
@@ -129,7 +128,7 @@ export type Email_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "Email" */
 export type Email_Arr_Rel_Insert_Input = {
     data: Array<Email_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Email_On_Conflict>;
 };
 
@@ -307,7 +306,7 @@ export type Email_Mutation_Response = {
     returning: Array<Email>;
 };
 
-/** on conflict condition type for table "Email" */
+/** on_conflict condition type for table "Email" */
 export type Email_On_Conflict = {
     constraint: Email_Constraint;
     update_columns?: Array<Email_Update_Column>;
@@ -666,6 +665,16 @@ export type JoinRoomVonageSessionOutput = {
     sessionId?: Maybe<Scalars["String"]>;
 };
 
+export type MigrateElementOutput = {
+    __typename?: "MigrateElementOutput";
+    success: Scalars["Boolean"];
+};
+
+export type MigrateProfilePhotoResponse = {
+    __typename?: "MigrateProfilePhotoResponse";
+    ok: Scalars["Boolean"];
+};
+
 export type NotifyEventEnded = {
     __typename?: "NotifyEventEnded";
     ok: Scalars["Boolean"];
@@ -732,7 +741,7 @@ export type PushNotificationSubscription_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "PushNotificationSubscription" */
 export type PushNotificationSubscription_Arr_Rel_Insert_Input = {
     data: Array<PushNotificationSubscription_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<PushNotificationSubscription_On_Conflict>;
 };
 
@@ -818,7 +827,7 @@ export type PushNotificationSubscription_Mutation_Response = {
     returning: Array<PushNotificationSubscription>;
 };
 
-/** on conflict condition type for table "PushNotificationSubscription" */
+/** on_conflict condition type for table "PushNotificationSubscription" */
 export type PushNotificationSubscription_On_Conflict = {
     constraint: PushNotificationSubscription_Constraint;
     update_columns?: Array<PushNotificationSubscription_Update_Column>;
@@ -1228,11 +1237,11 @@ export type User_Mutation_Response = {
 /** input type for inserting object relation for remote table "User" */
 export type User_Obj_Rel_Insert_Input = {
     data: User_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<User_On_Conflict>;
 };
 
-/** on conflict condition type for table "User" */
+/** on_conflict condition type for table "User" */
 export type User_On_Conflict = {
     constraint: User_Constraint;
     update_columns?: Array<User_Update_Column>;
@@ -1446,7 +1455,7 @@ export type Analytics_AppStats_Mutation_Response = {
     returning: Array<Analytics_AppStats>;
 };
 
-/** on conflict condition type for table "analytics.AppStats" */
+/** on_conflict condition type for table "analytics.AppStats" */
 export type Analytics_AppStats_On_Conflict = {
     constraint: Analytics_AppStats_Constraint;
     update_columns?: Array<Analytics_AppStats_Update_Column>;
@@ -1767,7 +1776,7 @@ export type Analytics_ContentElementStats_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "analytics.ContentElementStats" */
 export type Analytics_ContentElementStats_Arr_Rel_Insert_Input = {
     data: Array<Analytics_ContentElementStats_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Analytics_ContentElementStats_On_Conflict>;
 };
 
@@ -1865,7 +1874,7 @@ export type Analytics_ContentElementStats_Mutation_Response = {
     returning: Array<Analytics_ContentElementStats>;
 };
 
-/** on conflict condition type for table "analytics.ContentElementStats" */
+/** on_conflict condition type for table "analytics.ContentElementStats" */
 export type Analytics_ContentElementStats_On_Conflict = {
     constraint: Analytics_ContentElementStats_Constraint;
     update_columns?: Array<Analytics_ContentElementStats_Update_Column>;
@@ -2060,7 +2069,7 @@ export type Analytics_ContentItemStats_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "analytics.ContentItemStats" */
 export type Analytics_ContentItemStats_Arr_Rel_Insert_Input = {
     data: Array<Analytics_ContentItemStats_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Analytics_ContentItemStats_On_Conflict>;
 };
 
@@ -2158,7 +2167,7 @@ export type Analytics_ContentItemStats_Mutation_Response = {
     returning: Array<Analytics_ContentItemStats>;
 };
 
-/** on conflict condition type for table "analytics.ContentItemStats" */
+/** on_conflict condition type for table "analytics.ContentItemStats" */
 export type Analytics_ContentItemStats_On_Conflict = {
     constraint: Analytics_ContentItemStats_Constraint;
     update_columns?: Array<Analytics_ContentItemStats_Update_Column>;
@@ -2392,11 +2401,11 @@ export type Analytics_ElementTotalViews_Mutation_Response = {
 /** input type for inserting object relation for remote table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_Obj_Rel_Insert_Input = {
     data: Analytics_ElementTotalViews_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Analytics_ElementTotalViews_On_Conflict>;
 };
 
-/** on conflict condition type for table "analytics.ElementTotalViews" */
+/** on_conflict condition type for table "analytics.ElementTotalViews" */
 export type Analytics_ElementTotalViews_On_Conflict = {
     constraint: Analytics_ElementTotalViews_Constraint;
     update_columns?: Array<Analytics_ElementTotalViews_Update_Column>;
@@ -2577,11 +2586,11 @@ export type Analytics_ItemTotalViews_Mutation_Response = {
 /** input type for inserting object relation for remote table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_Obj_Rel_Insert_Input = {
     data: Analytics_ItemTotalViews_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Analytics_ItemTotalViews_On_Conflict>;
 };
 
-/** on conflict condition type for table "analytics.ItemTotalViews" */
+/** on_conflict condition type for table "analytics.ItemTotalViews" */
 export type Analytics_ItemTotalViews_On_Conflict = {
     constraint: Analytics_ItemTotalViews_Constraint;
     update_columns?: Array<Analytics_ItemTotalViews_Update_Column>;
@@ -2722,7 +2731,7 @@ export type Analytics_RoomPresence_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_Arr_Rel_Insert_Input = {
     data: Array<Analytics_RoomPresence_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Analytics_RoomPresence_On_Conflict>;
 };
 
@@ -2814,7 +2823,7 @@ export type Analytics_RoomPresence_Mutation_Response = {
     returning: Array<Analytics_RoomPresence>;
 };
 
-/** on conflict condition type for table "analytics.RoomPresence" */
+/** on_conflict condition type for table "analytics.RoomPresence" */
 export type Analytics_RoomPresence_On_Conflict = {
     constraint: Analytics_RoomPresence_Constraint;
     update_columns?: Array<Analytics_RoomPresence_Update_Column>;
@@ -3003,7 +3012,7 @@ export type Analytics_RoomStats_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "analytics.RoomStats" */
 export type Analytics_RoomStats_Arr_Rel_Insert_Input = {
     data: Array<Analytics_RoomStats_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Analytics_RoomStats_On_Conflict>;
 };
 
@@ -3099,7 +3108,7 @@ export type Analytics_RoomStats_Mutation_Response = {
     returning: Array<Analytics_RoomStats>;
 };
 
-/** on conflict condition type for table "analytics.RoomStats" */
+/** on_conflict condition type for table "analytics.RoomStats" */
 export type Analytics_RoomStats_On_Conflict = {
     constraint: Analytics_RoomStats_Constraint;
     update_columns?: Array<Analytics_RoomStats_Update_Column>;
@@ -3435,7 +3444,7 @@ export type Chat_Chat_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "chat.Chat" */
 export type Chat_Chat_Arr_Rel_Insert_Input = {
     data: Array<Chat_Chat_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Chat_On_Conflict>;
 };
 
@@ -3552,11 +3561,11 @@ export type Chat_Chat_Mutation_Response = {
 /** input type for inserting object relation for remote table "chat.Chat" */
 export type Chat_Chat_Obj_Rel_Insert_Input = {
     data: Chat_Chat_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Chat_On_Conflict>;
 };
 
-/** on conflict condition type for table "chat.Chat" */
+/** on_conflict condition type for table "chat.Chat" */
 export type Chat_Chat_On_Conflict = {
     constraint: Chat_Chat_Constraint;
     update_columns?: Array<Chat_Chat_Update_Column>;
@@ -3775,7 +3784,7 @@ export type Chat_FlagType_Mutation_Response = {
     returning: Array<Chat_FlagType>;
 };
 
-/** on conflict condition type for table "chat.FlagType" */
+/** on_conflict condition type for table "chat.FlagType" */
 export type Chat_FlagType_On_Conflict = {
     constraint: Chat_FlagType_Constraint;
     update_columns?: Array<Chat_FlagType_Update_Column>;
@@ -3862,7 +3871,7 @@ export type Chat_Flag_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "chat.Flag" */
 export type Chat_Flag_Arr_Rel_Insert_Input = {
     data: Array<Chat_Flag_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Flag_On_Conflict>;
 };
 
@@ -3990,7 +3999,7 @@ export type Chat_Flag_Mutation_Response = {
     returning: Array<Chat_Flag>;
 };
 
-/** on conflict condition type for table "chat.Flag" */
+/** on_conflict condition type for table "chat.Flag" */
 export type Chat_Flag_On_Conflict = {
     constraint: Chat_Flag_Constraint;
     update_columns?: Array<Chat_Flag_Update_Column>;
@@ -4158,12 +4167,7 @@ export type Chat_Flag_Variance_Order_By = {
     id?: InputMaybe<Order_By>;
 };
 
-/**
- * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- *
- *
- * columns and relationships of "chat.Message"
- */
+/** Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers. */
 export type Chat_Message = {
     __typename?: "chat_Message";
     /** An object relationship */
@@ -4196,22 +4200,12 @@ export type Chat_Message = {
     updated_at: Scalars["timestamptz"];
 };
 
-/**
- * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- *
- *
- * columns and relationships of "chat.Message"
- */
+/** Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers. */
 export type Chat_MessageDataArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/**
- * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- *
- *
- * columns and relationships of "chat.Message"
- */
+/** Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers. */
 export type Chat_MessageFlagsArgs = {
     distinct_on?: InputMaybe<Array<Chat_Flag_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -4220,12 +4214,7 @@ export type Chat_MessageFlagsArgs = {
     where?: InputMaybe<Chat_Flag_Bool_Exp>;
 };
 
-/**
- * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- *
- *
- * columns and relationships of "chat.Message"
- */
+/** Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers. */
 export type Chat_MessageFlags_AggregateArgs = {
     distinct_on?: InputMaybe<Array<Chat_Flag_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -4234,12 +4223,7 @@ export type Chat_MessageFlags_AggregateArgs = {
     where?: InputMaybe<Chat_Flag_Bool_Exp>;
 };
 
-/**
- * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- *
- *
- * columns and relationships of "chat.Message"
- */
+/** Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers. */
 export type Chat_MessageReactionsArgs = {
     distinct_on?: InputMaybe<Array<Chat_Reaction_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -4248,12 +4232,7 @@ export type Chat_MessageReactionsArgs = {
     where?: InputMaybe<Chat_Reaction_Bool_Exp>;
 };
 
-/**
- * Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers.
- *
- *
- * columns and relationships of "chat.Message"
- */
+/** Chat messages. The systemId field is unique and can be used to prevent duplicate inserts of things like event start/end markers. */
 export type Chat_MessageReactions_AggregateArgs = {
     distinct_on?: InputMaybe<Array<Chat_Reaction_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -4350,7 +4329,7 @@ export type Chat_MessageType_Mutation_Response = {
     returning: Array<Chat_MessageType>;
 };
 
-/** on conflict condition type for table "chat.MessageType" */
+/** on_conflict condition type for table "chat.MessageType" */
 export type Chat_MessageType_On_Conflict = {
     constraint: Chat_MessageType_Constraint;
     update_columns?: Array<Chat_MessageType_Update_Column>;
@@ -4436,7 +4415,7 @@ export type Chat_Message_Append_Input = {
 /** input type for inserting array relation for remote table "chat.Message" */
 export type Chat_Message_Arr_Rel_Insert_Input = {
     data: Array<Chat_Message_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Message_On_Conflict>;
 };
 
@@ -4598,11 +4577,11 @@ export type Chat_Message_Mutation_Response = {
 /** input type for inserting object relation for remote table "chat.Message" */
 export type Chat_Message_Obj_Rel_Insert_Input = {
     data: Chat_Message_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Message_On_Conflict>;
 };
 
-/** on conflict condition type for table "chat.Message" */
+/** on_conflict condition type for table "chat.Message" */
 export type Chat_Message_On_Conflict = {
     constraint: Chat_Message_Constraint;
     update_columns?: Array<Chat_Message_Update_Column>;
@@ -4790,12 +4769,7 @@ export type Chat_Message_Variance_Order_By = {
     id?: InputMaybe<Order_By>;
 };
 
-/**
- * Pin a chat to the sidebar.
- *
- *
- * columns and relationships of "chat.Pin"
- */
+/** Pin a chat to the sidebar. */
 export type Chat_Pin = {
     __typename?: "chat_Pin";
     /** An object relationship */
@@ -4839,7 +4813,7 @@ export type Chat_Pin_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "chat.Pin" */
 export type Chat_Pin_Arr_Rel_Insert_Input = {
     data: Array<Chat_Pin_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Pin_On_Conflict>;
 };
 
@@ -4914,11 +4888,11 @@ export type Chat_Pin_Mutation_Response = {
 /** input type for inserting object relation for remote table "chat.Pin" */
 export type Chat_Pin_Obj_Rel_Insert_Input = {
     data: Chat_Pin_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Pin_On_Conflict>;
 };
 
-/** on conflict condition type for table "chat.Pin" */
+/** on_conflict condition type for table "chat.Pin" */
 export type Chat_Pin_On_Conflict = {
     constraint: Chat_Pin_Constraint;
     update_columns?: Array<Chat_Pin_Update_Column>;
@@ -5119,7 +5093,7 @@ export type Chat_ReactionType_Mutation_Response = {
     returning: Array<Chat_ReactionType>;
 };
 
-/** on conflict condition type for table "chat.ReactionType" */
+/** on_conflict condition type for table "chat.ReactionType" */
 export type Chat_ReactionType_On_Conflict = {
     constraint: Chat_ReactionType_Constraint;
     update_columns?: Array<Chat_ReactionType_Update_Column>;
@@ -5195,7 +5169,7 @@ export type Chat_Reaction_Append_Input = {
 /** input type for inserting array relation for remote table "chat.Reaction" */
 export type Chat_Reaction_Arr_Rel_Insert_Input = {
     data: Array<Chat_Reaction_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Reaction_On_Conflict>;
 };
 
@@ -5325,11 +5299,11 @@ export type Chat_Reaction_Mutation_Response = {
 /** input type for inserting object relation for remote table "chat.Reaction" */
 export type Chat_Reaction_Obj_Rel_Insert_Input = {
     data: Chat_Reaction_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Reaction_On_Conflict>;
 };
 
-/** on conflict condition type for table "chat.Reaction" */
+/** on_conflict condition type for table "chat.Reaction" */
 export type Chat_Reaction_On_Conflict = {
     constraint: Chat_Reaction_Constraint;
     update_columns?: Array<Chat_Reaction_Update_Column>;
@@ -5471,7 +5445,7 @@ export type Chat_ReadUpToIndex_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Arr_Rel_Insert_Input = {
     data: Array<Chat_ReadUpToIndex_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_ReadUpToIndex_On_Conflict>;
 };
 
@@ -5547,7 +5521,7 @@ export type Chat_ReadUpToIndex_Mutation_Response = {
     returning: Array<Chat_ReadUpToIndex>;
 };
 
-/** on conflict condition type for table "chat.ReadUpToIndex" */
+/** on_conflict condition type for table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_On_Conflict = {
     constraint: Chat_ReadUpToIndex_Constraint;
     update_columns?: Array<Chat_ReadUpToIndex_Update_Column>;
@@ -5602,12 +5576,7 @@ export enum Chat_ReadUpToIndex_Update_Column {
     UpdatedAt = "updated_at",
 }
 
-/**
- * Subscribe to chat notifications.
- *
- *
- * columns and relationships of "chat.Subscription"
- */
+/** Subscribe to chat notifications. */
 export type Chat_Subscription = {
     __typename?: "chat_Subscription";
     /** An object relationship */
@@ -5653,7 +5622,7 @@ export type Chat_Subscription_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "chat.Subscription" */
 export type Chat_Subscription_Arr_Rel_Insert_Input = {
     data: Array<Chat_Subscription_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Chat_Subscription_On_Conflict>;
 };
 
@@ -5727,7 +5696,7 @@ export type Chat_Subscription_Mutation_Response = {
     returning: Array<Chat_Subscription>;
 };
 
-/** on conflict condition type for table "chat.Subscription" */
+/** on_conflict condition type for table "chat.Subscription" */
 export type Chat_Subscription_On_Conflict = {
     constraint: Chat_Subscription_Constraint;
     update_columns?: Array<Chat_Subscription_Update_Column>;
@@ -5872,7 +5841,7 @@ export type Collection_Exhibition_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "collection.Exhibition" */
 export type Collection_Exhibition_Arr_Rel_Insert_Input = {
     data: Array<Collection_Exhibition_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Collection_Exhibition_On_Conflict>;
 };
 
@@ -5911,9 +5880,11 @@ export type Collection_Exhibition_Bool_Exp = {
 /** unique or primary key constraints on table "collection.Exhibition" */
 export enum Collection_Exhibition_Constraint {
     /** unique or primary key constraint */
-    ExhibitionNameConferenceIdFkey = "Exhibition_name_conferenceId_fkey",
-    /** unique or primary key constraint */
     ExhibitionPkey = "Exhibition_pkey",
+    /** unique or primary key constraint */
+    CollectionExhibitionNameConferenceId = "collection_Exhibition_name_conferenceId",
+    /** unique or primary key constraint */
+    CollectionExhibitionNameSubconferenceId = "collection_Exhibition_name_subconferenceId",
 }
 
 /** input type for incrementing numeric columns in table "collection.Exhibition" */
@@ -6005,11 +5976,11 @@ export type Collection_Exhibition_Mutation_Response = {
 /** input type for inserting object relation for remote table "collection.Exhibition" */
 export type Collection_Exhibition_Obj_Rel_Insert_Input = {
     data: Collection_Exhibition_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Collection_Exhibition_On_Conflict>;
 };
 
-/** on conflict condition type for table "collection.Exhibition" */
+/** on_conflict condition type for table "collection.Exhibition" */
 export type Collection_Exhibition_On_Conflict = {
     constraint: Collection_Exhibition_Constraint;
     update_columns?: Array<Collection_Exhibition_Update_Column>;
@@ -6295,7 +6266,7 @@ export type Collection_ProgramPerson_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Arr_Rel_Insert_Input = {
     data: Array<Collection_ProgramPerson_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Collection_ProgramPerson_On_Conflict>;
 };
 
@@ -6335,13 +6306,17 @@ export type Collection_ProgramPerson_Bool_Exp = {
 /** unique or primary key constraints on table "collection.ProgramPerson" */
 export enum Collection_ProgramPerson_Constraint {
     /** unique or primary key constraint */
-    ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
-    /** unique or primary key constraint */
-    ProgramPersonConferenceIdNameKey = "ProgramPerson_conferenceId_name_key",
-    /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
     /** unique or primary key constraint */
     CollectionProgramPersonAccessToken = "collection_ProgramPerson_accessToken",
+    /** unique or primary key constraint */
+    CollectionProgramPersonConferenceIdName = "collection_ProgramPerson_conferenceId_name",
+    /** unique or primary key constraint */
+    CollectionProgramPersonConferenceIdNameAffiliation = "collection_ProgramPerson_conferenceId_name_affiliation",
+    /** unique or primary key constraint */
+    CollectionProgramPersonSubconferenceIdName = "collection_ProgramPerson_subconferenceId_name",
+    /** unique or primary key constraint */
+    CollectionProgramPersonSubconferenceIdNameAffiliation = "collection_ProgramPerson_subconferenceId_name_affiliation",
 }
 
 /** input type for incrementing numeric columns in table "collection.ProgramPerson" */
@@ -6434,11 +6409,11 @@ export type Collection_ProgramPerson_Mutation_Response = {
 /** input type for inserting object relation for remote table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Obj_Rel_Insert_Input = {
     data: Collection_ProgramPerson_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Collection_ProgramPerson_On_Conflict>;
 };
 
-/** on conflict condition type for table "collection.ProgramPerson" */
+/** on_conflict condition type for table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_On_Conflict = {
     constraint: Collection_ProgramPerson_Constraint;
     update_columns?: Array<Collection_ProgramPerson_Update_Column>;
@@ -6693,7 +6668,7 @@ export type Collection_Tag_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "collection.Tag" */
 export type Collection_Tag_Arr_Rel_Insert_Input = {
     data: Array<Collection_Tag_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Collection_Tag_On_Conflict>;
 };
 
@@ -6814,11 +6789,11 @@ export type Collection_Tag_Mutation_Response = {
 /** input type for inserting object relation for remote table "collection.Tag" */
 export type Collection_Tag_Obj_Rel_Insert_Input = {
     data: Collection_Tag_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Collection_Tag_On_Conflict>;
 };
 
-/** on conflict condition type for table "collection.Tag" */
+/** on_conflict condition type for table "collection.Tag" */
 export type Collection_Tag_On_Conflict = {
     constraint: Collection_Tag_Constraint;
     update_columns?: Array<Collection_Tag_Update_Column>;
@@ -6982,6 +6957,7 @@ export type Collection_Tag_Variance_Order_By = {
 export type Collection_SearchProgramPerson_Args = {
     conferenceid?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+    subconferenceid?: InputMaybe<Scalars["uuid"]>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7309,7 +7285,7 @@ export type Conference_Conference_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "conference.Conference" */
 export type Conference_Conference_Arr_Rel_Insert_Input = {
     data: Array<Conference_Conference_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_Conference_On_Conflict>;
 };
 
@@ -7476,11 +7452,11 @@ export type Conference_Conference_Mutation_Response = {
 /** input type for inserting object relation for remote table "conference.Conference" */
 export type Conference_Conference_Obj_Rel_Insert_Input = {
     data: Conference_Conference_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_Conference_On_Conflict>;
 };
 
-/** on conflict condition type for table "conference.Conference" */
+/** on_conflict condition type for table "conference.Conference" */
 export type Conference_Conference_On_Conflict = {
     constraint: Conference_Conference_Constraint;
     update_columns?: Array<Conference_Conference_Update_Column>;
@@ -7769,7 +7745,7 @@ export type Conference_ConfigurationKey_Mutation_Response = {
     returning: Array<Conference_ConfigurationKey>;
 };
 
-/** on conflict condition type for table "conference.ConfigurationKey" */
+/** on_conflict condition type for table "conference.ConfigurationKey" */
 export type Conference_ConfigurationKey_On_Conflict = {
     constraint: Conference_ConfigurationKey_Constraint;
     update_columns?: Array<Conference_ConfigurationKey_Update_Column>;
@@ -7845,7 +7821,7 @@ export type Conference_Configuration_Append_Input = {
 /** input type for inserting array relation for remote table "conference.Configuration" */
 export type Conference_Configuration_Arr_Rel_Insert_Input = {
     data: Array<Conference_Configuration_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_Configuration_On_Conflict>;
 };
 
@@ -7932,7 +7908,7 @@ export type Conference_Configuration_Mutation_Response = {
     returning: Array<Conference_Configuration>;
 };
 
-/** on conflict condition type for table "conference.Configuration" */
+/** on_conflict condition type for table "conference.Configuration" */
 export type Conference_Configuration_On_Conflict = {
     constraint: Conference_Configuration_Constraint;
     update_columns?: Array<Conference_Configuration_Update_Column>;
@@ -8042,7 +8018,7 @@ export type Conference_DemoCode_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "conference.DemoCode" */
 export type Conference_DemoCode_Arr_Rel_Insert_Input = {
     data: Array<Conference_DemoCode_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_DemoCode_On_Conflict>;
 };
 
@@ -8127,11 +8103,11 @@ export type Conference_DemoCode_Mutation_Response = {
 /** input type for inserting object relation for remote table "conference.DemoCode" */
 export type Conference_DemoCode_Obj_Rel_Insert_Input = {
     data: Conference_DemoCode_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_DemoCode_On_Conflict>;
 };
 
-/** on conflict condition type for table "conference.DemoCode" */
+/** on_conflict condition type for table "conference.DemoCode" */
 export type Conference_DemoCode_On_Conflict = {
     constraint: Conference_DemoCode_Constraint;
     update_columns?: Array<Conference_DemoCode_Update_Column>;
@@ -8417,11 +8393,11 @@ export type Conference_Quota_Mutation_Response = {
 /** input type for inserting object relation for remote table "conference.Quota" */
 export type Conference_Quota_Obj_Rel_Insert_Input = {
     data: Conference_Quota_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_Quota_On_Conflict>;
 };
 
-/** on conflict condition type for table "conference.Quota" */
+/** on_conflict condition type for table "conference.Quota" */
 export type Conference_Quota_On_Conflict = {
     constraint: Conference_Quota_Constraint;
     update_columns?: Array<Conference_Quota_Update_Column>;
@@ -9104,7 +9080,7 @@ export type Conference_Subconference_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "conference.Subconference" */
 export type Conference_Subconference_Arr_Rel_Insert_Input = {
     data: Array<Conference_Subconference_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_Subconference_On_Conflict>;
 };
 
@@ -9213,11 +9189,11 @@ export type Conference_Subconference_Mutation_Response = {
 /** input type for inserting object relation for remote table "conference.Subconference" */
 export type Conference_Subconference_Obj_Rel_Insert_Input = {
     data: Conference_Subconference_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_Subconference_On_Conflict>;
 };
 
-/** on conflict condition type for table "conference.Subconference" */
+/** on_conflict condition type for table "conference.Subconference" */
 export type Conference_Subconference_On_Conflict = {
     constraint: Conference_Subconference_Constraint;
     update_columns?: Array<Conference_Subconference_Update_Column>;
@@ -9458,11 +9434,11 @@ export type Conference_Usage_Mutation_Response = {
 /** input type for inserting object relation for remote table "conference.Usage" */
 export type Conference_Usage_Obj_Rel_Insert_Input = {
     data: Conference_Usage_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Conference_Usage_On_Conflict>;
 };
 
-/** on conflict condition type for table "conference.Usage" */
+/** on_conflict condition type for table "conference.Usage" */
 export type Conference_Usage_On_Conflict = {
     constraint: Conference_Usage_Constraint;
     update_columns?: Array<Conference_Usage_Update_Column>;
@@ -9716,7 +9692,7 @@ export type Conference_VisibilityLevel_Mutation_Response = {
     returning: Array<Conference_VisibilityLevel>;
 };
 
-/** on conflict condition type for table "conference.VisibilityLevel" */
+/** on_conflict condition type for table "conference.VisibilityLevel" */
 export type Conference_VisibilityLevel_On_Conflict = {
     constraint: Conference_VisibilityLevel_Constraint;
     update_columns?: Array<Conference_VisibilityLevel_Update_Column>;
@@ -9756,12 +9732,7 @@ export enum Conference_VisibilityLevel_Update_Column {
     Name = "name",
 }
 
-/**
- * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
- *
- *
- * columns and relationships of "content.Element"
- */
+/** The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted. */
 export type Content_Element = {
     __typename?: "content_Element";
     /** An object relationship */
@@ -9802,42 +9773,22 @@ export type Content_Element = {
     youTubeUploads_aggregate: Video_YouTubeUpload_Aggregate;
 };
 
-/**
- * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
- *
- *
- * columns and relationships of "content.Element"
- */
+/** The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted. */
 export type Content_ElementDataArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/**
- * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
- *
- *
- * columns and relationships of "content.Element"
- */
+/** The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted. */
 export type Content_ElementLayoutDataArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/**
- * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
- *
- *
- * columns and relationships of "content.Element"
- */
+/** The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted. */
 export type Content_ElementSourceArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
 
-/**
- * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
- *
- *
- * columns and relationships of "content.Element"
- */
+/** The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted. */
 export type Content_ElementStatsArgs = {
     distinct_on?: InputMaybe<Array<Analytics_ContentElementStats_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -9846,12 +9797,7 @@ export type Content_ElementStatsArgs = {
     where?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
 };
 
-/**
- * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
- *
- *
- * columns and relationships of "content.Element"
- */
+/** The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted. */
 export type Content_ElementStats_AggregateArgs = {
     distinct_on?: InputMaybe<Array<Analytics_ContentElementStats_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -9860,12 +9806,7 @@ export type Content_ElementStats_AggregateArgs = {
     where?: InputMaybe<Analytics_ContentElementStats_Bool_Exp>;
 };
 
-/**
- * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
- *
- *
- * columns and relationships of "content.Element"
- */
+/** The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted. */
 export type Content_ElementYouTubeUploadsArgs = {
     distinct_on?: InputMaybe<Array<Video_YouTubeUpload_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -9874,12 +9815,7 @@ export type Content_ElementYouTubeUploadsArgs = {
     where?: InputMaybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
-/**
- * The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted.
- *
- *
- * columns and relationships of "content.Element"
- */
+/** The "source" field is used in Postgres triggers to permit certain inserts irrespective of quotas. This ensures recordings can always be inserted. */
 export type Content_ElementYouTubeUploads_AggregateArgs = {
     distinct_on?: InputMaybe<Array<Video_YouTubeUpload_Select_Column>>;
     limit?: InputMaybe<Scalars["Int"]>;
@@ -10039,11 +9975,11 @@ export type Content_ElementType_Mutation_Response = {
 /** input type for inserting object relation for remote table "content.ElementType" */
 export type Content_ElementType_Obj_Rel_Insert_Input = {
     data: Content_ElementType_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_ElementType_On_Conflict>;
 };
 
-/** on conflict condition type for table "content.ElementType" */
+/** on_conflict condition type for table "content.ElementType" */
 export type Content_ElementType_On_Conflict = {
     constraint: Content_ElementType_Constraint;
     update_columns?: Array<Content_ElementType_Update_Column>;
@@ -10137,7 +10073,7 @@ export type Content_Element_Append_Input = {
 /** input type for inserting array relation for remote table "content.Element" */
 export type Content_Element_Arr_Rel_Insert_Input = {
     data: Array<Content_Element_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_Element_On_Conflict>;
 };
 
@@ -10301,11 +10237,11 @@ export type Content_Element_Mutation_Response = {
 /** input type for inserting object relation for remote table "content.Element" */
 export type Content_Element_Obj_Rel_Insert_Input = {
     data: Content_Element_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_Element_On_Conflict>;
 };
 
-/** on conflict condition type for table "content.Element" */
+/** on_conflict condition type for table "content.Element" */
 export type Content_Element_On_Conflict = {
     constraint: Content_Element_Constraint;
     update_columns?: Array<Content_Element_Update_Column>;
@@ -10784,7 +10720,7 @@ export type Content_ItemExhibition_Append_Input = {
 /** input type for inserting array relation for remote table "content.ItemExhibition" */
 export type Content_ItemExhibition_Arr_Rel_Insert_Input = {
     data: Array<Content_ItemExhibition_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_ItemExhibition_On_Conflict>;
 };
 
@@ -10893,7 +10829,7 @@ export type Content_ItemExhibition_Mutation_Response = {
     returning: Array<Content_ItemExhibition>;
 };
 
-/** on conflict condition type for table "content.ItemExhibition" */
+/** on_conflict condition type for table "content.ItemExhibition" */
 export type Content_ItemExhibition_On_Conflict = {
     constraint: Content_ItemExhibition_Constraint;
     update_columns?: Array<Content_ItemExhibition_Update_Column>;
@@ -11098,7 +11034,7 @@ export type Content_ItemProgramPerson_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "content.ItemProgramPerson" */
 export type Content_ItemProgramPerson_Arr_Rel_Insert_Input = {
     data: Array<Content_ItemProgramPerson_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_ItemProgramPerson_On_Conflict>;
 };
 
@@ -11199,7 +11135,7 @@ export type Content_ItemProgramPerson_Mutation_Response = {
     returning: Array<Content_ItemProgramPerson>;
 };
 
-/** on conflict condition type for table "content.ItemProgramPerson" */
+/** on_conflict condition type for table "content.ItemProgramPerson" */
 export type Content_ItemProgramPerson_On_Conflict = {
     constraint: Content_ItemProgramPerson_Constraint;
     update_columns?: Array<Content_ItemProgramPerson_Update_Column>;
@@ -11380,7 +11316,7 @@ export type Content_ItemTag_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "content.ItemTag" */
 export type Content_ItemTag_Arr_Rel_Insert_Input = {
     data: Array<Content_ItemTag_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_ItemTag_On_Conflict>;
 };
 
@@ -11452,7 +11388,7 @@ export type Content_ItemTag_Mutation_Response = {
     returning: Array<Content_ItemTag>;
 };
 
-/** on conflict condition type for table "content.ItemTag" */
+/** on_conflict condition type for table "content.ItemTag" */
 export type Content_ItemTag_On_Conflict = {
     constraint: Content_ItemTag_Constraint;
     update_columns?: Array<Content_ItemTag_Update_Column>;
@@ -11617,11 +11553,11 @@ export type Content_ItemType_Mutation_Response = {
 /** input type for inserting object relation for remote table "content.ItemType" */
 export type Content_ItemType_Obj_Rel_Insert_Input = {
     data: Content_ItemType_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_ItemType_On_Conflict>;
 };
 
-/** on conflict condition type for table "content.ItemType" */
+/** on_conflict condition type for table "content.ItemType" */
 export type Content_ItemType_On_Conflict = {
     constraint: Content_ItemType_Constraint;
     update_columns?: Array<Content_ItemType_Update_Column>;
@@ -11692,7 +11628,7 @@ export type Content_Item_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "content.Item" */
 export type Content_Item_Arr_Rel_Insert_Input = {
     data: Array<Content_Item_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_Item_On_Conflict>;
 };
 
@@ -11824,11 +11760,11 @@ export type Content_Item_Mutation_Response = {
 /** input type for inserting object relation for remote table "content.Item" */
 export type Content_Item_Obj_Rel_Insert_Input = {
     data: Content_Item_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Content_Item_On_Conflict>;
 };
 
-/** on conflict condition type for table "content.Item" */
+/** on_conflict condition type for table "content.Item" */
 export type Content_Item_On_Conflict = {
     constraint: Content_Item_Constraint;
     update_columns?: Array<Content_Item_Update_Column>;
@@ -11998,7 +11934,7 @@ export type Job_Queues_ChannelStackCreateJob_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "job_queues.ChannelStackCreateJob" */
 export type Job_Queues_ChannelStackCreateJob_Arr_Rel_Insert_Input = {
     data: Array<Job_Queues_ChannelStackCreateJob_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
 };
 
@@ -12101,11 +12037,11 @@ export type Job_Queues_ChannelStackCreateJob_Mutation_Response = {
 /** input type for inserting object relation for remote table "job_queues.ChannelStackCreateJob" */
 export type Job_Queues_ChannelStackCreateJob_Obj_Rel_Insert_Input = {
     data: Job_Queues_ChannelStackCreateJob_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
 };
 
-/** on conflict condition type for table "job_queues.ChannelStackCreateJob" */
+/** on_conflict condition type for table "job_queues.ChannelStackCreateJob" */
 export type Job_Queues_ChannelStackCreateJob_On_Conflict = {
     constraint: Job_Queues_ChannelStackCreateJob_Constraint;
     update_columns?: Array<Job_Queues_ChannelStackCreateJob_Update_Column>;
@@ -12279,7 +12215,7 @@ export type Job_Queues_ChannelStackDeleteJob_Mutation_Response = {
     returning: Array<Job_Queues_ChannelStackDeleteJob>;
 };
 
-/** on conflict condition type for table "job_queues.ChannelStackDeleteJob" */
+/** on_conflict condition type for table "job_queues.ChannelStackDeleteJob" */
 export type Job_Queues_ChannelStackDeleteJob_On_Conflict = {
     constraint: Job_Queues_ChannelStackDeleteJob_Constraint;
     update_columns?: Array<Job_Queues_ChannelStackDeleteJob_Update_Column>;
@@ -12408,7 +12344,7 @@ export type Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "job_queues.ChannelStackUpdateJob" */
 export type Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input = {
     data: Array<Job_Queues_ChannelStackUpdateJob_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
 };
 
@@ -12580,7 +12516,7 @@ export type Job_Queues_ChannelStackUpdateJob_Mutation_Response = {
     returning: Array<Job_Queues_ChannelStackUpdateJob>;
 };
 
-/** on conflict condition type for table "job_queues.ChannelStackUpdateJob" */
+/** on_conflict condition type for table "job_queues.ChannelStackUpdateJob" */
 export type Job_Queues_ChannelStackUpdateJob_On_Conflict = {
     constraint: Job_Queues_ChannelStackUpdateJob_Constraint;
     update_columns?: Array<Job_Queues_ChannelStackUpdateJob_Update_Column>;
@@ -12885,7 +12821,7 @@ export type Job_Queues_CombineVideosJob_Mutation_Response = {
     returning: Array<Job_Queues_CombineVideosJob>;
 };
 
-/** on conflict condition type for table "job_queues.CombineVideosJob" */
+/** on_conflict condition type for table "job_queues.CombineVideosJob" */
 export type Job_Queues_CombineVideosJob_On_Conflict = {
     constraint: Job_Queues_CombineVideosJob_Constraint;
     update_columns?: Array<Job_Queues_CombineVideosJob_Update_Column>;
@@ -13123,7 +13059,7 @@ export type Job_Queues_CustomEmailJob_Mutation_Response = {
     returning: Array<Job_Queues_CustomEmailJob>;
 };
 
-/** on conflict condition type for table "job_queues.CustomEmailJob" */
+/** on_conflict condition type for table "job_queues.CustomEmailJob" */
 export type Job_Queues_CustomEmailJob_On_Conflict = {
     constraint: Job_Queues_CustomEmailJob_Constraint;
     update_columns?: Array<Job_Queues_CustomEmailJob_Update_Column>;
@@ -13325,7 +13261,7 @@ export type Job_Queues_ImportJobOutput_Append_Input = {
 /** input type for inserting array relation for remote table "job_queues.ImportJobOutput" */
 export type Job_Queues_ImportJobOutput_Arr_Rel_Insert_Input = {
     data: Array<Job_Queues_ImportJobOutput_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Job_Queues_ImportJobOutput_On_Conflict>;
 };
 
@@ -13422,7 +13358,7 @@ export type Job_Queues_ImportJobOutput_Mutation_Response = {
     returning: Array<Job_Queues_ImportJobOutput>;
 };
 
-/** on conflict condition type for table "job_queues.ImportJobOutput" */
+/** on_conflict condition type for table "job_queues.ImportJobOutput" */
 export type Job_Queues_ImportJobOutput_On_Conflict = {
     constraint: Job_Queues_ImportJobOutput_Constraint;
     update_columns?: Array<Job_Queues_ImportJobOutput_Update_Column>;
@@ -13655,7 +13591,7 @@ export type Job_Queues_ImportJob_Mutation_Response = {
     returning: Array<Job_Queues_ImportJob>;
 };
 
-/** on conflict condition type for table "job_queues.ImportJob" */
+/** on_conflict condition type for table "job_queues.ImportJob" */
 export type Job_Queues_ImportJob_On_Conflict = {
     constraint: Job_Queues_ImportJob_Constraint;
     update_columns?: Array<Job_Queues_ImportJob_Update_Column>;
@@ -13941,7 +13877,7 @@ export type Job_Queues_InvitationEmailJob_Mutation_Response = {
     returning: Array<Job_Queues_InvitationEmailJob>;
 };
 
-/** on conflict condition type for table "job_queues.InvitationEmailJob" */
+/** on_conflict condition type for table "job_queues.InvitationEmailJob" */
 export type Job_Queues_InvitationEmailJob_On_Conflict = {
     constraint: Job_Queues_InvitationEmailJob_Constraint;
     update_columns?: Array<Job_Queues_InvitationEmailJob_Update_Column>;
@@ -14114,11 +14050,11 @@ export type Job_Queues_JobStatus_Mutation_Response = {
 /** input type for inserting object relation for remote table "job_queues.JobStatus" */
 export type Job_Queues_JobStatus_Obj_Rel_Insert_Input = {
     data: Job_Queues_JobStatus_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Job_Queues_JobStatus_On_Conflict>;
 };
 
-/** on conflict condition type for table "job_queues.JobStatus" */
+/** on_conflict condition type for table "job_queues.JobStatus" */
 export type Job_Queues_JobStatus_On_Conflict = {
     constraint: Job_Queues_JobStatus_Constraint;
     update_columns?: Array<Job_Queues_JobStatus_Update_Column>;
@@ -14277,7 +14213,7 @@ export type Job_Queues_MediaPackageHarvestJob_Mutation_Response = {
     returning: Array<Job_Queues_MediaPackageHarvestJob>;
 };
 
-/** on conflict condition type for table "job_queues.MediaPackageHarvestJob" */
+/** on_conflict condition type for table "job_queues.MediaPackageHarvestJob" */
 export type Job_Queues_MediaPackageHarvestJob_On_Conflict = {
     constraint: Job_Queues_MediaPackageHarvestJob_Constraint;
     update_columns?: Array<Job_Queues_MediaPackageHarvestJob_Update_Column>;
@@ -14487,11 +14423,11 @@ export type Job_Queues_PrepareJob_Mutation_Response = {
 /** input type for inserting object relation for remote table "job_queues.PrepareJob" */
 export type Job_Queues_PrepareJob_Obj_Rel_Insert_Input = {
     data: Job_Queues_PrepareJob_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Job_Queues_PrepareJob_On_Conflict>;
 };
 
-/** on conflict condition type for table "job_queues.PrepareJob" */
+/** on_conflict condition type for table "job_queues.PrepareJob" */
 export type Job_Queues_PrepareJob_On_Conflict = {
     constraint: Job_Queues_PrepareJob_Constraint;
     update_columns?: Array<Job_Queues_PrepareJob_Update_Column>;
@@ -14668,7 +14604,7 @@ export type Job_Queues_PublishVideoJob_Mutation_Response = {
     returning: Array<Job_Queues_PublishVideoJob>;
 };
 
-/** on conflict condition type for table "job_queues.PublishVideoJob" */
+/** on_conflict condition type for table "job_queues.PublishVideoJob" */
 export type Job_Queues_PublishVideoJob_On_Conflict = {
     constraint: Job_Queues_PublishVideoJob_Constraint;
     update_columns?: Array<Job_Queues_PublishVideoJob_Update_Column>;
@@ -14863,7 +14799,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Mutation_Response = {
     returning: Array<Job_Queues_SubmissionRequestEmailJob>;
 };
 
-/** on conflict condition type for table "job_queues.SubmissionRequestEmailJob" */
+/** on_conflict condition type for table "job_queues.SubmissionRequestEmailJob" */
 export type Job_Queues_SubmissionRequestEmailJob_On_Conflict = {
     constraint: Job_Queues_SubmissionRequestEmailJob_Constraint;
     update_columns?: Array<Job_Queues_SubmissionRequestEmailJob_Update_Column>;
@@ -14952,6 +14888,7 @@ export type Job_Queues_UploadYouTubeVideoJob = {
     /** An object relationship */
     registrantGoogleAccount: Registrant_GoogleAccount;
     registrantGoogleAccountId: Scalars["uuid"];
+    result?: Maybe<Scalars["jsonb"]>;
     retriesCount: Scalars["Int"];
     subconferenceId?: Maybe<Scalars["uuid"]>;
     updatedAt: Scalars["timestamptz"];
@@ -14962,6 +14899,11 @@ export type Job_Queues_UploadYouTubeVideoJob = {
     youTubeUploads: Array<Video_YouTubeUpload>;
     /** An aggregate relationship */
     youTubeUploads_aggregate: Video_YouTubeUpload_Aggregate;
+};
+
+/** columns and relationships of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJobResultArgs = {
+    path?: InputMaybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "job_queues.UploadYouTubeVideoJob" */
@@ -15011,6 +14953,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Aggregate_FieldsCountArgs = {
     distinct?: InputMaybe<Scalars["Boolean"]>;
 };
 
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_UploadYouTubeVideoJob_Append_Input = {
+    result?: InputMaybe<Scalars["jsonb"]>;
+};
+
 /** aggregate avg on columns */
 export type Job_Queues_UploadYouTubeVideoJob_Avg_Fields = {
     __typename?: "job_queues_UploadYouTubeVideoJob_avg_fields";
@@ -15034,6 +14981,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
     playlistId?: InputMaybe<String_Comparison_Exp>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Bool_Exp>;
     registrantGoogleAccountId?: InputMaybe<Uuid_Comparison_Exp>;
+    result?: InputMaybe<Jsonb_Comparison_Exp>;
     retriesCount?: InputMaybe<Int_Comparison_Exp>;
     subconferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -15048,6 +14996,21 @@ export enum Job_Queues_UploadYouTubeVideoJob_Constraint {
     /** unique or primary key constraint */
     UploadYouTubeVideoJobPkey = "UploadYouTubeVideoJob_pkey",
 }
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Job_Queues_UploadYouTubeVideoJob_Delete_At_Path_Input = {
+    result?: InputMaybe<Array<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Job_Queues_UploadYouTubeVideoJob_Delete_Elem_Input = {
+    result?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Job_Queues_UploadYouTubeVideoJob_Delete_Key_Input = {
+    result?: InputMaybe<Scalars["String"]>;
+};
 
 /** input type for incrementing numeric columns in table "job_queues.UploadYouTubeVideoJob" */
 export type Job_Queues_UploadYouTubeVideoJob_Inc_Input = {
@@ -15068,6 +15031,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
     playlistId?: InputMaybe<Scalars["String"]>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Obj_Rel_Insert_Input>;
     registrantGoogleAccountId?: InputMaybe<Scalars["uuid"]>;
+    result?: InputMaybe<Scalars["jsonb"]>;
     retriesCount?: InputMaybe<Scalars["Int"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -15122,7 +15086,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Mutation_Response = {
     returning: Array<Job_Queues_UploadYouTubeVideoJob>;
 };
 
-/** on conflict condition type for table "job_queues.UploadYouTubeVideoJob" */
+/** on_conflict condition type for table "job_queues.UploadYouTubeVideoJob" */
 export type Job_Queues_UploadYouTubeVideoJob_On_Conflict = {
     constraint: Job_Queues_UploadYouTubeVideoJob_Constraint;
     update_columns?: Array<Job_Queues_UploadYouTubeVideoJob_Update_Column>;
@@ -15143,6 +15107,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
     playlistId?: InputMaybe<Order_By>;
     registrantGoogleAccount?: InputMaybe<Registrant_GoogleAccount_Order_By>;
     registrantGoogleAccountId?: InputMaybe<Order_By>;
+    result?: InputMaybe<Order_By>;
     retriesCount?: InputMaybe<Order_By>;
     subconferenceId?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
@@ -15155,6 +15120,11 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
 /** primary key columns input for table: job_queues_UploadYouTubeVideoJob */
 export type Job_Queues_UploadYouTubeVideoJob_Pk_Columns_Input = {
     id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Job_Queues_UploadYouTubeVideoJob_Prepend_Input = {
+    result?: InputMaybe<Scalars["jsonb"]>;
 };
 
 /** select columns of table "job_queues.UploadYouTubeVideoJob" */
@@ -15175,6 +15145,8 @@ export enum Job_Queues_UploadYouTubeVideoJob_Select_Column {
     PlaylistId = "playlistId",
     /** column name */
     RegistrantGoogleAccountId = "registrantGoogleAccountId",
+    /** column name */
+    Result = "result",
     /** column name */
     RetriesCount = "retriesCount",
     /** column name */
@@ -15199,6 +15171,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Set_Input = {
     message?: InputMaybe<Scalars["String"]>;
     playlistId?: InputMaybe<Scalars["String"]>;
     registrantGoogleAccountId?: InputMaybe<Scalars["uuid"]>;
+    result?: InputMaybe<Scalars["jsonb"]>;
     retriesCount?: InputMaybe<Scalars["Int"]>;
     subconferenceId?: InputMaybe<Scalars["uuid"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -15250,6 +15223,8 @@ export enum Job_Queues_UploadYouTubeVideoJob_Update_Column {
     /** column name */
     RegistrantGoogleAccountId = "registrantGoogleAccountId",
     /** column name */
+    Result = "result",
+    /** column name */
     RetriesCount = "retriesCount",
     /** column name */
     SubconferenceId = "subconferenceId",
@@ -15281,8 +15256,13 @@ export type Job_Queues_UploadYouTubeVideoJob_Variance_Fields = {
     retriesCount?: Maybe<Scalars["Float"]>;
 };
 
+export type Jsonb_Cast_Exp = {
+    String?: InputMaybe<String_Comparison_Exp>;
+};
+
 /** Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'. */
 export type Jsonb_Comparison_Exp = {
+    _cast?: InputMaybe<Jsonb_Cast_Exp>;
     /** is the column contained in the given json value */
     _contained_in?: InputMaybe<Scalars["jsonb"]>;
     /** does the column contain the given json value at the top level */
@@ -16123,10 +16103,16 @@ export type Mutation_Root = {
     joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
     joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+    migrateElement?: Maybe<MigrateElementOutput>;
+    migrateProfilePhoto?: Maybe<MigrateProfilePhotoResponse>;
     notifyEventEnded: NotifyEventEnded;
     notifyEventStarted: NotifyEventStarted;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
+    /** execute VOLATILE function "schedule.shiftPresentationTimes" which returns "schedule.Event" */
+    schedule_shiftPresentationTimes: Array<Schedule_Event>;
+    /** execute VOLATILE function "schedule.shiftTimes" which returns "schedule.Event" */
+    schedule_shiftTimes: Array<Schedule_Event>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
@@ -18808,6 +18794,16 @@ export type Mutation_RootJoinRoomVonageSessionArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootMigrateElementArgs = {
+    elementId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootMigrateProfilePhotoArgs = {
+    registrantId: Scalars["uuid"];
+};
+
+/** mutation root */
 export type Mutation_RootNotifyEventEndedArgs = {
     eventId: Scalars["uuid"];
 };
@@ -18821,6 +18817,26 @@ export type Mutation_RootNotifyEventStartedArgs = {
 export type Mutation_RootRefreshYouTubeDataArgs = {
     registrantGoogleAccountId: Scalars["uuid"];
     registrantId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftPresentationTimesArgs = {
+    args: Schedule_ShiftPresentationTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+/** mutation root */
+export type Mutation_RootSchedule_ShiftTimesArgs = {
+    args: Schedule_ShiftTimes_Args;
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** mutation root */
@@ -19632,14 +19648,24 @@ export type Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJob_By_PkArgs =
 
 /** mutation root */
 export type Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJobArgs = {
+    _append?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Delete_Key_Input>;
     _inc?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Inc_Input>;
+    _prepend?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Prepend_Input>;
     _set?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Set_Input>;
     where: Job_Queues_UploadYouTubeVideoJob_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
+    _append?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Append_Input>;
+    _delete_at_path?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Delete_Key_Input>;
     _inc?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Inc_Input>;
+    _prepend?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Prepend_Input>;
     _set?: InputMaybe<Job_Queues_UploadYouTubeVideoJob_Set_Input>;
     pk_columns: Job_Queues_UploadYouTubeVideoJob_Pk_Columns_Input;
 };
@@ -23257,6 +23283,7 @@ export type Registrant_GoogleAccount = {
     createdAt: Scalars["timestamptz"];
     googleAccountEmail: Scalars["String"];
     id: Scalars["uuid"];
+    isDeleted: Scalars["Boolean"];
     /** An object relationship */
     registrant: Registrant_Registrant;
     registrantId: Scalars["uuid"];
@@ -23312,6 +23339,7 @@ export type Registrant_GoogleAccount_Bool_Exp = {
     createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     googleAccountEmail?: InputMaybe<String_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
+    isDeleted?: InputMaybe<Boolean_Comparison_Exp>;
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: InputMaybe<Uuid_Comparison_Exp>;
     tokenData?: InputMaybe<Jsonb_Comparison_Exp>;
@@ -23352,6 +23380,7 @@ export type Registrant_GoogleAccount_Insert_Input = {
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     googleAccountEmail?: InputMaybe<Scalars["String"]>;
     id?: InputMaybe<Scalars["uuid"]>;
+    isDeleted?: InputMaybe<Scalars["Boolean"]>;
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     tokenData?: InputMaybe<Scalars["jsonb"]>;
@@ -23393,11 +23422,11 @@ export type Registrant_GoogleAccount_Mutation_Response = {
 /** input type for inserting object relation for remote table "registrant.GoogleAccount" */
 export type Registrant_GoogleAccount_Obj_Rel_Insert_Input = {
     data: Registrant_GoogleAccount_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_GoogleAccount_On_Conflict>;
 };
 
-/** on conflict condition type for table "registrant.GoogleAccount" */
+/** on_conflict condition type for table "registrant.GoogleAccount" */
 export type Registrant_GoogleAccount_On_Conflict = {
     constraint: Registrant_GoogleAccount_Constraint;
     update_columns?: Array<Registrant_GoogleAccount_Update_Column>;
@@ -23411,6 +23440,7 @@ export type Registrant_GoogleAccount_Order_By = {
     createdAt?: InputMaybe<Order_By>;
     googleAccountEmail?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
+    isDeleted?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     registrantId?: InputMaybe<Order_By>;
     tokenData?: InputMaybe<Order_By>;
@@ -23440,6 +23470,8 @@ export enum Registrant_GoogleAccount_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
+    IsDeleted = "isDeleted",
+    /** column name */
     RegistrantId = "registrantId",
     /** column name */
     TokenData = "tokenData",
@@ -23455,6 +23487,7 @@ export type Registrant_GoogleAccount_Set_Input = {
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     googleAccountEmail?: InputMaybe<Scalars["String"]>;
     id?: InputMaybe<Scalars["uuid"]>;
+    isDeleted?: InputMaybe<Scalars["Boolean"]>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     tokenData?: InputMaybe<Scalars["jsonb"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -23471,6 +23504,8 @@ export enum Registrant_GoogleAccount_Update_Column {
     GoogleAccountEmail = "googleAccountEmail",
     /** column name */
     Id = "id",
+    /** column name */
+    IsDeleted = "isDeleted",
     /** column name */
     RegistrantId = "registrantId",
     /** column name */
@@ -23563,7 +23598,7 @@ export type Registrant_GroupRegistrant_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "registrant.GroupRegistrant" */
 export type Registrant_GroupRegistrant_Arr_Rel_Insert_Input = {
     data: Array<Registrant_GroupRegistrant_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_GroupRegistrant_On_Conflict>;
 };
 
@@ -23647,7 +23682,7 @@ export type Registrant_GroupRegistrant_Mutation_Response = {
     returning: Array<Registrant_GroupRegistrant>;
 };
 
-/** on conflict condition type for table "registrant.GroupRegistrant" */
+/** on_conflict condition type for table "registrant.GroupRegistrant" */
 export type Registrant_GroupRegistrant_On_Conflict = {
     constraint: Registrant_GroupRegistrant_Constraint;
     update_columns?: Array<Registrant_GroupRegistrant_Update_Column>;
@@ -23747,9 +23782,11 @@ export type Registrant_Group_Bool_Exp = {
 /** unique or primary key constraints on table "registrant.Group" */
 export enum Registrant_Group_Constraint {
     /** unique or primary key constraint */
-    GroupConferenceIdNameKey = "Group_conferenceId_name_key",
-    /** unique or primary key constraint */
     GroupPkey = "Group_pkey",
+    /** unique or primary key constraint */
+    RegistrantGroupConferenceIdName = "registrant_Group_conferenceId_name",
+    /** unique or primary key constraint */
+    RegistrantGroupSubconferenceIdName = "registrant_Group_subconferenceId_name",
 }
 
 /** input type for inserting data into table "registrant.Group" */
@@ -23799,11 +23836,11 @@ export type Registrant_Group_Mutation_Response = {
 /** input type for inserting object relation for remote table "registrant.Group" */
 export type Registrant_Group_Obj_Rel_Insert_Input = {
     data: Registrant_Group_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_Group_On_Conflict>;
 };
 
-/** on conflict condition type for table "registrant.Group" */
+/** on_conflict condition type for table "registrant.Group" */
 export type Registrant_Group_On_Conflict = {
     constraint: Registrant_Group_Constraint;
     update_columns?: Array<Registrant_Group_Update_Column>;
@@ -23880,7 +23917,6 @@ export type Registrant_Invitation = {
     emails: Array<Email>;
     /** An aggregate relationship */
     emails_aggregate: Email_Aggregate;
-    /** A computed field, executes function "registrant.invitationHash" */
     hash?: Maybe<Scalars["String"]>;
     id: Scalars["uuid"];
     inviteCode: Scalars["uuid"];
@@ -23943,7 +23979,7 @@ export type Registrant_Invitation_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "registrant.Invitation" */
 export type Registrant_Invitation_Arr_Rel_Insert_Input = {
     data: Array<Registrant_Invitation_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_Invitation_On_Conflict>;
 };
 
@@ -24063,11 +24099,11 @@ export type Registrant_Invitation_Mutation_Response = {
 /** input type for inserting object relation for remote table "registrant.Invitation" */
 export type Registrant_Invitation_Obj_Rel_Insert_Input = {
     data: Registrant_Invitation_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_Invitation_On_Conflict>;
 };
 
-/** on conflict condition type for table "registrant.Invitation" */
+/** on_conflict condition type for table "registrant.Invitation" */
 export type Registrant_Invitation_On_Conflict = {
     constraint: Registrant_Invitation_Constraint;
     update_columns?: Array<Registrant_Invitation_Update_Column>;
@@ -24476,11 +24512,11 @@ export type Registrant_Profile_Mutation_Response = {
 /** input type for inserting object relation for remote table "registrant.Profile" */
 export type Registrant_Profile_Obj_Rel_Insert_Input = {
     data: Registrant_Profile_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_Profile_On_Conflict>;
 };
 
-/** on conflict condition type for table "registrant.Profile" */
+/** on_conflict condition type for table "registrant.Profile" */
 export type Registrant_Profile_On_Conflict = {
     constraint: Registrant_Profile_Constraint;
     update_columns?: Array<Registrant_Profile_Update_Column>;
@@ -24693,8 +24729,9 @@ export type Registrant_Registrant = {
     invitation?: Maybe<Registrant_Invitation>;
     /** A computed field, executes function "registrant.InvitationEmailStatus" */
     invitationStatus?: Maybe<Scalars["jsonb"]>;
-    /** A computed field, executes function "registrant.HasBeenInvited" */
     inviteSent?: Maybe<Scalars["Boolean"]>;
+    /** A computed field, executes function "registrant.isProgramPerson" */
+    isProgramPerson?: Maybe<Scalars["Boolean"]>;
     /** An object relationship */
     profile?: Maybe<Registrant_Profile>;
     /** An array relationship */
@@ -24875,7 +24912,7 @@ export type Registrant_RegistrantRole_Mutation_Response = {
     returning: Array<Registrant_RegistrantRole>;
 };
 
-/** on conflict condition type for table "registrant.RegistrantRole" */
+/** on_conflict condition type for table "registrant.RegistrantRole" */
 export type Registrant_RegistrantRole_On_Conflict = {
     constraint: Registrant_RegistrantRole_Constraint;
     update_columns?: Array<Registrant_RegistrantRole_Update_Column>;
@@ -24946,7 +24983,7 @@ export type Registrant_Registrant_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "registrant.Registrant" */
 export type Registrant_Registrant_Arr_Rel_Insert_Input = {
     data: Array<Registrant_Registrant_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_Registrant_On_Conflict>;
 };
 
@@ -24966,6 +25003,7 @@ export type Registrant_Registrant_Bool_Exp = {
     invitation?: InputMaybe<Registrant_Invitation_Bool_Exp>;
     invitationStatus?: InputMaybe<Jsonb_Comparison_Exp>;
     inviteSent?: InputMaybe<Boolean_Comparison_Exp>;
+    isProgramPerson?: InputMaybe<Boolean_Comparison_Exp>;
     profile?: InputMaybe<Registrant_Profile_Bool_Exp>;
     programPeople?: InputMaybe<Collection_ProgramPerson_Bool_Exp>;
     subconferenceMemberships?: InputMaybe<Registrant_SubconferenceMembership_Bool_Exp>;
@@ -25055,11 +25093,11 @@ export type Registrant_Registrant_Mutation_Response = {
 /** input type for inserting object relation for remote table "registrant.Registrant" */
 export type Registrant_Registrant_Obj_Rel_Insert_Input = {
     data: Registrant_Registrant_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_Registrant_On_Conflict>;
 };
 
-/** on conflict condition type for table "registrant.Registrant" */
+/** on_conflict condition type for table "registrant.Registrant" */
 export type Registrant_Registrant_On_Conflict = {
     constraint: Registrant_Registrant_Constraint;
     update_columns?: Array<Registrant_Registrant_Update_Column>;
@@ -25079,6 +25117,7 @@ export type Registrant_Registrant_Order_By = {
     invitation?: InputMaybe<Registrant_Invitation_Order_By>;
     invitationStatus?: InputMaybe<Order_By>;
     inviteSent?: InputMaybe<Order_By>;
+    isProgramPerson?: InputMaybe<Order_By>;
     profile?: InputMaybe<Registrant_Profile_Order_By>;
     programPeople_aggregate?: InputMaybe<Collection_ProgramPerson_Aggregate_Order_By>;
     subconferenceMemberships_aggregate?: InputMaybe<Registrant_SubconferenceMembership_Aggregate_Order_By>;
@@ -25185,7 +25224,7 @@ export type Registrant_SavedVonageRoomRecording_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "registrant.SavedVonageRoomRecording" */
 export type Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input = {
     data: Array<Registrant_SavedVonageRoomRecording_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
 };
 
@@ -25271,7 +25310,7 @@ export type Registrant_SavedVonageRoomRecording_Mutation_Response = {
     returning: Array<Registrant_SavedVonageRoomRecording>;
 };
 
-/** on conflict condition type for table "registrant.SavedVonageRoomRecording" */
+/** on_conflict condition type for table "registrant.SavedVonageRoomRecording" */
 export type Registrant_SavedVonageRoomRecording_On_Conflict = {
     constraint: Registrant_SavedVonageRoomRecording_Constraint;
     update_columns?: Array<Registrant_SavedVonageRoomRecording_Update_Column>;
@@ -25383,7 +25422,7 @@ export type Registrant_SubconferenceMembership_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "registrant.SubconferenceMembership" */
 export type Registrant_SubconferenceMembership_Arr_Rel_Insert_Input = {
     data: Array<Registrant_SubconferenceMembership_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Registrant_SubconferenceMembership_On_Conflict>;
 };
 
@@ -25469,7 +25508,7 @@ export type Registrant_SubconferenceMembership_Mutation_Response = {
     returning: Array<Registrant_SubconferenceMembership>;
 };
 
-/** on conflict condition type for table "registrant.SubconferenceMembership" */
+/** on_conflict condition type for table "registrant.SubconferenceMembership" */
 export type Registrant_SubconferenceMembership_On_Conflict = {
     constraint: Registrant_SubconferenceMembership_Constraint;
     update_columns?: Array<Registrant_SubconferenceMembership_Update_Column>;
@@ -25628,7 +25667,7 @@ export type Room_Backend_Mutation_Response = {
     returning: Array<Room_Backend>;
 };
 
-/** on conflict condition type for table "room.Backend" */
+/** on_conflict condition type for table "room.Backend" */
 export type Room_Backend_On_Conflict = {
     constraint: Room_Backend_Constraint;
     update_columns?: Array<Room_Backend_Update_Column>;
@@ -25806,11 +25845,11 @@ export type Room_ChimeMeeting_Mutation_Response = {
 /** input type for inserting object relation for remote table "room.ChimeMeeting" */
 export type Room_ChimeMeeting_Obj_Rel_Insert_Input = {
     data: Room_ChimeMeeting_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_ChimeMeeting_On_Conflict>;
 };
 
-/** on conflict condition type for table "room.ChimeMeeting" */
+/** on_conflict condition type for table "room.ChimeMeeting" */
 export type Room_ChimeMeeting_On_Conflict = {
     constraint: Room_ChimeMeeting_Constraint;
     update_columns?: Array<Room_ChimeMeeting_Update_Column>;
@@ -26146,11 +26185,11 @@ export type Room_ManagementMode_Mutation_Response = {
 /** input type for inserting object relation for remote table "room.ManagementMode" */
 export type Room_ManagementMode_Obj_Rel_Insert_Input = {
     data: Room_ManagementMode_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_ManagementMode_On_Conflict>;
 };
 
-/** on conflict condition type for table "room.ManagementMode" */
+/** on_conflict condition type for table "room.ManagementMode" */
 export type Room_ManagementMode_On_Conflict = {
     constraint: Room_ManagementMode_Constraint;
     update_columns?: Array<Room_ManagementMode_Update_Column>;
@@ -26281,11 +26320,11 @@ export type Room_PersonRole_Mutation_Response = {
 /** input type for inserting object relation for remote table "room.PersonRole" */
 export type Room_PersonRole_Obj_Rel_Insert_Input = {
     data: Room_PersonRole_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_PersonRole_On_Conflict>;
 };
 
-/** on conflict condition type for table "room.PersonRole" */
+/** on_conflict condition type for table "room.PersonRole" */
 export type Room_PersonRole_On_Conflict = {
     constraint: Room_PersonRole_Constraint;
     update_columns?: Array<Room_PersonRole_Update_Column>;
@@ -26355,7 +26394,6 @@ export type Room_Room = {
     /** An aggregate relationship */
     events_aggregate: Schedule_Event_Aggregate;
     id: Scalars["uuid"];
-    /** A computed field, executes function "room.IsProgramRoom" */
     isProgramRoom?: Maybe<Scalars["Boolean"]>;
     /** A computed field, executes function "room.IsStreamingProgramRoom" */
     isStreamingProgramRoom?: Maybe<Scalars["Boolean"]>;
@@ -26663,7 +26701,7 @@ export type Room_RoomGroupMembership_Mutation_Response = {
     returning: Array<Room_RoomGroupMembership>;
 };
 
-/** on conflict condition type for table "room.RoomGroupMembership" */
+/** on_conflict condition type for table "room.RoomGroupMembership" */
 export type Room_RoomGroupMembership_On_Conflict = {
     constraint: Room_RoomGroupMembership_Constraint;
     update_columns?: Array<Room_RoomGroupMembership_Update_Column>;
@@ -26771,7 +26809,7 @@ export type Room_RoomMembership_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "room.RoomMembership" */
 export type Room_RoomMembership_Arr_Rel_Insert_Input = {
     data: Array<Room_RoomMembership_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_RoomMembership_On_Conflict>;
 };
 
@@ -26859,7 +26897,7 @@ export type Room_RoomMembership_Mutation_Response = {
     returning: Array<Room_RoomMembership>;
 };
 
-/** on conflict condition type for table "room.RoomMembership" */
+/** on_conflict condition type for table "room.RoomMembership" */
 export type Room_RoomMembership_On_Conflict = {
     constraint: Room_RoomMembership_Constraint;
     update_columns?: Array<Room_RoomMembership_Update_Column>;
@@ -26973,7 +27011,7 @@ export type Room_Room_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "room.Room" */
 export type Room_Room_Arr_Rel_Insert_Input = {
     data: Array<Room_Room_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_Room_On_Conflict>;
 };
 
@@ -27163,11 +27201,11 @@ export type Room_Room_Mutation_Response = {
 /** input type for inserting object relation for remote table "room.Room" */
 export type Room_Room_Obj_Rel_Insert_Input = {
     data: Room_Room_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_Room_On_Conflict>;
 };
 
-/** on conflict condition type for table "room.Room" */
+/** on_conflict condition type for table "room.Room" */
 export type Room_Room_On_Conflict = {
     constraint: Room_Room_Constraint;
     update_columns?: Array<Room_Room_Update_Column>;
@@ -27481,7 +27519,7 @@ export type Room_ShuffleAlgorithm_Mutation_Response = {
     returning: Array<Room_ShuffleAlgorithm>;
 };
 
-/** on conflict condition type for table "room.ShuffleAlgorithm" */
+/** on_conflict condition type for table "room.ShuffleAlgorithm" */
 export type Room_ShuffleAlgorithm_On_Conflict = {
     constraint: Room_ShuffleAlgorithm_Constraint;
     update_columns?: Array<Room_ShuffleAlgorithm_Update_Column>;
@@ -27657,7 +27695,7 @@ export type Room_ShufflePeriod_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "room.ShufflePeriod" */
 export type Room_ShufflePeriod_Arr_Rel_Insert_Input = {
     data: Array<Room_ShufflePeriod_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_ShufflePeriod_On_Conflict>;
 };
 
@@ -27823,11 +27861,11 @@ export type Room_ShufflePeriod_Mutation_Response = {
 /** input type for inserting object relation for remote table "room.ShufflePeriod" */
 export type Room_ShufflePeriod_Obj_Rel_Insert_Input = {
     data: Room_ShufflePeriod_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_ShufflePeriod_On_Conflict>;
 };
 
-/** on conflict condition type for table "room.ShufflePeriod" */
+/** on_conflict condition type for table "room.ShufflePeriod" */
 export type Room_ShufflePeriod_On_Conflict = {
     constraint: Room_ShufflePeriod_Constraint;
     update_columns?: Array<Room_ShufflePeriod_Update_Column>;
@@ -28128,7 +28166,7 @@ export type Room_ShuffleQueueEntry_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "room.ShuffleQueueEntry" */
 export type Room_ShuffleQueueEntry_Arr_Rel_Insert_Input = {
     data: Array<Room_ShuffleQueueEntry_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_ShuffleQueueEntry_On_Conflict>;
 };
 
@@ -28241,7 +28279,7 @@ export type Room_ShuffleQueueEntry_Mutation_Response = {
     returning: Array<Room_ShuffleQueueEntry>;
 };
 
-/** on conflict condition type for table "room.ShuffleQueueEntry" */
+/** on_conflict condition type for table "room.ShuffleQueueEntry" */
 export type Room_ShuffleQueueEntry_On_Conflict = {
     constraint: Room_ShuffleQueueEntry_Constraint;
     update_columns?: Array<Room_ShuffleQueueEntry_Update_Column>;
@@ -28514,7 +28552,7 @@ export type Room_ShuffleRoom_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "room.ShuffleRoom" */
 export type Room_ShuffleRoom_Arr_Rel_Insert_Input = {
     data: Array<Room_ShuffleRoom_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_ShuffleRoom_On_Conflict>;
 };
 
@@ -28638,11 +28676,11 @@ export type Room_ShuffleRoom_Mutation_Response = {
 /** input type for inserting object relation for remote table "room.ShuffleRoom" */
 export type Room_ShuffleRoom_Obj_Rel_Insert_Input = {
     data: Room_ShuffleRoom_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Room_ShuffleRoom_On_Conflict>;
 };
 
-/** on conflict condition type for table "room.ShuffleRoom" */
+/** on_conflict condition type for table "room.ShuffleRoom" */
 export type Room_ShuffleRoom_On_Conflict = {
     constraint: Room_ShuffleRoom_Constraint;
     update_columns?: Array<Room_ShuffleRoom_Update_Column>;
@@ -28819,12 +28857,7 @@ export type Room_ShuffleRoom_Variance_Order_By = {
     id?: InputMaybe<Order_By>;
 };
 
-/**
- * A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go.
- *
- *
- * columns and relationships of "schedule.Continuation"
- */
+/** A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go. */
 export type Schedule_Continuation = {
     __typename?: "schedule_Continuation";
     colour: Scalars["String"];
@@ -28842,12 +28875,7 @@ export type Schedule_Continuation = {
     to: Scalars["jsonb"];
 };
 
-/**
- * A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go.
- *
- *
- * columns and relationships of "schedule.Continuation"
- */
+/** A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go. */
 export type Schedule_ContinuationToArgs = {
     path?: InputMaybe<Scalars["String"]>;
 };
@@ -28904,7 +28932,7 @@ export type Schedule_Continuation_Append_Input = {
 /** input type for inserting array relation for remote table "schedule.Continuation" */
 export type Schedule_Continuation_Arr_Rel_Insert_Input = {
     data: Array<Schedule_Continuation_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Schedule_Continuation_On_Conflict>;
 };
 
@@ -29033,7 +29061,7 @@ export type Schedule_Continuation_Mutation_Response = {
     returning: Array<Schedule_Continuation>;
 };
 
-/** on conflict condition type for table "schedule.Continuation" */
+/** on_conflict condition type for table "schedule.Continuation" */
 export type Schedule_Continuation_On_Conflict = {
     constraint: Schedule_Continuation_Constraint;
     update_columns?: Array<Schedule_Continuation_Update_Column>;
@@ -29551,6 +29579,10 @@ export type Schedule_Event = {
     mode?: Maybe<Schedule_Mode>;
     modeName?: Maybe<Schedule_Mode_Enum>;
     name: Scalars["String"];
+    /** An array relationship */
+    presentations: Array<Schedule_Event>;
+    /** An aggregate relationship */
+    presentations_aggregate: Schedule_Event_Aggregate;
     /** An object relationship */
     room: Room_Room;
     roomId: Scalars["uuid"];
@@ -29558,6 +29590,8 @@ export type Schedule_Event = {
     roomName?: Maybe<Scalars["String"]>;
     scheduledEndTime?: Maybe<Scalars["timestamptz"]>;
     scheduledStartTime?: Maybe<Scalars["timestamptz"]>;
+    /** An object relationship */
+    session?: Maybe<Schedule_Event>;
     sessionEventId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     shufflePeriod?: Maybe<Room_ShufflePeriod>;
@@ -29605,6 +29639,24 @@ export type Schedule_EventEventPeople_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<Schedule_EventProgramPerson_Order_By>>;
     where?: InputMaybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventPresentationsArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventPresentations_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Schedule_Event_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Schedule_Event_Order_By>>;
+    where?: InputMaybe<Schedule_Event_Bool_Exp>;
 };
 
 /** columns and relationships of "schedule.EventProgramPerson" */
@@ -29741,11 +29793,11 @@ export type Schedule_EventProgramPersonRole_Mutation_Response = {
 /** input type for inserting object relation for remote table "schedule.EventProgramPersonRole" */
 export type Schedule_EventProgramPersonRole_Obj_Rel_Insert_Input = {
     data: Schedule_EventProgramPersonRole_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Schedule_EventProgramPersonRole_On_Conflict>;
 };
 
-/** on conflict condition type for table "schedule.EventProgramPersonRole" */
+/** on_conflict condition type for table "schedule.EventProgramPersonRole" */
 export type Schedule_EventProgramPersonRole_On_Conflict = {
     constraint: Schedule_EventProgramPersonRole_Constraint;
     update_columns?: Array<Schedule_EventProgramPersonRole_Update_Column>;
@@ -29817,7 +29869,7 @@ export type Schedule_EventProgramPerson_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "schedule.EventProgramPerson" */
 export type Schedule_EventProgramPerson_Arr_Rel_Insert_Input = {
     data: Array<Schedule_EventProgramPerson_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Schedule_EventProgramPerson_On_Conflict>;
 };
 
@@ -29905,7 +29957,7 @@ export type Schedule_EventProgramPerson_Mutation_Response = {
     returning: Array<Schedule_EventProgramPerson>;
 };
 
-/** on conflict condition type for table "schedule.EventProgramPerson" */
+/** on_conflict condition type for table "schedule.EventProgramPerson" */
 export type Schedule_EventProgramPerson_On_Conflict = {
     constraint: Schedule_EventProgramPerson_Constraint;
     update_columns?: Array<Schedule_EventProgramPerson_Update_Column>;
@@ -30003,7 +30055,7 @@ export type Schedule_Event_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "schedule.Event" */
 export type Schedule_Event_Arr_Rel_Insert_Input = {
     data: Array<Schedule_Event_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
 };
 
@@ -30030,11 +30082,13 @@ export type Schedule_Event_Bool_Exp = {
     mode?: InputMaybe<Schedule_Mode_Bool_Exp>;
     modeName?: InputMaybe<Schedule_Mode_Enum_Comparison_Exp>;
     name?: InputMaybe<String_Comparison_Exp>;
+    presentations?: InputMaybe<Schedule_Event_Bool_Exp>;
     room?: InputMaybe<Room_Room_Bool_Exp>;
     roomId?: InputMaybe<Uuid_Comparison_Exp>;
     roomName?: InputMaybe<String_Comparison_Exp>;
     scheduledEndTime?: InputMaybe<Timestamptz_Comparison_Exp>;
     scheduledStartTime?: InputMaybe<Timestamptz_Comparison_Exp>;
+    session?: InputMaybe<Schedule_Event_Bool_Exp>;
     sessionEventId?: InputMaybe<Uuid_Comparison_Exp>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Bool_Exp>;
     shufflePeriodId?: InputMaybe<Uuid_Comparison_Exp>;
@@ -30072,10 +30126,12 @@ export type Schedule_Event_Insert_Input = {
     mode?: InputMaybe<Schedule_Mode_Obj_Rel_Insert_Input>;
     modeName?: InputMaybe<Schedule_Mode_Enum>;
     name?: InputMaybe<Scalars["String"]>;
+    presentations?: InputMaybe<Schedule_Event_Arr_Rel_Insert_Input>;
     room?: InputMaybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: InputMaybe<Scalars["uuid"]>;
     scheduledEndTime?: InputMaybe<Scalars["timestamptz"]>;
     scheduledStartTime?: InputMaybe<Scalars["timestamptz"]>;
+    session?: InputMaybe<Schedule_Event_Obj_Rel_Insert_Input>;
     sessionEventId?: InputMaybe<Scalars["uuid"]>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
     shufflePeriodId?: InputMaybe<Scalars["uuid"]>;
@@ -30181,11 +30237,11 @@ export type Schedule_Event_Mutation_Response = {
 /** input type for inserting object relation for remote table "schedule.Event" */
 export type Schedule_Event_Obj_Rel_Insert_Input = {
     data: Schedule_Event_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Schedule_Event_On_Conflict>;
 };
 
-/** on conflict condition type for table "schedule.Event" */
+/** on_conflict condition type for table "schedule.Event" */
 export type Schedule_Event_On_Conflict = {
     constraint: Schedule_Event_Constraint;
     update_columns?: Array<Schedule_Event_Update_Column>;
@@ -30212,11 +30268,13 @@ export type Schedule_Event_Order_By = {
     mode?: InputMaybe<Schedule_Mode_Order_By>;
     modeName?: InputMaybe<Order_By>;
     name?: InputMaybe<Order_By>;
+    presentations_aggregate?: InputMaybe<Schedule_Event_Aggregate_Order_By>;
     room?: InputMaybe<Room_Room_Order_By>;
     roomId?: InputMaybe<Order_By>;
     roomName?: InputMaybe<Order_By>;
     scheduledEndTime?: InputMaybe<Order_By>;
     scheduledStartTime?: InputMaybe<Order_By>;
+    session?: InputMaybe<Schedule_Event_Order_By>;
     sessionEventId?: InputMaybe<Order_By>;
     shufflePeriod?: InputMaybe<Room_ShufflePeriod_Order_By>;
     shufflePeriodId?: InputMaybe<Order_By>;
@@ -30470,11 +30528,11 @@ export type Schedule_Mode_Mutation_Response = {
 /** input type for inserting object relation for remote table "schedule.Mode" */
 export type Schedule_Mode_Obj_Rel_Insert_Input = {
     data: Schedule_Mode_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Schedule_Mode_On_Conflict>;
 };
 
-/** on conflict condition type for table "schedule.Mode" */
+/** on_conflict condition type for table "schedule.Mode" */
 export type Schedule_Mode_On_Conflict = {
     constraint: Schedule_Mode_Constraint;
     update_columns?: Array<Schedule_Mode_Update_Column>;
@@ -30703,7 +30761,7 @@ export type Schedule_StarredEvent_Mutation_Response = {
     returning: Array<Schedule_StarredEvent>;
 };
 
-/** on conflict condition type for table "schedule.StarredEvent" */
+/** on_conflict condition type for table "schedule.StarredEvent" */
 export type Schedule_StarredEvent_On_Conflict = {
     constraint: Schedule_StarredEvent_Constraint;
     update_columns?: Array<Schedule_StarredEvent_Update_Column>;
@@ -30766,6 +30824,16 @@ export enum Schedule_StarredEvent_Update_Column {
 export type Schedule_SearchEvents_Args = {
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     search?: InputMaybe<Scalars["String"]>;
+};
+
+export type Schedule_ShiftPresentationTimes_Args = {
+    minutes?: InputMaybe<Scalars["Int"]>;
+    sessionId?: InputMaybe<Scalars["uuid"]>;
+};
+
+export type Schedule_ShiftTimes_Args = {
+    eventIds?: InputMaybe<Scalars["_uuid"]>;
+    minutes?: InputMaybe<Scalars["Int"]>;
 };
 
 /** columns and relationships of "sponsor.Tier" */
@@ -30872,7 +30940,7 @@ export type Sponsor_TierMember_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "sponsor.TierMember" */
 export type Sponsor_TierMember_Arr_Rel_Insert_Input = {
     data: Array<Sponsor_TierMember_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Sponsor_TierMember_On_Conflict>;
 };
 
@@ -30978,7 +31046,7 @@ export type Sponsor_TierMember_Mutation_Response = {
     returning: Array<Sponsor_TierMember>;
 };
 
-/** on conflict condition type for table "sponsor.TierMember" */
+/** on_conflict condition type for table "sponsor.TierMember" */
 export type Sponsor_TierMember_On_Conflict = {
     constraint: Sponsor_TierMember_Constraint;
     update_columns?: Array<Sponsor_TierMember_Update_Column>;
@@ -31168,7 +31236,7 @@ export type Sponsor_Tier_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "sponsor.Tier" */
 export type Sponsor_Tier_Arr_Rel_Insert_Input = {
     data: Array<Sponsor_Tier_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
 };
 
@@ -31308,11 +31376,11 @@ export type Sponsor_Tier_Mutation_Response = {
 /** input type for inserting object relation for remote table "sponsor.Tier" */
 export type Sponsor_Tier_Obj_Rel_Insert_Input = {
     data: Sponsor_Tier_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Sponsor_Tier_On_Conflict>;
 };
 
-/** on conflict condition type for table "sponsor.Tier" */
+/** on_conflict condition type for table "sponsor.Tier" */
 export type Sponsor_Tier_On_Conflict = {
     constraint: Sponsor_Tier_Constraint;
     update_columns?: Array<Sponsor_Tier_Update_Column>;
@@ -34520,11 +34588,11 @@ export type System_ConfigurationKey_Mutation_Response = {
 /** input type for inserting object relation for remote table "system.ConfigurationKey" */
 export type System_ConfigurationKey_Obj_Rel_Insert_Input = {
     data: System_ConfigurationKey_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<System_ConfigurationKey_On_Conflict>;
 };
 
-/** on conflict condition type for table "system.ConfigurationKey" */
+/** on_conflict condition type for table "system.ConfigurationKey" */
 export type System_ConfigurationKey_On_Conflict = {
     constraint: System_ConfigurationKey_Constraint;
     update_columns?: Array<System_ConfigurationKey_Update_Column>;
@@ -34613,7 +34681,7 @@ export type System_ConfigurationPermissionGrant_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "system.ConfigurationPermissionGrant" */
 export type System_ConfigurationPermissionGrant_Arr_Rel_Insert_Input = {
     data: Array<System_ConfigurationPermissionGrant_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<System_ConfigurationPermissionGrant_On_Conflict>;
 };
 
@@ -34697,7 +34765,7 @@ export type System_ConfigurationPermissionGrant_Mutation_Response = {
     returning: Array<System_ConfigurationPermissionGrant>;
 };
 
-/** on conflict condition type for table "system.ConfigurationPermissionGrant" */
+/** on_conflict condition type for table "system.ConfigurationPermissionGrant" */
 export type System_ConfigurationPermissionGrant_On_Conflict = {
     constraint: System_ConfigurationPermissionGrant_Constraint;
     update_columns?: Array<System_ConfigurationPermissionGrant_Update_Column>;
@@ -34855,7 +34923,7 @@ export type System_Configuration_Mutation_Response = {
     returning: Array<System_Configuration>;
 };
 
-/** on conflict condition type for table "system.Configuration" */
+/** on_conflict condition type for table "system.Configuration" */
 export type System_Configuration_On_Conflict = {
     constraint: System_Configuration_Constraint;
     update_columns?: Array<System_Configuration_Update_Column>;
@@ -35034,7 +35102,7 @@ export type System_SuperUserPermissionGrant_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "system.SuperUserPermissionGrant" */
 export type System_SuperUserPermissionGrant_Arr_Rel_Insert_Input = {
     data: Array<System_SuperUserPermissionGrant_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<System_SuperUserPermissionGrant_On_Conflict>;
 };
 
@@ -35118,7 +35186,7 @@ export type System_SuperUserPermissionGrant_Mutation_Response = {
     returning: Array<System_SuperUserPermissionGrant>;
 };
 
-/** on conflict condition type for table "system.SuperUserPermissionGrant" */
+/** on_conflict condition type for table "system.SuperUserPermissionGrant" */
 export type System_SuperUserPermissionGrant_On_Conflict = {
     constraint: System_SuperUserPermissionGrant_Constraint;
     update_columns?: Array<System_SuperUserPermissionGrant_Update_Column>;
@@ -35291,11 +35359,11 @@ export type System_SuperUserPermission_Mutation_Response = {
 /** input type for inserting object relation for remote table "system.SuperUserPermission" */
 export type System_SuperUserPermission_Obj_Rel_Insert_Input = {
     data: System_SuperUserPermission_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<System_SuperUserPermission_On_Conflict>;
 };
 
-/** on conflict condition type for table "system.SuperUserPermission" */
+/** on_conflict condition type for table "system.SuperUserPermission" */
 export type System_SuperUserPermission_On_Conflict = {
     constraint: System_SuperUserPermission_Constraint;
     update_columns?: Array<System_SuperUserPermission_Update_Column>;
@@ -35650,11 +35718,11 @@ export type Video_ChannelStack_Mutation_Response = {
 /** input type for inserting object relation for remote table "video.ChannelStack" */
 export type Video_ChannelStack_Obj_Rel_Insert_Input = {
     data: Video_ChannelStack_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_ChannelStack_On_Conflict>;
 };
 
-/** on conflict condition type for table "video.ChannelStack" */
+/** on_conflict condition type for table "video.ChannelStack" */
 export type Video_ChannelStack_On_Conflict = {
     constraint: Video_ChannelStack_Constraint;
     update_columns?: Array<Video_ChannelStack_Update_Column>;
@@ -36030,11 +36098,11 @@ export type Video_EventVonageSession_Mutation_Response = {
 /** input type for inserting object relation for remote table "video.EventVonageSession" */
 export type Video_EventVonageSession_Obj_Rel_Insert_Input = {
     data: Video_EventVonageSession_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_EventVonageSession_On_Conflict>;
 };
 
-/** on conflict condition type for table "video.EventVonageSession" */
+/** on_conflict condition type for table "video.EventVonageSession" */
 export type Video_EventVonageSession_On_Conflict = {
     constraint: Video_EventVonageSession_Constraint;
     update_columns?: Array<Video_EventVonageSession_Update_Column>;
@@ -36253,7 +36321,7 @@ export type Video_ImmediateSwitch_Mutation_Response = {
     returning: Array<Video_ImmediateSwitch>;
 };
 
-/** on conflict condition type for table "video.ImmediateSwitch" */
+/** on_conflict condition type for table "video.ImmediateSwitch" */
 export type Video_ImmediateSwitch_On_Conflict = {
     constraint: Video_ImmediateSwitch_Constraint;
     update_columns?: Array<Video_ImmediateSwitch_Update_Column>;
@@ -36414,7 +36482,7 @@ export type Video_InputType_Mutation_Response = {
     returning: Array<Video_InputType>;
 };
 
-/** on conflict condition type for table "video.InputType" */
+/** on_conflict condition type for table "video.InputType" */
 export type Video_InputType_On_Conflict = {
     constraint: Video_InputType_Constraint;
     update_columns?: Array<Video_InputType_Update_Column>;
@@ -36593,11 +36661,11 @@ export type Video_MediaLiveChannelStatus_Mutation_Response = {
 /** input type for inserting object relation for remote table "video.MediaLiveChannelStatus" */
 export type Video_MediaLiveChannelStatus_Obj_Rel_Insert_Input = {
     data: Video_MediaLiveChannelStatus_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_MediaLiveChannelStatus_On_Conflict>;
 };
 
-/** on conflict condition type for table "video.MediaLiveChannelStatus" */
+/** on_conflict condition type for table "video.MediaLiveChannelStatus" */
 export type Video_MediaLiveChannelStatus_On_Conflict = {
     constraint: Video_MediaLiveChannelStatus_Constraint;
     update_columns?: Array<Video_MediaLiveChannelStatus_Update_Column>;
@@ -36845,11 +36913,11 @@ export type Video_RoomRtmpInput_Mutation_Response = {
 /** input type for inserting object relation for remote table "video.RoomRtmpInput" */
 export type Video_RoomRtmpInput_Obj_Rel_Insert_Input = {
     data: Video_RoomRtmpInput_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_RoomRtmpInput_On_Conflict>;
 };
 
-/** on conflict condition type for table "video.RoomRtmpInput" */
+/** on_conflict condition type for table "video.RoomRtmpInput" */
 export type Video_RoomRtmpInput_On_Conflict = {
     constraint: Video_RoomRtmpInput_Constraint;
     update_columns?: Array<Video_RoomRtmpInput_Update_Column>;
@@ -36932,12 +37000,7 @@ export enum Video_RoomRtmpInput_Update_Column {
     UpdatedAt = "updated_at",
 }
 
-/**
- * Enables broadcasting of a live-stream from a room to an RTMP-capable service, such as YouTube.
- *
- *
- * columns and relationships of "video.RoomRtmpOutput"
- */
+/** Enables broadcasting of a live-stream from a room to an RTMP-capable service, such as YouTube. */
 export type Video_RoomRtmpOutput = {
     __typename?: "video_RoomRtmpOutput";
     created_at: Scalars["timestamptz"];
@@ -37038,11 +37101,11 @@ export type Video_RoomRtmpOutput_Mutation_Response = {
 /** input type for inserting object relation for remote table "video.RoomRtmpOutput" */
 export type Video_RoomRtmpOutput_Obj_Rel_Insert_Input = {
     data: Video_RoomRtmpOutput_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_RoomRtmpOutput_On_Conflict>;
 };
 
-/** on conflict condition type for table "video.RoomRtmpOutput" */
+/** on_conflict condition type for table "video.RoomRtmpOutput" */
 export type Video_RoomRtmpOutput_On_Conflict = {
     constraint: Video_RoomRtmpOutput_Constraint;
     update_columns?: Array<Video_RoomRtmpOutput_Update_Column>;
@@ -37197,7 +37260,7 @@ export type Video_RtmpInput_Mutation_Response = {
     returning: Array<Video_RtmpInput>;
 };
 
-/** on conflict condition type for table "video.RtmpInput" */
+/** on_conflict condition type for table "video.RtmpInput" */
 export type Video_RtmpInput_On_Conflict = {
     constraint: Video_RtmpInput_Constraint;
     update_columns?: Array<Video_RtmpInput_Update_Column>;
@@ -37341,7 +37404,7 @@ export type Video_TranscriptionJob_Mutation_Response = {
     returning: Array<Video_TranscriptionJob>;
 };
 
-/** on conflict condition type for table "video.TranscriptionJob" */
+/** on_conflict condition type for table "video.TranscriptionJob" */
 export type Video_TranscriptionJob_On_Conflict = {
     constraint: Video_TranscriptionJob_Constraint;
     update_columns?: Array<Video_TranscriptionJob_Update_Column>;
@@ -37497,7 +37560,7 @@ export type Video_VideoRenderJob_Append_Input = {
 /** input type for inserting array relation for remote table "video.VideoRenderJob" */
 export type Video_VideoRenderJob_Arr_Rel_Insert_Input = {
     data: Array<Video_VideoRenderJob_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_VideoRenderJob_On_Conflict>;
 };
 
@@ -37636,7 +37699,7 @@ export type Video_VideoRenderJob_Mutation_Response = {
     returning: Array<Video_VideoRenderJob>;
 };
 
-/** on conflict condition type for table "video.VideoRenderJob" */
+/** on_conflict condition type for table "video.VideoRenderJob" */
 export type Video_VideoRenderJob_On_Conflict = {
     constraint: Video_VideoRenderJob_Constraint;
     update_columns?: Array<Video_VideoRenderJob_Update_Column>;
@@ -37810,12 +37873,7 @@ export type Video_VideoRenderJob_Variance_Order_By = {
     retriesCount?: InputMaybe<Order_By>;
 };
 
-/**
- * Current streams in Vonage sessions.
- *
- *
- * columns and relationships of "video.VonageParticipantStream"
- */
+/** Current streams in Vonage sessions. */
 export type Video_VonageParticipantStream = {
     __typename?: "video_VonageParticipantStream";
     /** An object relationship */
@@ -37869,7 +37927,7 @@ export type Video_VonageParticipantStream_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "video.VonageParticipantStream" */
 export type Video_VonageParticipantStream_Arr_Rel_Insert_Input = {
     data: Array<Video_VonageParticipantStream_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_VonageParticipantStream_On_Conflict>;
 };
 
@@ -37984,7 +38042,7 @@ export type Video_VonageParticipantStream_Mutation_Response = {
     returning: Array<Video_VonageParticipantStream>;
 };
 
-/** on conflict condition type for table "video.VonageParticipantStream" */
+/** on_conflict condition type for table "video.VonageParticipantStream" */
 export type Video_VonageParticipantStream_On_Conflict = {
     constraint: Video_VonageParticipantStream_Constraint;
     update_columns?: Array<Video_VonageParticipantStream_Update_Column>;
@@ -38148,7 +38206,7 @@ export type Video_VonageRoomRecording_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "video.VonageRoomRecording" */
 export type Video_VonageRoomRecording_Arr_Rel_Insert_Input = {
     data: Array<Video_VonageRoomRecording_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_VonageRoomRecording_On_Conflict>;
 };
 
@@ -38265,11 +38323,11 @@ export type Video_VonageRoomRecording_Mutation_Response = {
 /** input type for inserting object relation for remote table "video.VonageRoomRecording" */
 export type Video_VonageRoomRecording_Obj_Rel_Insert_Input = {
     data: Video_VonageRoomRecording_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_VonageRoomRecording_On_Conflict>;
 };
 
-/** on conflict condition type for table "video.VonageRoomRecording" */
+/** on_conflict condition type for table "video.VonageRoomRecording" */
 export type Video_VonageRoomRecording_On_Conflict = {
     constraint: Video_VonageRoomRecording_Constraint;
     update_columns?: Array<Video_VonageRoomRecording_Update_Column>;
@@ -38439,7 +38497,7 @@ export type Video_VonageSessionLayout_Append_Input = {
 /** input type for inserting array relation for remote table "video.VonageSessionLayout" */
 export type Video_VonageSessionLayout_Arr_Rel_Insert_Input = {
     data: Array<Video_VonageSessionLayout_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_VonageSessionLayout_On_Conflict>;
 };
 
@@ -38549,11 +38607,11 @@ export type Video_VonageSessionLayout_Mutation_Response = {
 /** input type for inserting object relation for remote table "video.VonageSessionLayout" */
 export type Video_VonageSessionLayout_Obj_Rel_Insert_Input = {
     data: Video_VonageSessionLayout_Insert_Input;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_VonageSessionLayout_On_Conflict>;
 };
 
-/** on conflict condition type for table "video.VonageSessionLayout" */
+/** on_conflict condition type for table "video.VonageSessionLayout" */
 export type Video_VonageSessionLayout_On_Conflict = {
     constraint: Video_VonageSessionLayout_Constraint;
     update_columns?: Array<Video_VonageSessionLayout_Update_Column>;
@@ -38796,7 +38854,7 @@ export type Video_VonageVideoPlaybackCommand_Mutation_Response = {
     returning: Array<Video_VonageVideoPlaybackCommand>;
 };
 
-/** on conflict condition type for table "video.VonageVideoPlaybackCommand" */
+/** on_conflict condition type for table "video.VonageVideoPlaybackCommand" */
 export type Video_VonageVideoPlaybackCommand_On_Conflict = {
     constraint: Video_VonageVideoPlaybackCommand_Constraint;
     update_columns?: Array<Video_VonageVideoPlaybackCommand_Update_Column>;
@@ -38933,7 +38991,7 @@ export type Video_YouTubeUpload_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "video.YouTubeUpload" */
 export type Video_YouTubeUpload_Arr_Rel_Insert_Input = {
     data: Array<Video_YouTubeUpload_Insert_Input>;
-    /** on conflict condition */
+    /** upsert condition */
     on_conflict?: InputMaybe<Video_YouTubeUpload_On_Conflict>;
 };
 
@@ -39053,7 +39111,7 @@ export type Video_YouTubeUpload_Mutation_Response = {
     returning: Array<Video_YouTubeUpload>;
 };
 
-/** on conflict condition type for table "video.YouTubeUpload" */
+/** on_conflict condition type for table "video.YouTubeUpload" */
 export type Video_YouTubeUpload_On_Conflict = {
     constraint: Video_YouTubeUpload_Constraint;
     update_columns?: Array<Video_YouTubeUpload_Update_Column>;

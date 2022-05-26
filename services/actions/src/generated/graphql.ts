@@ -23284,6 +23284,7 @@ export type Registrant_GoogleAccount = {
     createdAt: Scalars["timestamptz"];
     googleAccountEmail: Scalars["String"];
     id: Scalars["uuid"];
+    isDeleted: Scalars["Boolean"];
     /** An object relationship */
     registrant: Registrant_Registrant;
     registrantId: Scalars["uuid"];
@@ -23339,6 +23340,7 @@ export type Registrant_GoogleAccount_Bool_Exp = {
     createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     googleAccountEmail?: InputMaybe<String_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
+    isDeleted?: InputMaybe<Boolean_Comparison_Exp>;
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: InputMaybe<Uuid_Comparison_Exp>;
     tokenData?: InputMaybe<Jsonb_Comparison_Exp>;
@@ -23379,6 +23381,7 @@ export type Registrant_GoogleAccount_Insert_Input = {
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     googleAccountEmail?: InputMaybe<Scalars["String"]>;
     id?: InputMaybe<Scalars["uuid"]>;
+    isDeleted?: InputMaybe<Scalars["Boolean"]>;
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     tokenData?: InputMaybe<Scalars["jsonb"]>;
@@ -23438,6 +23441,7 @@ export type Registrant_GoogleAccount_Order_By = {
     createdAt?: InputMaybe<Order_By>;
     googleAccountEmail?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
+    isDeleted?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     registrantId?: InputMaybe<Order_By>;
     tokenData?: InputMaybe<Order_By>;
@@ -23467,6 +23471,8 @@ export enum Registrant_GoogleAccount_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
+    IsDeleted = "isDeleted",
+    /** column name */
     RegistrantId = "registrantId",
     /** column name */
     TokenData = "tokenData",
@@ -23482,6 +23488,7 @@ export type Registrant_GoogleAccount_Set_Input = {
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     googleAccountEmail?: InputMaybe<Scalars["String"]>;
     id?: InputMaybe<Scalars["uuid"]>;
+    isDeleted?: InputMaybe<Scalars["Boolean"]>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     tokenData?: InputMaybe<Scalars["jsonb"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -23498,6 +23505,8 @@ export enum Registrant_GoogleAccount_Update_Column {
     GoogleAccountEmail = "googleAccountEmail",
     /** column name */
     Id = "id",
+    /** column name */
+    IsDeleted = "isDeleted",
     /** column name */
     RegistrantId = "registrantId",
     /** column name */
@@ -39767,7 +39776,34 @@ export type MarkAndSelectNewUploadYouTubeVideoJobsMutationVariables = Exact<{
 
 export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = {
     __typename?: "mutation_root";
-    update_job_queues_UploadYouTubeVideoJob?: {
+    nextJobs?: {
+        __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
+        returning: Array<{
+            __typename?: "job_queues_UploadYouTubeVideoJob";
+            id: any;
+            conferenceId: any;
+            subconferenceId?: any | null;
+            jobStatusName: Job_Queues_JobStatus_Enum;
+            retriesCount: number;
+            videoTitle: string;
+            videoDescription: string;
+            videoPrivacyStatus: string;
+            playlistId?: string | null;
+            registrantGoogleAccount: {
+                __typename?: "registrant_GoogleAccount";
+                id: any;
+                tokenData: any;
+                googleAccountEmail: string;
+            };
+            element: {
+                __typename?: "content_Element";
+                data: any;
+                id: any;
+                item: { __typename?: "content_Item"; id: any; title: string };
+            };
+        }>;
+    } | null;
+    expiredJobs?: {
         __typename?: "job_queues_UploadYouTubeVideoJob_mutation_response";
         returning: Array<{
             __typename?: "job_queues_UploadYouTubeVideoJob";
@@ -45559,6 +45595,11 @@ export const Google_CreateRegistrantGoogleAccountDocument = {
                                             name: { kind: "Name", value: "tokenData" },
                                             value: { kind: "Variable", name: { kind: "Name", value: "tokenData" } },
                                         },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "isDeleted" },
+                                            value: { kind: "BooleanValue", value: false },
+                                        },
                                     ],
                                 },
                             },
@@ -45579,7 +45620,13 @@ export const Google_CreateRegistrantGoogleAccountDocument = {
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "update_columns" },
-                                            value: { kind: "EnumValue", value: "tokenData" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    { kind: "EnumValue", value: "tokenData" },
+                                                    { kind: "EnumValue", value: "isDeleted" },
+                                                ],
+                                            },
                                         },
                                     ],
                                 },
@@ -45823,6 +45870,7 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                 selections: [
                     {
                         kind: "Field",
+                        alias: { kind: "Name", value: "nextJobs" },
                         name: { kind: "Name", value: "update_job_queues_UploadYouTubeVideoJob" },
                         arguments: [
                             {
@@ -45862,6 +45910,20 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                                                 ],
                                             },
                                         },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "retriesCount" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_lt" },
+                                                        value: { kind: "IntValue", value: "3" },
+                                                    },
+                                                ],
+                                            },
+                                        },
                                     ],
                                 },
                             },
@@ -45894,6 +45956,156 @@ export const MarkAndSelectNewUploadYouTubeVideoJobsDocument = {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "retriesCount" },
                                             value: { kind: "IntValue", value: "1" },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "returning" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "FragmentSpread",
+                                                name: { kind: "Name", value: "UploadYouTubeVideoJobData" },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        alias: { kind: "Name", value: "expiredJobs" },
+                        name: { kind: "Name", value: "update_job_queues_UploadYouTubeVideoJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "id" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_in" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "ids" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_nin" },
+                                                        value: {
+                                                            kind: "ListValue",
+                                                            values: [
+                                                                { kind: "EnumValue", value: "FAILED" },
+                                                                { kind: "EnumValue", value: "EXPIRED" },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_or" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: {
+                                                                    kind: "Name",
+                                                                    value: "registrantGoogleAccount",
+                                                                },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "isDeleted" },
+                                                                            value: {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "_eq",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "BooleanValue",
+                                                                                            value: true,
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "retriesCount" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_gte" },
+                                                                            value: { kind: "IntValue", value: "3" },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: { kind: "EnumValue", value: "EXPIRED" },
                                         },
                                     ],
                                 },

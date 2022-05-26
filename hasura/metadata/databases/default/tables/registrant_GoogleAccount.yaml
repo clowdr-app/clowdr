@@ -59,17 +59,24 @@ select_permissions:
         registrant:
           userId:
             _eq: X-Hasura-User-Id
-delete_permissions:
+update_permissions:
   - role: conference-organizer
     permission:
+      columns:
+        - isDeleted
       filter:
         registrantId:
           _in: X-Hasura-Registrant-Ids
+      check: null
   - role: subconference-organizer
     permission:
+      columns:
+        - isDeleted
       filter:
         registrantId:
           _in: X-Hasura-Registrant-Ids
+      check: null
+delete_permissions:
   - role: user
     permission:
       filter:

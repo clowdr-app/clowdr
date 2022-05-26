@@ -94,8 +94,12 @@ gql`
                 conferenceId: $conferenceId
                 googleAccountEmail: $googleAccountEmail
                 tokenData: $tokenData
+                isDeleted: false
             }
-            on_conflict: { constraint: GoogleAccount_registrantId_googleAccountEmail_key, update_columns: tokenData }
+            on_conflict: {
+                constraint: GoogleAccount_registrantId_googleAccountEmail_key
+                update_columns: [tokenData, isDeleted]
+            }
         ) {
             id
         }
@@ -289,7 +293,7 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                             variables: {
                                 id: job.id,
                                 message: JSON.stringify(error),
-                                result: error,
+                                result: [error],
                             },
                         });
                     });
@@ -310,11 +314,16 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                                 variables: {
                                     id: job.id,
                                     message: "No data returned from YouTube API",
-                                    result: {
-                                        data: result?.data,
-                                        status: result?.status,
-                                        statusText: result?.statusText,
-                                    },
+                                    result:
+                                        result && (result.data || result.status || result.statusText)
+                                            ? [
+                                                  {
+                                                      data: result?.data,
+                                                      status: result?.status,
+                                                      statusText: result?.statusText,
+                                                  },
+                                              ]
+                                            : [],
                                 },
                             });
                         });
@@ -438,10 +447,22 @@ gql`
     }
 
     mutation MarkAndSelectNewUploadYouTubeVideoJobs($ids: [uuid!]!, $initialResult: jsonb!) {
-        update_job_queues_UploadYouTubeVideoJob(
-            where: { id: { _in: $ids }, jobStatusName: { _eq: NEW } }
+        nextJobs: update_job_queues_UploadYouTubeVideoJob(
+            where: { id: { _in: $ids }, jobStatusName: { _eq: NEW }, retriesCount: { _lt: 3 } }
             _set: { jobStatusName: IN_PROGRESS, result: $initialResult }
             _inc: { retriesCount: 1 }
+        ) {
+            returning {
+                ...UploadYouTubeVideoJobData
+            }
+        }
+        expiredJobs: update_job_queues_UploadYouTubeVideoJob(
+            where: {
+                id: { _in: $ids }
+                jobStatusName: { _nin: [FAILED, EXPIRED] }
+                _or: [{ registrantGoogleAccount: { isDeleted: { _eq: true } } }, { retriesCount: { _gte: 3 } }]
+            }
+            _set: { jobStatusName: EXPIRED }
         ) {
             returning {
                 ...UploadYouTubeVideoJobData
@@ -513,19 +534,20 @@ export async function handleUploadYouTubeVideoJobQueue(logger: P.Logger): Promis
             initialResult: [],
         },
     });
-    assert(jobs.data?.update_job_queues_UploadYouTubeVideoJob, "Failed to fetch new UploadYouTubeVideoJobs");
+    assert(
+        jobs.data?.nextJobs !== null && jobs.data?.nextJobs !== undefined,
+        "Failed to fetch new UploadYouTubeVideoJobs"
+    );
 
     const snooze = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
     const unsuccesssfulJobs: (string | undefined)[] = await Promise.all(
-        jobs.data.update_job_queues_UploadYouTubeVideoJob.returning.map(async (job) => {
+        jobs.data.nextJobs.returning.map(async (job) => {
             try {
-                if (job.retriesCount < 3) {
-                    await snooze(Math.floor(Math.random() * 5 * 1000));
-                    await callWithRetry(async () => {
-                        await startUploadYouTubeVideoJob(logger, job);
-                    });
-                }
+                await snooze(Math.floor(Math.random() * 5 * 1000));
+                await callWithRetry(async () => {
+                    await startUploadYouTubeVideoJob(logger, job);
+                });
             } catch (e: any) {
                 logger.error({ jobId: job.id, err: e }, "Could not start UploadYouTubeVideoJob");
                 return job.id;

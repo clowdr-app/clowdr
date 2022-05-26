@@ -34467,6 +34467,7 @@ type registrant_GoogleAccount {
     createdAt: timestamptz!
     googleAccountEmail: String!
     id: uuid!
+    isDeleted: Boolean!
     """
     An object relationship
     """
@@ -34524,6 +34525,7 @@ input registrant_GoogleAccount_bool_exp {
     createdAt: timestamptz_comparison_exp
     googleAccountEmail: String_comparison_exp
     id: uuid_comparison_exp
+    isDeleted: Boolean_comparison_exp
     registrant: registrant_Registrant_bool_exp
     registrantId: uuid_comparison_exp
     tokenData: jsonb_comparison_exp
@@ -34578,6 +34580,7 @@ input registrant_GoogleAccount_insert_input {
     createdAt: timestamptz
     googleAccountEmail: String
     id: uuid
+    isDeleted: Boolean
     registrant: registrant_Registrant_obj_rel_insert_input
     registrantId: uuid
     tokenData: jsonb
@@ -34652,6 +34655,7 @@ input registrant_GoogleAccount_order_by {
     createdAt: order_by
     googleAccountEmail: order_by
     id: order_by
+    isDeleted: order_by
     registrant: registrant_Registrant_order_by
     registrantId: order_by
     tokenData: order_by
@@ -34697,6 +34701,10 @@ enum registrant_GoogleAccount_select_column {
     """
     column name
     """
+    isDeleted
+    """
+    column name
+    """
     registrantId
     """
     column name
@@ -34720,6 +34728,7 @@ input registrant_GoogleAccount_set_input {
     createdAt: timestamptz
     googleAccountEmail: String
     id: uuid
+    isDeleted: Boolean
     registrantId: uuid
     tokenData: jsonb
     updatedAt: timestamptz
@@ -34746,6 +34755,10 @@ enum registrant_GoogleAccount_update_column {
     column name
     """
     id
+    """
+    column name
+    """
+    isDeleted
     """
     column name
     """

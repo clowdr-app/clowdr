@@ -61,7 +61,7 @@ import { YouTubeExportContext } from "./YouTubeExportContext";
 
 gql`
     query UploadYouTubeVideos_GetRegistrantGoogleAccounts($registrantId: uuid!) {
-        registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId } }) {
+        registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId }, isDeleted: { _eq: false } }) {
             id
             registrantId
             googleAccountEmail

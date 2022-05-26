@@ -23283,6 +23283,7 @@ export type Registrant_GoogleAccount = {
     createdAt: Scalars["timestamptz"];
     googleAccountEmail: Scalars["String"];
     id: Scalars["uuid"];
+    isDeleted: Scalars["Boolean"];
     /** An object relationship */
     registrant: Registrant_Registrant;
     registrantId: Scalars["uuid"];
@@ -23338,6 +23339,7 @@ export type Registrant_GoogleAccount_Bool_Exp = {
     createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     googleAccountEmail?: InputMaybe<String_Comparison_Exp>;
     id?: InputMaybe<Uuid_Comparison_Exp>;
+    isDeleted?: InputMaybe<Boolean_Comparison_Exp>;
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: InputMaybe<Uuid_Comparison_Exp>;
     tokenData?: InputMaybe<Jsonb_Comparison_Exp>;
@@ -23378,6 +23380,7 @@ export type Registrant_GoogleAccount_Insert_Input = {
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     googleAccountEmail?: InputMaybe<Scalars["String"]>;
     id?: InputMaybe<Scalars["uuid"]>;
+    isDeleted?: InputMaybe<Scalars["Boolean"]>;
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     tokenData?: InputMaybe<Scalars["jsonb"]>;
@@ -23437,6 +23440,7 @@ export type Registrant_GoogleAccount_Order_By = {
     createdAt?: InputMaybe<Order_By>;
     googleAccountEmail?: InputMaybe<Order_By>;
     id?: InputMaybe<Order_By>;
+    isDeleted?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     registrantId?: InputMaybe<Order_By>;
     tokenData?: InputMaybe<Order_By>;
@@ -23466,6 +23470,8 @@ export enum Registrant_GoogleAccount_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
+    IsDeleted = "isDeleted",
+    /** column name */
     RegistrantId = "registrantId",
     /** column name */
     TokenData = "tokenData",
@@ -23481,6 +23487,7 @@ export type Registrant_GoogleAccount_Set_Input = {
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     googleAccountEmail?: InputMaybe<Scalars["String"]>;
     id?: InputMaybe<Scalars["uuid"]>;
+    isDeleted?: InputMaybe<Scalars["Boolean"]>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
     tokenData?: InputMaybe<Scalars["jsonb"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -23497,6 +23504,8 @@ export enum Registrant_GoogleAccount_Update_Column {
     GoogleAccountEmail = "googleAccountEmail",
     /** column name */
     Id = "id",
+    /** column name */
+    IsDeleted = "isDeleted",
     /** column name */
     RegistrantId = "registrantId",
     /** column name */

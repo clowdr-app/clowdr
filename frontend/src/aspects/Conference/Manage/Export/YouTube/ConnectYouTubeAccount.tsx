@@ -25,7 +25,7 @@ gql`
     }
 
     query ManageExport_GetRegistrantGoogleAccounts($registrantId: uuid!) {
-        registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId } }) {
+        registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId }, isDeleted: { _eq: false } }) {
             ...ManageExport_RegistrantGoogleAccount
         }
     }
@@ -38,7 +38,10 @@ gql`
     }
 
     mutation ManageExport_DeleteRegistrantGoogleAccount($registrantGoogleAccountId: uuid!) {
-        delete_registrant_GoogleAccount_by_pk(id: $registrantGoogleAccountId) {
+        update_registrant_GoogleAccount_by_pk(
+            pk_columns: { id: $registrantGoogleAccountId }
+            _set: { isDeleted: true }
+        ) {
             id
         }
     }

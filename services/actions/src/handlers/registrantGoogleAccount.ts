@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/action-types";
 import type { EventPayload } from "@midspace/hasura/event";
-import type { RegistrantGoogleAccountData } from "@midspace/hasura/event-data";
+import type { GoogleAuthTokenData } from "@midspace/hasura/event-data";
 import type {
     YouTubeChannelDetails,
     YouTubeDataBlob,
@@ -22,9 +22,9 @@ import { apolloClient } from "../graphqlClient";
 import { createOAuth2Client } from "../lib/googleAuth";
 import { callWithRetry } from "../utils";
 
-export async function handleRegistrantGoogleAccountDeleted(
+export async function handleGoogleAuthTokenDeleted(
     logger: P.Logger,
-    payload: EventPayload<RegistrantGoogleAccountData>
+    payload: EventPayload<GoogleAuthTokenData>
 ): Promise<void> {
     assert(payload.event.data.old, "Payload must contain old row data");
     const oldRow = payload.event.data.old;
@@ -32,11 +32,11 @@ export async function handleRegistrantGoogleAccountDeleted(
     const accessToken = oldRow.tokenData.access_token;
 
     if (accessToken) {
-        logger.info({ googleAccountId: oldRow.id }, "Revoking credentials for registrant Google account");
+        logger.info({ authTokenSubject: oldRow.sub }, "Revoking credentials for Google auth token");
         const oauth2Client = createOAuth2Client();
         oauth2Client.setCredentials(payload.event.data.old.tokenData);
         await callWithRetry(async () => await oauth2Client.revokeCredentials());
-        logger.info({ googleAccountId: oldRow.id }, "Revoked credentials for registrant Google account");
+        logger.info({ authTokenSubject: oldRow.sub }, "Revoked credentials for Google auth token");
     }
     return;
 }
@@ -46,7 +46,9 @@ gql`
         registrant_GoogleAccount_by_pk(id: $id) {
             registrantId
             id
-            tokenData
+            authToken {
+                tokenData
+            }
             youTubeData
         }
     }
@@ -118,7 +120,7 @@ export async function handleRefreshYouTubeData(
 
     const client = await createGoogleOAuthClient(
         logger,
-        registrantGoogleAccount.data.registrant_GoogleAccount_by_pk.tokenData
+        registrantGoogleAccount.data.registrant_GoogleAccount_by_pk.authToken.tokenData
     );
 
     const youtubeClient = google.youtube({

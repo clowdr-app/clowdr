@@ -9,3 +9,17 @@ array_relationships:
         table:
           schema: registrant
           name: GoogleAccount
+event_triggers:
+  - name: GoogleAuthTokenDeleted
+    definition:
+      enable_manual: false
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/registrantGoogleAccount/deleted'
+    headers:
+      - name: x-hasura-event-secret
+        value_from_env: EVENT_SECRET

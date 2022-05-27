@@ -626,6 +626,200 @@ export type GetUploadAgreementOutput = {
     agreementUrl?: Maybe<Scalars["String"]>;
 };
 
+/** columns and relationships of "GoogleAuthToken" */
+export type GoogleAuthToken = {
+    __typename?: "GoogleAuthToken";
+    created_at: Scalars["timestamptz"];
+    /** An array relationship */
+    googleAccounts: Array<Registrant_GoogleAccount>;
+    /** An aggregate relationship */
+    googleAccounts_aggregate: Registrant_GoogleAccount_Aggregate;
+    sub: Scalars["String"];
+    tokenData: Scalars["jsonb"];
+    updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "GoogleAuthToken" */
+export type GoogleAuthTokenGoogleAccountsArgs = {
+    distinct_on?: InputMaybe<Array<Registrant_GoogleAccount_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_GoogleAccount_Order_By>>;
+    where?: InputMaybe<Registrant_GoogleAccount_Bool_Exp>;
+};
+
+/** columns and relationships of "GoogleAuthToken" */
+export type GoogleAuthTokenGoogleAccounts_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<Registrant_GoogleAccount_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<Registrant_GoogleAccount_Order_By>>;
+    where?: InputMaybe<Registrant_GoogleAccount_Bool_Exp>;
+};
+
+/** columns and relationships of "GoogleAuthToken" */
+export type GoogleAuthTokenTokenDataArgs = {
+    path?: InputMaybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "GoogleAuthToken" */
+export type GoogleAuthToken_Aggregate = {
+    __typename?: "GoogleAuthToken_aggregate";
+    aggregate?: Maybe<GoogleAuthToken_Aggregate_Fields>;
+    nodes: Array<GoogleAuthToken>;
+};
+
+/** aggregate fields of "GoogleAuthToken" */
+export type GoogleAuthToken_Aggregate_Fields = {
+    __typename?: "GoogleAuthToken_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<GoogleAuthToken_Max_Fields>;
+    min?: Maybe<GoogleAuthToken_Min_Fields>;
+};
+
+/** aggregate fields of "GoogleAuthToken" */
+export type GoogleAuthToken_Aggregate_FieldsCountArgs = {
+    columns?: InputMaybe<Array<GoogleAuthToken_Select_Column>>;
+    distinct?: InputMaybe<Scalars["Boolean"]>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type GoogleAuthToken_Append_Input = {
+    tokenData?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** Boolean expression to filter rows from the table "GoogleAuthToken". All fields are combined with a logical 'AND'. */
+export type GoogleAuthToken_Bool_Exp = {
+    _and?: InputMaybe<Array<GoogleAuthToken_Bool_Exp>>;
+    _not?: InputMaybe<GoogleAuthToken_Bool_Exp>;
+    _or?: InputMaybe<Array<GoogleAuthToken_Bool_Exp>>;
+    created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+    googleAccounts?: InputMaybe<Registrant_GoogleAccount_Bool_Exp>;
+    sub?: InputMaybe<String_Comparison_Exp>;
+    tokenData?: InputMaybe<Jsonb_Comparison_Exp>;
+    updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "GoogleAuthToken" */
+export enum GoogleAuthToken_Constraint {
+    /** unique or primary key constraint */
+    GoogleAuthTokenPkey = "GoogleAuthToken_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type GoogleAuthToken_Delete_At_Path_Input = {
+    tokenData?: InputMaybe<Array<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type GoogleAuthToken_Delete_Elem_Input = {
+    tokenData?: InputMaybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type GoogleAuthToken_Delete_Key_Input = {
+    tokenData?: InputMaybe<Scalars["String"]>;
+};
+
+/** input type for inserting data into table "GoogleAuthToken" */
+export type GoogleAuthToken_Insert_Input = {
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    googleAccounts?: InputMaybe<Registrant_GoogleAccount_Arr_Rel_Insert_Input>;
+    sub?: InputMaybe<Scalars["String"]>;
+    tokenData?: InputMaybe<Scalars["jsonb"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type GoogleAuthToken_Max_Fields = {
+    __typename?: "GoogleAuthToken_max_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    sub?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type GoogleAuthToken_Min_Fields = {
+    __typename?: "GoogleAuthToken_min_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    sub?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "GoogleAuthToken" */
+export type GoogleAuthToken_Mutation_Response = {
+    __typename?: "GoogleAuthToken_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<GoogleAuthToken>;
+};
+
+/** input type for inserting object relation for remote table "GoogleAuthToken" */
+export type GoogleAuthToken_Obj_Rel_Insert_Input = {
+    data: GoogleAuthToken_Insert_Input;
+    /** upsert condition */
+    on_conflict?: InputMaybe<GoogleAuthToken_On_Conflict>;
+};
+
+/** on_conflict condition type for table "GoogleAuthToken" */
+export type GoogleAuthToken_On_Conflict = {
+    constraint: GoogleAuthToken_Constraint;
+    update_columns?: Array<GoogleAuthToken_Update_Column>;
+    where?: InputMaybe<GoogleAuthToken_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "GoogleAuthToken". */
+export type GoogleAuthToken_Order_By = {
+    created_at?: InputMaybe<Order_By>;
+    googleAccounts_aggregate?: InputMaybe<Registrant_GoogleAccount_Aggregate_Order_By>;
+    sub?: InputMaybe<Order_By>;
+    tokenData?: InputMaybe<Order_By>;
+    updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: GoogleAuthToken */
+export type GoogleAuthToken_Pk_Columns_Input = {
+    sub: Scalars["String"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type GoogleAuthToken_Prepend_Input = {
+    tokenData?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "GoogleAuthToken" */
+export enum GoogleAuthToken_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Sub = "sub",
+    /** column name */
+    TokenData = "tokenData",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "GoogleAuthToken" */
+export type GoogleAuthToken_Set_Input = {
+    created_at?: InputMaybe<Scalars["timestamptz"]>;
+    sub?: InputMaybe<Scalars["String"]>;
+    tokenData?: InputMaybe<Scalars["jsonb"]>;
+    updated_at?: InputMaybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "GoogleAuthToken" */
+export enum GoogleAuthToken_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Sub = "sub",
+    /** column name */
+    TokenData = "tokenData",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
 export type InitialiseSuperUserOutput = {
     __typename?: "InitialiseSuperUserOutput";
     error?: Maybe<Scalars["String"]>;
@@ -15307,6 +15501,10 @@ export type Mutation_Root = {
     delete_Email?: Maybe<Email_Mutation_Response>;
     /** delete single row from the table: "Email" */
     delete_Email_by_pk?: Maybe<Email>;
+    /** delete data from the table: "GoogleAuthToken" */
+    delete_GoogleAuthToken?: Maybe<GoogleAuthToken_Mutation_Response>;
+    /** delete single row from the table: "GoogleAuthToken" */
+    delete_GoogleAuthToken_by_pk?: Maybe<GoogleAuthToken>;
     /** delete data from the table: "PushNotificationSubscription" */
     delete_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
     /** delete single row from the table: "PushNotificationSubscription" */
@@ -15711,6 +15909,10 @@ export type Mutation_Root = {
     insert_Email?: Maybe<Email_Mutation_Response>;
     /** insert a single row into the table: "Email" */
     insert_Email_one?: Maybe<Email>;
+    /** insert data into the table: "GoogleAuthToken" */
+    insert_GoogleAuthToken?: Maybe<GoogleAuthToken_Mutation_Response>;
+    /** insert a single row into the table: "GoogleAuthToken" */
+    insert_GoogleAuthToken_one?: Maybe<GoogleAuthToken>;
     /** insert data into the table: "PushNotificationSubscription" */
     insert_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
     /** insert a single row into the table: "PushNotificationSubscription" */
@@ -16135,6 +16337,10 @@ export type Mutation_Root = {
     update_Email?: Maybe<Email_Mutation_Response>;
     /** update single row of the table: "Email" */
     update_Email_by_pk?: Maybe<Email>;
+    /** update data of the table: "GoogleAuthToken" */
+    update_GoogleAuthToken?: Maybe<GoogleAuthToken_Mutation_Response>;
+    /** update single row of the table: "GoogleAuthToken" */
+    update_GoogleAuthToken_by_pk?: Maybe<GoogleAuthToken>;
     /** update data of the table: "PushNotificationSubscription" */
     update_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
     /** update single row of the table: "PushNotificationSubscription" */
@@ -16565,6 +16771,16 @@ export type Mutation_RootDelete_EmailArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Email_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_GoogleAuthTokenArgs = {
+    where: GoogleAuthToken_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_GoogleAuthToken_By_PkArgs = {
+    sub: Scalars["String"];
 };
 
 /** mutation root */
@@ -17582,6 +17798,18 @@ export type Mutation_RootInsert_EmailArgs = {
 export type Mutation_RootInsert_Email_OneArgs = {
     object: Email_Insert_Input;
     on_conflict?: InputMaybe<Email_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_GoogleAuthTokenArgs = {
+    objects: Array<GoogleAuthToken_Insert_Input>;
+    on_conflict?: InputMaybe<GoogleAuthToken_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_GoogleAuthToken_OneArgs = {
+    object: GoogleAuthToken_Insert_Input;
+    on_conflict?: InputMaybe<GoogleAuthToken_On_Conflict>;
 };
 
 /** mutation root */
@@ -18900,6 +19128,28 @@ export type Mutation_RootUpdate_Email_By_PkArgs = {
     _inc?: InputMaybe<Email_Inc_Input>;
     _set?: InputMaybe<Email_Set_Input>;
     pk_columns: Email_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_GoogleAuthTokenArgs = {
+    _append?: InputMaybe<GoogleAuthToken_Append_Input>;
+    _delete_at_path?: InputMaybe<GoogleAuthToken_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<GoogleAuthToken_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<GoogleAuthToken_Delete_Key_Input>;
+    _prepend?: InputMaybe<GoogleAuthToken_Prepend_Input>;
+    _set?: InputMaybe<GoogleAuthToken_Set_Input>;
+    where: GoogleAuthToken_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_GoogleAuthToken_By_PkArgs = {
+    _append?: InputMaybe<GoogleAuthToken_Append_Input>;
+    _delete_at_path?: InputMaybe<GoogleAuthToken_Delete_At_Path_Input>;
+    _delete_elem?: InputMaybe<GoogleAuthToken_Delete_Elem_Input>;
+    _delete_key?: InputMaybe<GoogleAuthToken_Delete_Key_Input>;
+    _prepend?: InputMaybe<GoogleAuthToken_Prepend_Input>;
+    _set?: InputMaybe<GoogleAuthToken_Set_Input>;
+    pk_columns: GoogleAuthToken_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -20428,6 +20678,12 @@ export type Query_Root = {
     ForeignKeyIntrospection: Array<ForeignKeyIntrospection>;
     /** fetch aggregated fields from the table: "ForeignKeyIntrospection" */
     ForeignKeyIntrospection_aggregate: ForeignKeyIntrospection_Aggregate;
+    /** fetch data from the table: "GoogleAuthToken" */
+    GoogleAuthToken: Array<GoogleAuthToken>;
+    /** fetch aggregated fields from the table: "GoogleAuthToken" */
+    GoogleAuthToken_aggregate: GoogleAuthToken_Aggregate;
+    /** fetch data from the table: "GoogleAuthToken" using primary key columns */
+    GoogleAuthToken_by_pk?: Maybe<GoogleAuthToken>;
     /** fetch data from the table: "PushNotificationSubscription" */
     PushNotificationSubscription: Array<PushNotificationSubscription>;
     /** fetch aggregated fields from the table: "PushNotificationSubscription" */
@@ -21107,6 +21363,26 @@ export type Query_RootForeignKeyIntrospection_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<ForeignKeyIntrospection_Order_By>>;
     where?: InputMaybe<ForeignKeyIntrospection_Bool_Exp>;
+};
+
+export type Query_RootGoogleAuthTokenArgs = {
+    distinct_on?: InputMaybe<Array<GoogleAuthToken_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<GoogleAuthToken_Order_By>>;
+    where?: InputMaybe<GoogleAuthToken_Bool_Exp>;
+};
+
+export type Query_RootGoogleAuthToken_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<GoogleAuthToken_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<GoogleAuthToken_Order_By>>;
+    where?: InputMaybe<GoogleAuthToken_Bool_Exp>;
+};
+
+export type Query_RootGoogleAuthToken_By_PkArgs = {
+    sub: Scalars["String"];
 };
 
 export type Query_RootPushNotificationSubscriptionArgs = {
@@ -23290,6 +23566,9 @@ export type Query_RootVideo_YouTubeUpload_By_PkArgs = {
 export type Registrant_GoogleAccount = {
     __typename?: "registrant_GoogleAccount";
     /** An object relationship */
+    authToken: GoogleAuthToken;
+    authTokenSubject: Scalars["String"];
+    /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
     createdAt: Scalars["timestamptz"];
@@ -23299,14 +23578,8 @@ export type Registrant_GoogleAccount = {
     /** An object relationship */
     registrant: Registrant_Registrant;
     registrantId: Scalars["uuid"];
-    tokenData: Scalars["jsonb"];
     updatedAt: Scalars["timestamptz"];
     youTubeData?: Maybe<Scalars["jsonb"]>;
-};
-
-/** columns and relationships of "registrant.GoogleAccount" */
-export type Registrant_GoogleAccountTokenDataArgs = {
-    path?: InputMaybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "registrant.GoogleAccount" */
@@ -23335,10 +23608,23 @@ export type Registrant_GoogleAccount_Aggregate_FieldsCountArgs = {
     distinct?: InputMaybe<Scalars["Boolean"]>;
 };
 
+/** order by aggregate values of table "registrant.GoogleAccount" */
+export type Registrant_GoogleAccount_Aggregate_Order_By = {
+    count?: InputMaybe<Order_By>;
+    max?: InputMaybe<Registrant_GoogleAccount_Max_Order_By>;
+    min?: InputMaybe<Registrant_GoogleAccount_Min_Order_By>;
+};
+
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type Registrant_GoogleAccount_Append_Input = {
-    tokenData?: InputMaybe<Scalars["jsonb"]>;
     youTubeData?: InputMaybe<Scalars["jsonb"]>;
+};
+
+/** input type for inserting array relation for remote table "registrant.GoogleAccount" */
+export type Registrant_GoogleAccount_Arr_Rel_Insert_Input = {
+    data: Array<Registrant_GoogleAccount_Insert_Input>;
+    /** upsert condition */
+    on_conflict?: InputMaybe<Registrant_GoogleAccount_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "registrant.GoogleAccount". All fields are combined with a logical 'AND'. */
@@ -23346,6 +23632,8 @@ export type Registrant_GoogleAccount_Bool_Exp = {
     _and?: InputMaybe<Array<Registrant_GoogleAccount_Bool_Exp>>;
     _not?: InputMaybe<Registrant_GoogleAccount_Bool_Exp>;
     _or?: InputMaybe<Array<Registrant_GoogleAccount_Bool_Exp>>;
+    authToken?: InputMaybe<GoogleAuthToken_Bool_Exp>;
+    authTokenSubject?: InputMaybe<String_Comparison_Exp>;
     conference?: InputMaybe<Conference_Conference_Bool_Exp>;
     conferenceId?: InputMaybe<Uuid_Comparison_Exp>;
     createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -23354,7 +23642,6 @@ export type Registrant_GoogleAccount_Bool_Exp = {
     isDeleted?: InputMaybe<Boolean_Comparison_Exp>;
     registrant?: InputMaybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: InputMaybe<Uuid_Comparison_Exp>;
-    tokenData?: InputMaybe<Jsonb_Comparison_Exp>;
     updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
     youTubeData?: InputMaybe<Jsonb_Comparison_Exp>;
 };
@@ -23369,24 +23656,23 @@ export enum Registrant_GoogleAccount_Constraint {
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
 export type Registrant_GoogleAccount_Delete_At_Path_Input = {
-    tokenData?: InputMaybe<Array<Scalars["String"]>>;
     youTubeData?: InputMaybe<Array<Scalars["String"]>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Registrant_GoogleAccount_Delete_Elem_Input = {
-    tokenData?: InputMaybe<Scalars["Int"]>;
     youTubeData?: InputMaybe<Scalars["Int"]>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Registrant_GoogleAccount_Delete_Key_Input = {
-    tokenData?: InputMaybe<Scalars["String"]>;
     youTubeData?: InputMaybe<Scalars["String"]>;
 };
 
 /** input type for inserting data into table "registrant.GoogleAccount" */
 export type Registrant_GoogleAccount_Insert_Input = {
+    authToken?: InputMaybe<GoogleAuthToken_Obj_Rel_Insert_Input>;
+    authTokenSubject?: InputMaybe<Scalars["String"]>;
     conference?: InputMaybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
@@ -23395,7 +23681,6 @@ export type Registrant_GoogleAccount_Insert_Input = {
     isDeleted?: InputMaybe<Scalars["Boolean"]>;
     registrant?: InputMaybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
-    tokenData?: InputMaybe<Scalars["jsonb"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     youTubeData?: InputMaybe<Scalars["jsonb"]>;
 };
@@ -23403,6 +23688,7 @@ export type Registrant_GoogleAccount_Insert_Input = {
 /** aggregate max on columns */
 export type Registrant_GoogleAccount_Max_Fields = {
     __typename?: "registrant_GoogleAccount_max_fields";
+    authTokenSubject?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     googleAccountEmail?: Maybe<Scalars["String"]>;
@@ -23411,15 +23697,38 @@ export type Registrant_GoogleAccount_Max_Fields = {
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
+/** order by max() on columns of table "registrant.GoogleAccount" */
+export type Registrant_GoogleAccount_Max_Order_By = {
+    authTokenSubject?: InputMaybe<Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    createdAt?: InputMaybe<Order_By>;
+    googleAccountEmail?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    registrantId?: InputMaybe<Order_By>;
+    updatedAt?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Registrant_GoogleAccount_Min_Fields = {
     __typename?: "registrant_GoogleAccount_min_fields";
+    authTokenSubject?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     googleAccountEmail?: Maybe<Scalars["String"]>;
     id?: Maybe<Scalars["uuid"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "registrant.GoogleAccount" */
+export type Registrant_GoogleAccount_Min_Order_By = {
+    authTokenSubject?: InputMaybe<Order_By>;
+    conferenceId?: InputMaybe<Order_By>;
+    createdAt?: InputMaybe<Order_By>;
+    googleAccountEmail?: InputMaybe<Order_By>;
+    id?: InputMaybe<Order_By>;
+    registrantId?: InputMaybe<Order_By>;
+    updatedAt?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "registrant.GoogleAccount" */
@@ -23447,6 +23756,8 @@ export type Registrant_GoogleAccount_On_Conflict = {
 
 /** Ordering options when selecting data from "registrant.GoogleAccount". */
 export type Registrant_GoogleAccount_Order_By = {
+    authToken?: InputMaybe<GoogleAuthToken_Order_By>;
+    authTokenSubject?: InputMaybe<Order_By>;
     conference?: InputMaybe<Conference_Conference_Order_By>;
     conferenceId?: InputMaybe<Order_By>;
     createdAt?: InputMaybe<Order_By>;
@@ -23455,7 +23766,6 @@ export type Registrant_GoogleAccount_Order_By = {
     isDeleted?: InputMaybe<Order_By>;
     registrant?: InputMaybe<Registrant_Registrant_Order_By>;
     registrantId?: InputMaybe<Order_By>;
-    tokenData?: InputMaybe<Order_By>;
     updatedAt?: InputMaybe<Order_By>;
     youTubeData?: InputMaybe<Order_By>;
 };
@@ -23467,12 +23777,13 @@ export type Registrant_GoogleAccount_Pk_Columns_Input = {
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 export type Registrant_GoogleAccount_Prepend_Input = {
-    tokenData?: InputMaybe<Scalars["jsonb"]>;
     youTubeData?: InputMaybe<Scalars["jsonb"]>;
 };
 
 /** select columns of table "registrant.GoogleAccount" */
 export enum Registrant_GoogleAccount_Select_Column {
+    /** column name */
+    AuthTokenSubject = "authTokenSubject",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -23485,8 +23796,6 @@ export enum Registrant_GoogleAccount_Select_Column {
     IsDeleted = "isDeleted",
     /** column name */
     RegistrantId = "registrantId",
-    /** column name */
-    TokenData = "tokenData",
     /** column name */
     UpdatedAt = "updatedAt",
     /** column name */
@@ -23495,19 +23804,21 @@ export enum Registrant_GoogleAccount_Select_Column {
 
 /** input type for updating data in table "registrant.GoogleAccount" */
 export type Registrant_GoogleAccount_Set_Input = {
+    authTokenSubject?: InputMaybe<Scalars["String"]>;
     conferenceId?: InputMaybe<Scalars["uuid"]>;
     createdAt?: InputMaybe<Scalars["timestamptz"]>;
     googleAccountEmail?: InputMaybe<Scalars["String"]>;
     id?: InputMaybe<Scalars["uuid"]>;
     isDeleted?: InputMaybe<Scalars["Boolean"]>;
     registrantId?: InputMaybe<Scalars["uuid"]>;
-    tokenData?: InputMaybe<Scalars["jsonb"]>;
     updatedAt?: InputMaybe<Scalars["timestamptz"]>;
     youTubeData?: InputMaybe<Scalars["jsonb"]>;
 };
 
 /** update columns of table "registrant.GoogleAccount" */
 export enum Registrant_GoogleAccount_Update_Column {
+    /** column name */
+    AuthTokenSubject = "authTokenSubject",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -23520,8 +23831,6 @@ export enum Registrant_GoogleAccount_Update_Column {
     IsDeleted = "isDeleted",
     /** column name */
     RegistrantId = "registrantId",
-    /** column name */
-    TokenData = "tokenData",
     /** column name */
     UpdatedAt = "updatedAt",
     /** column name */
@@ -31592,6 +31901,12 @@ export type Subscription_Root = {
     ForeignKeyIntrospection: Array<ForeignKeyIntrospection>;
     /** fetch aggregated fields from the table: "ForeignKeyIntrospection" */
     ForeignKeyIntrospection_aggregate: ForeignKeyIntrospection_Aggregate;
+    /** fetch data from the table: "GoogleAuthToken" */
+    GoogleAuthToken: Array<GoogleAuthToken>;
+    /** fetch aggregated fields from the table: "GoogleAuthToken" */
+    GoogleAuthToken_aggregate: GoogleAuthToken_Aggregate;
+    /** fetch data from the table: "GoogleAuthToken" using primary key columns */
+    GoogleAuthToken_by_pk?: Maybe<GoogleAuthToken>;
     /** fetch data from the table: "PushNotificationSubscription" */
     PushNotificationSubscription: Array<PushNotificationSubscription>;
     /** fetch aggregated fields from the table: "PushNotificationSubscription" */
@@ -32266,6 +32581,26 @@ export type Subscription_RootForeignKeyIntrospection_AggregateArgs = {
     offset?: InputMaybe<Scalars["Int"]>;
     order_by?: InputMaybe<Array<ForeignKeyIntrospection_Order_By>>;
     where?: InputMaybe<ForeignKeyIntrospection_Bool_Exp>;
+};
+
+export type Subscription_RootGoogleAuthTokenArgs = {
+    distinct_on?: InputMaybe<Array<GoogleAuthToken_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<GoogleAuthToken_Order_By>>;
+    where?: InputMaybe<GoogleAuthToken_Bool_Exp>;
+};
+
+export type Subscription_RootGoogleAuthToken_AggregateArgs = {
+    distinct_on?: InputMaybe<Array<GoogleAuthToken_Select_Column>>;
+    limit?: InputMaybe<Scalars["Int"]>;
+    offset?: InputMaybe<Scalars["Int"]>;
+    order_by?: InputMaybe<Array<GoogleAuthToken_Order_By>>;
+    where?: InputMaybe<GoogleAuthToken_Bool_Exp>;
+};
+
+export type Subscription_RootGoogleAuthToken_By_PkArgs = {
+    sub: Scalars["String"];
 };
 
 export type Subscription_RootPushNotificationSubscriptionArgs = {
@@ -39749,7 +40084,9 @@ export type Google_CreateRegistrantGoogleAccountMutationVariables = Exact<{
     registrantId: Scalars["uuid"];
     conferenceId: Scalars["uuid"];
     googleAccountEmail: Scalars["String"];
+    subject: Scalars["String"];
     tokenData: Scalars["jsonb"];
+    authTokenColumnsToUpdate: Array<GoogleAuthToken_Update_Column> | GoogleAuthToken_Update_Column;
 }>;
 
 export type Google_CreateRegistrantGoogleAccountMutation = {
@@ -39806,8 +40143,8 @@ export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = {
             registrantGoogleAccount: {
                 __typename?: "registrant_GoogleAccount";
                 id: any;
-                tokenData: any;
                 googleAccountEmail: string;
+                authToken: { __typename?: "GoogleAuthToken"; tokenData: any };
             };
             element: {
                 __typename?: "content_Element";
@@ -39833,8 +40170,8 @@ export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = {
             registrantGoogleAccount: {
                 __typename?: "registrant_GoogleAccount";
                 id: any;
-                tokenData: any;
                 googleAccountEmail: string;
+                authToken: { __typename?: "GoogleAuthToken"; tokenData: any };
             };
             element: {
                 __typename?: "content_Element";
@@ -39860,8 +40197,8 @@ export type MarkAndSelectNewUploadYouTubeVideoJobsMutation = {
             registrantGoogleAccount: {
                 __typename?: "registrant_GoogleAccount";
                 id: any;
-                tokenData: any;
                 googleAccountEmail: string;
+                authToken: { __typename?: "GoogleAuthToken"; tokenData: any };
             };
             element: {
                 __typename?: "content_Element";
@@ -39887,8 +40224,8 @@ export type UploadYouTubeVideoJobDataFragment = {
     registrantGoogleAccount: {
         __typename?: "registrant_GoogleAccount";
         id: any;
-        tokenData: any;
         googleAccountEmail: string;
+        authToken: { __typename?: "GoogleAuthToken"; tokenData: any };
     };
     element: {
         __typename?: "content_Element";
@@ -40303,8 +40640,8 @@ export type RegistrantGoogleAccount_GetRegistrantGoogleAccountQuery = {
         __typename?: "registrant_GoogleAccount";
         registrantId: any;
         id: any;
-        tokenData: any;
         youTubeData?: any | null;
+        authToken: { __typename?: "GoogleAuthToken"; tokenData: any };
     } | null;
 };
 
@@ -42007,7 +42344,14 @@ export const UploadYouTubeVideoJobDataFragmentDoc = {
                             kind: "SelectionSet",
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "tokenData" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "authToken" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "tokenData" } }],
+                                    },
+                                },
                                 { kind: "Field", name: { kind: "Name", value: "googleAccountEmail" } },
                             ],
                         },
@@ -45610,8 +45954,30 @@ export const Google_CreateRegistrantGoogleAccountDocument = {
                 },
                 {
                     kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "subject" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "tokenData" } },
                     type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "jsonb" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "authTokenColumnsToUpdate" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: {
+                            kind: "ListType",
+                            type: {
+                                kind: "NonNullType",
+                                type: {
+                                    kind: "NamedType",
+                                    name: { kind: "Name", value: "GoogleAuthToken_update_column" },
+                                },
+                            },
+                        },
+                    },
                 },
             ],
             selectionSet: {
@@ -45647,13 +46013,70 @@ export const Google_CreateRegistrantGoogleAccountDocument = {
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "tokenData" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "tokenData" } },
+                                            name: { kind: "Name", value: "isDeleted" },
+                                            value: { kind: "BooleanValue", value: false },
                                         },
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "isDeleted" },
-                                            value: { kind: "BooleanValue", value: false },
+                                            name: { kind: "Name", value: "authToken" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "on_conflict" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "constraint" },
+                                                                    value: {
+                                                                        kind: "EnumValue",
+                                                                        value: "GoogleAuthToken_pkey",
+                                                                    },
+                                                                },
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "update_columns" },
+                                                                    value: {
+                                                                        kind: "Variable",
+                                                                        name: {
+                                                                            kind: "Name",
+                                                                            value: "authTokenColumnsToUpdate",
+                                                                        },
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "data" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "sub" },
+                                                                    value: {
+                                                                        kind: "Variable",
+                                                                        name: { kind: "Name", value: "subject" },
+                                                                    },
+                                                                },
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "tokenData" },
+                                                                    value: {
+                                                                        kind: "Variable",
+                                                                        name: { kind: "Name", value: "tokenData" },
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
                                         },
                                     ],
                                 },
@@ -45677,10 +46100,7 @@ export const Google_CreateRegistrantGoogleAccountDocument = {
                                             name: { kind: "Name", value: "update_columns" },
                                             value: {
                                                 kind: "ListValue",
-                                                values: [
-                                                    { kind: "EnumValue", value: "tokenData" },
-                                                    { kind: "EnumValue", value: "isDeleted" },
-                                                ],
+                                                values: [{ kind: "EnumValue", value: "isDeleted" }],
                                             },
                                         },
                                     ],
@@ -48896,7 +49316,14 @@ export const RegistrantGoogleAccount_GetRegistrantGoogleAccountDocument = {
                             selections: [
                                 { kind: "Field", name: { kind: "Name", value: "registrantId" } },
                                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "tokenData" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "authToken" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "tokenData" } }],
+                                    },
+                                },
                                 { kind: "Field", name: { kind: "Name", value: "youTubeData" } },
                             ],
                         },

@@ -57,6 +57,7 @@ select_permissions:
         - created_at
         - googleAccountEmail
         - id
+        - isDeleted
         - registrantId
         - updated_at
         - youTubeData
@@ -88,17 +89,3 @@ delete_permissions:
         registrant:
           userId:
             _eq: X-Hasura-User-Id
-event_triggers:
-  - name: RegistrantGoogleAccountDeleted
-    definition:
-      enable_manual: false
-      delete:
-        columns: '*'
-    retry_conf:
-      num_retries: 0
-      interval_sec: 10
-      timeout_sec: 60
-    webhook: '{{ACTION_BASE_URL}}/registrantGoogleAccount/deleted'
-    headers:
-      - name: x-hasura-event-secret
-        value_from_env: EVENT_SECRET

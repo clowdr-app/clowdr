@@ -20,6 +20,7 @@ import {
     CompleteUploadYouTubeVideoJobDocument,
     CreateYouTubeUploadDocument,
     FailUploadYouTubeVideoJobDocument,
+    GoogleAuthToken_Update_Column,
     GoogleOAuth_ConferenceConfig_FrontendHostDocument,
     Google_CreateRegistrantGoogleAccountDocument,
     MarkAndSelectNewUploadYouTubeVideoJobsDocument,
@@ -87,20 +88,22 @@ gql`
         $registrantId: uuid!
         $conferenceId: uuid!
         $googleAccountEmail: String!
+        $subject: String!
         $tokenData: jsonb!
+        $authTokenColumnsToUpdate: [GoogleAuthToken_update_column!]!
     ) {
         insert_registrant_GoogleAccount_one(
             object: {
                 registrantId: $registrantId
                 conferenceId: $conferenceId
                 googleAccountEmail: $googleAccountEmail
-                tokenData: $tokenData
                 isDeleted: false
+                authToken: {
+                    on_conflict: { constraint: GoogleAuthToken_pkey, update_columns: $authTokenColumnsToUpdate }
+                    data: { sub: $subject, tokenData: $tokenData }
+                }
             }
-            on_conflict: {
-                constraint: GoogleAccount_registrantId_googleAccountEmail_key
-                update_columns: [tokenData, isDeleted]
-            }
+            on_conflict: { constraint: GoogleAccount_registrantId_googleAccountEmail_key, update_columns: [isDeleted] }
         ) {
             id
         }
@@ -163,6 +166,8 @@ export async function handleSubmitGoogleOAuthToken(
                 conferenceId: validRegistrant.conferenceId,
                 googleAccountEmail: tokenData.email,
                 tokenData: token.tokens,
+                authTokenColumnsToUpdate: token.tokens.refresh_token ? [GoogleAuthToken_Update_Column.TokenData] : [],
+                subject: tokenData.sub,
             },
         });
 
@@ -240,10 +245,10 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
             Key: key,
         });
 
-        assertType<Credentials>(job.registrantGoogleAccount.tokenData);
+        assertType<Credentials>(job.registrantGoogleAccount.authToken.tokenData);
 
         const client = createOAuth2Client();
-        client.setCredentials(job.registrantGoogleAccount.tokenData);
+        client.setCredentials(job.registrantGoogleAccount.authToken.tokenData);
 
         let bytesRead = 0;
         const totalBytes = object.ContentLength ?? 0;
@@ -559,7 +564,9 @@ gql`
         retriesCount
         registrantGoogleAccount {
             id
-            tokenData
+            authToken {
+                tokenData
+            }
             googleAccountEmail
         }
         element {

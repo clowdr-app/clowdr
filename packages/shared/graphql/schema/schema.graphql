@@ -774,6 +774,282 @@ type GetUploadAgreementOutput {
     agreementUrl: String
 }
 
+"""
+columns and relationships of "GoogleAuthToken"
+"""
+type GoogleAuthToken {
+    created_at: timestamptz!
+    """
+    An array relationship
+    """
+    googleAccounts(
+        """
+        distinct select on columns
+        """
+        distinct_on: [registrant_GoogleAccount_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [registrant_GoogleAccount_order_by!]
+        """
+        filter the rows returned
+        """
+        where: registrant_GoogleAccount_bool_exp
+    ): [registrant_GoogleAccount!]!
+    """
+    An aggregate relationship
+    """
+    googleAccounts_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [registrant_GoogleAccount_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [registrant_GoogleAccount_order_by!]
+        """
+        filter the rows returned
+        """
+        where: registrant_GoogleAccount_bool_exp
+    ): registrant_GoogleAccount_aggregate!
+    sub: String!
+    tokenData(
+        """
+        JSON select path
+        """
+        path: String
+    ): jsonb!
+    updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "GoogleAuthToken"
+"""
+type GoogleAuthToken_aggregate {
+    aggregate: GoogleAuthToken_aggregate_fields
+    nodes: [GoogleAuthToken!]!
+}
+
+"""
+aggregate fields of "GoogleAuthToken"
+"""
+type GoogleAuthToken_aggregate_fields {
+    count(columns: [GoogleAuthToken_select_column!], distinct: Boolean): Int!
+    max: GoogleAuthToken_max_fields
+    min: GoogleAuthToken_min_fields
+}
+
+"""
+append existing jsonb value of filtered columns with new jsonb value
+"""
+input GoogleAuthToken_append_input {
+    tokenData: jsonb
+}
+
+"""
+Boolean expression to filter rows from the table "GoogleAuthToken". All fields are combined with a logical 'AND'.
+"""
+input GoogleAuthToken_bool_exp {
+    _and: [GoogleAuthToken_bool_exp!]
+    _not: GoogleAuthToken_bool_exp
+    _or: [GoogleAuthToken_bool_exp!]
+    created_at: timestamptz_comparison_exp
+    googleAccounts: registrant_GoogleAccount_bool_exp
+    sub: String_comparison_exp
+    tokenData: jsonb_comparison_exp
+    updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "GoogleAuthToken"
+"""
+enum GoogleAuthToken_constraint {
+    """
+    unique or primary key constraint
+    """
+    GoogleAuthToken_pkey
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input GoogleAuthToken_delete_at_path_input {
+    tokenData: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input GoogleAuthToken_delete_elem_input {
+    tokenData: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input GoogleAuthToken_delete_key_input {
+    tokenData: String
+}
+
+"""
+input type for inserting data into table "GoogleAuthToken"
+"""
+input GoogleAuthToken_insert_input {
+    created_at: timestamptz
+    googleAccounts: registrant_GoogleAccount_arr_rel_insert_input
+    sub: String
+    tokenData: jsonb
+    updated_at: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type GoogleAuthToken_max_fields {
+    created_at: timestamptz
+    sub: String
+    updated_at: timestamptz
+}
+
+"""
+aggregate min on columns
+"""
+type GoogleAuthToken_min_fields {
+    created_at: timestamptz
+    sub: String
+    updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "GoogleAuthToken"
+"""
+type GoogleAuthToken_mutation_response {
+    """
+    number of rows affected by the mutation
+    """
+    affected_rows: Int!
+    """
+    data from the rows affected by the mutation
+    """
+    returning: [GoogleAuthToken!]!
+}
+
+"""
+input type for inserting object relation for remote table "GoogleAuthToken"
+"""
+input GoogleAuthToken_obj_rel_insert_input {
+    data: GoogleAuthToken_insert_input!
+    """
+    upsert condition
+    """
+    on_conflict: GoogleAuthToken_on_conflict
+}
+
+"""
+on_conflict condition type for table "GoogleAuthToken"
+"""
+input GoogleAuthToken_on_conflict {
+    constraint: GoogleAuthToken_constraint!
+    update_columns: [GoogleAuthToken_update_column!]! = []
+    where: GoogleAuthToken_bool_exp
+}
+
+"""
+Ordering options when selecting data from "GoogleAuthToken".
+"""
+input GoogleAuthToken_order_by {
+    created_at: order_by
+    googleAccounts_aggregate: registrant_GoogleAccount_aggregate_order_by
+    sub: order_by
+    tokenData: order_by
+    updated_at: order_by
+}
+
+"""
+primary key columns input for table: GoogleAuthToken
+"""
+input GoogleAuthToken_pk_columns_input {
+    sub: String!
+}
+
+"""
+prepend existing jsonb value of filtered columns with new jsonb value
+"""
+input GoogleAuthToken_prepend_input {
+    tokenData: jsonb
+}
+
+"""
+select columns of table "GoogleAuthToken"
+"""
+enum GoogleAuthToken_select_column {
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    sub
+    """
+    column name
+    """
+    tokenData
+    """
+    column name
+    """
+    updated_at
+}
+
+"""
+input type for updating data in table "GoogleAuthToken"
+"""
+input GoogleAuthToken_set_input {
+    created_at: timestamptz
+    sub: String
+    tokenData: jsonb
+    updated_at: timestamptz
+}
+
+"""
+update columns of table "GoogleAuthToken"
+"""
+enum GoogleAuthToken_update_column {
+    """
+    column name
+    """
+    created_at
+    """
+    column name
+    """
+    sub
+    """
+    column name
+    """
+    tokenData
+    """
+    column name
+    """
+    updated_at
+}
+
 type InitialiseSuperUserOutput {
     error: String
     success: Boolean!
@@ -20936,6 +21212,19 @@ type mutation_root {
     """
     delete_Email_by_pk(id: uuid!): Email
     """
+    delete data from the table: "GoogleAuthToken"
+    """
+    delete_GoogleAuthToken(
+        """
+        filter the rows which have to be deleted
+        """
+        where: GoogleAuthToken_bool_exp!
+    ): GoogleAuthToken_mutation_response
+    """
+    delete single row from the table: "GoogleAuthToken"
+    """
+    delete_GoogleAuthToken_by_pk(sub: String!): GoogleAuthToken
+    """
     delete data from the table: "PushNotificationSubscription"
     """
     delete_PushNotificationSubscription(
@@ -22262,6 +22551,32 @@ type mutation_root {
         """
         on_conflict: Email_on_conflict
     ): Email
+    """
+    insert data into the table: "GoogleAuthToken"
+    """
+    insert_GoogleAuthToken(
+        """
+        the rows to be inserted
+        """
+        objects: [GoogleAuthToken_insert_input!]!
+        """
+        upsert condition
+        """
+        on_conflict: GoogleAuthToken_on_conflict
+    ): GoogleAuthToken_mutation_response
+    """
+    insert a single row into the table: "GoogleAuthToken"
+    """
+    insert_GoogleAuthToken_one(
+        """
+        the row to be inserted
+        """
+        object: GoogleAuthToken_insert_input!
+        """
+        upsert condition
+        """
+        on_conflict: GoogleAuthToken_on_conflict
+    ): GoogleAuthToken
     """
     insert data into the table: "PushNotificationSubscription"
     """
@@ -24959,6 +25274,69 @@ type mutation_root {
         _set: Email_set_input
         pk_columns: Email_pk_columns_input!
     ): Email
+    """
+    update data of the table: "GoogleAuthToken"
+    """
+    update_GoogleAuthToken(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: GoogleAuthToken_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: GoogleAuthToken_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: GoogleAuthToken_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: GoogleAuthToken_delete_key_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: GoogleAuthToken_prepend_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: GoogleAuthToken_set_input
+        """
+        filter the rows which have to be updated
+        """
+        where: GoogleAuthToken_bool_exp!
+    ): GoogleAuthToken_mutation_response
+    """
+    update single row of the table: "GoogleAuthToken"
+    """
+    update_GoogleAuthToken_by_pk(
+        """
+        append existing jsonb value of filtered columns with new jsonb value
+        """
+        _append: GoogleAuthToken_append_input
+        """
+        delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+        """
+        _delete_at_path: GoogleAuthToken_delete_at_path_input
+        """
+        delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+        """
+        _delete_elem: GoogleAuthToken_delete_elem_input
+        """
+        delete key/value pair or string element. key/value pairs are matched based on their key value
+        """
+        _delete_key: GoogleAuthToken_delete_key_input
+        """
+        prepend existing jsonb value of filtered columns with new jsonb value
+        """
+        _prepend: GoogleAuthToken_prepend_input
+        """
+        sets the columns of the filtered rows to the given values
+        """
+        _set: GoogleAuthToken_set_input
+        pk_columns: GoogleAuthToken_pk_columns_input!
+    ): GoogleAuthToken
     """
     update data of the table: "PushNotificationSubscription"
     """
@@ -28532,6 +28910,60 @@ type query_root {
         """
         where: ForeignKeyIntrospection_bool_exp
     ): ForeignKeyIntrospection_aggregate!
+    """
+    fetch data from the table: "GoogleAuthToken"
+    """
+    GoogleAuthToken(
+        """
+        distinct select on columns
+        """
+        distinct_on: [GoogleAuthToken_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [GoogleAuthToken_order_by!]
+        """
+        filter the rows returned
+        """
+        where: GoogleAuthToken_bool_exp
+    ): [GoogleAuthToken!]!
+    """
+    fetch aggregated fields from the table: "GoogleAuthToken"
+    """
+    GoogleAuthToken_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [GoogleAuthToken_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [GoogleAuthToken_order_by!]
+        """
+        filter the rows returned
+        """
+        where: GoogleAuthToken_bool_exp
+    ): GoogleAuthToken_aggregate!
+    """
+    fetch data from the table: "GoogleAuthToken" using primary key columns
+    """
+    GoogleAuthToken_by_pk(sub: String!): GoogleAuthToken
     """
     fetch data from the table: "PushNotificationSubscription"
     """
@@ -34477,6 +34909,11 @@ type registrant_GoogleAccount {
     """
     An object relationship
     """
+    authToken: GoogleAuthToken!
+    authTokenSubject: String!
+    """
+    An object relationship
+    """
     conference: conference_Conference!
     conferenceId: uuid!
     createdAt: timestamptz!
@@ -34488,12 +34925,6 @@ type registrant_GoogleAccount {
     """
     registrant: registrant_Registrant!
     registrantId: uuid!
-    tokenData(
-        """
-        JSON select path
-        """
-        path: String
-    ): jsonb!
     updatedAt: timestamptz!
     youTubeData(
         """
@@ -34521,11 +34952,30 @@ type registrant_GoogleAccount_aggregate_fields {
 }
 
 """
+order by aggregate values of table "registrant.GoogleAccount"
+"""
+input registrant_GoogleAccount_aggregate_order_by {
+    count: order_by
+    max: registrant_GoogleAccount_max_order_by
+    min: registrant_GoogleAccount_min_order_by
+}
+
+"""
 append existing jsonb value of filtered columns with new jsonb value
 """
 input registrant_GoogleAccount_append_input {
-    tokenData: jsonb
     youTubeData: jsonb
+}
+
+"""
+input type for inserting array relation for remote table "registrant.GoogleAccount"
+"""
+input registrant_GoogleAccount_arr_rel_insert_input {
+    data: [registrant_GoogleAccount_insert_input!]!
+    """
+    upsert condition
+    """
+    on_conflict: registrant_GoogleAccount_on_conflict
 }
 
 """
@@ -34535,6 +34985,8 @@ input registrant_GoogleAccount_bool_exp {
     _and: [registrant_GoogleAccount_bool_exp!]
     _not: registrant_GoogleAccount_bool_exp
     _or: [registrant_GoogleAccount_bool_exp!]
+    authToken: GoogleAuthToken_bool_exp
+    authTokenSubject: String_comparison_exp
     conference: conference_Conference_bool_exp
     conferenceId: uuid_comparison_exp
     createdAt: timestamptz_comparison_exp
@@ -34543,7 +34995,6 @@ input registrant_GoogleAccount_bool_exp {
     isDeleted: Boolean_comparison_exp
     registrant: registrant_Registrant_bool_exp
     registrantId: uuid_comparison_exp
-    tokenData: jsonb_comparison_exp
     updatedAt: timestamptz_comparison_exp
     youTubeData: jsonb_comparison_exp
 }
@@ -34566,7 +35017,6 @@ enum registrant_GoogleAccount_constraint {
 delete the field or element with specified path (for JSON arrays, negative integers count from the end)
 """
 input registrant_GoogleAccount_delete_at_path_input {
-    tokenData: [String!]
     youTubeData: [String!]
 }
 
@@ -34574,7 +35024,6 @@ input registrant_GoogleAccount_delete_at_path_input {
 delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
 """
 input registrant_GoogleAccount_delete_elem_input {
-    tokenData: Int
     youTubeData: Int
 }
 
@@ -34582,7 +35031,6 @@ input registrant_GoogleAccount_delete_elem_input {
 delete key/value pair or string element. key/value pairs are matched based on their key value
 """
 input registrant_GoogleAccount_delete_key_input {
-    tokenData: String
     youTubeData: String
 }
 
@@ -34590,6 +35038,8 @@ input registrant_GoogleAccount_delete_key_input {
 input type for inserting data into table "registrant.GoogleAccount"
 """
 input registrant_GoogleAccount_insert_input {
+    authToken: GoogleAuthToken_obj_rel_insert_input
+    authTokenSubject: String
     conference: conference_Conference_obj_rel_insert_input
     conferenceId: uuid
     createdAt: timestamptz
@@ -34598,7 +35048,6 @@ input registrant_GoogleAccount_insert_input {
     isDeleted: Boolean
     registrant: registrant_Registrant_obj_rel_insert_input
     registrantId: uuid
-    tokenData: jsonb
     updatedAt: timestamptz
     youTubeData: jsonb
 }
@@ -34607,6 +35056,7 @@ input registrant_GoogleAccount_insert_input {
 aggregate max on columns
 """
 type registrant_GoogleAccount_max_fields {
+    authTokenSubject: String
     conferenceId: uuid
     createdAt: timestamptz
     googleAccountEmail: String
@@ -34616,15 +35066,42 @@ type registrant_GoogleAccount_max_fields {
 }
 
 """
+order by max() on columns of table "registrant.GoogleAccount"
+"""
+input registrant_GoogleAccount_max_order_by {
+    authTokenSubject: order_by
+    conferenceId: order_by
+    createdAt: order_by
+    googleAccountEmail: order_by
+    id: order_by
+    registrantId: order_by
+    updatedAt: order_by
+}
+
+"""
 aggregate min on columns
 """
 type registrant_GoogleAccount_min_fields {
+    authTokenSubject: String
     conferenceId: uuid
     createdAt: timestamptz
     googleAccountEmail: String
     id: uuid
     registrantId: uuid
     updatedAt: timestamptz
+}
+
+"""
+order by min() on columns of table "registrant.GoogleAccount"
+"""
+input registrant_GoogleAccount_min_order_by {
+    authTokenSubject: order_by
+    conferenceId: order_by
+    createdAt: order_by
+    googleAccountEmail: order_by
+    id: order_by
+    registrantId: order_by
+    updatedAt: order_by
 }
 
 """
@@ -34665,6 +35142,8 @@ input registrant_GoogleAccount_on_conflict {
 Ordering options when selecting data from "registrant.GoogleAccount".
 """
 input registrant_GoogleAccount_order_by {
+    authToken: GoogleAuthToken_order_by
+    authTokenSubject: order_by
     conference: conference_Conference_order_by
     conferenceId: order_by
     createdAt: order_by
@@ -34673,7 +35152,6 @@ input registrant_GoogleAccount_order_by {
     isDeleted: order_by
     registrant: registrant_Registrant_order_by
     registrantId: order_by
-    tokenData: order_by
     updatedAt: order_by
     youTubeData: order_by
 }
@@ -34689,7 +35167,6 @@ input registrant_GoogleAccount_pk_columns_input {
 prepend existing jsonb value of filtered columns with new jsonb value
 """
 input registrant_GoogleAccount_prepend_input {
-    tokenData: jsonb
     youTubeData: jsonb
 }
 
@@ -34697,6 +35174,10 @@ input registrant_GoogleAccount_prepend_input {
 select columns of table "registrant.GoogleAccount"
 """
 enum registrant_GoogleAccount_select_column {
+    """
+    column name
+    """
+    authTokenSubject
     """
     column name
     """
@@ -34721,10 +35202,6 @@ enum registrant_GoogleAccount_select_column {
     column name
     """
     registrantId
-    """
-    column name
-    """
-    tokenData
     """
     column name
     """
@@ -34739,13 +35216,13 @@ enum registrant_GoogleAccount_select_column {
 input type for updating data in table "registrant.GoogleAccount"
 """
 input registrant_GoogleAccount_set_input {
+    authTokenSubject: String
     conferenceId: uuid
     createdAt: timestamptz
     googleAccountEmail: String
     id: uuid
     isDeleted: Boolean
     registrantId: uuid
-    tokenData: jsonb
     updatedAt: timestamptz
     youTubeData: jsonb
 }
@@ -34754,6 +35231,10 @@ input registrant_GoogleAccount_set_input {
 update columns of table "registrant.GoogleAccount"
 """
 enum registrant_GoogleAccount_update_column {
+    """
+    column name
+    """
+    authTokenSubject
     """
     column name
     """
@@ -34778,10 +35259,6 @@ enum registrant_GoogleAccount_update_column {
     column name
     """
     registrantId
-    """
-    column name
-    """
-    tokenData
     """
     column name
     """
@@ -45908,6 +46385,60 @@ type subscription_root {
         """
         where: ForeignKeyIntrospection_bool_exp
     ): ForeignKeyIntrospection_aggregate!
+    """
+    fetch data from the table: "GoogleAuthToken"
+    """
+    GoogleAuthToken(
+        """
+        distinct select on columns
+        """
+        distinct_on: [GoogleAuthToken_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [GoogleAuthToken_order_by!]
+        """
+        filter the rows returned
+        """
+        where: GoogleAuthToken_bool_exp
+    ): [GoogleAuthToken!]!
+    """
+    fetch aggregated fields from the table: "GoogleAuthToken"
+    """
+    GoogleAuthToken_aggregate(
+        """
+        distinct select on columns
+        """
+        distinct_on: [GoogleAuthToken_select_column!]
+        """
+        limit the number of rows returned
+        """
+        limit: Int
+        """
+        skip the first n rows. Use only with order_by
+        """
+        offset: Int
+        """
+        sort the rows by one or more columns
+        """
+        order_by: [GoogleAuthToken_order_by!]
+        """
+        filter the rows returned
+        """
+        where: GoogleAuthToken_bool_exp
+    ): GoogleAuthToken_aggregate!
+    """
+    fetch data from the table: "GoogleAuthToken" using primary key columns
+    """
+    GoogleAuthToken_by_pk(sub: String!): GoogleAuthToken
     """
     fetch data from the table: "PushNotificationSubscription"
     """

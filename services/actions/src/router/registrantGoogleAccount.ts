@@ -1,12 +1,12 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/action-types";
 import type { EventPayload } from "@midspace/hasura/event";
-import type { RegistrantGoogleAccountData } from "@midspace/hasura/event-data";
+import type { GoogleAuthTokenData } from "@midspace/hasura/event-data";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
-import { handleRefreshYouTubeData, handleRegistrantGoogleAccountDeleted } from "../handlers/registrantGoogleAccount";
+import { handleGoogleAuthTokenDeleted, handleRefreshYouTubeData } from "../handlers/registrantGoogleAccount";
 
 export const router = express.Router();
 
@@ -15,7 +15,7 @@ router.use(checkEventSecret);
 
 router.post("/deleted", json(), async (req: Request, res: Response) => {
     try {
-        assertType<EventPayload<RegistrantGoogleAccountData>>(req.body);
+        assertType<EventPayload<GoogleAuthTokenData>>(req.body);
     } catch (e: any) {
         req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
@@ -23,9 +23,9 @@ router.post("/deleted", json(), async (req: Request, res: Response) => {
     }
 
     try {
-        await handleRegistrantGoogleAccountDeleted(req.log, req.body);
+        await handleGoogleAuthTokenDeleted(req.log, req.body);
     } catch (e: any) {
-        req.log.error({ err: e }, "Failure while handling RegistrantGoogleAccount deleted");
+        req.log.error({ err: e }, "Failure while handling GoogleAuthToken deleted");
         res.status(500).json("Failure while handling event");
         return;
     }

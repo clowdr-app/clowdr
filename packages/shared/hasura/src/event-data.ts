@@ -152,6 +152,13 @@ export interface RegistrantGoogleAccountData extends BaseData {
     conferenceId: string;
 }
 
+export interface GoogleAuthTokenData {
+    sub: string;
+    tokenData: Credentials;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface UserData extends BaseData {}
 
 export interface FlagData {

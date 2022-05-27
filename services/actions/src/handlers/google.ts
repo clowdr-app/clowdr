@@ -448,6 +448,31 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                                     },
                                 });
                             });
+                        } else if (error.message?.length) {
+                            if (error.message.toLowerCase().includes("no refresh token")) {
+                                await callWithRetry(async () => {
+                                    await apolloClient.mutate({
+                                        mutation: FailUploadYouTubeVideoJobDocument,
+                                        variables: {
+                                            id: job.id,
+                                            message:
+                                                "Upload failed because the connection between your Midspace account and your YouTube account has expired. Please try disconnecting and reconnecting your YouTube account from Midspace then try the upload again.",
+                                            result: [error.toString()],
+                                        },
+                                    });
+                                });
+                            } else {
+                                await callWithRetry(async () => {
+                                    await apolloClient.mutate({
+                                        mutation: FailUploadYouTubeVideoJobDocument,
+                                        variables: {
+                                            id: job.id,
+                                            message: `Upload failed due to a YouTube error. The error message from YouTube was: ${error.message}`,
+                                            result: [error.toString()],
+                                        },
+                                    });
+                                });
+                            }
                         } else {
                             await callWithRetry(async () => {
                                 await apolloClient.mutate({

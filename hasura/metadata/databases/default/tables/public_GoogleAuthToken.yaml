@@ -1,0 +1,11 @@
+table:
+  schema: public
+  name: GoogleAuthToken
+array_relationships:
+  - name: googleAccounts
+    using:
+      foreign_key_constraint_on:
+        column: authTokenSubject
+        table:
+          schema: registrant
+          name: GoogleAccount

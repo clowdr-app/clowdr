@@ -12,6 +12,9 @@ configuration:
     updated_at: updatedAt
     created_at: createdAt
 object_relationships:
+  - name: authToken
+    using:
+      foreign_key_constraint_on: authTokenSubject
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId

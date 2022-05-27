@@ -166,7 +166,9 @@ export async function handleSubmitGoogleOAuthToken(
                 conferenceId: validRegistrant.conferenceId,
                 googleAccountEmail: tokenData.email,
                 tokenData: token.tokens,
-                authTokenColumnsToUpdate: token.tokens.refresh_token ? [GoogleAuthToken_Update_Column.TokenData] : [],
+                authTokenColumnsToUpdate: token.tokens.refresh_token
+                    ? [GoogleAuthToken_Update_Column.Sub, GoogleAuthToken_Update_Column.TokenData]
+                    : [GoogleAuthToken_Update_Column.Sub],
                 subject: tokenData.sub,
             },
         });

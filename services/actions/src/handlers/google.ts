@@ -432,16 +432,36 @@ async function startUploadYouTubeVideoJob(logger: P.Logger, job: UploadYouTubeVi
                             });
                         });
                     } else {
-                        await callWithRetry(async () => {
-                            await apolloClient.mutate({
-                                mutation: FailUploadYouTubeVideoJobDocument,
-                                variables: {
-                                    id: job.id,
-                                    message: JSON.stringify(error),
-                                    result: [error],
-                                },
+                        if (error.errors?.length) {
+                            await callWithRetry(async () => {
+                                await apolloClient.mutate({
+                                    mutation: FailUploadYouTubeVideoJobDocument,
+                                    variables: {
+                                        id: job.id,
+                                        message:
+                                            `Upload failed due to a YouTube error.
+
+| Domain | Reason | Message |
+|--------|--------|---------|
+` + error.errors.map((x: any) => `| ${x.domain} | ${x.reason} | ${x.message} |`).join("\n"),
+                                        result: [error],
+                                    },
+                                });
                             });
-                        });
+                        } else {
+                            await callWithRetry(async () => {
+                                await apolloClient.mutate({
+                                    mutation: FailUploadYouTubeVideoJobDocument,
+                                    variables: {
+                                        id: job.id,
+                                        message: `Upload failed due to a YouTube error but the error information is blank. YouTube has failed in an undocumented way (generic error code ${
+                                            error.code ?? "unavailable"
+                                        }). Please try disconnecting and reconnecting your YouTube account from Midspace then try the upload again.`,
+                                        result: [error],
+                                    },
+                                });
+                            });
+                        }
                     }
                 } catch (e: any) {
                     logger.error({ err: e }, "Failure while recording failure of YouTube upload job");

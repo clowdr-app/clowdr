@@ -1,5 +1,11 @@
 # Midspace virtual conference platform
 
+---
+
+**Note**: the official Midspace instance at midspace.app is no longer available. You can still host your own Midspace instance using the open-source code. Thanks for using Midspace!
+
+---
+
 This is version 3 of Midspace - more functional, more robust, more scalable,
 and 100% open source!
 

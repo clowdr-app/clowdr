@@ -9,7 +9,7 @@
 This is version 3 of Midspace - more functional, more robust, more scalable,
 and 100% open source!
 
-If you want to contribute to Midspace, please read our [contribution guidelines](CONTRIBUTING).
+If you want to contribute to Midspace, please read our [contribution guidelines](CONTRIBUTING.md).
 
 ## Structure
 
